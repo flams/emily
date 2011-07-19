@@ -1,4 +1,4 @@
 # Eclipse IDE files
 .settings/
 .project
-build/temp/
+build/temp
