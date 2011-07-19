@@ -7,7 +7,6 @@
     <property name="tools.dir" value="../tools/"/>
     <property name="build.dir" value="build"/>
     <property name="temp.dir" value="${build.dir}/temp"/>
-    <property name="unpacked.dir" value="${build.dir}/unpacked"/>
     <property name="reports.dir" value="${build.dir}/reports"/>
     
     <property name="JsDoc.dir" value="${tools.dir}/JsDoc"/>
@@ -62,8 +61,8 @@
         <mkdir dir="${temp.dir}"/>
         <java jar="${GoogleCompiler}" fork="true">
             <arg line="--js ${temp.dir}/concat.js"/>
-            <arg line="--js_output_file ${unpacked.dir}/Emily/Emily.js"/>
-            <arg line="--create_source_map ${unpacked.dir}/Emily/Emily-map"/>        
+            <arg line="--js_output_file ${build.dir}/Emily.js"/>
+            <arg line="--create_source_map ${build.dir}/Emily-map"/>        
         </java>
     </target>
     

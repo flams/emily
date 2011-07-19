@@ -132,4 +132,5 @@ TestCase("ObservablesIsolated", {
 		this.obs1.watch(this.testTopic, function (){});
 		assertFalse(this.obs2.notify(this.testTopic));
 	}
+	
 });
