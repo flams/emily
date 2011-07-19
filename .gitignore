@@ -1,3 +1,4 @@
 # Eclipse IDE files
 .settings/
 .project
+build/temp/
