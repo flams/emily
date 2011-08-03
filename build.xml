@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="gny12" basedir="." default="BUILD">
+<project name="Emily" basedir="." default="BUILD">
 
     <!-- Properties definition  -->
     <property name="src.dir" value="src"/>
@@ -67,7 +67,7 @@
     </target>
     
     <target name="BUILD" description="Builds the whole project, generates doc and tests reports" depends="DOC_generate, BUILD_minify">
-        <echo message="Enjoy GNY12!"/>
+        <echo message="Enjoy Emily!"/>
     </target>
     
 
