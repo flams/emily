@@ -32,14 +32,14 @@ TestCase("TinyStoreSet", {
 
 	"test should set null value": function () {
 		this.tinyStore.set("test", null);
-		assertTrue(this.tinyStore.get("test") === null);
+		assertNull(this.tinyStore.get("test"));
 	},
 
 	"test should update value if it already exists": function () {
 		this.tinyStore.set("test", true);
-		assertTrue(this.tinyStore.get("test") === true);
+		assertTrue(this.tinyStore.get("test"));
 		assertTrue(this.tinyStore.set("test", false));
-		assertTrue(this.tinyStore.get("test") === false);
+		assertFalse(this.tinyStore.get("test"));
 	},
 
 	"test should return false if wrong parameters": function () {
