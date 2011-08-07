@@ -1,31 +1,19 @@
 TestCase("TinyStoreInit", {
+	
+	setUp: function () {
+		this.tinyStore = Emily.require("TinyStore");
+	},
 
 	"test should create a TinyStore": function () {
-		var tinyStore = Emily.TinyStore.create();
-		tinyStore.set("test", true);
-		assertTrue(tinyStore.has("test"));
-		assertTrue(tinyStore.get("test") === true);
+		assertObject(this.tinyStore.create());
 	},
 
 	"test should create a TinyStore with value": function () {
-		var initValues = {x: 10}, 
-		tinyStore = Emily.TinyStore.create(initValues);
+		var initValues = {x: 10},
+			tinyStore = this.tinyStore.create(initValues);
+		assertObject(tinyStore);
 		assertTrue(tinyStore.has("x"));
-		assertTrue(tinyStore.get("x") === 10);
-	},
-
-	"test string should create an empty TinyStore": function () {
-		var tinyStore = Emily.TinyStore.create("fail");
-		assertFalse(tinyStore.has("test"));
-		tinyStore.set("test", true);
-		assertTrue(tinyStore.has("test"));
-	},
-
-	"test array should create an empty TinyStore": function () {
-		var tinyStore = Emily.TinyStore.create(["fa", "il"]);
-		assertFalse(tinyStore.has("fa"));
-		tinyStore.set("fa", true);
-		assertTrue(tinyStore.has("fa"));
+		assertEquals(10, tinyStore.get("x"));
 	}
 
 });
@@ -33,7 +21,7 @@ TestCase("TinyStoreInit", {
 TestCase("TinyStoreSet", {
 
 	setUp: function () {
-		this.tinyStore = Emily.TinyStore.create();
+		this.tinyStore = Emily.require("TinyStore").create();
 	},
 
 	"test should set undefined value": function () {
@@ -65,7 +53,7 @@ TestCase("TinyStoreSet", {
 TestCase("TinyStoreDel", {
 
 	setUp: function () {
-		this.tinyStore = Emily.TinyStore.create();
+		this.tinyStore = Emily.require("TinyStore").create();
 	},
 
 	"test should delete value": function () {
@@ -80,97 +68,98 @@ TestCase("TinyStoreDel", {
 TestCase("TinyStoreWatch", {
 
 	setUp: function () {
-		this.tinyStore = Emily.TinyStore.create();
+		this.tinyStore = Emily.require("TinyStore").create();
 	},
 
 	"test should be notified on set": function () {
-		var func = function () {
-			func.called = true;
-		};
-		this.tinyStore.watch("test", func);
+		var spy = sinon.spy();
+		this.tinyStore.watch("test", spy);
 		this.tinyStore.set("test");
-		assertTrue(func.called === true);
+		
+		assertTrue(spy.called);
+		
 	},
 
 	"test should be notified on del": function () {
-		var func = function () {
-			func.called = true;
-		};
-		this.tinyStore.watch("test", func);
+		var spy = sinon.spy();
 		this.tinyStore.set("test");
+		
+		assertFalse(spy.called);
+		
+		this.tinyStore.watch("test", spy);		
 		this.tinyStore.del("test");
-		assertTrue(func.called === true);
+		
+		assertTrue(spy.called);
 	},
 
 	"test should unwatch value": function () {
-		var func = function () {
-			func.called = true;
-		},
-		handler = this.tinyStore.watch("test", func);
+		var spy = sinon.spy();
+		handler = this.tinyStore.watch("test", spy);
 		this.tinyStore.unwatch(handler);
+		
 		this.tinyStore.set("test");
 		this.tinyStore.del("test");
-		assertFalse(func.called === true);
+		
+		assertFalse(spy.called);
 	},
 
 	"test should receive new value on set": function () {
-		var func = function (v) {
-			func.value = v;
-		},
-		value   = {x:10};
+		var spy = sinon.spy(),
+			value = {x:10};
 
-		this.tinyStore.watch("test", func)
+		this.tinyStore.watch("test", spy);
 		this.tinyStore.set("test", value);
-		assertTrue(func.value === value);
+		
+		assert(spy.calledWith(value));
+		
 		this.tinyStore.del("test");
-		assertUndefined(func.value);
+		
+		assert(spy.calledWith(undefined));
 	},
 
 	"test should exec in scope on set": function () {
-		var func = function () {
-			func.scope = this;
-		};
+		var spy = sinon.spy();
 
-		this.tinyStore.watch("test", func, this);
+		this.tinyStore.watch("test", spy, this);
 		this.tinyStore.set("test");
-		assertTrue(func.scope === this);
+		
+		assertSame(this, spy.thisValues[0]);
 	},
 
 	"test should exec in scope on del": function () {
-		var func = function () {
-			func.scope = this;
-		};
+		var spy = sinon.spy();
 
-		this.tinyStore.watch("test", func, this);
 		this.tinyStore.set("test");
+		this.tinyStore.watch("test", spy, this);		
 		this.tinyStore.del("test");
-		assertTrue(func.scope === this);
+		
+		assertSame(this, spy.thisValues[0]);
 	}
 });
 
 TestCase("TinyStoreLength", {
 
 	"test should return proper length": function () {
-		this.tinyStore = Emily.TinyStore.create();
-		assertTrue(this.tinyStore.length == 0);
+		this.tinyStore = Emily.require("TinyStore").create();
+		assertEquals(0, this.tinyStore.length);
 		this.tinyStore.set("value1");
-		assertTrue(this.tinyStore.length == 1);
+		assertEquals(1, this.tinyStore.length);
 		this.tinyStore.set("value2");
 		this.tinyStore.set("value3");
-		assertTrue(this.tinyStore.length == 3);
+		assertEquals(3, this.tinyStore.length);
 		this.tinyStore.del("value3");
-		assertTrue(this.tinyStore.length == 2);
+		assertEquals(2, this.tinyStore.length);
 		this.tinyStore.del("value2");
 		this.tinyStore.del("value1");
 		this.tinyStore.del("test");
-		assertTrue(this.tinyStore.length == 0);
+		assertEquals(0, this.tinyStore.length);
 	},
 
 	"test should return proper length when init with data": function () {
 		var initValues = {x: 10, y: 20},
-		tinyStore = Emily.TinyStore.create(initValues);
-		jstestdriver.console.log(tinyStore.length);
-		assertTrue(tinyStore.length == 2);
+		tinyStore = Emily.require("TinyStore").create(initValues);
+		
+		assertEquals(2, tinyStore.length);
 		
 	}
 });

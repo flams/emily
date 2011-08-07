@@ -82,6 +82,6 @@ Emily.declare("Observable", /** @class */function Observable() {
 			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
 		};
 		
-	};
+	}
 	
 });

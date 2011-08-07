@@ -2,38 +2,28 @@
  * @class
  */
 function Emily() {
+	
+	/**
+	 * The list of services
+	 * @private
+	 */
+	var _services = {};
+	
     /**
      * declare a new service
      * @param {String} name the name of the service
      * @param {Function} func the service's function
      */
-    this.declare = function add(name, func) {
-    	this[name] = new func(this);
+    this.declare = function declare(name, func) {
+    	_services[name] = new func(this);
+    	return _services[name];
     };
     
-    /**
-     * removes a service
-     * @param {String} name the name of the service
-     */
-    this.remove = function remove(name) {
-    	delete this[name];
-    };
-
-    /**
-     * loads a service
-     * @param {String} name the name of the service
-     */
-    this.load = function load(name) {
-    	
+    this.require = function require(name) {
+    	return _services[name];
     };
     
-    /**
-     * reloads a service
-     * @param {String} name the name of the service
-     */
-    this.reload = function reload(name) {
-    	
-    };
+    
     
 };
 

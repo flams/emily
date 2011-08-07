@@ -1,7 +1,7 @@
 Emily.declare("TinyStore", /** @class */function TinyStore(API) {
 	
 	/**
-	 * Return a new DataStore
+	 * @returns a new DataStore
 	 */
 	this.create = function create(values) {
 		return new _TinyStore(values);
@@ -12,7 +12,7 @@ Emily.declare("TinyStore", /** @class */function TinyStore(API) {
 	 * @param values
 	 * @returns
 	 */
-	_TinyStore = function _TinyStore(values) {
+	function _TinyStore(values) {
 		
 		var _data = {}, 
 			mixin = function mixin(values) {
@@ -23,12 +23,13 @@ Emily.declare("TinyStore", /** @class */function TinyStore(API) {
 					}
 				}
 			},
-			_observable = API.Observable.create();
+			_observable = API.require("Observable").create();
 			
 		
 		
 		this.length = 0;
 		mixin.call(this, values);
+		
 		/**
 		 * 
 		 * @param name
@@ -103,5 +104,5 @@ Emily.declare("TinyStore", /** @class */function TinyStore(API) {
 			return _observable.unwatch(handler);
 		};
 		
-	};
+	}
 });
