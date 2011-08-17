@@ -16,7 +16,7 @@ function Emily() {
      */
     this.declare = function declare(name, func) {
     	_services[name] = new func(this);
-    	return _services[name];
+    	return true;
     };
     
     this.require = function require(name) {
