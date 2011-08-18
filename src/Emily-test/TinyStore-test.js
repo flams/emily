@@ -118,22 +118,24 @@ TestCase("TinyStoreWatch", {
 	},
 
 	"test should exec in scope on set": function () {
-		var spy = sinon.spy();
+		var spy = sinon.spy(),
+			thisObj = {};
 
-		this.tinyStore.watch("test", spy, this);
+		this.tinyStore.watch("test", spy, thisObj);
 		this.tinyStore.set("test");
 		
-		assertSame(this, spy.thisValues[0]);
+		assertSame(thisObj, spy.thisValues[0]);
 	},
 
 	"test should exec in scope on del": function () {
-		var spy = sinon.spy();
+		var spy = sinon.spy(),
+			thisObj = {};
 
 		this.tinyStore.set("test");
-		this.tinyStore.watch("test", spy, this);		
+		this.tinyStore.watch("test", spy, thisObj);		
 		this.tinyStore.del("test");
 		
-		assertSame(this, spy.thisValues[0]);
+		assertSame(thisObj, spy.thisValues[0]);
 	}
 });
 

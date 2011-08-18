@@ -5,7 +5,7 @@ TestCase("ObservableInit", {
 		assertFunction(this.observable.watch);
 		assertFunction(this.observable.unwatch);
 		assertFunction(this.observable.notify);
-		assertFunction(this.observable.hasObserver);
+		assertFunction(this.observable.hasObserver);	
 	}
 });
 
@@ -17,38 +17,36 @@ TestCase("ObservableWatch", {
 	},
 	
 	"test should add observer": function () {
-		var func = function () {},
+		var spy = sinon.spy(),
 			handler;
 		
 		assertFalse(this.observable.hasObserver(handler));
-		handler = this.observable.watch(this.testTopic, func);
+		handler = this.observable.watch(this.testTopic, spy);
 		
 		assertTrue(this.observable.hasObserver(handler));
 	},
 	
 	"test should add observer with scope": function () {
-		var func = function () {},
+		var spy = sinon.spy(),
 			handler;
 		
 		assertFalse(this.observable.hasObserver(handler));
-		handler = this.observable.watch(this.testTopic, func, this);
+		handler = this.observable.watch(this.testTopic, spy, this);
 
 		assertTrue(this.observable.hasObserver(handler));
 	},
 	
 	"test should remove observer": function () {
-		var func = function () {
-				func.called = true;
-			},
+		var spy = sinon.spy(),
 			handler;
 		
-		handler = this.observable.watch(this.testTopic, func);
+		handler = this.observable.watch(this.testTopic, spy);
 		
 		assertTrue(this.observable.hasObserver(handler));
 		this.observable.unwatch(handler);
 		assertFalse(this.observable.hasObserver(handler));
 		this.observable.notify(this.testTopic);
-		assertFalse(func.called === true);
+		assertFalse(spy.called);
 	},
 	
 	"test should return false if remove called with wrong handler": function () {
@@ -71,41 +69,35 @@ TestCase("ObservableNotify", {
 	},
 	
 	"test should notify observer with no scope": function () {
-		var func = function () {
-				func.called  = true;
-			};
+		var spy = sinon.spy();
 
-		this.observable.watch(this.testTopic, func);
+		this.observable.watch(this.testTopic, spy);
 		
-		assertUndefined(func.called);
+		assertFalse(spy.called);
 		this.observable.notify(this.testTopic);
-		assert(func.called);
+		assertTrue(spy.called);
 	},
 	
 	"test should notify observer with scope": function () {
-		var func = function () {
-				func.scope = this;
-			};
+		var spy = sinon.spy(),
+			thisObj = {};
 		
-		this.observable.watch(this.testTopic, func, this);
+		this.observable.watch(this.testTopic, spy, thisObj);
 		
-		assertFalse(func.scope === this);
+		assertNotSame(thisObj, spy.thisValues[0]);
 		this.observable.notify(this.testTopic);
 		
-		assert(func.scope === this);
+		assertSame(thisObj, spy.thisValues[0]);
 	},
 	
 	"test should pass parameter": function () {
-		var func = function (p) {
-			func.param = p;
-		},
-		post = {x:10};
+		var spy = sinon.spy(),
+			post = {x:10};
 		
-		this.observable.watch(this.testTopic, func);
-		
-		assertFalse(func.param === post);
+		this.observable.watch(this.testTopic, spy);
+
 		this.observable.notify(this.testTopic, post);
-		assert(func.param === post);
+		assert(spy.calledWith(post));
 	},
 	
 	"test should return false if topic doesn't exist": function () {
