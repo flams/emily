@@ -32,7 +32,6 @@ Emily.declare("Observable", /** @class */function Observable() {
 			} else {
 				return false;
 			}
-
 		};
 		
 		/**

@@ -24,7 +24,7 @@
     <target name="DOC_generate" description="Generate all documentation to ${JsDoc.output}">
        <java jar="${JsDoc}" fork="true">
             <arg value="${JsDoc.dir}/app/run.js" />
-            <arg value="${src.dir}" />
+            <arg value="${src.dir}/Emily" />
             <arg line="-r=2" />
             <arg line="-d=${JsDoc.output}" />
             <arg line="-t=${JsDoc.dir}/templates/jsdoc" />
