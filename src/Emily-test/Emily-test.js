@@ -22,6 +22,9 @@ TestCase("Emily", {
 		assertTrue(Emily.getUnitTestMode()); 
 		Emily.setUnitTestMode(false);
 		assertFalse(Emily.getUnitTestMode());
+		
+		// Important that UnitTestMode goes back to false
+		Emily.setUnitTestMode(false);
 	},
 	
 	"test Emily should allow for dependency injection while in UnitTestMode": function () {
@@ -56,11 +59,9 @@ TestCase("Emily", {
 		Emily.inject("requiredService", requiredServiceStubbed);
 		// And it should now be the one that is required
 		assertSame(requiredServiceStubbed, service.requireExternal());
-	
-	},
-	
-	tearDown: function () {
+		
 		// Important that UnitTestMode goes back to false
 		Emily.setUnitTestMode(false);
+	
 	}
 });
