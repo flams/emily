@@ -6,7 +6,7 @@ TestCase("Emily", {
 	
 	tearDown: function () {
 		// Important that isolation mode goes back to false
-		//Emily.setIsolationMode(false);
+		Emily.setIsolationMode(false);
 	},
 	
 	"test should declare a service" : function () {
