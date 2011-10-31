@@ -4,6 +4,11 @@ TestCase("Emily", {
 		this.spy = sinon.spy();
 	},
 	
+	tearDown: function () {
+		// Important that isolation mode goes back to false
+		//Emily.setIsolationMode(false);
+	},
+	
 	"test should declare a service" : function () {
 		assertTrue(Emily.declare("myService", this.spy));
 		assertSame(Emily, this.spy.args[0][0]);
@@ -15,19 +20,16 @@ TestCase("Emily", {
 		assertUndefined(Emily.require("nothing"));
 	},
 	
-	"test should make Emily run in test mode": function () {
-		// Test mode should be false by default
-		assertFalse(Emily.getUnitTestMode());
-		Emily.setUnitTestMode(true);
-		assertTrue(Emily.getUnitTestMode()); 
-		Emily.setUnitTestMode(false);
-		assertFalse(Emily.getUnitTestMode());
-		
-		// Important that UnitTestMode goes back to false
-		Emily.setUnitTestMode(false);
+	"test should make Emily's services run in isolation": function () {
+		// Isolation mode should be false by default
+		assertFalse(Emily.getIsolationMode());
+		Emily.setIsolationMode(true);
+		assertTrue(Emily.getIsolationMode()); 
+		Emily.setIsolationMode(false);
+		assertFalse(Emily.getIsolationMode());
 	},
 	
-	"test Emily should allow for dependency injection while in UnitTestMode": function () {
+	"test Emily should allow for dependency injection while services run in isolation": function () {
 		
 		// Define a future new service
 		var newService = function (API) {
@@ -52,16 +54,13 @@ TestCase("Emily", {
 		assertSame(requiredService, service.requireExternal().constructor);
 
 		// Now, in UnitTestMode		
-		Emily.setUnitTestMode(true);	
+		Emily.setIsolationMode(true);	
 		// Should first get undefined when requiring unstubbed service
 		assertUndefined(service.requireExternal());
 		// I can inject a stubbed service
 		Emily.inject("requiredService", requiredServiceStubbed);
 		// And it should now be the one that is required
 		assertSame(requiredServiceStubbed, service.requireExternal());
-		
-		// Important that UnitTestMode goes back to false
-		Emily.setUnitTestMode(false);
 	
 	}
 });

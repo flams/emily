@@ -9,7 +9,7 @@ function Emily() {
 	 */
 	var _services = {},
 		_injected = {},
-		_unitTestMode = false;
+		_isolationMode = false;
 	
     /**
      * Declare a new service
@@ -27,7 +27,7 @@ function Emily() {
      * @returns {Object} the service
      */
     this.require = function require(name) {
-    	if (_unitTestMode) {
+    	if (_isolationMode) {
     		return _injected[name];
     	} else {
     		return _services[name];	
@@ -39,16 +39,16 @@ function Emily() {
      * To stubb a service, use the inject function
      * @param value
      */
-    this.setUnitTestMode = function setUnitTestMode(value) {
-    	_unitTestMode = value;
+    this.setIsolationMode = function setIsolationMode(value) {
+    	_isolationMode = value;
     };
     
     /**
      * Know the unit testing mode value
      * @returns {Boolean}
      */
-    this.getUnitTestMode = function getUnitTestMode() {
-    	return _unitTestMode;
+    this.getIsolationMode = function getIsolationMode() {
+    	return _isolationMode;
     };
     
     /**
