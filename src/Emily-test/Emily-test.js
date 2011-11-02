@@ -62,5 +62,24 @@ TestCase("Emily", {
 		// And it should now be the one that is required
 		assertSame(requiredServiceStubbed, service.requireExternal());
 	
+	},
+	
+	"test Emily should also serve globally defined services": function () {
+		window.globallyDefined = {};
+		
+		assertSame(window.globallyDefined, Emily.require("globallyDefined"));
+		
+		delete window.globallyDefined;
+	},
+	
+	"test Emily should isolate the globally defined services that it serves": function () {
+		window.globallyDefined = {};
+		var locallyDefined = {};
+		
+		Emily.setIsolationMode(true);
+		Emily.inject("globallyDefined", locallyDefined);
+		assertSame(locallyDefined, Emily.require("globallyDefined"));
+		
+		delete window.globallyDefined;
 	}
 });

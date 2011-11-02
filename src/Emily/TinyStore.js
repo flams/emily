@@ -1,7 +1,7 @@
 Emily.declare("TinyStore", /** @class */function TinyStore(API) {
 	
 	/**
-	 * @returns a new DataStore
+	 * @returns a new TinyStore
 	 */
 	this.create = function create(values) {
 		return new _TinyStore(values);

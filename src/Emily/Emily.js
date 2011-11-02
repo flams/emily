@@ -30,7 +30,7 @@ function Emily() {
     	if (_isolationMode) {
     		return _injected[name];
     	} else {
-    		return _services[name];	
+    		return _services[name] || window[name];	
     	}
     };
     
