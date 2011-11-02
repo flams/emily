@@ -62,7 +62,6 @@ TestCase("TransportTest", {
 		socket = transport.getSocket();
 		assertTrue(socket.on.calledOnce);
 		assertTrue(socket.on.calledWith(event, func));
-		
 	},
 	
 	"test emit event": function () {
