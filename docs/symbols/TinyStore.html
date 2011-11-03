@@ -199,6 +199,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TinyStore.html">TinyStore</a></li>
 	
+	<li><a href="../symbols/Tools.html">Tools</a></li>
+	
 	<li><a href="../symbols/Transport.html">Transport</a></li>
 	
 </ul>
@@ -218,7 +220,7 @@ ul.inheritsList
 				
 				
 			
-				
+				TinyStore creates a small NoSQL databasethat can publish events on data add/change.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Emily_TinyStore.js.html">TinyStore.js</a>.
@@ -240,7 +242,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/TinyStore.html#constructor">TinyStore</a></b>(API)
+								<b><a href="../symbols/TinyStore.html#constructor">TinyStore</a></b>(exports, API)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -267,11 +269,11 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#create">create</a></b>(values)
+								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#-create">create</a></b>(values)
 								</div>
-								<div class="description"></div>
+								<div class="description">Creates a new TinyStore</div>
 							</td>
 						</tr>
 					
@@ -280,7 +282,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#del">del</a></b>(name)
 								</div>
-								<div class="description"></div>
+								<div class="description">Delete value from its index</div>
 							</td>
 						</tr>
 					
@@ -289,7 +291,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#get">get</a></b>(name)
 								</div>
-								<div class="description"></div>
+								<div class="description">Get a value from its index</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#getNbItems">getNbItems</a></b>()
+								</div>
+								<div class="description">Get the number of items in the store</div>
 							</td>
 						</tr>
 					
@@ -298,7 +309,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#has">has</a></b>(name)
 								</div>
-								<div class="description"></div>
+								<div class="description">Checks if the store has a given value</div>
 							</td>
 						</tr>
 					
@@ -307,7 +318,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#set">set</a></b>(name, value)
 								</div>
-								<div class="description"></div>
+								<div class="description">Set a new value and overrides an existing one</div>
 							</td>
 						</tr>
 					
@@ -316,7 +327,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#unwatch">unwatch</a></b>(handler)
 								</div>
-								<div class="description"></div>
+								<div class="description">Unwatch the value's modifications</div>
 							</td>
 						</tr>
 					
@@ -325,7 +336,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TinyStore.html#watch">watch</a></b>(name, func, scope)
 								</div>
-								<div class="description"></div>
+								<div class="description">Watch the value's modifications</div>
 							</td>
 						</tr>
 					
@@ -346,7 +357,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>TinyStore</b>(API)
+						<b>TinyStore</b>(exports, API)
 				</div>
 				
 				<div class="description">
@@ -360,6 +371,12 @@ ul.inheritsList
 					
 						<dl class="detailList">
 						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>exports</b>
+								
+							</dt>
+								<dd></dd>
 						
 							<dt>
 								 <b>API</b>
@@ -388,15 +405,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="create"> </a>
-					<div class="fixedFont">
+					<a name="-create"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
-					
+					<span class="light">{Object}</span>
 					<b>create</b>(values)
 					
 					</div>
 					<div class="description">
-						
+						Creates a new TinyStore
 						
 						
 					</div>
@@ -408,10 +425,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>values</b>
+									<span class="light fixedFont">{Object}</span> <b>values</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the values to initialize the store with</dd>
 							
 							</dl>
 						
@@ -422,7 +439,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>a new TinyStore</dd>
+								<dd><span class="light fixedFont">{Object}</span> the TinyStore</dd>
 							
 							</dl>
 						
@@ -439,7 +456,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						
+						Delete value from its index
 						
 						
 					</div>
@@ -451,10 +468,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>name</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the name of the index from which to delete the value</dd>
 							
 							</dl>
 						
@@ -465,7 +482,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd></dd>
+								<dd>true if successfully deleted.</dd>
 							
 							</dl>
 						
@@ -482,7 +499,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						
+						Get a value from its index
 						
 						
 					</div>
@@ -494,10 +511,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>name</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the name of the index</dd>
 							
 							</dl>
 						
@@ -508,7 +525,39 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd></dd>
+								<dd>the value</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getNbItems"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Int}</span>
+					<b>getNbItems</b>()
+					
+					</div>
+					<div class="description">
+						Get the number of items in the store
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Int}</span> the number of items in the store</dd>
 							
 							</dl>
 						
@@ -520,12 +569,12 @@ ul.inheritsList
 					<a name="has"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{Boolean}</span>
 					<b>has</b>(name)
 					
 					</div>
 					<div class="description">
-						
+						Checks if the store has a given value
 						
 						
 					</div>
@@ -537,10 +586,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>name</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the name of the index</dd>
 							
 							</dl>
 						
@@ -551,7 +600,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd></dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if the value exists</dd>
 							
 							</dl>
 						
@@ -568,7 +617,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						
+						Set a new value and overrides an existing one
 						
 						
 					</div>
@@ -580,16 +629,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>name</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the name of the value</dd>
 							
 								<dt>
 									<b>value</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the value to assign</dd>
 							
 							</dl>
 						
@@ -600,7 +649,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd></dd>
+								<dd>true if value is set</dd>
 							
 							</dl>
 						
@@ -617,7 +666,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						
+						Unwatch the value's modifications
 						
 						
 					</div>
@@ -629,10 +678,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>handler</b>
+									<span class="light fixedFont">{Handler}</span> <b>handler</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the handler returned by the watch function</dd>
 							
 							</dl>
 						
@@ -655,12 +704,12 @@ ul.inheritsList
 					<a name="watch"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{Handler}</span>
 					<b>watch</b>(name, func, scope)
 					
 					</div>
 					<div class="description">
-						
+						Watch the value's modifications
 						
 						
 					</div>
@@ -672,22 +721,22 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>name</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the index of the value</dd>
 							
 								<dt>
-									<b>func</b>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the function to execute when the value changes</dd>
 							
 								<dt>
-									<b>scope</b>
+									<span class="light fixedFont">{Object}</span> <b>scope</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the scope in which to execute the function</dd>
 							
 							</dl>
 						
@@ -698,7 +747,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd></dd>
+								<dd><span class="light fixedFont">{Handler}</span> the subscribe's handler to use to stop watching</dd>
 							
 							</dl>
 						
@@ -719,7 +768,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Nov 02 2011 23:12:11 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Nov 03 2011 16:16:00 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

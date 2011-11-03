@@ -1,7 +1,10 @@
 TestCase("Emily", {
 	
 	setUp: function () {
-		this.spy = sinon.spy();
+		this.module = function module(exports, API) {
+			module.exports = exports;
+			module.API = API;
+		};
 	},
 	
 	tearDown: function () {
@@ -9,18 +12,18 @@ TestCase("Emily", {
 		Emily.setIsolationMode(false);
 	},
 	
-	"test should declare a service" : function () {
-		assertTrue(Emily.declare("myService", this.spy));
-		assertSame(Emily, this.spy.args[0][0]);
+	"test should declare a module" : function () {
+		assertTrue(Emily.declare("module", this.module));
+		assertSame(Emily, this.module.API);
 	},
 	
-	"test should require a service": function () {
-		Emily.declare("myService", this.spy);
-		assertObject(Emily.require("myService"));
+	"test should require a module": function () {
+		Emily.declare("module", this.module);
+		assertSame(Emily.require("module"), this.module.exports);
 		assertUndefined(Emily.require("nothing"));
 	},
 	
-	"test should make Emily's services run in isolation": function () {
+	"test should make Emily's modules run in isolation": function () {
 		// Isolation mode should be false by default
 		assertFalse(Emily.getIsolationMode());
 		Emily.setIsolationMode(true);
@@ -29,42 +32,42 @@ TestCase("Emily", {
 		assertFalse(Emily.getIsolationMode());
 	},
 	
-	"test Emily should allow for dependency injection while services run in isolation": function () {
+	"test Emily should allow for dependency injection while modules run in isolation": function () {
 		
-		// Define a future new service
-		var newService = function (API) {
-				this.requireExternal = function () {
+		// Define a future new module
+		var newModule = function (exports, API) {
+				exports.requireExternal = function () {
 					// That will require an other one
-					return API.require("requiredService");
+					return API.require("requiredModule");
 				};
 			},
-			// This is the other service that will be required by the previously defined
-			requiredService = function (API) {},
-			// This is the same external service but stubbed
-			requiredServiceStubbed = {},
-			service;
+			// This is the other module that will be required by the previously defined
+			requiredModule = function () {},
+			// This is the same external module but stubbed
+			requiredModuleStubbed = {},
+			module;
 		
-		// Declare the future required service
-		Emily.declare("requiredService", requiredService);
-		// Declare the new service
-		Emily.declare("newService", newService);
+		// Declare the future required module
+		Emily.declare("requiredModule", requiredModule);
+		// Declare the new module
+		Emily.declare("newModule", newModule);
 		// Require it to manipulate it
-		service = Emily.require("newService");
-		// The requiredService should be the same than the one previously declared
-		assertSame(requiredService, service.requireExternal().constructor);
+		module = Emily.require("newModule");
+		// The requiredmodule should be the same than the one previously declared
+		assertSame(Emily.require("requiredModule"), module.requireExternal());
 
 		// Now, in UnitTestMode		
 		Emily.setIsolationMode(true);	
-		// Should first get undefined when requiring unstubbed service
-		assertUndefined(service.requireExternal());
-		// I can inject a stubbed service
-		Emily.inject("requiredService", requiredServiceStubbed);
+		// Should first get undefined when requiring unstubbed module
+		assertUndefined(module.requireExternal());
+		// I can inject a stubbed module
+		Emily.inject("requiredModule", requiredModuleStubbed);
 		// And it should now be the one that is required
-		assertSame(requiredServiceStubbed, service.requireExternal());
+		assertSame(Emily.require("requiredModule"), module.requireExternal());
 	
 	},
 	
-	"test Emily should also serve globally defined services": function () {
+	"test Emily should also serve globally defined modules": function () {
 		window.globallyDefined = {};
 		
 		assertSame(window.globallyDefined, Emily.require("globallyDefined"));
@@ -72,7 +75,7 @@ TestCase("Emily", {
 		delete window.globallyDefined;
 	},
 	
-	"test Emily should isolate the globally defined services that it serves": function () {
+	"test Emily should isolate the globally defined modules that it serves": function () {
 		window.globallyDefined = {};
 		var locallyDefined = {};
 		

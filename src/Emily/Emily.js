@@ -1,43 +1,65 @@
 /**
  * @class
+ * Emily is the module loader.
+ * You can declare modules and require them.
+ * There's a testing mode that allows modules to run in isolation.
+ * A module that requires an other module will get an injected
+ * one instead. 
+ * Emily can also serve modules that are globally defined,
+ * so they can be stubbed or mocked. 
  */
 function Emily() {
 	
 	/**
-	 * The list of services
+	 * The list of modules
 	 * @private
 	 */
-	var _services = {},
-		_injected = {},
-		_isolationMode = false;
+	var _modules = {},
+	
+	/**
+	 * The list of injected modules while in isolationMode 
+	 * @private
+	 */
+	_injected = {},
+		
+	/**
+	 * The isolationMode boolean. While in isolationMode,
+	 * only the injected modules are returned by require()
+	 * @private 
+	 */
+	_isolationMode = false;
 	
     /**
-     * Declare a new service
-     * @param {String} name the name of the service
-     * @param {Function} func the service's function
+     * Declare a new module
+     * @param {String} name the name of the module
+     * @param {Function} func the module's constructor
      */
-    this.declare = function declare(name, func) {   	
-    	_services[name] = new func(this);
+    this.declare = function declare(name, func) {   
+    	var exports = {};
+    	_modules[name] = exports;
+    	func(exports, this);
     	return true;
     };
     
     /**
-     * Require a service
-     * @param {String} name the name of the service
-     * @returns {Object} the service
+     * Require a module
+     * @param {String} name the name of the module
+     * @returns {Object} the module
      */
     this.require = function require(name) {
     	if (_isolationMode) {
     		return _injected[name];
     	} else {
-    		return _services[name] || window[name];	
+    		// If the module is not declared,
+    		// check if it exists in the global object
+    		return _modules[name] || window[name];	
     	}
     };
     
     /**
-     * Switch to unit testing. In unit testing, services run in isolation.
-     * To stubb a service, use the inject function
-     * @param value
+     * Set isolationMode. In unit testing, modules can run in isolation.
+     * To inject a test double, use the inject function.
+     * @param {Boolean} the isolationMode value
      */
     this.setIsolationMode = function setIsolationMode(value) {
     	_isolationMode = value;
@@ -52,9 +74,9 @@ function Emily() {
     };
     
     /**
-     * Inject a stubbed service
-     * @param {String} name the name of the service to stubb
-     * @param {Object} obj the stubbed service
+     * Inject a test double
+     * @param {String} name the name of the module to double
+     * @param {Object} obj the test double
      */
     this.inject = function inject(name, obj) {
     	_injected[name] = obj;

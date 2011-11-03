@@ -143,25 +143,25 @@ TestCase("TinyStoreLength", {
 
 	"test should return proper length": function () {
 		this.tinyStore = Emily.require("TinyStore").create();
-		assertEquals(0, this.tinyStore.length);
+		assertEquals(0, this.tinyStore.getNbItems());
 		this.tinyStore.set("value1");
-		assertEquals(1, this.tinyStore.length);
+		assertEquals(1, this.tinyStore.getNbItems());
 		this.tinyStore.set("value2");
 		this.tinyStore.set("value3");
-		assertEquals(3, this.tinyStore.length);
+		assertEquals(3, this.tinyStore.getNbItems());
 		this.tinyStore.del("value3");
-		assertEquals(2, this.tinyStore.length);
+		assertEquals(2, this.tinyStore.getNbItems());
 		this.tinyStore.del("value2");
 		this.tinyStore.del("value1");
 		this.tinyStore.del("test");
-		assertEquals(0, this.tinyStore.length);
+		assertEquals(0, this.tinyStore.getNbItems());
 	},
 
 	"test should return proper length when init with data": function () {
 		var initValues = {x: 10, y: 20},
 		tinyStore = Emily.require("TinyStore").create(initValues);
 		
-		assertEquals(2, tinyStore.length);
+		assertEquals(2, tinyStore.getNbItems());
 		
 	}
 });

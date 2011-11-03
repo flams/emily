@@ -1,19 +1,35 @@
-Emily.declare("Observable", /** @class */function Observable() {
+Emily.declare("Observable",
+/** 
+* @class 
+* Observable is an implementation of the Observer design pattern, 
+* which is also known as publish/subscribe.
+* 
+* This service creates an Observable on which you can add subscribers.
+*/
+function Observable(exports) {
 	
-	
+	exports.create = 
 	/**
-	 * Return a new Observable
+	 * Returns a new Observable
+	 * @returns {Object} an Observable
 	 */
-	this.create = function create() {
+	function create() {
 		return new _Observable();
 	};
 	
+	/**
+	 * Defines the Observable
+	 * @private
+	 * @returns {_Observable}
+	 */
 	function _Observable() {
 
 		/**
-		 * @private _topics
+		 * The list of topics
+		 * @private
 		 */
 		var _topics = {};
+		
 		/**
 		 * Add an observer
 		 * @param {String} topic the topic to observe
@@ -36,8 +52,8 @@ Emily.declare("Observable", /** @class */function Observable() {
 		
 		/**
 		 * Remove an observer
-		 * @param handler returned by the watch method
-		 * @returns Boolean
+		 * @param {Handler} handler returned by the watch method
+		 * @returns {Boolean} true if there were subscribers
 		 */
 		this.unwatch = function unwatch(handler) {
 			var topic = handler[0], idx = handler[1];
@@ -52,8 +68,9 @@ Emily.declare("Observable", /** @class */function Observable() {
 		
 		/**
 		 * Notifies observers that a topic has a new message
-		 * @param topic
+		 * @param {String} topic the name of the topic to publish to
 		 * @param subject
+		 * @returns {Boolean} true if there was subscribers
 		 */
 		this.notify = function notify(topic, subject) {
 			
@@ -72,10 +89,9 @@ Emily.declare("Observable", /** @class */function Observable() {
 		},
 		
 		/**
-		 * Check if topic has described observer
-		 * @param topic
-		 * @param func
-		 * @returns {Boolean}
+		 * Check if topic has the described observer
+		 * @param {Handler}
+		 * @returns {Boolean} true if exists
 		 */
 		this.hasObserver = function hasObserver(handler) {
 			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);

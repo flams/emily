@@ -199,6 +199,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TinyStore.html">TinyStore</a></li>
 	
+	<li><a href="../symbols/Tools.html">Tools</a></li>
+	
 	<li><a href="../symbols/Transport.html">Transport</a></li>
 	
 </ul>
@@ -218,7 +220,7 @@ ul.inheritsList
 				
 				
 			
-				
+				Observable is an implementation of the Observer design pattern, which is also known as publish/subscribe.This service creates an Observable on which you can add subscribers.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Emily_Observable.js.html">Observable.js</a>.
@@ -240,7 +242,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Observable.html#constructor">Observable</a></b>()
+								<b><a href="../symbols/Observable.html#constructor">Observable</a></b>(exports)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -267,20 +269,20 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#create">create</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Observable.html#-create">create</a></b>()
 								</div>
-								<div class="description">Return a new Observable</div>
+								<div class="description">Returns a new Observable</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#hasObserver">hasObserver</a></b>(topic, func)
+								<div class="fixedFont"><b><a href="../symbols/Observable.html#hasObserver">hasObserver</a></b>()
 								</div>
-								<div class="description">Check if topic has described observer</div>
+								<div class="description">Check if topic has the described observer</div>
 							</td>
 						</tr>
 					
@@ -328,7 +330,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Observable</b>()
+						<b>Observable</b>(exports)
 				</div>
 				
 				<div class="description">
@@ -339,6 +341,17 @@ ul.inheritsList
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>exports</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
 					
 					
 					
@@ -359,15 +372,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="create"> </a>
-					<div class="fixedFont">
+					<a name="-create"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
-					
+					<span class="light">{Object}</span>
 					<b>create</b>()
 					
 					</div>
 					<div class="description">
-						Return a new Observable
+						Returns a new Observable
 						
 						
 					</div>
@@ -378,6 +391,13 @@ ul.inheritsList
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> an Observable</dd>
+							
+							</dl>
 						
 						
 						
@@ -388,11 +408,11 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					<span class="light">{Boolean}</span>
-					<b>hasObserver</b>(topic, func)
+					<b>hasObserver</b>()
 					
 					</div>
 					<div class="description">
-						Check if topic has described observer
+						Check if topic has the described observer
 						
 						
 					</div>
@@ -404,13 +424,7 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>topic</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>func</b>
+									<span class="light fixedFont">{Handler}</span> <b></b>
 									
 								</dt>
 								<dd></dd>
@@ -424,7 +438,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if exists</dd>
 							
 							</dl>
 						
@@ -436,7 +450,7 @@ ul.inheritsList
 					<a name="notify"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{Boolean}</span>
 					<b>notify</b>(topic, subject)
 					
 					</div>
@@ -453,10 +467,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>topic</b>
+									<span class="light fixedFont">{String}</span> <b>topic</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the name of the topic to publish to</dd>
 							
 								<dt>
 									<b>subject</b>
@@ -470,6 +484,13 @@ ul.inheritsList
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if there was subscribers</dd>
+							
+							</dl>
+						
 						
 						
 
@@ -478,7 +499,7 @@ ul.inheritsList
 					<a name="unwatch"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{Boolean}</span>
 					<b>unwatch</b>(handler)
 					
 					</div>
@@ -495,7 +516,7 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>handler</b>
+									<span class="light fixedFont">{Handler}</span> <b>handler</b>
 									
 								</dt>
 								<dd>returned by the watch method</dd>
@@ -509,7 +530,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>Boolean</dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if there were subscribers</dd>
 							
 							</dl>
 						
@@ -585,7 +606,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Nov 02 2011 23:12:11 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Nov 03 2011 16:16:00 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

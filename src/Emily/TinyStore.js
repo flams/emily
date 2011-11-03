@@ -1,67 +1,74 @@
-Emily.declare("TinyStore", /** @class */function TinyStore(API) {
+Emily.declare("TinyStore", 
+/** 
+ * @class
+ * TinyStore creates a small NoSQL database
+ * that can publish events on data add/change.
+ */
+ function TinyStore(exports, API) {
 	
+	exports.create = 
 	/**
-	 * @returns a new TinyStore
+	 * Creates a new TinyStore
+	 * @param {Object} values the values to initialize the store with
+	 * @returns {Object} the TinyStore
 	 */
-	this.create = function create(values) {
+	function create(values) {
 		return new _TinyStore(values);
 	};
     
 	/**
-	 * 
+	 * Defines the tinyStore
+	 * @private
 	 * @param values
 	 * @returns
 	 */
 	function _TinyStore(values) {
 		
 		var _data = {}, 
-			mixin = function mixin(values) {
-				for (var i in values) {
-					if (values.hasOwnProperty(i)) {
-						this.length++;
-						_data[i] = values[i];
-					}
-				}
-			},
+			_tools = API.require("Tools"),
 			_observable = API.require("Observable").create();
 			
-		
-		
-		this.length = 0;
-		mixin.call(this, values);
+		_tools.mixin(values, _data);
 		
 		/**
-		 * 
-		 * @param name
-		 * @returns
+		 * Get the number of items in the store
+		 * @returns {Int} the number of items in the store
+		 */
+		this.getNbItems = function() {
+			return _tools.count(_data);
+		};
+		
+
+		
+		/**
+		 * Get a value from its index
+		 * @param {String} name the name of the index
+		 * @returns the value
 		 */
 		this.get = function get(name) {
 			return _data[name];
 		};
 		
 		/**
-		 * 
-		 * @param name
-		 * @returns
+		 * Checks if the store has a given value
+		 * @param {String} name the name of the index
+		 * @returns {Boolean} true if the value exists
 		 */
 		this.has = function has(name) {
 			return _data.hasOwnProperty(name);
 		};
 		
 		/**
-		 * 
-		 * @param name
-		 * @param value
-		 * @returns
+		 * Set a new value and overrides an existing one
+		 * @param {String} name the name of the value
+		 * @param value the value to assign
+		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
 			var oldValue;
 			if (typeof name == "string") {
 				oldValue = _data[name];
 				_data[name] = value;
-				if (!oldValue) {
-					this.length++;
-				}
 				_observable.notify(name, value, oldValue);
 				return true;
 			} else {
@@ -70,13 +77,12 @@ Emily.declare("TinyStore", /** @class */function TinyStore(API) {
 		};
 		
 		/**
-		 * 
-		 * @param name
-		 * @returns
+		 * Delete value from its index
+		 * @param {String} name the name of the index from which to delete the value
+		 * @returns true if successfully deleted.
 		 */
 		this.del = function del(name) {
 			if (this.has(name)) {
-				this.length--;
 				delete _data[name];
 				_observable.notify(name, _data[name]);
 				return true;
@@ -86,18 +92,19 @@ Emily.declare("TinyStore", /** @class */function TinyStore(API) {
 		};
 		
 		/**
-		 * 
-		 * @param name
-		 * @param func
-		 * @returns
+		 * Watch the value's modifications
+		 * @param {String} name the index of the value
+		 * @param {Function} func the function to execute when the value changes
+		 * @param {Object} scope the scope in which to execute the function
+		 * @returns {Handler} the subscribe's handler to use to stop watching
 		 */
 		this.watch = function watch(name, func, scope) {
 			return _observable.watch(name, func, scope);
 		};
 		
 		/**
-		 * 
-		 * @param handler
+		 * Unwatch the value's modifications
+		 * @param {Handler} handler the handler returned by the watch function
 		 * @returns
 		 */
 		this.unwatch = function unwatch(handler) {

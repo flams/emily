@@ -33,7 +33,15 @@ TestCase("TransportTest", {
 
 		assertTrue(this.fakeIO.connect.called);
 		assertEquals(url, this.fakeIO.connect.url);
-		
+	},
+	
+	"test connect function can be chained": function () {
+		var url = "/",
+			transport = this.transport.create();
+
+		Emily.setIsolationMode(true);
+		Emily.inject("io", this.fakeIO);
+		assertSame(transport, transport.connect(url)); 
 	},
 	
 	"test transport can be directly initialized from create": function () {

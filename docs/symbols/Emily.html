@@ -199,6 +199,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TinyStore.html">TinyStore</a></li>
 	
+	<li><a href="../symbols/Tools.html">Tools</a></li>
+	
 	<li><a href="../symbols/Transport.html">Transport</a></li>
 	
 </ul>
@@ -218,7 +220,13 @@ ul.inheritsList
 				
 				
 			
-				
+				Emily is the module loader.
+You can declare modules and require them.
+There's a testing mode that allows modules to run in isolation.
+A module that requires an other module will get an injected
+one instead. 
+Emily can also serve modules that are globally defined,
+so they can be stubbed or mocked.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Emily_Emily.js.html">Emily.js</a>.
@@ -271,7 +279,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Emily.html#declare">declare</a></b>(name, func)
 								</div>
-								<div class="description">Declare a new service</div>
+								<div class="description">Declare a new module</div>
 							</td>
 						</tr>
 					
@@ -289,7 +297,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Emily.html#inject">inject</a></b>(name, obj)
 								</div>
-								<div class="description">Inject a stubbed service</div>
+								<div class="description">Inject a test double</div>
 							</td>
 						</tr>
 					
@@ -298,16 +306,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Emily.html#require">require</a></b>(name)
 								</div>
-								<div class="description">Require a service</div>
+								<div class="description">Require a module</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Emily.html#setIsolationMode">setIsolationMode</a></b>(value)
+								<div class="fixedFont"><b><a href="../symbols/Emily.html#setIsolationMode">setIsolationMode</a></b>(the)
 								</div>
-								<div class="description">Switch to unit testing.</div>
+								<div class="description">Set isolationMode.</div>
 							</td>
 						</tr>
 					
@@ -367,7 +375,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Declare a new service
+						Declare a new module
 						
 						
 					</div>
@@ -382,13 +390,13 @@ ul.inheritsList
 									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>the name of the service</dd>
+								<dd>the name of the module</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>func</b>
 									
 								</dt>
-								<dd>the service's function</dd>
+								<dd>the module's constructor</dd>
 							
 							</dl>
 						
@@ -441,7 +449,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Inject a stubbed service
+						Inject a test double
 						
 						
 					</div>
@@ -456,13 +464,13 @@ ul.inheritsList
 									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>the name of the service to stubb</dd>
+								<dd>the name of the module to double</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>obj</b>
 									
 								</dt>
-								<dd>the stubbed service</dd>
+								<dd>the test double</dd>
 							
 							</dl>
 						
@@ -483,7 +491,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Require a service
+						Require a module
 						
 						
 					</div>
@@ -498,7 +506,7 @@ ul.inheritsList
 									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>the name of the service</dd>
+								<dd>the name of the module</dd>
 							
 							</dl>
 						
@@ -509,7 +517,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> the service</dd>
+								<dd><span class="light fixedFont">{Object}</span> the module</dd>
 							
 							</dl>
 						
@@ -522,12 +530,12 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>setIsolationMode</b>(value)
+					<b>setIsolationMode</b>(the)
 					
 					</div>
 					<div class="description">
-						Switch to unit testing. In unit testing, services run in isolation.
-To stubb a service, use the inject function
+						Set isolationMode. In unit testing, modules can run in isolation.
+To inject a test double, use the inject function.
 						
 						
 					</div>
@@ -539,10 +547,10 @@ To stubb a service, use the inject function
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>value</b>
+									<span class="light fixedFont">{Boolean}</span> <b>the</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>isolationMode value</dd>
 							
 							</dl>
 						
@@ -567,7 +575,7 @@ To stubb a service, use the inject function
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Nov 02 2011 23:12:11 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Nov 03 2011 16:16:00 GMT+0100 (CET)
 		</div>
 	</body>
 </html>
