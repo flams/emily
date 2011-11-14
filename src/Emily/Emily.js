@@ -32,7 +32,12 @@ function Emily() {
     /**
      * Declare a new module
      * @param {String} name the name of the module
+     * @param {String or Array of Strings} inherits the list of modules that the new one inherits from
      * @param {Function} func the module's constructor
+     * 
+     * Ex: Emily.declare("module", function(exports, API){...});
+     * Emily.declare("module", "modulesItInheritsFrom", function(exports, API){...});
+     * Emily.declare("module", ["inherits1, inhertits2...], function(exports, API) {...});
      */
     this.declare = function declare(name) {   
     	var exports = {},
