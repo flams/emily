@@ -85,4 +85,62 @@ TestCase("Emily", {
 		
 		delete window.globallyDefined;
 	}
+	
+});
+
+TestCase("EmilyInheritance", {
+	
+	setUp: function () {
+		   Emily.declare("base", function (exports) {
+			   exports.base = function () {
+				   return true;
+			   };
+		   });
+		   
+		   Emily.declare("child", "base", function (exports) {
+			   exports.inherits = function () {
+				   return this.base;
+			   };
+		   });
+	},
+	
+	"test Emily should allow for modules to inherit from other module": function () {
+	   assertSame(Emily.require("base").base, Emily.require("child").inherits());
+	},
+
+	// I can only figure out if it's prototypal based by checking its behaviour.
+	// Is this test absolutely relevant?
+	"test Emily's modules have prototypal inheritance": function () {
+		var base = Emily.require("base"),
+			child = Emily.require("child"),
+			newBase = function () {};
+		
+		child.base = newBase;
+		
+		assertSame(child.inherits(), newBase);
+		delete child.base;
+		assertSame(child.inherits(), base.base);
+		base.base = newBase;
+		assertSame(child.inherits(), newBase);
+	},
+	
+	"test Emily should allow for modules to inherit from multiple modules": function () {   
+		   Emily.declare("base2", function (exports) {
+			  exports.base2 = function () {
+				 return true; 
+			  } ;
+		   });
+		   
+		   Emily.declare("child2", ["base", "base2"], function (exports) {
+			   exports.inherits = function () {
+				   return this.base;
+			   };
+			   exports.inherits2 = function () {
+				 return this.base2;  
+			   };
+		   });
+		   
+		   assertSame(Emily.require("base").base, Emily.require("child2").inherits());
+		   assertSame(Emily.require("base2").base2, Emily.require("child2").inherits2());
+	}
 });

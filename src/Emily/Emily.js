@@ -34,8 +34,29 @@ function Emily() {
      * @param {String} name the name of the module
      * @param {Function} func the module's constructor
      */
-    this.declare = function declare(name, func) {   
-    	var exports = {};
+    this.declare = function declare(name) {   
+    	var exports = {},
+    		func,
+    		inherits = {},
+    		mixin;
+    	
+    	if (typeof arguments[1] == "function") {
+    		func = arguments[1];
+    	}
+    	
+    	if (typeof arguments[2] == "function") {
+    		func = arguments[2];
+    		if (arguments[1].forEach) {
+    			mixin = this.require("Tools").mixin;
+    			arguments[1].forEach(function (module){
+    				mixin(this.require(module), inherits);
+    			}, this);
+    		} else {
+    			inherits = this.require(arguments[1]);
+    		}
+        	exports = Object.create(inherits);
+    	}
+    	
     	_modules[name] = exports;
     	func(exports, this);
     	return true;
