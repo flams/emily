@@ -108,20 +108,10 @@ TestCase("EmilyInheritance", {
 	   assertSame(Emily.require("base").base, Emily.require("child").inherits());
 	},
 
-	// I can only figure out if it's prototypal based by checking its behaviour.
-	// Is this test absolutely relevant?
 	"test Emily's modules have prototypal inheritance": function () {
 		var base = Emily.require("base"),
-			child = Emily.require("child"),
-			newBase = function () {};
-		
-		child.base = newBase;
-		
-		assertSame(child.inherits(), newBase);
-		delete child.base;
-		assertSame(child.inherits(), base.base);
-		base.base = newBase;
-		assertSame(child.inherits(), newBase);
+			child = Emily.require("child"); 
+		assertSame(base, Object.getPrototypeOf(child));
 	},
 	
 	"test Emily should allow for modules to inherit from multiple modules": function () {   
