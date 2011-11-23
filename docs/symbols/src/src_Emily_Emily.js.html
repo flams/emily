@@ -85,7 +85,7 @@
 <span class='line'> 78</span> </span><span class="WHIT">    	</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 79</span> </span><span class="WHIT">    		</span><span class="COMM">// If the module is not declared,</span><span class="WHIT">
 <span class='line'> 80</span> </span><span class="WHIT">    		</span><span class="COMM">// check if it exists in the global object</span><span class="WHIT">
-<span class='line'> 81</span> </span><span class="WHIT">    		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_modules</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">window</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">	
+<span class='line'> 81</span> </span><span class="WHIT">    		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_modules</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">this.require</span><span class="PUNC">(</span><span class="STRN">"Tools"</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">getGlobal</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">	
 <span class='line'> 82</span>     	</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'> 83</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 84</span> </span><span class="WHIT">    
@@ -114,8 +114,9 @@
 <span class='line'>107</span> </span><span class="WHIT">    </span><span class="NAME">this.inject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">inject</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">obj</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>108</span> </span><span class="WHIT">    	</span><span class="NAME">_injected</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">obj</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>109</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>110</span> </span><span class="WHIT">    
-<span class='line'>111</span>     
-<span class='line'>112</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>113</span> 
-<span class='line'>114</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Emily</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Emily</span><span class="PUNC">;</span><span class="WHIT"> </span></pre></body></html>
+<span class='line'>110</span> 
+<span class='line'>111</span> </span><span class="WHIT">    
+<span class='line'>112</span>     
+<span class='line'>113</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>114</span> 
+<span class='line'>115</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Emily</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Emily</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span></pre></body></html>
