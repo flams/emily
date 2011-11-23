@@ -1,4 +1,4 @@
-var global = this;
+var __Global = this;
 
 TestCase("Emily", {
 	
@@ -70,22 +70,22 @@ TestCase("Emily", {
 	},
 	
 	"test Emily should also serve globally defined modules": function () {
-		window.globallyDefined = {};
+		__Global.globallyDefined = {};
 		
-		assertSame(window.globallyDefined, Emily.require("globallyDefined"));
+		assertSame(__Global.globallyDefined, Emily.require("globallyDefined"));
 		
-		delete window.globallyDefined;
+		delete __Global.globallyDefined;
 	},
 	
 	"test Emily should isolate the globally defined modules that it serves": function () {
-		window.globallyDefined = {};
+		__Global.globallyDefined = {};
 		var locallyDefined = {};
 		
 		Emily.setIsolationMode(true);
 		Emily.inject("globallyDefined", locallyDefined);
 		assertSame(locallyDefined, Emily.require("globallyDefined"));
 		
-		delete window.globallyDefined;
+		delete __Global.globallyDefined;
 	}
 	
 });
