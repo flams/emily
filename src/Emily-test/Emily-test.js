@@ -1,3 +1,5 @@
+var global = this;
+
 TestCase("Emily", {
 	
 	setUp: function () {

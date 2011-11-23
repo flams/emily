@@ -5,6 +5,20 @@ Emily.declare("Tools",
  */
  function Tools(exports) {
 	
+    
+    exports.getGlobal = 
+    /**
+     * For applications that don't run in a browser, window is not the global object.
+     * This function returns the global object wherever the application runs.
+     * @returns {Object} the global object
+     */
+    function getGlobal() {
+    	var func = function() {
+    		return this;
+    	};
+    	return func.call(null);
+    };
+	
 	exports.mixin = 
 	/**
 	 * Mixes an object into another

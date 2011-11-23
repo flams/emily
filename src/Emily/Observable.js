@@ -80,7 +80,7 @@ function Observable(exports) {
 			if (observers) {
 				l = observers.length;
 				while (l--) {
-					observers[l] && observers[l][0].call(observers[l][1] || window, subject); 
+					observers[l] && observers[l][0].call(observers[l][1] || null, subject); 
 				}
 				return true;
 			} else {

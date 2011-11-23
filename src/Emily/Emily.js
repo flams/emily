@@ -78,7 +78,7 @@ function Emily() {
     	} else {
     		// If the module is not declared,
     		// check if it exists in the global object
-    		return _modules[name] || window[name];	
+    		return _modules[name] || this.require("Tools").getGlobal()[name];	
     	}
     };
     
@@ -107,8 +107,9 @@ function Emily() {
     this.inject = function inject(name, obj) {
     	_injected[name] = obj;
     };
+
     
     
 };
 
-var Emily = new Emily; 
+var Emily = new Emily(); 

@@ -1,3 +1,16 @@
+var __Global = this;
+
+TestCase("ToolsTestGetGlobal", {
+	setUp: function () {
+		this.tools = Emily.require("Tools");
+	},
+	
+	"test should get global object": function () {
+		assertFunction(this.tools.getGlobal);
+		assertSame(__Global, this.tools.getGlobal());
+	}
+});
+
 TestCase("ToolsTestMixin", {
 	
 	setUp: function () {
