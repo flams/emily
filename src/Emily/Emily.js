@@ -59,13 +59,7 @@ function Emily() {
      * @returns {Object} the module's constructor
      */
     this.require = function require(name) {
-    	if (_isolationMode) {
-    		return _injected[name];
-    	} else {
-    		// If the module is not declared,
-    		// check if it exists in the global object
-    		return _modules[name] || this.require("Tools").getGlobal()[name];
-    	}
+		return _isolationMode && _injected[name] || _modules[name] || this.require("Tools").getGlobal()[name];
     };
     
     /**

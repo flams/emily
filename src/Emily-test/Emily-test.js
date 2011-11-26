@@ -61,8 +61,8 @@ TestCase("Emily", {
 
 		// Now, in UnitTestMode		
 		Emily.setIsolationMode(true);	
-		// Should first get undefined when requiring unstubbed module
-		assertUndefined(module.requireExternal());
+		// Should first get the original when requiring unstubbed module
+		assertSame(Emily.require("requiredModule"), module.requireExternal());
 		// I can inject a stubbed module
 		Emily.inject("requiredModule", requiredModuleStubbed);
 		// And it should now be the one that is required
@@ -83,6 +83,7 @@ TestCase("Emily", {
 		var locallyDefined = {};
 		
 		Emily.setIsolationMode(true);
+		assertSame(__Global.globallyDefined, Emily.require("globallyDefined"));
 		Emily.inject("globallyDefined", locallyDefined);
 		assertSame(locallyDefined, Emily.require("globallyDefined"));
 		
