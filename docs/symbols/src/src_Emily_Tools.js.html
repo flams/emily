@@ -10,10 +10,10 @@
 <span class='line'>  3</span>  * @class
 <span class='line'>  4</span>  * Tools is a collection of tools 
 <span class='line'>  5</span>  */</span><span class="WHIT">
-<span class='line'>  6</span> </span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Tools</span><span class="PUNC">(</span><span class="NAME">exports</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Tools</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>  7</span> </span><span class="WHIT">	
 <span class='line'>  8</span>     
-<span class='line'>  9</span>     </span><span class="NAME">exports.getGlobal</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> 
+<span class='line'>  9</span>     </span><span class="NAME">this.getGlobal</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> 
 <span class='line'> 10</span>     </span><span class="COMM">/**
 <span class='line'> 11</span>      * For applications that don't run in a browser, window is not the global object.
 <span class='line'> 12</span>      * This function returns the global object wherever the application runs.
@@ -26,7 +26,7 @@
 <span class='line'> 19</span> </span><span class="WHIT">    	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">func.call</span><span class="PUNC">(</span><span class="KEYW">null</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 20</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 21</span> </span><span class="WHIT">	
-<span class='line'> 22</span> 	</span><span class="NAME">exports.mixin</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> 
+<span class='line'> 22</span>     </span><span class="NAME">this.mixin</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> 
 <span class='line'> 23</span> 	</span><span class="COMM">/**
 <span class='line'> 24</span> 	 * Mixes an object into another
 <span class='line'> 25</span> 	 * @param {Object} destination object to mix values into
@@ -44,7 +44,7 @@
 <span class='line'> 37</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'> 38</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 39</span> </span><span class="WHIT">	
-<span class='line'> 40</span> 	</span><span class="NAME">exports.count</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> 
+<span class='line'> 40</span> 	</span><span class="NAME">this.count</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> 
 <span class='line'> 41</span> 	</span><span class="COMM">/**
 <span class='line'> 42</span> 	 * Count the number of properties in an object
 <span class='line'> 43</span> 	 * It doesn't look up in the prototype chain

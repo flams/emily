@@ -3,10 +3,10 @@ Emily.declare("Tools",
  * @class
  * Tools is a collection of tools 
  */
- function Tools(exports) {
+ function Tools() {
 	
     
-    exports.getGlobal = 
+    this.getGlobal = 
     /**
      * For applications that don't run in a browser, window is not the global object.
      * This function returns the global object wherever the application runs.
@@ -19,7 +19,7 @@ Emily.declare("Tools",
     	return func.call(null);
     };
 	
-	exports.mixin = 
+    this.mixin = 
 	/**
 	 * Mixes an object into another
 	 * @param {Object} destination object to mix values into
@@ -37,7 +37,7 @@ Emily.declare("Tools",
 		}
 	};
 	
-	exports.count = 
+	this.count = 
 	/**
 	 * Count the number of properties in an object
 	 * It doesn't look up in the prototype chain

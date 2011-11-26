@@ -11,10 +11,11 @@
 function Emily() {
 	
 	/**
-	 * The list of modules
+	 * The list of modules' constructors
 	 * @private
 	 */
-	var _modules = {},
+	var _constructors = {},
+	_modules = {},
 	
 	/**
 	 * The list of injected modules while in isolationMode 
@@ -32,45 +33,30 @@ function Emily() {
     /**
      * Declare a new module
      * @param {String} name the name of the module
-     * @param {String or Array of Strings} inherits the list of modules that the new one inherits from
+     * @param {String} inherits - optional the name of the module to inherit from
      * @param {Function} func the module's constructor
-     * 
-     * Ex: Emily.declare("module", function(exports, API){...});
-     * Emily.declare("module", "modulesItInheritsFrom", function(exports, API){...});
-     * Emily.declare("module", ["inherits1, inhertits2...], function(exports, API) {...});
+     * @returns the module's constructor
      */
     this.declare = function declare(name) {   
-    	var exports = {},
-    		func,
-    		inherits = {},
-    		mixin;
+    	var func;
     	
-    	if (typeof arguments[1] == "function") {
-    		func = arguments[1];
-    	}
-    	
-    	if (typeof arguments[2] == "function") {
+    	if (typeof arguments[1] == "string" && typeof arguments[2] == "function") {
     		func = arguments[2];
-    		if (arguments[1].forEach) {
-    			mixin = this.require("Tools").mixin;
-    			arguments[1].forEach(function (module){
-    				mixin(this.require(module), inherits);
-    			}, this);
-    		} else {
-    			inherits = this.require(arguments[1]);
-    		}
-        	exports = Object.create(inherits);
+    		func.prototype = new _constructors[arguments[1]](this);
+    	} else if (typeof arguments[1] == "function"){
+    		func = arguments[1];
+    	} else {
+    		return false;
     	}
     	
-    	_modules[name] = exports;
-    	func(exports, this);
-    	return true;
+    	_modules[name] = new func(this);
+    	return _constructors[name] = func;
     };
     
     /**
      * Require a module
      * @param {String} name the name of the module
-     * @returns {Object} the module
+     * @returns {Object} the module's constructor
      */
     this.require = function require(name) {
     	if (_isolationMode) {
@@ -78,7 +64,7 @@ function Emily() {
     	} else {
     		// If the module is not declared,
     		// check if it exists in the global object
-    		return _modules[name] || this.require("Tools").getGlobal()[name];	
+    		return _modules[name] || this.require("Tools").getGlobal()[name];
     	}
     };
     
@@ -112,4 +98,4 @@ function Emily() {
     
 };
 
-var Emily = new Emily(); 
+var Emily = new Emily();

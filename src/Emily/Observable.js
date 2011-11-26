@@ -6,9 +6,9 @@ Emily.declare("Observable",
 * 
 * This service creates an Observable on which you can add subscribers.
 */
-function Observable(exports) {
+function Observable() {
 	
-	exports.create = 
+	this.create = 
 	/**
 	 * Returns a new Observable
 	 * @returns {Object} an Observable

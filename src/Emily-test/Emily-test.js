@@ -3,9 +3,8 @@ var __Global = this;
 TestCase("Emily", {
 	
 	setUp: function () {
-		this.module = function module(exports, API) {
-			module.exports = exports;
-			module.API = API;
+		this.module = function module(API) {
+			this.API = API;
 		};
 	},
 	
@@ -14,15 +13,17 @@ TestCase("Emily", {
 		Emily.setIsolationMode(false);
 	},
 	
-	"test should declare a module" : function () {
-		assertTrue(Emily.declare("module", this.module));
-		assertSame(Emily, this.module.API);
+	"test should declare a module": function () {
+		assertSame(this.module, Emily.declare("module", this.module));
 	},
 	
 	"test should require a module": function () {
+		var module;
+		
 		Emily.declare("module", this.module);
-		assertSame(Emily.require("module"), this.module.exports);
-		assertUndefined(Emily.require("nothing"));
+		module = Emily.require("module");
+		assertObject(module);
+		assertSame(Emily, module.API);
 	},
 	
 	"test should make Emily's modules run in isolation": function () {
@@ -37,8 +38,8 @@ TestCase("Emily", {
 	"test Emily should allow for dependency injection while modules run in isolation": function () {
 		
 		// Define a future new module
-		var newModule = function (exports, API) {
-				exports.requireExternal = function () {
+		var newModule = function (API) {
+				this.requireExternal = function () {
 					// That will require an other one
 					return API.require("requiredModule");
 				};
@@ -90,49 +91,83 @@ TestCase("Emily", {
 	
 });
 
-TestCase("EmilyInheritance", {
-	
+TestCase("EmilyInheritanceTest", {
 	setUp: function () {
-		   Emily.declare("base", function (exports) {
-			   exports.base = function () {
-				   return true;
-			   };
-		   });
-		   
-		   Emily.declare("child", "base", function (exports) {
-			   exports.inherits = function () {
-				   return this.base;
-			   };
-		   });
-	},
-	
-	"test Emily should allow for modules to inherit from other module": function () {
-	   assertSame(Emily.require("base").base, Emily.require("child").inherits());
-	},
+		Emily.declare("base", function () {
+			
+			var _name = "base";
+			
+			this.getName = function () {
+				return _name;
+			};
+			
+			this.setName = function (name) {
+				_name = name;
+			};
+		});
 
-	"test Emily's modules have prototypal inheritance": function () {
-		var base = Emily.require("base"),
-			child = Emily.require("child"); 
-		assertSame(base, Object.getPrototypeOf(child));
 	},
 	
-	"test Emily should allow for modules to inherit from multiple modules": function () {   
-		   Emily.declare("base2", function (exports) {
-			  exports.base2 = function () {
-				 return true; 
-			  } ;
-		   });
-		   
-		   Emily.declare("child2", ["base", "base2"], function (exports) {
-			   exports.inherits = function () {
-				   return this.base;
-			   };
-			   exports.inherits2 = function () {
-				 return this.base2;  
-			   };
-		   });
-		   
-		   assertSame(Emily.require("base").base, Emily.require("child2").inherits());
-		   assertSame(Emily.require("base2").base2, Emily.require("child2").inherits2());
+	"test modules can inherit from other modules": function () {
+		var module;
+		Emily.declare("module", "base", function () {});
+		
+		module = Emily.require("module");
+		
+		assertFunction(module.getName);
+		assertFunction(module.setName);
+		module.setName("ok");
+		assertEquals("ok", module.getName());
+	},
+	
+	"test inherited modules don't share the same values": function () {
+		var module1, module2;
+		
+		Emily.declare("module1", "base", function() {});
+		Emily.declare("module2", "base", function() {});
+		module1 = Emily.require("module1");
+		module2 = Emily.require("module2");
+		
+		module1.setName("new base");
+		assertNotEquals(module1.getName(), module2.getName());
+		assertEquals("base", module2.getName());
+	},
+	
+	"test inherited modules sharing values": function () {
+		var module1, module2;
+		
+		Emily.declare("store", function () {
+			this.value = "shared";
+		});
+		
+		Emily.declare("base2", function (API) {
+			var store = API.require("store");
+			this.getValue = function () {
+				return store.value;
+			};
+			this.setValue = function (value) {
+				return store.value = value;
+			};
+		});
+		
+		Emily.declare("module1", "base2", function () {});
+		Emily.declare("module2", "base2", function () {});
+		module1 = Emily.require("module1");
+		module2 = Emily.require("module2");
+		
+		assertEquals("shared", module1.getValue());
+		assertEquals("shared", module2.getValue());
+		module1.setValue("new shared");
+		assertEquals("new shared", module2.getValue());
+		
+	},
+	
+	"test declare should return false with wrong params": function () {
+		assertFalse(Emily.declare());
+		assertFalse(Emily.declare("wrong"));
+		assertFalse(Emily.declare("wrong", "params"));
+		assertFalse(Emily.declare("wrong", {}));
+		assertFalse(Emily.declare("wrong", "params", {}));
+		assertFalse(Emily.declare("wrong", [], {}));
 	}
 });

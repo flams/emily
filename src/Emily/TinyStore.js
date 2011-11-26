@@ -4,9 +4,9 @@ Emily.declare("TinyStore",
  * TinyStore creates a small NoSQL database
  * that can publish events on data add/change.
  */
- function TinyStore(exports, API) {
+ function TinyStore(API) {
 	
-	exports.create = 
+	this.create = 
 	/**
 	 * Creates a new TinyStore
 	 * @param {Object} values the values to initialize the store with

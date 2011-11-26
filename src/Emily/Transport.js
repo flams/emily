@@ -4,9 +4,9 @@ Emily.declare("Transport",
  * Transport allows for client-server eventing.
  * It's based on socket.io.
  */
-function Transport(exports, API) {
+function Transport(API) {
 	
-	exports.create = 
+	this.create = 
 	/**
 	 * Creates a new Transport
 	 * @param {Url} url the url to connect Transport to
