@@ -88,6 +88,11 @@ TestCase("Emily", {
 		assertSame(locallyDefined, Emily.require("globallyDefined"));
 		
 		delete __Global.globallyDefined;
+	},
+	
+	"test Emily's module have a getName method that returns the name of the module": function () {
+		var module = Emily.require("module");
+		assertEquals("module", module._declaredName);
 	}
 	
 });
@@ -119,6 +124,11 @@ TestCase("EmilyInheritanceTest", {
 		assertFunction(module.setName);
 		module.setName("ok");
 		assertEquals("ok", module.getName());
+	},
+	
+	"test modules that inherit from other modules return a correct name": function () {
+		Emily.declare("module", "base", function () {});
+		assertEquals("module", Emily.require("module")._declaredName);
 	},
 	
 	"test inherited modules don't share the same values": function () {

@@ -61,3 +61,21 @@ TestCase("ToolsTestCount", {
 		assertEquals(2, this.tools.count(this.object));
 	}
 });
+
+TestCase("ToolsTestCompareObjects", {
+	setUp: function () {
+		this.o1 = {a: 1, c:3, b:4, x:10};
+		this.o2 = {a: 2, c:5, b:52, x:100};
+		this.o3 = {a: 5, b: 3, x: 50};
+		this.tools = Emily.require("Tools");
+	},
+	
+	"test compareObjects exists": function () {
+		assertFunction(this.tools.compareObjects);
+	},
+	
+	"test compareObjects should return true if objects have the same own properties": function () {
+		assertTrue(this.tools.compareObjects(this.o1, this.o2));
+		assertFalse(this.tools.compareObjects(this.o2, this.o3));
+	} 
+});

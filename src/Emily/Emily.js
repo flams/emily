@@ -49,6 +49,8 @@ function Emily() {
     		return false;
     	}
     	
+    	func.prototype._declaredName = name;
+    	
     	_modules[name] = new func(this);
     	return _constructors[name] = func;
     };
