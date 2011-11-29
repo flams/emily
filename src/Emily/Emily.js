@@ -15,6 +15,11 @@ function Emily() {
 	 * @private
 	 */
 	var _constructors = {},
+	
+	/**
+	 * The list of modules
+	 * @private
+	 */
 	_modules = {},
 	
 	/**
