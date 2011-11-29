@@ -93,13 +93,18 @@ Emily.declare("TinyStore",
 		
 		/**
 		 * Watch the value's modifications
+		 * A first notification is done if the value already exists
 		 * @param {String} name the index of the value
 		 * @param {Function} func the function to execute when the value changes
 		 * @param {Object} scope the scope in which to execute the function
 		 * @returns {Handler} the subscribe's handler to use to stop watching
 		 */
 		this.watch = function watch(name, func, scope) {
-			return _observable.watch(name, func, scope);
+			var handler = _observable.watch(name, func, scope);
+			if (_data[name]) {
+				_observable.notify(name, _data[name]);
+			}
+			return handler;
 		};
 		
 		/**

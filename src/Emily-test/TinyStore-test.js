@@ -79,6 +79,13 @@ TestCase("TinyStoreWatch", {
 		assertTrue(spy.called);
 		
 	},
+	
+	"test should pass data on watch if it exists": function () {
+		var spy = sinon.spy();
+		this.tinyStore.set("test", true);
+		this.tinyStore.watch("test", spy);
+		assertTrue(spy.calledWith(true));
+	},
 
 	"test should be notified on del": function () {
 		var spy = sinon.spy();
