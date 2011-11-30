@@ -100,28 +100,23 @@
 <span class='line'> 93</span> </span><span class="WHIT">		</span><span class="WHIT">
 <span class='line'> 94</span> </span><span class="WHIT">		</span><span class="COMM">/**
 <span class='line'> 95</span> 		 * Watch the value's modifications
-<span class='line'> 96</span> 		 * A first notification is done if the value already exists
-<span class='line'> 97</span> 		 * @param {String} name the index of the value
-<span class='line'> 98</span> 		 * @param {Function} func the function to execute when the value changes
-<span class='line'> 99</span> 		 * @param {Object} scope the scope in which to execute the function
-<span class='line'>100</span> 		 * @returns {Handler} the subscribe's handler to use to stop watching
-<span class='line'>101</span> 		 */</span><span class="WHIT">
-<span class='line'>102</span> </span><span class="WHIT">		</span><span class="NAME">this.watch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>103</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">handler</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_observable.watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>104</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>105</span> </span><span class="WHIT">				</span><span class="NAME">_observable.notify</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">_data</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>106</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>107</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">handler</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>108</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>109</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>110</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>111</span> 		 * Unwatch the value's modifications
-<span class='line'>112</span> 		 * @param {Handler} handler the handler returned by the watch function
-<span class='line'>113</span> 		 * @returns
-<span class='line'>114</span> 		 */</span><span class="WHIT">
-<span class='line'>115</span> </span><span class="WHIT">		</span><span class="NAME">this.unwatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>116</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_observable.unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>117</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>118</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>119</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>120</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'> 96</span> 		 * @param {String} name the index of the value
+<span class='line'> 97</span> 		 * @param {Function} func the function to execute when the value changes
+<span class='line'> 98</span> 		 * @param {Object} scope the scope in which to execute the function
+<span class='line'> 99</span> 		 * @returns {Handler} the subscribe's handler to use to stop watching
+<span class='line'>100</span> 		 */</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">		</span><span class="NAME">this.watch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_observable.watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>106</span> 		 * Unwatch the value's modifications
+<span class='line'>107</span> 		 * @param {Handler} handler the handler returned by the watch function
+<span class='line'>108</span> 		 * @returns
+<span class='line'>109</span> 		 */</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">		</span><span class="NAME">this.unwatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_observable.unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
