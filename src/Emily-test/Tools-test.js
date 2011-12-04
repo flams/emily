@@ -79,3 +79,30 @@ TestCase("ToolsTestCompareObjects", {
 		assertFalse(this.tools.compareObjects(this.o2, this.o3));
 	} 
 });
+
+TestCase("ToolsTestToArray", {
+	setUp: function () {
+		var ul = document.createElement("ul");
+		ul.innerHTML = "<li>hel</li><li>lo</li>";
+		
+		this.toArray = Emily.require("Tools").toArray;
+		
+		this.nodeList = ul.querySelectorAll("ul");
+		this.arguments = (function (a,b) {return arguments;})(1,2);
+	},
+	
+	"test toArray can transform liveNodes to an array": function () {
+		assertTrue(this.nodeList instanceof NodeList);
+		var array = this.toArray(this.nodeList);
+		assertArray(array);
+		assertSame(this.nodeList[0], array[0]);
+		assertSame(this.nodeList[1], array[1]);
+	},
+	
+	"test toArray can transform arguments to an array": function () {
+		var array = this.toArray(this.arguments);
+		assertArray(array);
+		assertSame(this.arguments[0], array[0]);
+		assertSame(this.arguments[1], array[1]);
+	}
+});

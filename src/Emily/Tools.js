@@ -60,11 +60,20 @@ Emily.declare("Tools",
 	 * @param {Object} second object
 	 * @returns {Boolean} true if the two objets have the same properties
 	 */
-	this.compareObjects = function (object1, object2) {
+	this.compareObjects = function compareObjects(object1, object2) {
 		var getOwnProperties = function (object) {
 			return Object.getOwnPropertyNames(object).sort().join("");
 		};
 		return getOwnProperties(object1) == getOwnProperties(object2);
+	};
+	
+	/**
+	 * Transform array-like objects to array, such as nodeLists or arguments
+	 * @param {Array-like object}
+	 * @returns {Array}
+	 */
+	this.toArray = function toArray(array) {
+		return Array.prototype.slice.call(array);
 	};
 	
 });
