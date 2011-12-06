@@ -2,7 +2,7 @@ var __Global = this;
 
 TestCase("ToolsTestGetGlobal", {
 	setUp: function () {
-		this.tools = Emily.require("Tools");
+		this.tools = require("Tools");
 	},
 	
 	"test should get global object": function () {
@@ -14,7 +14,7 @@ TestCase("ToolsTestGetGlobal", {
 TestCase("ToolsTestMixin", {
 	
 	setUp: function () {
-		this.tools = Emily.require("Tools");
+		this.tools = require("Tools");
 		this.destination = {a: 10, b: 20};
 		this.source = function () { this.b=30; this.c=40;};
 		this.source.prototype.d = 50;
@@ -50,7 +50,7 @@ TestCase("ToolsTestCount", {
 		this.object = function () { this.a=10; this.b=20; };
 		this.object.prototype.c = 30;
 		this.object = new this.object;
-		this.tools = Emily.require("Tools");
+		this.tools = require("Tools");
 	},
 	
 	"test count function exists": function () {
@@ -67,7 +67,7 @@ TestCase("ToolsTestCompareObjects", {
 		this.o1 = {a: 1, c:3, b:4, x:10};
 		this.o2 = {a: 2, c:5, b:52, x:100};
 		this.o3 = {a: 5, b: 3, x: 50};
-		this.tools = Emily.require("Tools");
+		this.tools = require("Tools");
 	},
 	
 	"test compareObjects exists": function () {
@@ -85,7 +85,7 @@ TestCase("ToolsTestToArray", {
 		var ul = document.createElement("ul");
 		ul.innerHTML = "<li>hel</li><li>lo</li>";
 		
-		this.toArray = Emily.require("Tools").toArray;
+		this.toArray = require("Tools").toArray;
 		
 		this.nodeList = ul.querySelectorAll("ul");
 		this.arguments = (function (a,b) {return arguments;})(1,2);

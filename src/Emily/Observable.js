@@ -1,4 +1,4 @@
-Emily.declare("Observable",
+define("Observable",
 /** 
 * @class 
 * Observable is an implementation of the Observer design pattern, 
@@ -6,15 +6,17 @@ Emily.declare("Observable",
 * 
 * This service creates an Observable on which you can add subscribers.
 */
-function Observable() {
+function () {
 	
-	this.create = 
-	/**
-	 * Returns a new Observable
-	 * @returns {Object} an Observable
-	 */
-	function create() {
-		return new _Observable();
+
+	return {
+		/**
+		 * Returns a new Observable
+		 * @returns {Object} an Observable
+		 */
+		create: function create() {
+			return new _Observable();
+		}
 	};
 	
 	/**

@@ -1,7 +1,7 @@
 TestCase("TinyStoreInit", {
 	
 	setUp: function () {
-		this.tinyStore = Emily.require("TinyStore");
+		this.tinyStore = require("TinyStore");
 	},
 
 	"test should create a TinyStore": function () {
@@ -21,7 +21,7 @@ TestCase("TinyStoreInit", {
 TestCase("TinyStoreSet", {
 
 	setUp: function () {
-		this.tinyStore = Emily.require("TinyStore").create();
+		this.tinyStore = require("TinyStore").create();
 	},
 
 	"test should set undefined value": function () {
@@ -53,7 +53,7 @@ TestCase("TinyStoreSet", {
 TestCase("TinyStoreDel", {
 
 	setUp: function () {
-		this.tinyStore = Emily.require("TinyStore").create();
+		this.tinyStore = require("TinyStore").create();
 	},
 
 	"test should delete value": function () {
@@ -68,7 +68,7 @@ TestCase("TinyStoreDel", {
 TestCase("TinyStoreWatch", {
 
 	setUp: function () {
-		this.tinyStore = Emily.require("TinyStore").create();
+		this.tinyStore = require("TinyStore").create();
 	},
 
 	"test should be notified on set": function () {
@@ -142,7 +142,7 @@ TestCase("TinyStoreWatch", {
 TestCase("TinyStoreLength", {
 
 	"test should return proper length": function () {
-		this.tinyStore = Emily.require("TinyStore").create();
+		this.tinyStore = require("TinyStore").create();
 		assertEquals(0, this.tinyStore.getNbItems());
 		this.tinyStore.set("value1");
 		assertEquals(1, this.tinyStore.getNbItems());
@@ -159,7 +159,7 @@ TestCase("TinyStoreLength", {
 
 	"test should return proper length when init with data": function () {
 		var initValues = {x: 10, y: 20},
-		tinyStore = Emily.require("TinyStore").create(initValues);
+		tinyStore = require("TinyStore").create(initValues);
 		
 		assertEquals(2, tinyStore.getNbItems());
 		

@@ -1,19 +1,20 @@
-Emily.declare("Transport",
+define("Transport",
 /** 
  * @class
  * Transport allows for client-server eventing.
  * It's based on socket.io.
  */
-function Transport(API) {
-	
-	this.create = 
-	/**
-	 * Creates a new Transport
-	 * @param {Url} url the url to connect Transport to
-	 * @returns {Object} new Transport
-	 */
-	function create(url) {
-		return new _Transport(url).connect(url);
+function () {
+
+	return {
+		/**
+		 * Creates a new Transport
+		 * @param {Url} url the url to connect Transport to
+		 * @returns {Object} new Transport
+		 */
+		create: function create(url) {
+			return new _Transport(url).connect(url);
+		}
 	};
 	
 	/**
@@ -34,7 +35,7 @@ function Transport(API) {
 		 * @private
 		 * The socket.io globally defined module
 		 */
-		_io = API.require("io");
+		_io = io;
 		
 		/**
 		 * Connect Transport to an url

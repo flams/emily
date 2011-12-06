@@ -1,19 +1,20 @@
-Emily.declare("TinyStore", 
+define("TinyStore", ["Observable", "Tools"],
 /** 
  * @class
  * TinyStore creates a small NoSQL database
  * that can publish events on data add/change.
  */
- function TinyStore(API) {
+ function TinyStore(Observable, Tools) {
 	
-	this.create = 
-	/**
-	 * Creates a new TinyStore
-	 * @param {Object} values the values to initialize the store with
-	 * @returns {Object} the TinyStore
-	 */
-	function create(values) {
-		return new _TinyStore(values);
+	return { 
+		/**
+		 * Creates a new TinyStore
+		 * @param {Object} values the values to initialize the store with
+		 * @returns {Object} the TinyStore
+		 */
+		create: function create(values) {
+			return new _TinyStore(values);
+		}
 	};
     
 	/**
@@ -25,8 +26,8 @@ Emily.declare("TinyStore",
 	function _TinyStore(values) {
 		
 		var _data = {}, 
-			_tools = API.require("Tools"),
-			_observable = API.require("Observable").create();
+			_tools = Tools,
+			_observable = Observable.create();
 			
 		_tools.mixin(values, _data);
 		

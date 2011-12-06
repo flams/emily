@@ -1,6 +1,6 @@
 TestCase("ObservableInit", {
 	"test should create an observable": function () {
-		this.observable = Emily.require("Observable").create();
+		this.observable = require("Observable").create();
 		assertObject(this.observable);
 		assertFunction(this.observable.watch);
 		assertFunction(this.observable.unwatch);
@@ -12,7 +12,7 @@ TestCase("ObservableInit", {
 TestCase("ObservableWatch", {
 	
 	setUp: function () {
-		this.observable = Emily.require("Observable").create();
+		this.observable = require("Observable").create();
 		this.testTopic = "testTopic";
 	},
 	
@@ -64,7 +64,7 @@ TestCase("ObservableWatch", {
 TestCase("ObservableNotify", {
 	
 	setUp : function () {
-		this.observable = Emily.require("Observable").create();
+		this.observable = require("Observable").create();
 		this.testTopic = "testTopic";
 	},
 	
@@ -109,8 +109,8 @@ TestCase("ObservableNotify", {
 TestCase("ObservablesIsolated", {
 	
 	setUp: function () {
-		this.obs1 = Emily.require("Observable").create();
-		this.obs2 = Emily.require("Observable").create();
+		this.obs1 = require("Observable").create();
+		this.obs2 = require("Observable").create();
 		this.testTopic = "testTopic";
 	},
 	
