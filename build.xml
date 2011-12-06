@@ -50,8 +50,7 @@
     
     <target name="BUILD_concat" description="Concatenates all files" depends="BUILD_clean">
         <concat destfile="${temp.dir}/concat.js">
-            <filelist dir="${Emily.dir}" files="Emily.js"/>
-            <fileset dir="${Emily.dir}" includes="*.js" excludes="Emily.js"/>
+            <fileset dir="${Emily.dir}" includes="*.js"/>
         </concat>
     </target>
     

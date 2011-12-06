@@ -6,7 +6,7 @@ define("Observable",
 * 
 * This service creates an Observable on which you can add subscribers.
 */
-function () {
+function Observable() {
 	
 
 	return {
