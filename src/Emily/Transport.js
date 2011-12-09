@@ -6,17 +6,6 @@ define("Transport",
  */
 function Transport() {
 
-	return {
-		/**
-		 * Creates a new Transport
-		 * @param {Url} url the url to connect Transport to
-		 * @returns {Object} new Transport
-		 */
-		create: function create(url) {
-			return new _Transport(url).connect(url);
-		}
-	};
-	
 	/**
 	 * Defines the Transport
 	 * @private
@@ -43,7 +32,7 @@ function Transport() {
 		 */
 		this.connect = function connect(url) {
 			_socket = _io.connect(url);
-			return this;
+			return !!_socket;
 		},
 		
 		/**
@@ -71,5 +60,18 @@ function Transport() {
 		this.emit = function emit(event, data) {
 			_socket.emit(event, data);
 		};
+	};
+	
+	return {
+		/**
+		 * Creates a new Transport
+		 * @param {Url} url the url to connect Transport to
+		 * @returns {Object} new Transport
+		 */
+		create: function create(url) {
+			var transport = new _Transport(url);
+			transport.connect(url);
+			return transport;
+		}
 	};
 });

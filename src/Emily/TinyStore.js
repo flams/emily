@@ -6,17 +6,6 @@ define("TinyStore", ["Observable", "Tools"],
  */
  function TinyStore(Observable, Tools) {
 	
-	return { 
-		/**
-		 * Creates a new TinyStore
-		 * @param {Object} values the values to initialize the store with
-		 * @returns {Object} the TinyStore
-		 */
-		create: function create(values) {
-			return new _TinyStore(values);
-		}
-	};
-    
 	/**
 	 * Defines the tinyStore
 	 * @private
@@ -66,11 +55,9 @@ define("TinyStore", ["Observable", "Tools"],
 		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
-			var oldValue;
 			if (typeof name == "string") {
-				oldValue = _data[name];
 				_data[name] = value;
-				_observable.notify(name, value, oldValue);
+				_observable.notify(name, value);
 				return true;
 			} else {
 				return false;
@@ -113,4 +100,15 @@ define("TinyStore", ["Observable", "Tools"],
 		};
 		
 	}
+	
+	return { 
+		/**
+		 * Creates a new TinyStore
+		 * @param {Object} values the values to initialize the store with
+		 * @returns {Object} the TinyStore
+		 */
+		create: function create(values) {
+			return new _TinyStore(values);
+		}
+	};
 });

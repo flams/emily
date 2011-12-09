@@ -8,17 +8,6 @@ define("Observable",
 */
 function Observable() {
 	
-
-	return {
-		/**
-		 * Returns a new Observable
-		 * @returns {Object} an Observable
-		 */
-		create: function create() {
-			return new _Observable();
-		}
-	};
-	
 	/**
 	 * Defines the Observable
 	 * @private
@@ -100,5 +89,15 @@ function Observable() {
 		};
 		
 	}
+	
+	return {
+		/**
+		 * Returns a new Observable
+		 * @returns {Object} an Observable
+		 */
+		create: function create() {
+			return new _Observable();
+		}
+	};
 	
 });
