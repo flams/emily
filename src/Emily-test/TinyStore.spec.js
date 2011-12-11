@@ -79,58 +79,58 @@ require(["TinyStore"], function (TinyStore) {
 		});
 		
 		it("should notify on set", function () {
-			var spy = sinon.spy();
+			var spy = jasmine.createSpy("callback");
 			
 			tinyStore.watch("test", spy);
 			tinyStore.set("test");
-			expect(spy.called).toEqual(true);
+			expect(spy.wasCalled).toEqual(true);
 		});
 		
 		it("should notify with new value on update", function () {
-			var spy = sinon.spy();
+			var spy = jasmine.createSpy("callback");
 			tinyStore.set("test", "old");
 			tinyStore.watch("test", spy);
 			tinyStore.set("test", "new");
 		
-			expect(spy.args[0][0]).toEqual("new");
+			expect(spy.mostRecentCall.args[0]).toEqual("new");
 		});
 		
 		it("should notify on del", function () {
-			var spy = sinon.spy();
+			var spy = jasmine.createSpy("callback");
 			tinyStore.set("test");
 			tinyStore.watch("test", spy);
 			tinyStore.del("test");
-			expect(spy.called).toEqual(true);
-			expect(spy.args[0][0]).toBeUndefined();
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.mostRecentCall.args[0]).toBeUndefined();
 		});
 		
 		it("can unwatch value", function () {
-			var spy = sinon.spy();
+			var spy = jasmine.createSpy("callback");
 			handler = tinyStore.watch("test", spy);
 			tinyStore.unwatch(handler);
 			tinyStore.set("test");
 			tinyStore.del("test");
-			expect(spy.called).toEqual(false);
+			expect(spy.wasCalled).toEqual(false);
 		});
 		
 		it("should execute in scope on set", function () {
-			var spy = sinon.spy(),
+			var spy = jasmine.createSpy("callback");
 				thisObj = {};
 			
 			tinyStore.watch("test", spy, thisObj);
 			tinyStore.set("test");
 			
-			expect(spy.thisValues[0]).toBe(thisObj);
+			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 		
 		it("should execute in scope on del", function () {
-			var spy = sinon.spy(),
+			var spy = jasmine.createSpy("callback"),
 				thisObj = {};
 			
 			tinyStore.set("test");
 			tinyStore.watch("test", spy, thisObj);
 			tinyStore.del("test");
-			expect(spy.thisValues[0]).toBe(thisObj);
+			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 
 	});

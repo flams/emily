@@ -89,26 +89,30 @@ require(["Tools"], function (Tools) {
 	
 	describe("ToolsTestToArray", function () {
 		
-		var ul = document.createElement("ul"),
-			nodeList = ul.querySelectorAll("ul"),
-			args = (function (a,b) {return arguments;})(1,2);
-		
-		ul.innerHTML = "<li>hel</li><li>lo</li>";
-		
 		it("should be a function", function () {
 			expect(Tools.toArray).toBeInstanceOf(Function);
 		});
 		
-		it("should transform nodesList to an array", function () {
-			expect(nodeList).toBeInstanceOf(NodeList);
-			var array = Tools.toArray(nodeList);
-			expect(array).toBeInstanceOf(Array);
-			expect(nodeList[0]).toBe(array[0]);
-			expect(nodeList[1]).toBe(array[1]);
-		});
+		if (__Global.document) {
+			it("should transform nodes lists to an array if running in browser", function () {
+				var ul = document.createElement("ul"),
+				nodeList = ul.querySelectorAll("ul"),
+				array = null;
+			
+		
+				ul.innerHTML = "<li>hel</li><li>lo</li>";
+				
+				expect(nodeList).toBeInstanceOf(NodeList);
+				array = Tools.toArray(nodeList);
+				expect(array).toBeInstanceOf(Array);
+				expect(nodeList[0]).toBe(array[0]);
+				expect(nodeList[1]).toBe(array[1]);
+			});
+		}
 		
 		it("should transform arguments to an array", function () {
-			var array = Tools.toArray(args);
+			var args = (function (a,b) {return arguments;})(1,2),
+				array = Tools.toArray(args);
 			expect(array).toBeInstanceOf(Array);
 			expect(args[0]).toBe(array[0]);
 			expect(args[1]).toBe(array[1]);

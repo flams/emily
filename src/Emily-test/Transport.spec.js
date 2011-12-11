@@ -27,8 +27,8 @@ require(["Transport"], function (Transport) {
 					connect.called = true;
 					connect.url = url;
 					return {
-						on: sinon.spy(),
-						emit: sinon.spy()
+						on: jasmine.createSpy("on"),
+						emit: jasmine.createSpy("emit")
 					};
 				}
 			};
@@ -72,8 +72,9 @@ require(["Transport"], function (Transport) {
 			
 			transport.on(event, func);
 			
-			expect(socket.on.calledOnce).toEqual(true);
-			expect(socket.on.calledWith(event, func)).toEqual(true);
+			expect(socket.on.wasCalled).toEqual(true);
+			expect(socket.on.mostRecentCall.args[0]).toEqual(event);
+			expect(socket.on.mostRecentCall.args[1]).toEqual(func);
 			
 		});
 		
@@ -88,8 +89,9 @@ require(["Transport"], function (Transport) {
 			
 			transport.emit(event, data);
 			socket = transport.getSocket();
-			expect(socket.emit.calledOnce).toEqual(true);
-			expect(socket.emit.calledWith(event, data)).toEqual(true);
+			expect(socket.emit.wasCalled).toEqual(true);
+			expect(socket.emit.mostRecentCall.args[0]).toEqual(event);
+			expect(socket.emit.mostRecentCall.args[1]).toEqual(data);
 		});
 		
 	});

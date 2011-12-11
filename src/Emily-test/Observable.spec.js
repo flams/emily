@@ -37,7 +37,7 @@ require(["Observable"], function (Observable) {
 		});
 		
 		it("should add an observer", function () {
-			var spy = sinon.spy(),
+			var spy = jasmine.createSpy("callback");
 				handler = null;
 			
 			expect(observable.hasObserver(handler)).toEqual(false);
@@ -48,7 +48,7 @@ require(["Observable"], function (Observable) {
 		});
 		
 		it("should add an observer with scope", function () {
-			var spy = sinon.spy(),
+			var spy = jasmine.createSpy("callback");
 				handler = null;
 			
 			expect(observable.hasObserver(handler)).toEqual(false);
@@ -58,8 +58,8 @@ require(["Observable"], function (Observable) {
 		});
 		
 		it("should add multiple observers with or without scopes", function () {
-			var spy1 = sinon.spy(),
-				spy2 = sinon.spy(),
+			var spy1 = jasmine.createSpy("callback");
+				spy2 = jasmine.createSpy("callback");
 				handler1 = null,
 				handler2 = null,
 				thisObj = {},
@@ -73,7 +73,7 @@ require(["Observable"], function (Observable) {
 		});
 		
 		it("can remove an observer", function () {
-			var spy = sinon.spy(),
+			var spy = jasmine.createSpy("callback");
 			handler;
 
 			handler = observable.watch(testTopic, spy);
@@ -84,8 +84,8 @@ require(["Observable"], function (Observable) {
 		});
 		
 		it("should remove multiple observers", function () {
-			var spy1 = sinon.spy(),
-				spy2 = sinon.spy(),
+			var spy1 = jasmine.createSpy("callback");
+				spy2 = jasmine.createSpy("callback");
 				handler1 = null,
 				handler2 = null,
 				thisObj = {},
@@ -118,45 +118,45 @@ require(["Observable"], function (Observable) {
 		});
 		
 		it("should notify observer", function () {
-			var spy = sinon.spy();
+			var spy = jasmine.createSpy("callbac");
 			
 			observable.watch(testTopic, spy);
 			expect(observable.notify(testTopic)).toEqual(true);
-			expect(spy.called).toEqual(true);
+			expect(spy.wasCalled).toEqual(true);
 		});
 		
 		it("should notify observer in scope", function () {
-			var spy = sinon.spy(),
+			var spy = jasmine.createSpy("callback");
 				thisObj = {};
 			
 			observable.watch(testTopic, spy, thisObj);
 			expect(observable.notify(testTopic)).toEqual(true);
-			expect(spy.called).toEqual(true);
-			expect(spy.thisValues[0]).toBe(thisObj);
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 		
 		it("should pass parameters", function () {
-			var spy = sinon.spy(),
+			var spy = jasmine.createSpy("callback");
 				post = {x:10};
 		
 			observable.watch(testTopic, spy);
 			observable.notify(testTopic, post);
 			
-			expect(spy.calledWith(post)).toEqual(true);
+			expect(spy.mostRecentCall.args[0]).toBe(post);
 		});
 		
 		it("should notify all observers", function () {
-			var spy1 = sinon.spy(),
-				spy2 = sinon.spy(),
+			var spy1 = jasmine.createSpy("callback"),
+				spy2 = jasmine.createSpy("callback"),
 				thisObj = {},
 				testTopic = "testTopic";
 	
 			observable.watch(testTopic, spy1);
 			observable.watch(testTopic, spy2, thisObj);
 			observable.notify(testTopic, "test");
-			expect(spy1.called).toEqual(true);
-			expect(spy2.called).toEqual(true);
-			expect(spy2.thisValues[0]).toBe(thisObj);
+			expect(spy1.wasCalled).toEqual(true);
+			expect(spy2.wasCalled).toEqual(true);
+			expect(spy2.mostRecentCall.object).toBe(thisObj);
 		});
 		
 		it("should return false when notifying on empty topics", function () {
