@@ -1,8 +1,6 @@
 var requirejs = require("requirejs"),
 	jasmine = require("jasmine-node");
 
-
-
 requirejs.config({
 	baseUrl: "./src/Emily",
 	nodeRequire: require

@@ -1,0 +1,84 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="NAME">define</span><span class="PUNC">(</span><span class="STRN">"Transport"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="COMM">/** 
+<span class='line'>  3</span>  * @class
+<span class='line'>  4</span>  * Transport allows for client-server eventing.
+<span class='line'>  5</span>  * It's based on socket.io.
+<span class='line'>  6</span>  */</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Transport</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  8</span> 
+<span class='line'>  9</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 10</span> 	 * Defines the Transport
+<span class='line'> 11</span> 	 * @private
+<span class='line'> 12</span> 	 * @param {url} $url the url to connect Transport to
+<span class='line'> 13</span> 	 * @returns
+<span class='line'> 14</span> 	 */</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">_Transport</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="WHIT">		
+<span class='line'> 17</span> 		</span><span class="COMM">/**
+<span class='line'> 18</span> 		 * @private
+<span class='line'> 19</span> 		 * The socket.io's socket
+<span class='line'> 20</span> 		 */</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">_socket</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">		
+<span class='line'> 23</span> 		</span><span class="COMM">/**
+<span class='line'> 24</span> 		 * @private
+<span class='line'> 25</span> 		 * The socket.io globally defined module
+<span class='line'> 26</span> 		 */</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">		</span><span class="NAME">_io</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">io</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">		
+<span class='line'> 29</span> 		</span><span class="COMM">/**
+<span class='line'> 30</span> 		 * Connect Transport to an url
+<span class='line'> 31</span> 		 * @param {Url} url the url to connect Transport to
+<span class='line'> 32</span> 		 */</span><span class="WHIT">
+<span class='line'> 33</span> </span><span class="WHIT">		</span><span class="NAME">this.connect</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">connect</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="WHIT">			</span><span class="NAME">_socket</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_io.connect</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="PUNC">!</span><span class="NAME">_socket</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">		
+<span class='line'> 38</span> 		</span><span class="COMM">/**
+<span class='line'> 39</span> 		 * Get the socket, for debugging purpose
+<span class='line'> 40</span> 		 * @returns {Object} the socket
+<span class='line'> 41</span> 		 */</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">		</span><span class="NAME">this.getSocket</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getSocket</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_socket</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">		
+<span class='line'> 46</span> 		</span><span class="COMM">/**
+<span class='line'> 47</span> 		 * Subscribe to a socket event
+<span class='line'> 48</span> 		 * @param {String} event the name of the event
+<span class='line'> 49</span> 		 * @param {Function} func the function to execute when the event fires
+<span class='line'> 50</span> 		 */</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">		</span><span class="NAME">this.on</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">on</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">			</span><span class="NAME">_socket.on</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">		
+<span class='line'> 55</span> 		</span><span class="COMM">/**
+<span class='line'> 56</span> 		 * Publish an event on the socket
+<span class='line'> 57</span> 		 * @param {String} event the event to publish
+<span class='line'> 58</span> 		 * @param data
+<span class='line'> 59</span> 		 */</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">		</span><span class="NAME">this.emit</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">emit</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">			</span><span class="NAME">_socket.emit</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">	
+<span class='line'> 65</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'> 67</span> 		 * Creates a new Transport
+<span class='line'> 68</span> 		 * @param {Url} url the url to connect Transport to
+<span class='line'> 69</span> 		 * @returns {Object} new Transport
+<span class='line'> 70</span> 		 */</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">		</span><span class="NAME">create</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">create</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">transport</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">_Transport</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">			</span><span class="NAME">transport.connect</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">transport</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
