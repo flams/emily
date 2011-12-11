@@ -1,13 +1,5 @@
 require(["Transport"], function (Transport) {
 	
-	beforeEach(function () {
-		this.addMatchers({
-			toBeInstanceOf: function(expected) {
-				return this.actual instanceof expected;
-			}
-		});
-	});
-	
 	describe("TransportTest", function () {
 		
 		it("should be an object with a create method", function () {

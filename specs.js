@@ -8,15 +8,15 @@ requirejs.config({
 	nodeRequire: require
 });
 
-
 requirejs("Observable");
 requirejs("TinyStore");
 requirejs("Transport");
 requirejs("Tools");
-requirejs("./src/Emily-test/Observable.spec.js");
-requirejs("./src/Emily-test/TinyStore.spec.js");
-requirejs("./src/Emily-test/Transport.spec.js");
-requirejs("./src/Emily-test/Tools.spec.js");
+requirejs("./src/Emily-specs/specHelper.js");
+requirejs("./src/Emily-specs/Observable.spec.js");
+requirejs("./src/Emily-specs/TinyStore.spec.js");
+requirejs("./src/Emily-specs/Transport.spec.js");
+requirejs("./src/Emily-specs/Tools.spec.js");
 
 
 

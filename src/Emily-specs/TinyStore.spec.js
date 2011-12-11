@@ -2,14 +2,6 @@ require(["TinyStore"], function (TinyStore) {
 	
 	describe("TinyStoreTest", function () {
 
-		beforeEach(function() {
-			this.addMatchers({
-				toBeInstanceOf: function(expected) {
-					return this.actual instanceof expected;
-				}
-			});
-		});
-		
 		it("should be an object with a create function", function () {
 			expect(TinyStore).toBeInstanceOf(Object);
 			expect(TinyStore.create).toBeInstanceOf(Function);

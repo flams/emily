@@ -1,16 +1,6 @@
 require(["Observable"], function (Observable) {
 	
-
-	
 	describe("ObservableTest", function () {
-		
-		beforeEach(function() {
-			this.addMatchers({
-				toBeInstanceOf: function(expected) {
-					return this.actual instanceof expected;
-				}
-			});
-		});
 		
 		it("should be an object with a create function", function () {
 			expect(Observable).toBeInstanceOf(Object);

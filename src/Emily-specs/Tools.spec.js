@@ -2,14 +2,6 @@ var __Global = this;
 
 require(["Tools"], function (Tools) {
 	
-	beforeEach(function() {
-		this.addMatchers({
-			toBeInstanceOf: function(expected) {
-				return this.actual instanceof expected;
-			}
-		});
-	});
-	
 	describe("ToolsTestGetGlobal", function () {
 		
 		it("should get global object", function () {
