@@ -130,8 +130,17 @@ namespace("tests", function () {
 	task("node", [], function () {
 		
 		[PROJECT_SRC_DIR, PROJECT_SPECS_DIR].forEach(_requireDirectory);
-
-		jasmine.getEnv().addReporter(new jasmine.ConsoleReporter());
+/**
+ * {
+			reportSpecResults : function (spec) {
+				var results = spec.results();
+				results.getItems().forEach( function (item) {
+					if (item.trace) console.log(item.trace);
+				});
+			}
+		}
+ */
+		jasmine.getEnv().addReporter(new TerminalReporter({}));
 		jasmine.getEnv().execute();
 	});
 	

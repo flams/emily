@@ -54,12 +54,12 @@
 				test: [ PROJECT_SPECS_DIR + "/specHelper.js",
 				        PROJECT_SPECS_DIR + "/*.js"
 				      ],
-/*		
+		/*
 				plugin: ['name: "coverage" \n' +
 				         '   jar: "../tools/JsTestDriver/coverage-1.3.3d.jar" \n' +
 				         '   module: "com.google.jstestdriver.coverage.CoverageModule"'
 				         ],
-*/				
+				*/
 				timeout: 90	
 			},
 			browsers: ["/Applications/Firefox.app/Contents/MacOS/Firefox",
