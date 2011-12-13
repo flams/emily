@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Tools</title>
+		<title>JsDoc Reference - StateMachine</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -210,7 +210,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Tools
+				Class StateMachine
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -218,16 +218,16 @@ ul.inheritsList
 				
 				
 			
-				Tools is a collection of tools
+				Create a stateMachine
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Project_Tools.js.html">Tools.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Project_StateMachine.js.html">StateMachine.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Tools.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class StateMachine.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -240,7 +240,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Tools.html#constructor">Tools</a></b>()
+								<b><a href="../symbols/StateMachine.html#constructor">StateMachine</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -256,7 +256,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Tools.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class StateMachine.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -267,49 +267,65 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.compareObjects">compareObjects</a></b>(first, second)
+								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#add">add</a></b>(name)
 								</div>
-								<div class="description">Compares the properties of two objects and returns true if they're the same
-It's doesn't do it recursively</div>
+								<div class="description">Add a new state</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.count">count</a></b>(object)
+								<div class="fixedFont">StateMachine.<b><a href="../symbols/StateMachine.html#.create">create</a></b>(initState, diagram)
 								</div>
-								<div class="description">Count the number of properties in an object
-It doesn't look up in the prototype chain</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.getGlobal">getGlobal</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#event">event</a></b>(name)
 								</div>
-								<div class="description">For applications that don't run in a browser, window is not the global object.</div>
+								<div class="description">Pass an event to the state machine</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.mixin">mixin</a></b>(destination, source, optional,)
+								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#get">get</a></b>(name)
 								</div>
-								<div class="description">Mixes an object into another</div>
+								<div class="description">Get an existing state</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.toArray">toArray</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#getCurrent">getCurrent</a></b>()
 								</div>
-								<div class="description">Transform array-like objects to array, such as nodeLists or arguments</div>
+								<div class="description">Get the current state</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#has">has</a></b>(event)
+								</div>
+								<div class="description">Check if a transition can be triggered with given event</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#init">init</a></b>(name)
+								</div>
+								<div class="description">Set the initialization state</div>
 							</td>
 						</tr>
 					
@@ -330,7 +346,7 @@ It doesn't look up in the prototype chain</div>
 				</div>
 				
 				<div class="fixedFont">
-						<b>Tools</b>()
+						<b>StateMachine</b>()
 				</div>
 				
 				<div class="description">
@@ -361,16 +377,122 @@ It doesn't look up in the prototype chain</div>
 					Method Detail
 				</div>
 				
-					<a name=".compareObjects"> </a>
+					<a name="add"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{State}</span>
+					<b>add</b>(name)
+					
+					</div>
+					<div class="description">
+						Add a new state
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>the name of the state</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{State}</span> a new state</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".create"> </a>
 					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">StateMachine.</span><b>create</b>(initState, diagram)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+					<pre class="code">
+     diagram = {
+             "State1" : [
+                     [ message1, action, nextState], // Same as the state's add function
+                     [ message2, action2, nextState]
+             ],
+
+             "State2" :
+               	 [ message3, action3, scope3, nextState]
+                     ... and so on ....
+
+  }</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>initState</b>
+									
+								</dt>
+								<dd>{String} the initial state</dd>
+							
+								<dt>
+									<b>diagram</b>
+									
+								</dt>
+								<dd>{Object} the diagram that describes the state machine</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>the stateMachine object</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="event"> </a>
+					<div class="fixedFont">
 					
 					<span class="light">{Boolean}</span>
-					<span class="light">Tools.</span><b>compareObjects</b>(first, second)
+					<b>event</b>(name)
 					
 					</div>
 					<div class="description">
-						Compares the properties of two objects and returns true if they're the same
-It's doesn't do it recursively
+						Pass an event to the state machine
 						
 						
 					</div>
@@ -382,16 +504,10 @@ It's doesn't do it recursively
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>first</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>second</b>
-									
-								</dt>
-								<dd>object</dd>
+								<dd>the name of the event</dd>
 							
 							</dl>
 						
@@ -402,7 +518,7 @@ It's doesn't do it recursively
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if the two objets have the same properties</dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if the event exists in the current state</dd>
 							
 							</dl>
 						
@@ -411,16 +527,15 @@ It's doesn't do it recursively
 
 					<hr />
 				
-					<a name=".count"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="get"> </a>
+					<div class="fixedFont">
 					
-					<span class="light">{Number}</span>
-					<span class="light">Tools.</span><b>count</b>(object)
+					<span class="light">{State}</span>
+					<b>get</b>(name)
 					
 					</div>
 					<div class="description">
-						Count the number of properties in an object
-It doesn't look up in the prototype chain
+						Get an existing state
 						
 						
 					</div>
@@ -432,10 +547,10 @@ It doesn't look up in the prototype chain
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>object</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>the object to count</dd>
+								<dd>the name of the state</dd>
 							
 							</dl>
 						
@@ -446,7 +561,7 @@ It doesn't look up in the prototype chain
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Number}</span> </dd>
+								<dd><span class="light fixedFont">{State}</span> the state</dd>
 							
 							</dl>
 						
@@ -455,16 +570,15 @@ It doesn't look up in the prototype chain
 
 					<hr />
 				
-					<a name=".getGlobal"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="getCurrent"> </a>
+					<div class="fixedFont">
 					
-					<span class="light">{Object}</span>
-					<span class="light">Tools.</span><b>getGlobal</b>()
+					<span class="light">{String}</span>
+					<b>getCurrent</b>()
 					
 					</div>
 					<div class="description">
-						For applications that don't run in a browser, window is not the global object.
-This function returns the global object wherever the application runs.
+						Get the current state
 						
 						
 					</div>
@@ -479,7 +593,7 @@ This function returns the global object wherever the application runs.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> the global object</dd>
+								<dd><span class="light fixedFont">{String}</span> </dd>
 							
 							</dl>
 						
@@ -488,15 +602,15 @@ This function returns the global object wherever the application runs.
 
 					<hr />
 				
-					<a name=".mixin"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="has"> </a>
+					<div class="fixedFont">
 					
-					
-					<span class="light">Tools.</span><b>mixin</b>(destination, source, optional,)
+					<span class="light">{Boolean}</span>
+					<b>has</b>(event)
 					
 					</div>
 					<div class="description">
-						Mixes an object into another
+						Check if a transition can be triggered with given event
 						
 						
 					</div>
@@ -508,58 +622,10 @@ This function returns the global object wherever the application runs.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>destination</b>
+									<span class="light fixedFont">{String}</span> <b>event</b>
 									
 								</dt>
-								<dd>object to mix values into</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>source</b>
-									
-								</dt>
-								<dd>object to get values from</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Boolean}</span> <b>optional,</b>
-									
-								</dt>
-								<dd>set to true to prevent overriding</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".toArray"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Array}</span>
-					<span class="light">Tools.</span><b>toArray</b>()
-					
-					</div>
-					<div class="description">
-						Transform array-like objects to array, such as nodeLists or arguments
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Array-like object}</span> <b></b>
-									
-								</dt>
-								<dd></dd>
+								<dd>the name of the event</dd>
 							
 							</dl>
 						
@@ -570,7 +636,50 @@ This function returns the global object wherever the application runs.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Array}</span> </dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if exists</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="init"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>init</b>(name)
+					
+					</div>
+					<div class="description">
+						Set the initialization state
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>the name of the init state</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> </dd>
 							
 							</dl>
 						

@@ -71,6 +71,7 @@ require(["StateMachine"], function (StateMachine) {
 		it("should have the following api", function () {
 			expect(state.add).toBeInstanceOf(Function);
 			expect(state.event).toBeInstanceOf(Function);
+			expect(state.has).toBeInstanceOf(Function);
 		});
 		
 		it("should add an action without transition", function () {
@@ -83,6 +84,8 @@ require(["StateMachine"], function (StateMachine) {
 			expect(state.add(action, action)).toEqual(false);
 			expect(state.add(event, action)).toEqual(true);
 			expect(state.add(event, action)).toEqual(false);
+			
+			expect(state.has(event));
 		});
 		
 		it("should execute action on message", function () {
@@ -139,7 +142,7 @@ require(["StateMachine"], function (StateMachine) {
 			expect(state.add(event, action, scope, next)).toEqual(false);
 		});
 		
-		it("should add execute an action in scope and return the next transition", function () {
+		it("should execute an action in scope and return the next transition", function () {
 			var action = jasmine.createSpy(),
 				event = "on",
 				scope = {},
@@ -232,6 +235,64 @@ require(["StateMachine"], function (StateMachine) {
 	
 	describe("StateMachineInit", function () {
 		
+			// The actions :
+			var Unlock = jasmine.createSpy(),
+				UnlockObj = {},
+				
+				Alarm = jasmine.createSpy(),
+				
+				Thankyou = jasmine.createSpy(),
+				ThankyouObj = {},
+				
+				Lock = jasmine.createSpy(),
+			
+			// The State Diagram
+			diagram = {	
+				"Unlocked" : [
+			           ["Coin", Thankyou, ThankyouObj],
+			           ["Pass", Lock, "Locked"]
+				],
+		
+				"Locked" : [
+					["Coin", Unlock, UnlockObj, "Unlocked"],
+					["Pass", Alarm]
+				]
+			},
+				
+			stateMachine = StateMachine.create("Locked", diagram);
+			
+			it("should have been initialiazed with the given diagram", function () {
+				var locked,
+					unlocked;
+				
+				expect(unlocked = stateMachine.get("Unlocked")).toBeTruthy();
+				expect(locked = stateMachine.get("Locked")).toBeTruthy();
+				
+				expect(locked.has("Coin")).toBeTruthy();
+				expect(locked.has("Pass")).toBeTruthy();
+				expect(unlocked.has("Coin")).toBeTruthy();
+				expect(unlocked.has("Pass")).toBeTruthy();
+				
+				expect(stateMachine.getCurrent()).toEqual("Locked");
+				
+				stateMachine.event("Pass");
+				expect(Alarm.wasCalled).toEqual(true);
+				expect(stateMachine.getCurrent()).toEqual("Locked");
+				
+				stateMachine.event("Coin");
+				expect(Unlock.wasCalled).toEqual(true);
+				expect(Unlock.mostRecentCall.object).toBe(UnlockObj);
+				expect(stateMachine.getCurrent()).toEqual("Unlocked");
+				
+				stateMachine.event("Coin");
+				expect(Thankyou.wasCalled).toEqual(true);
+				expect(Thankyou.mostRecentCall.object).toBe(ThankyouObj);
+				expect(stateMachine.getCurrent()).toEqual("Unlocked");
+				
+				stateMachine.event("Pass");
+				expect(Lock.wasCalled).toEqual(true);
+				expect(stateMachine.getCurrent()).toEqual("Locked");
+			});
+		
 	});
-	
 });
