@@ -35,8 +35,24 @@
 		JSTD_DIR = TOOLS_DIR + "/JsTestDriver",
 		// The JsTestDriver executable
 		JSTD = JSTD_DIR + "/JsTestDriver-1.3.3d.jar",
+		// The URL of the JsTestDriver server
 		JSTD_URL = "http://localhost",
+		// The port of the JsTestDriver server
 		JSTD_PORT = 4224,
+		
+		// The order in which to load the libraries
+		LIBS_LOADING_ORDER = [ 
+						       LIBS_DIR + "/require.js",
+						       LIBS_DIR + "/socket.io.min.js",
+						      ];
+	 
+	 	PROJECT_LOADING_ORDER = [  PROJECT_SRC_DIR + "/*.js"
+	 	                        ];
+	 
+	 	// The order in which to load the spec files
+	 	SPECS_LOADING_ORDER = [ PROJECT_SPECS_DIR + "/specHelper.js",
+	 					        PROJECT_SPECS_DIR + "/*.js"
+	 						   ];
 		/**
 		 * jsTestDriver's config.
 		 * This JSON will simply generate a temporary jsTestDriver.conf file
@@ -45,20 +61,17 @@
 			configFile: {
 				// No trailing slash
 				server: JSTD_URL + ":" + JSTD_PORT,
-				load: [ LIBS_DIR + "/jasmine.js",
-				        LIBS_DIR + "/jasmineAdapter.js",
-				        LIBS_DIR + "/*.js",
-				        PROJECT_SRC_DIR + "/*.js"
-				      ],
+				load: [LIBS_DIR + "/jasmine.js",
+				       LIBS_DIR + "/jasmineAdapter.js"]
+					  .concat(LIBS_LOADING_ORDER)
+					  .concat(PROJECT_LOADING_ORDER),
 				        
-				test: [ PROJECT_SPECS_DIR + "/specHelper.js",
-				        PROJECT_SPECS_DIR + "/*.js"
-				      ],
+				test: SPECS_LOADING_ORDER,
 		
-				/*plugin: ['name: "coverage" \n' +
+				plugin: ['name: "coverage" \n' +
 				         '   jar: "../tools/JsTestDriver/coverage-1.3.3d.jar" \n' +
 				         '   module: "com.google.jstestdriver.coverage.CoverageModule"'
-				         ],*/
+				         ],
 				
 				timeout: 90	
 			},

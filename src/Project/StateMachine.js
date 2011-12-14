@@ -89,7 +89,6 @@ function StateMachine() {
 	
 	/**
 	 * Each state has associated transitions
-	 * @namespace _Transition
 	 */
 	function _Transition() {
 		

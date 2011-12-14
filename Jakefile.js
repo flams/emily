@@ -17,6 +17,20 @@ var requirejs = require("requirejs"),
 			requirejs(dir + "/" + file);
 		});
 	},
+	_requireList = function _requireList(file) {
+
+		var basedir = file.split("/"),
+			basename = basedir.pop();
+		if (basename.indexOf("*") >= 0) {
+
+			_requireDirectory(basedir.join("/"));
+		} else {
+
+			requirejs(file);
+		}
+
+	},
+	
 	_execCommand = function _execCommand(cmd) {
 		cp.exec(cmd, function (error, stdout, stderr) {
 			 console.log(stdout);
@@ -129,17 +143,9 @@ namespace("tests", function () {
 	
 	task("node", [], function () {
 		
-		[PROJECT_SRC_DIR, PROJECT_SPECS_DIR].forEach(_requireDirectory);
-/**
- * {
-			reportSpecResults : function (spec) {
-				var results = spec.results();
-				results.getItems().forEach( function (item) {
-					if (item.trace) console.log(item.trace);
-				});
-			}
-		}
- */
+		LIBS_LOADING_ORDER.forEach(_requireList);
+		PROJECT_LOADING_ORDER.forEach(_requireList);
+		SPECS_LOADING_ORDER.forEach(_requireList);
 		jasmine.getEnv().addReporter(new TerminalReporter({}));
 		jasmine.getEnv().execute();
 	});
