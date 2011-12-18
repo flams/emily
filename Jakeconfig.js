@@ -43,7 +43,7 @@
 		// The order in which to load the libraries
 		LIBS_LOADING_ORDER = [ 
 						       LIBS_DIR + "/require.js",
-						       LIBS_DIR + "/socket.io.min.js",
+						       LIBS_DIR + "/socket.io.min.js"
 						      ];
 	 
 	 	PROJECT_LOADING_ORDER = [  PROJECT_SRC_DIR + "/*.js"
@@ -67,12 +67,12 @@
 					  .concat(PROJECT_LOADING_ORDER),
 				        
 				test: SPECS_LOADING_ORDER,
-		
+		/*
 				plugin: ['name: "coverage" \n' +
 				         '   jar: "../tools/JsTestDriver/coverage-1.3.3d.jar" \n' +
 				         '   module: "com.google.jstestdriver.coverage.CoverageModule"'
 				         ],
-				
+		*/
 				timeout: 90	
 			},
 			browsers: ["/Applications/Firefox.app/Contents/MacOS/Firefox",

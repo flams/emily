@@ -72,8 +72,8 @@ function StateMachine() {
 		 * @param {String} name the name of the event
 		 * @returns {Boolean} true if the event exists in the current state
 		 */
-		this.event = function event(name) {
-			var nextState = _states[_currentState].event(name);
+		this.event = function event(name, params) {
+			var nextState = _states[_currentState].event(name, params);
 			// False means that there's no such event
 			// But undefined means that the state doesn't not change
 			if (nextState === false) {

@@ -187,14 +187,16 @@ require(["StateMachine"], function (StateMachine) {
 			state2 = stateMachine.add("state2"); 
 		});
 		
-		it("should send the event to the current state", function () {
+		it("should send the event and the params to the current state", function () {
 			var action = jasmine.createSpy(),
-				event = "on";
+				event = "on",
+				params = {};
 			
 			stateMachine.init("state1");
 			state1.add(event, action);
-			expect(stateMachine.event(event)).toEqual(true);
+			expect(stateMachine.event(event, params)).toEqual(true);
 			expect(action.wasCalled).toEqual(true);
+			expect(action.mostRecentCall.args[0]).toBe(params);
 			expect(stateMachine.event("noEvent")).toEqual(false);
 		});
 		
