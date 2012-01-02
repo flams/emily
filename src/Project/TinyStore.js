@@ -14,18 +14,15 @@ define("TinyStore", ["Observable", "Tools"],
 	 */
 	function _TinyStore(values) {
 		
-		var _data = {}, 
-			_tools = Tools,
+		var _data = values || {}, 
 			_observable = Observable.create();
-			
-		_tools.mixin(values, _data);
 		
 		/**
 		 * Get the number of items in the store
-		 * @returns {Int} the number of items in the store
+		 * @returns {Number} the number of items in the store
 		 */
 		this.getNbItems = function() {
-			return _tools.count(_data);
+			return Tools.count(_data);
 		};
 		
 
@@ -55,9 +52,23 @@ define("TinyStore", ["Observable", "Tools"],
 		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
-			if (typeof name == "string") {
+			var ante;
+			if (typeof name != "undefined") {
+				/**
+				 * I need to know if it exists just before I set the value.
+				 */
+				ante = this.has(name);
+				/** 
+				* And I set it here so the value is available for store.get(name) 
+				* in the callback.
+				* It's not in the if conditions to respect DRY 
+				*/
 				_data[name] = value;
-				_observable.notify(name, value);
+				if (!ante) {
+					_observable.notify("added", name, value);
+				} else {
+					_observable.notify("updated", name, value);
+				}
 				return true;
 			} else {
 				return false;
@@ -72,7 +83,7 @@ define("TinyStore", ["Observable", "Tools"],
 		this.del = function del(name) {
 			if (this.has(name)) {
 				delete _data[name];
-				_observable.notify(name, _data[name]);
+				_observable.notify("deleted", name, _data[name]);
 				return true;
 			} else {
 				return false;
@@ -99,6 +110,28 @@ define("TinyStore", ["Observable", "Tools"],
 			return _observable.unwatch(handler);
 		};
 		
+		this.loop = function loop(func, scope) {
+			if (_data.forEach) {
+				_data.forEach(func, scope);
+			} else {
+				for (var i in _data) {
+					if (_data.hasOwnProperty(i)) {
+						func.call(scope, _data[i], i);
+					}
+				}
+			}
+		};
+		
+		this.reset = function reset(data) {
+			if (data instanceof Object) {
+				_data = data;
+				_observable.notify("reset");
+				return true;
+			} else {
+				return false;
+			}
+
+		};
 	}
 	
 	return { 

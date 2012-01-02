@@ -1,4 +1,6 @@
 define("Observable",
+
+["Tools"],
 /** 
 * @class 
 * Observable is an implementation of the Observer design pattern, 
@@ -6,7 +8,7 @@ define("Observable",
 * 
 * This service creates an Observable on which you can add subscribers.
 */
-function Observable() {
+function Observable(Tools) {
 	
 	/**
 	 * Defines the Observable
@@ -29,7 +31,7 @@ function Observable() {
 		 * @returns handler
 		 */
 		this.watch = function watch(topic, callback, scope) {
-			if (typeof topic == "string" && typeof callback == "function") {
+			if (typeof callback == "function") {
 				var observers = _topics[topic] = _topics[topic] || [];
 			
 				observer = [callback, scope];
@@ -63,7 +65,7 @@ function Observable() {
 		 * @param subject
 		 * @returns {Boolean} true if there was subscribers
 		 */
-		this.notify = function notify(topic, subject) {
+		this.notify = function notify(topic) {
 			
 			var observers = _topics[topic],
 				l;
@@ -71,7 +73,7 @@ function Observable() {
 			if (observers) {
 				l = observers.length;
 				while (l--) {
-					observers[l] && observers[l][0].call(observers[l][1] || null, subject); 
+					observers[l] && observers[l][0].apply(observers[l][1] || null, Tools.toArray(arguments).slice(1)); 
 				}
 				return true;
 			} else {
@@ -86,6 +88,11 @@ function Observable() {
 		 */
 		this.hasObserver = function hasObserver(handler) {
 			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
+		};
+		
+		this.unwatchAll = function unwatchAll() {
+			_topics = {};
+			return true;
 		};
 		
 	}

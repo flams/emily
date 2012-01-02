@@ -37,6 +37,17 @@ require(["Observable"], function (Observable) {
 			
 		});
 		
+		it("should add an observer on a topic that is a number", function () {
+			var spy = jasmine.createSpy("callback");
+			handler = null;
+		
+			expect(observable.hasObserver(handler)).toEqual(false);
+			handler = observable.watch(0, spy);
+			
+			expect(observable.hasObserver(handler)).toEqual(true);
+			
+		});
+		
 		it("should add an observer with scope", function () {
 			var spy = jasmine.createSpy("callback");
 				handler = null;
@@ -96,6 +107,20 @@ require(["Observable"], function (Observable) {
 			expect(observable.watch("", {})).toEqual(false);
 		});
 		
+		it("should remove all observers", function () {
+			var handler1 = null,
+				handler2 = null;
+			
+			handler1 = observable.watch("test", function(){});
+			handler2 = observable.watch("test2", function(){});
+			
+			expect(observable.unwatchAll).toBeInstanceOf(Function);
+			expect(observable.unwatchAll()).toEqual(true);
+			
+			expect(observable.hasObserver(handler1)).toEqual(false);
+			expect(observable.hasObserver(handler2)).toEqual(false);
+		});
+		
 	});
 	
 	describe("ObservableNotify", function () {
@@ -108,11 +133,20 @@ require(["Observable"], function (Observable) {
 		});
 		
 		it("should notify observer", function () {
-			var spy = jasmine.createSpy("callbac");
+			var spy = jasmine.createSpy("callback");
 			
 			observable.watch(testTopic, spy);
 			expect(observable.notify(testTopic)).toEqual(true);
 			expect(spy.wasCalled).toEqual(true);
+		});
+		
+		it("should notify observer on topics that are numbers", function () {
+			var spy = jasmine.createSpy("callback");
+			
+			observable.watch(0, spy);
+			expect(observable.notify(0)).toEqual(true);
+			expect(spy.wasCalled).toEqual(true);
+			
 		});
 		
 		it("should notify observer in scope", function () {
@@ -133,6 +167,18 @@ require(["Observable"], function (Observable) {
 			observable.notify(testTopic, post);
 			
 			expect(spy.mostRecentCall.args[0]).toBe(post);
+		});
+		
+		it("should pass multiple parameters", function () {
+			var spy = jasmine.createSpy("callback"),
+				param1 = "param1",
+				param2 = "param2";
+			
+			observable.watch(testTopic, spy);
+			observable.notify(testTopic, param1, param2);
+			
+			expect(spy.mostRecentCall.args[0]).toEqual(param1);
+			expect(spy.mostRecentCall.args[1]).toEqual(param2);
 		});
 		
 		it("should notify all observers", function () {
