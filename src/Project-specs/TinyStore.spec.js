@@ -61,7 +61,6 @@ require(["TinyStore"], function (TinyStore) {
 		});
 
 	});
-
 	
 	describe("TinyStoreWatchUnwatch", function () {
 		
@@ -264,6 +263,34 @@ require(["TinyStore"], function (TinyStore) {
 		});
 		
 	});
+	
+	
+	describe("TinyStoreArrayFunctionsReveal", function () {
+		var tinyStore = null,
+			initialData = null;
+		
+		beforeEach(function () {
+			initialData = [1, 2, 3, 4];
+			tinyStore = TinyStore.create(initialData);
+		});
+		
+		it("should reveal array manipulation functions", function () {
+			["shift",
+             "pop",
+             "unshift",
+             "push",
+             "slice",
+             "splice",
+             "concat",
+             "short",
+             "reverse"].forEach(function (func) {
+            	 expect(tinyStore[func]).toBeInstanceOf(Function);
+             });
+			
+			
+		});
+	});
+
 	
 	describe("TinyStoreReset", function () {
 		var tinyStore = null,

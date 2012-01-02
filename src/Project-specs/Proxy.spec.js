@@ -18,9 +18,9 @@ require(["StaticProxy"], function (StaticProxy) {
 	
 	describe("StaticProxyTest", function () {
 		
-		var tinyProxy = null,
+		var staticProxy = null,
 			proxied = {
-				func: jasmine.createSpy()
+				func: function () {}
 			};
 		
 		beforeEach(function () {

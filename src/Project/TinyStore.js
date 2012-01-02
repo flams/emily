@@ -132,6 +132,18 @@ define("TinyStore", ["Observable", "Tools"],
 			}
 
 		};
+		
+		["shift",
+         "pop",
+         "unshift",
+         "push",
+         "slice",
+         "splice",
+         "concat",
+         "short",
+         "reverse"].forEach(function (name) {
+        	 this[name] = function () {};
+         }, this);
 	}
 	
 	return { 

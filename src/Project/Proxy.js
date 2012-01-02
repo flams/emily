@@ -1,14 +1,24 @@
-define("TinyProxy", 
+define("StaticProxy", 
 		
-function Proxy() {
+function StaticProxy() {
 	
-	function _Proxy() {
+	function _StaticProxy(proxied) {
+		
+		var _proxied = proxied;
+		
+		this.trap = function trap(method, wrapper) {
+			var _trapped = _proxied[method];
+			_proxied[method] = function () {
+				wrapper();
+				_trapped();
+			};
+		};
 		
 	}
 
 	return {
-		create: function () {
-			return new _Proxy;
+		create: function (proxied) {
+			return new _StaticProxy(proxied);
 		}
 	};
 	
