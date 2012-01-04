@@ -74,22 +74,83 @@ function Tools (){
 			return Array.prototype.slice.call(array);
 		},
 		
+		/**
+		 * Small adapter for looping over objects and arrays
+		 * @param {Array/Object} iterated the array or object to loop through
+		 * @param {Function} callback the function to execute for each iteration
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns {Boolean} true if executed
+		 */
 		loop: function loop(iterated, callback, scope) {
-			var i;
-			if (iterated instanceof Array) {
-				iterated.forEach(callback, scope);
-			} else {
-				for (i in iterated) {
-					if (iterated.hasOwnProperty(i)) {
-						callback.call(scope, iterated[i], i, iterated);
+			if (iterated instanceof Object && typeof callback == "function") {
+				var i;
+				if (iterated instanceof Array) {
+					iterated.forEach(callback, scope);
+				} else {
+					for (i in iterated) {
+						if (iterated.hasOwnProperty(i)) {
+							callback.call(scope, iterated[i], i, iterated);
+						}
 					}
 				}
+				return true;
+			} else {
+				return false;
 			}
-
-			return true;
+		},
+		
+		objectsDiffs : function objectsDiffs(before, after) {
+			if (before instanceof Object && after instanceof Object) {
+				var unchanged = [],
+					updated = [],
+					deleted = [],
+					added = [];
+				
+				 // Look for the unchanged values
+				 this.loop(after, function (value, idx) {
+					 if (value !== before[idx] && typeof before[idx] != "undefined") {
+						 updated.push(idx);
+					 } else if (value === before[idx]) {
+						 unchanged.push(idx);
+					 } else if (typeof before[idx] == "undefined") {
+						 added.push(idx);
+					 }
+				 });
+				 
+				 // Look for the deleted
+				 this.loop(before, function (value, idx) {
+					if (typeof after[idx] == "undefined") {
+						deleted.push(idx);
+					} 
+				 });
+				 
+				return {
+					updated: updated,
+					unchanged: unchanged,
+					added: added,
+					deleted: deleted
+				};
+				
+			} else {
+				return false;
+			}
+		},
+		
+		/**
+		 * Transforms Arrays and Objects into valid JSON
+		 * @param {Object/Array} object the object to JSONify 
+		 * @returns the JSONified object or false if failed
+		 */
+		jsonify: function jsonify(object) {
+			if (object instanceof Object) {
+				return JSON.parse(JSON.stringify(object));	
+			} else {
+				return false;
+			}
 		}
-	
+		
 	};
+	
 	
 });
 		

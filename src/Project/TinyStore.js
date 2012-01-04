@@ -15,7 +15,17 @@ define("TinyStore", ["Observable", "Tools"],
 	function _TinyStore(values) {
 		
 		var _data = JSON.parse(JSON.stringify(values || {})), 
-			_observable = Observable.create();
+			_observable = Observable.create(),
+			_notifyDiffs = function _notifyDiffs(previousData) {
+				var diffs = Tools.objectsDiffs(previousData, Tools.jsonify(_data));
+				["updated",
+				 "deleted",
+				 "added"].forEach(function (value) {
+					 diffs[value].forEach(function (dataIndex) {
+							_observable.notify(value, dataIndex, _data[dataIndex]);
+					 });
+				});
+			};
 		
 		/**
 		 * Get the number of items in the store
@@ -52,9 +62,15 @@ define("TinyStore", ["Observable", "Tools"],
 		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
+			var ante;
 			if (typeof name != "undefined") {
-				_data[name] = typeof value == "undefined" ? null : value;
-				_observable.notify(name, _data[name]);
+				ante = this.has(name);
+				_data[name] = value;
+				if (ante) {
+					_observable.notify("updated", name, _data[name]);	
+				} else {
+					_observable.notify("added", name, _data[name]);
+				}
 				return true;
 			} else {
 				return false;
@@ -69,7 +85,7 @@ define("TinyStore", ["Observable", "Tools"],
 		this.del = function del(name) {
 			if (this.has(name)) {
 				delete _data[name];
-				_observable.notify(name, _data[name]);
+				_observable.notify("deleted", name);
 				return true;
 			} else {
 				return false;
@@ -102,37 +118,9 @@ define("TinyStore", ["Observable", "Tools"],
 		
 		this.reset = function reset(data) {
 			if (data instanceof Object) {
-				// This should go into tools as well, in a "comparison function" that only returns
-				// removed, modified arrays to loop on
-					var previousData = JSON.parse(JSON.stringify(_data)),
-				 	unchanged = [];
-
-
-					_data = JSON.parse(JSON.stringify(data || {}));
-					
-				 // Check for the unchanged values
-				 this.loop(function (value, idx) {
-					 if (value === previousData[idx]) {
-						 unchanged.push(idx);
-					 }
-				 });
-				 
-				 // Notify for the deleted
-				 Tools.loop(previousData, function (value, idx) {
-					if (typeof _data[idx] == "undefined") {
-						_observable.notify(idx);
-						//NOTNOW BUT WILL BE NEEDED:_observable.unwatchAll(idx);
-					}
-				 });
-				 
-				 // Notify those that have changed
-				 this.loop(function (value, idx) {
-					 // If it has changed, it's not in the unchanged array
-					if (unchanged.indexOf(idx) < 0) {
-						_observable.notify(idx, value);
-					} 
-				 });
-
+				var previousData = Tools.jsonify(_data);
+				_data = Tools.jsonify(data || {});
+				_notifyDiffs(previousData);
 				return true;
 			} else {
 				return false;
@@ -148,7 +136,10 @@ define("TinyStore", ["Observable", "Tools"],
 		 "splice"
 		 ].forEach(function (name) {
 			 this[name] = function () {
-				 return _data[name].apply(_data, arguments);	 
+				 var previousData = Tools.jsonify(_data),
+				 apply = _data[name].apply(_data, arguments);
+				 _notifyDiffs(previousData);
+				 return apply;
 			 };
 		 }, this);
 	

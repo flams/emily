@@ -66,7 +66,7 @@ require(["Tools"], function (Tools) {
 	
 	describe("ToolsTestCompareObjects", function () {
 		var o1 = {a: 1, c:3, b:4, x:10},
-			o2 = {a: 2, c:5, b:52, x:100},
+			o2 = {a: 2, b:52, c:4, x:100},
 			o3 = {a: 5, b: 3, x: 50};
 		
 		it("should be a function", function () {
@@ -128,6 +128,15 @@ require(["Tools"], function (Tools) {
 			expect(Tools.loop).toBeInstanceOf(Function);
 		});
 		
+		it("should execute only with correct parameters", function () {
+			expect(Tools.loop()).toEqual(false);
+			expect(Tools.loop("")).toEqual(false);
+			expect(Tools.loop(null)).toEqual(false);
+			expect(Tools.loop({}), "").toEqual(false);
+			expect(Tools.loop([], [])).toEqual(false);
+			expect(Tools.loop([], function(){})).toEqual(true);
+		});
+		
 		it("should iterate through arrays", function () {
 			var spy = jasmine.createSpy();
 			expect(Tools.loop(array, spy)).toEqual(true);
@@ -171,5 +180,112 @@ require(["Tools"], function (Tools) {
 			Tools.loop(object, spy, thisObj);
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
+	});
+	
+	describe("ToolsTestObjectDiff", function () {
+		
+		it("should be a function", function () {
+			expect(Tools.objectsDiffs).toBeInstanceOf(Function);
+		});
+		
+		it("should take two objects as parameters", function () {
+			expect(Tools.objectsDiffs("")).toEqual(false);
+			expect(Tools.objectsDiffs([], "")).toEqual(false);
+			expect(Tools.objectsDiffs("", {})).toEqual(false);
+			expect(Tools.objectsDiffs({}, [])).toBeTruthy();
+		});
+		
+		it("should return an object with changed/deleted info", function () {
+			var result = Tools.objectsDiffs({}, {});
+			expect(result).toBeInstanceOf(Object);
+			expect(result.updated).toBeInstanceOf(Array);
+			expect(result.unchanged).toBeInstanceOf(Array);
+			expect(result.added).toBeInstanceOf(Array);
+			expect(result.deleted).toBeInstanceOf(Array);
+		});
+		
+		describe("ToolsTestDiffWithArray", function () {
+			var initialArray = ["a", "b", "c", "d"],
+				finalArray = ["a", "d", "e"];
+			
+			it("should return items that have changed or have been deleted", function () {
+				var result = Tools.objectsDiffs(initialArray, finalArray);
+				expect(result.updated.length).toEqual(2);
+				expect(result.unchanged.length).toEqual(1);
+				expect(result.added.length).toEqual(0);
+				expect(result.deleted.length).toEqual(1);
+				expect(result.updated.sort().join("")).toEqual([1, 2].sort().join(""));
+				expect(result.unchanged[0]).toEqual(0);
+				expect(result.deleted[0]).toEqual(3);
+			});
+			
+			it("shouldn't have the same result if arrays are swapped", function () {
+				var result = Tools.objectsDiffs(finalArray, initialArray);
+				expect(result.added.length).toEqual(1);
+				expect(result.added[0]).toEqual(3);
+			});
+		});
+		
+		describe("ToolsTestDiffWithObjects", function () {
+			var initialObject = {a: 10, b: 20, c: 30},
+				finalObject = {a:10, c: 40, d: 50};
+			
+			it("should return items that have changed or have been deleted", function () {
+				var result = Tools.objectsDiffs(initialObject, finalObject);
+				expect(result.updated.length).toEqual(1);
+				expect(result.updated[0]).toEqual("c");
+				expect(result.unchanged.length).toEqual(1);
+				expect(result.unchanged[0]).toEqual("a");
+				expect(result.deleted.length).toEqual(1);
+				expect(result.deleted[0]).toEqual("b");
+				expect(result.added.length).toEqual(1);
+				expect(result.added[0]).toEqual("d");
+			});
+		});
+		
+		
+	});
+	
+	describe("ToolsTestJsonify", function () {
+		
+		var func = function () {
+				this.a = 1;
+				this.b = function () {};
+				this.d;
+				this.e = null;
+			},
+			object = null,
+			array = [1, 3];
+			
+		func.prototype.c = 3;
+		object = new func;
+			
+		it("should be a function", function () {
+			expect(Tools.jsonify).toBeInstanceOf(Function);
+		});
+		
+		it("should return valid JSON", function () {
+			var result = Tools.jsonify(object);
+			expect(result).toBeInstanceOf(Object);
+			expect(result["a"]).toEqual(1);
+			expect(result["b"]).toBeUndefined();
+			expect(result["c"]).toBeUndefined();
+			expect(result["d"]).toBeUndefined();
+		});
+		
+		it("should return a copy of the array", function () {
+			var result = Tools.jsonify(array);
+			expect(result).toBeInstanceOf(Array);
+			expect(result).not.toBe(array);
+			expect(result.length).toEqual(2);
+			expect(result[0]).toEqual(1);
+			expect(result[1]).toEqual(3);
+		});
+		
+		it("should return false if not an object", function () {
+			expect(Tools.jsonify("")).toEqual(false);
+		});
+		
+		
 	});
 });

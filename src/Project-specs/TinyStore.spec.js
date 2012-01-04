@@ -31,7 +31,7 @@ require(["TinyStore"], function (TinyStore) {
 		it("should set undefined value and get it as null", function () {
 			tinyStore.set("test");
 			expect(tinyStore.has("test")).toEqual(true);
-			expect(tinyStore.get("test")).toBeNull();
+			expect(tinyStore.get("test")).toBeUndefined();
 		});
 		
 		it("should return undefined if does'nt exist", function () {
@@ -73,26 +73,28 @@ require(["TinyStore"], function (TinyStore) {
 		it("should notify on set", function () {
 			var spy = jasmine.createSpy("callback");
 			
-			tinyStore.watch("test", spy);
+			tinyStore.watch("added", spy);
 			tinyStore.set("test");
 			expect(spy.wasCalled).toEqual(true);
-			expect(spy.mostRecentCall.args[0]).toBeNull();
+			expect(spy.mostRecentCall.args[0]).toEqual("test");
+			expect(spy.mostRecentCall.args[1]).toBeUndefined();
 		});
 		
 		it("should notify with new value on update", function () {
 			var spy = jasmine.createSpy("callback");
 			tinyStore.set("test");
-			tinyStore.watch("test", spy);
+			tinyStore.watch("updated", spy);
 			tinyStore.set("test", "new");
 		
-			expect(spy.mostRecentCall.args[0]).toEqual("new");
+			expect(spy.mostRecentCall.args[0]).toEqual("test");
+			expect(spy.mostRecentCall.args[1]).toEqual("new");
 		});
 		
 		it("should provide value when annonced as available", function () {
 			var callback = function () {
 				callback.ret = tinyStore.get("test");
 			};
-			tinyStore.watch("test", callback);
+			tinyStore.watch("added", callback);
 			tinyStore.set("test", "yes");
 			
 			expect(callback.ret).toEqual("yes");
@@ -101,16 +103,17 @@ require(["TinyStore"], function (TinyStore) {
 		it("should notify on del", function () {
 			var spy = jasmine.createSpy("callback");
 			tinyStore.set("test");
-			tinyStore.watch("test", spy);
+			tinyStore.watch("deleted", spy);
 			tinyStore.del("test");
 			
 			expect(spy.wasCalled).toEqual(true);
-			expect(spy.mostRecentCall.args[0]).toBeUndefined();
+			expect(spy.mostRecentCall.args[0]).toEqual("test");
+			expect(spy.mostRecentCall.args[1]).toBeUndefined();
 		});
 		
 		it("can unwatch value", function () {
 			var spy = jasmine.createSpy("callback");
-			handler = tinyStore.watch("test", spy);
+			handler = tinyStore.watch("added", spy);
 			tinyStore.unwatch(handler);
 			tinyStore.set("test");
 			tinyStore.del("test");
@@ -121,7 +124,16 @@ require(["TinyStore"], function (TinyStore) {
 			var spy = jasmine.createSpy("callback");
 				thisObj = {};
 			
-			tinyStore.watch("test", spy, thisObj);
+			tinyStore.watch("added", spy, thisObj);
+			tinyStore.set("test");
+			expect(spy.mostRecentCall.object).toBe(thisObj);
+		});
+		
+		it("should execute in scope on update", function () {
+			var spy = jasmine.createSpy("callback");
+				thisObj = {};
+			
+			tinyStore.watch("added", spy, thisObj);
 			tinyStore.set("test");
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
@@ -131,7 +143,7 @@ require(["TinyStore"], function (TinyStore) {
 				thisObj = {};
 			
 			tinyStore.set("test");
-			tinyStore.watch("test", spy, thisObj);
+			tinyStore.watch("deleted", spy, thisObj);
 			tinyStore.del("test");
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
@@ -343,6 +355,17 @@ require(["TinyStore"], function (TinyStore) {
 			 expect(tinyStore.get(3)).toEqual(3);
 		});
 		
+		it("should advertise on changes", function () {
+			var spy1 = jasmine.createSpy(),
+				spy2 = jasmine.createSpy();
+			
+			tinyStore.watch("updated", spy1);
+			tinyStore.watch("deleted", spy2);
+			
+			tinyStore.splice(1, 2);
+expect(false).toEqual(true); // Add tests here !! for pop push slice and all
+		});
+		
 	});
 
 	
@@ -375,13 +398,15 @@ require(["TinyStore"], function (TinyStore) {
 			var spyA = jasmine.createSpy(),
 				spyB = jasmine.createSpy();
 			
-			tinyStore.watch("a", spyA);
-			tinyStore.watch("b", spyB);
+			tinyStore.watch("deleted", spyA);
+			tinyStore.watch("added", spyB);
 			tinyStore.reset(resetData);
 			expect(spyA.wasCalled).toEqual(true);
-			expect(spyA.mostRecentCall.args[0]).toBeUndefined();
+			expect(spyA.mostRecentCall.args[0]).toEqual("a")
+			expect(spyA.mostRecentCall.args[1]).toBeUndefined();
 			expect(spyA.callCount).toEqual(1);
-			expect(spyB.mostRecentCall.args[0]).toEqual(20);
+			expect(spyB.mostRecentCall.args[0]).toEqual("b");
+			expect(spyB.mostRecentCall.args[1]).toEqual(20);
 			expect(spyB.callCount).toEqual(1);
 		});
 	});
@@ -407,7 +432,7 @@ require(["TinyStore"], function (TinyStore) {
 			var spyAdded = jasmine.createSpy(),
 				spyUpdated = jasmine.createSpy();
 			
-			tinyStore1.watch("test", spyAdded);
+			tinyStore1.watch("added", spyAdded);
 			tinyStore2.set("shared");
 			expect(spyAdded.wasCalled).toEqual(false);
 			expect(spyUpdated.wasCalled).toEqual(false);
@@ -422,7 +447,7 @@ require(["TinyStore"], function (TinyStore) {
 			var spyAdded = jasmine.createSpy(),
 			spyUpdated = jasmine.createSpy();
 		
-			tinyStore1.watch("test", spyAdded);
+			tinyStore1.watch("added", spyAdded);
 			tinyStore2.set("shared");
 			expect(spyAdded.wasCalled).toEqual(false);
 			expect(spyUpdated.wasCalled).toEqual(false);
