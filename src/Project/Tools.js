@@ -25,14 +25,11 @@ function Tools (){
 		 * @param {Boolean} optional, set to true to prevent overriding
 		 */
 	    mixin: function mixin(source, destination, dontOverride) {
-			var value;
-			for (value in source) {
-				if (source.hasOwnProperty(value)) {
-					if (!destination[value] || !dontOverride) {
-						destination[value] = source[value];	
-					}
+			this.loop(source, function (value, idx) {
+				if (!destination[idx] || !dontOverride) {
+					destination[idx] = source[idx];	
 				}
-			}
+			});
 		},
 		
 		/**
@@ -75,6 +72,21 @@ function Tools (){
 		 */
 		toArray: function toArray(array) {
 			return Array.prototype.slice.call(array);
+		},
+		
+		loop: function loop(iterated, callback, scope) {
+			var i;
+			if (iterated instanceof Array) {
+				iterated.forEach(callback, scope);
+			} else {
+				for (i in iterated) {
+					if (iterated.hasOwnProperty(i)) {
+						callback.call(scope, iterated[i], i, iterated);
+					}
+				}
+			}
+
+			return true;
 		}
 	
 	};

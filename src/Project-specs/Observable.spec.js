@@ -121,6 +121,21 @@ require(["Observable"], function (Observable) {
 			expect(observable.hasObserver(handler2)).toEqual(false);
 		});
 		
+		it("should remove all observers from one topic", function () {
+			var handler1 = null,
+				handler2 = null;
+		
+		handler1 = observable.watch("test", function(){});
+		handler2 = observable.watch("test2", function(){});
+		handler3 = observable.watch("test2", function(){});
+		
+		expect(observable.unwatchAll("test2")).toEqual(true);
+		
+		expect(observable.hasObserver(handler1)).toEqual(true);
+		expect(observable.hasObserver(handler2)).toEqual(false);
+		expect(observable.hasObserver(handler3)).toEqual(false);
+		});
+		
 	});
 	
 	describe("ObservableNotify", function () {

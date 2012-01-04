@@ -14,7 +14,7 @@ define("TinyStore", ["Observable", "Tools"],
 	 */
 	function _TinyStore(values) {
 		
-		var _data = values || {}, 
+		var _data = JSON.parse(JSON.stringify(values || {})), 
 			_observable = Observable.create();
 		
 		/**
@@ -52,23 +52,9 @@ define("TinyStore", ["Observable", "Tools"],
 		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
-			var ante;
 			if (typeof name != "undefined") {
-				/**
-				 * I need to know if it exists just before I set the value.
-				 */
-				ante = this.has(name);
-				/** 
-				* And I set it here so the value is available for store.get(name) 
-				* in the callback.
-				* It's not in the if conditions to respect DRY 
-				*/
-				_data[name] = value;
-				if (!ante) {
-					_observable.notify("added", name, value);
-				} else {
-					_observable.notify("updated", name, value);
-				}
+				_data[name] = typeof value == "undefined" ? null : value;
+				_observable.notify(name, _data[name]);
 				return true;
 			} else {
 				return false;
@@ -83,7 +69,7 @@ define("TinyStore", ["Observable", "Tools"],
 		this.del = function del(name) {
 			if (this.has(name)) {
 				delete _data[name];
-				_observable.notify("deleted", name, _data[name]);
+				_observable.notify(name, _data[name]);
 				return true;
 			} else {
 				return false;
@@ -109,23 +95,44 @@ define("TinyStore", ["Observable", "Tools"],
 		this.unwatch = function unwatch(handler) {
 			return _observable.unwatch(handler);
 		};
-		
+
 		this.loop = function loop(func, scope) {
-			if (_data.forEach) {
-				_data.forEach(func, scope);
-			} else {
-				for (var i in _data) {
-					if (_data.hasOwnProperty(i)) {
-						func.call(scope, _data[i], i);
-					}
-				}
-			}
+			Tools.loop(_data, func, scope);
 		};
 		
 		this.reset = function reset(data) {
 			if (data instanceof Object) {
-				_data = data;
-				_observable.notify("reset");
+				// This should go into tools as well, in a "comparison function" that only returns
+				// removed, modified arrays to loop on
+					var previousData = JSON.parse(JSON.stringify(_data)),
+				 	unchanged = [];
+
+
+					_data = JSON.parse(JSON.stringify(data || {}));
+					
+				 // Check for the unchanged values
+				 this.loop(function (value, idx) {
+					 if (value === previousData[idx]) {
+						 unchanged.push(idx);
+					 }
+				 });
+				 
+				 // Notify for the deleted
+				 Tools.loop(previousData, function (value, idx) {
+					if (typeof _data[idx] == "undefined") {
+						_observable.notify(idx);
+						//NOTNOW BUT WILL BE NEEDED:_observable.unwatchAll(idx);
+					}
+				 });
+				 
+				 // Notify those that have changed
+				 this.loop(function (value, idx) {
+					 // If it has changed, it's not in the unchanged array
+					if (unchanged.indexOf(idx) < 0) {
+						_observable.notify(idx, value);
+					} 
+				 });
+
 				return true;
 			} else {
 				return false;
@@ -133,17 +140,18 @@ define("TinyStore", ["Observable", "Tools"],
 
 		};
 		
-		["shift",
-         "pop",
-         "unshift",
-         "push",
-         "slice",
-         "splice",
-         "concat",
-         "short",
-         "reverse"].forEach(function (name) {
-        	 this[name] = function () {};
-         }, this);
+		["push",
+		 "pop",
+		 "unshift",
+		 "shift",
+		 "slice",
+		 "splice"
+		 ].forEach(function (name) {
+			 this[name] = function () {
+				 return _data[name].apply(_data, arguments);	 
+			 };
+		 }, this);
+	
 	}
 	
 	return { 

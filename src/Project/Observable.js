@@ -90,8 +90,12 @@ function Observable(Tools) {
 			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
 		};
 		
-		this.unwatchAll = function unwatchAll() {
-			_topics = {};
+		this.unwatchAll = function unwatchAll(topic) {
+			if (_topics[topic]) {
+				delete _topics[topic];
+			} else {
+				_topics = {};
+			}
 			return true;
 		};
 		
