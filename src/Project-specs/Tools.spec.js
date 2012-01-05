@@ -46,6 +46,9 @@ require(["Tools"], function (Tools) {
 			expect(destination.d).toBeUndefined();
 		});
 		
+		it("should also return the destination", function () {
+			expect(Tools.mixin(source, destination)).toBe(destination);
+		})
 	});
 	
 	describe("ToolsTestCount", function () {
@@ -285,7 +288,46 @@ require(["Tools"], function (Tools) {
 		it("should return false if not an object", function () {
 			expect(Tools.jsonify("")).toEqual(false);
 		});
+
+	});
+	
+	describe("ToolsTestClone", function () {
 		
+		it("should be a function", function () {
+			expect(Tools.clone).toBeInstanceOf(Function);
+		});
 		
+		it("should make a copy of objects", function () {
+			var object = {a:10, b:20},
+				clone = Tools.clone(object);
+
+			expect(Tools.count(clone)).toEqual(Tools.count(object));
+			Tools.loop(clone, function (value, idx) {
+				expect(clone[idx]).toEqual(object[idx]);
+			});
+			expect(clone).not.toBe(object);
+		});
+		
+		it("should make a copy of arrays", function () {
+			var array  = [1, 2, 3],
+				copy = Tools.clone(array);
+			
+			expect(copy.length).toEqual(array.length);
+			copy.forEach(function (value, idx) {
+				expect(copy[idx]).toEqual(array[idx]);
+			});
+			expect(copy).not.toBe(array);
+		});
+
+		it("should return the rest", function () {
+			var func = function () {},
+				regExp = /o/;
+		
+			expect(Tools.clone("yes")).toEqual("yes");
+			expect(Tools.clone(null)).toEqual(null);
+			expect(Tools.clone(func)).toBe(func);
+			expect(Tools.clone(regExp)).toBe(regExp);
+			
+		});
 	});
 });

@@ -30,6 +30,7 @@ function Tools (){
 					destination[idx] = source[idx];	
 				}
 			});
+			return destination;
 		},
 		
 		/**
@@ -39,14 +40,10 @@ function Tools (){
 		 * @returns {Number}
 		 */
 		count: function count(object) {
-			var nbItems = 0,
-				v;
-			
-			for (v in object) {
-				if (object.hasOwnProperty(v)) {
-					nbItems++;
-				}
-			}
+			var nbItems = 0;
+			this.loop(object, function () {
+				nbItems++;
+			});
 			
 			return nbItems;
 		},
@@ -82,8 +79,9 @@ function Tools (){
 		 * @returns {Boolean} true if executed
 		 */
 		loop: function loop(iterated, callback, scope) {
+			var i;
+			
 			if (iterated instanceof Object && typeof callback == "function") {
-				var i;
 				if (iterated instanceof Array) {
 					iterated.forEach(callback, scope);
 				} else {
@@ -146,6 +144,16 @@ function Tools (){
 				return JSON.parse(JSON.stringify(object));	
 			} else {
 				return false;
+			}
+		},
+		
+		clone: function clone(object) {
+			if (object instanceof Array) {
+				return object.slice(0);
+			} else if (typeof object == "object" && object !== null && !(object instanceof RegExp)) {
+				return this.mixin(object, {});
+			} else {
+				return object;
 			}
 		}
 		

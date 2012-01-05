@@ -27,20 +27,30 @@ require(["TinyStore"], function (TinyStore) {
 		beforeEach(function () {
 			tinyStore = TinyStore.create();
 		});
-
-		it("should set undefined value and get it as null", function () {
+		
+		it("should set values of any type", function () {
+			var obj = {},
+				arr = [],
+				func = function () {};
+				
 			tinyStore.set("test");
 			expect(tinyStore.has("test")).toEqual(true);
 			expect(tinyStore.get("test")).toBeUndefined();
+			tinyStore.set("test", null);
+			expect(tinyStore.get("test")).toEqual(null);
+			tinyStore.set("test", obj);
+			expect(tinyStore.get("test")).toBe(obj)
+			tinyStore.set("test", arr);
+			expect(tinyStore.get("test")).toEqual(arr);
+			tinyStore.set("test", func);
+			expect(tinyStore.get("test")).toEqual(func);
+			tinyStore.set("test", "yes");
+			expect(tinyStore.get("test")).toEqual("yes");
 		});
+		
 		
 		it("should return undefined if does'nt exist", function () {
 			expect(tinyStore.get("has not")).toBeUndefined();
-		});
-		
-		it("should set null value", function () {
-			tinyStore.set("test", null);
-			expect(tinyStore.get("test")).toEqual(null);
 		});
 		
 		it("should update value if it already exists", function () {
@@ -151,27 +161,21 @@ require(["TinyStore"], function (TinyStore) {
 	});
 	
 	describe("TinyStoreInit", function () {
-		it("can be initialized with values", function () {
-			var tinyStore = TinyStore.create({x: 10, y: 20});
-			expect(tinyStore.has("x")).toEqual(true);
+		it("can be initialized with an object", function () {
+			var func = function () {};
+			
+			var tinyStore = TinyStore.create({x: 10, y: 20, z:func});
 			expect(tinyStore.get("x")).toEqual(10);
-			expect(tinyStore.has("y")).toEqual(true);
 			expect(tinyStore.get("y")).toEqual(20);
+			expect(tinyStore.get("z")).toEqual(func);
 		});
 		
-		it("should only keep valid JSON data", function () {
-			var data = function () {
-					this.a = 10;
-					this.b = function () {};
-				}, 
-				tinyStore = null;
-				
-			data.prototype.c = 30;
-			
-			tinyStore = TinyStore.create(new data);
-			expect(tinyStore.has("a")).toEqual(true);
-			expect(tinyStore.has("b")).toEqual(false);
-			expect(tinyStore.has("c")).toEqual(false);
+		it("can be initialized with an array", function () {
+			tinyStore = TinyStore.create([1, 2, "yes"]);
+			expect(tinyStore.get(0)).toEqual(1);
+			expect(tinyStore.get(1)).toEqual(2);
+			expect(tinyStore.get(2)).toEqual("yes");
+
 		});
 	});
 	
@@ -204,25 +208,6 @@ require(["TinyStore"], function (TinyStore) {
 			
 			expect(tinyStore.getNbItems()).toEqual(2);
 		});	
-	});
-	
-	describe("TinyStoreNesting", function () {
-		var tinyStore = null,
-			nestedStore = null;
-		
-		beforeEach(function () {
-			tinyStore = TinyStore.create();
-			nestedStore = TinyStore.create();
-		});
-		
-		it("should store objects like other stores", function () {
-			tinyStore.set("nestedStore", nestedStore);
-			
-			expect(tinyStore.get("nestedStore")).toBe(nestedStore);
-			
-			nestedStore.set("test", 10);
-			expect(tinyStore.get("nestedStore").get("test")).toEqual(10);
-		});
 	});
 	
 	describe("TinyStoreLoop", function () {
@@ -362,8 +347,20 @@ require(["TinyStore"], function (TinyStore) {
 			tinyStore.watch("updated", spy1);
 			tinyStore.watch("deleted", spy2);
 			
-			tinyStore.splice(1, 2);
-expect(false).toEqual(true); // Add tests here !! for pop push slice and all
+			tinyStore.splice(1,2);
+			
+			expect(spy1.wasCalled).toEqual(true);
+			expect(spy2.wasCalled).toEqual(true);
+			expect(spy1.callCount).toEqual(1);
+			expect(spy2.callCount).toEqual(2);
+			expect(spy1.mostRecentCall.args[0]).toEqual(1);
+			expect(spy1.mostRecentCall.args[1]).toEqual(3);
+			spy2.calls.forEach(function (call) {
+				// Don't know how to write this test better
+				//  call.args[0] should equal 2 or 3
+				expect(call.args[0] >= 2).toEqual(true);
+				expect(call.args[1]).toBeUndefined();
+			});
 		});
 		
 	});
@@ -454,5 +451,6 @@ expect(false).toEqual(true); // Add tests here !! for pop push slice and all
 		});
 
 	});
+
 	
 });

@@ -14,10 +14,10 @@ define("TinyStore", ["Observable", "Tools"],
 	 */
 	function _TinyStore(values) {
 		
-		var _data = JSON.parse(JSON.stringify(values || {})), 
+		var _data = Tools.clone(values || {}),
 			_observable = Observable.create(),
 			_notifyDiffs = function _notifyDiffs(previousData) {
-				var diffs = Tools.objectsDiffs(previousData, Tools.jsonify(_data));
+				var diffs = Tools.objectsDiffs(previousData, _data);
 				["updated",
 				 "deleted",
 				 "added"].forEach(function (value) {
@@ -92,6 +92,21 @@ define("TinyStore", ["Observable", "Tools"],
 			}
 		};
 		
+		["push",
+		 "pop",
+		 "unshift",
+		 "shift",
+		 "slice",
+		 "splice"
+		 ].forEach(function (name) {
+			 this[name] = function () {
+				 var previousData = Tools.clone(_data),
+				 apply = _data[name].apply(_data, arguments);
+				 _notifyDiffs(previousData);
+				 return apply;
+			 };
+		 }, this);
+		
 		/**
 		 * Watch the value's modifications
 		 * @param {String} name the index of the value
@@ -118,8 +133,8 @@ define("TinyStore", ["Observable", "Tools"],
 		
 		this.reset = function reset(data) {
 			if (data instanceof Object) {
-				var previousData = Tools.jsonify(_data);
-				_data = Tools.jsonify(data || {});
+				var previousData = Tools.clone(_data);
+				_data = Tools.clone(data || {});
 				_notifyDiffs(previousData);
 				return true;
 			} else {
@@ -128,20 +143,7 @@ define("TinyStore", ["Observable", "Tools"],
 
 		};
 		
-		["push",
-		 "pop",
-		 "unshift",
-		 "shift",
-		 "slice",
-		 "splice"
-		 ].forEach(function (name) {
-			 this[name] = function () {
-				 var previousData = Tools.jsonify(_data),
-				 apply = _data[name].apply(_data, arguments);
-				 _notifyDiffs(previousData);
-				 return apply;
-			 };
-		 }, this);
+		
 	
 	}
 	
