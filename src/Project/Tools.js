@@ -97,6 +97,37 @@ function Tools (){
 			}
 		},
 		
+		/**
+		 * Make a diff between two objects
+		 * @param {Array/Object} before is the object as it was before
+		 * @param {Array/Object} after is what it is now
+		 * @example: 
+		 * 	With objects:
+		 * 
+		 * 	before = {a:1, b:2, c:3, d:4, f:6}
+		 * 	after = {a:1, b:20, d: 4, e: 5}
+		 * 	will return : 
+		 * 	{
+		 *  	unchanged: ["a", "d"],
+		 *  	updated: ["b"],
+		 *  	deleted: ["f"],
+		 *  	added: ["e"]
+		 * 	}
+		 * 
+		 * It also works with Arrays:
+		 * 
+		 * 	before = [10, 20, 30]
+		 * 	after = [15, 20]
+		 * 	will return : 
+		 * 	{
+		 *  	unchanged: [1],
+		 *  	updated: [0],
+		 *  	deleted: [2],
+		 *  	added: []
+		 * 	}
+		 * 
+		 * @returns object
+		 */
 		objectsDiffs : function objectsDiffs(before, after) {
 			if (before instanceof Object && after instanceof Object) {
 				var unchanged = [],
@@ -104,19 +135,27 @@ function Tools (){
 					deleted = [],
 					added = [];
 				
-				 // Look for the unchanged values
+				 // Look through the after object
 				 this.loop(after, function (value, idx) {
+					 
+					 // To get the updated
 					 if (value !== before[idx] && typeof before[idx] != "undefined") {
 						 updated.push(idx);
+						 
+					 // The unchanged	 
 					 } else if (value === before[idx]) {
 						 unchanged.push(idx);
+					
+					 // And the added
 					 } else if (typeof before[idx] == "undefined") {
 						 added.push(idx);
 					 }
 				 });
 				 
-				 // Look for the deleted
+				 // Loop through the before object
 				 this.loop(before, function (value, idx) {
+					 
+					// To get the deleted 
 					if (typeof after[idx] == "undefined") {
 						deleted.push(idx);
 					} 
@@ -147,6 +186,11 @@ function Tools (){
 			}
 		},
 		
+		/**
+		 * Clone an Array or an Object
+		 * @param {Array/Object} object the object to clone
+		 * @returns {Array/Object} the cloned object
+		 */
 		clone: function clone(object) {
 			if (object instanceof Array) {
 				return object.slice(0);

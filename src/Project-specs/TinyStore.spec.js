@@ -7,17 +7,18 @@ require(["TinyStore"], function (TinyStore) {
 			expect(TinyStore.create).toBeInstanceOf(Function);
 		});
 		
-		it("should have the correct API once created", function () {
+		it("should have the following methods once created", function () {
 			var tinyStore = TinyStore.create();
 			expect(tinyStore.getNbItems).toBeInstanceOf(Function);
 			expect(tinyStore.get).toBeInstanceOf(Function);
 			expect(tinyStore.set).toBeInstanceOf(Function);
 			expect(tinyStore.has).toBeInstanceOf(Function);
 			expect(tinyStore.del).toBeInstanceOf(Function);
+			expect(tinyStore.alter).toBeInstanceOf(Function);
 			expect(tinyStore.watch).toBeInstanceOf(Function);
 			expect(tinyStore.unwatch).toBeInstanceOf(Function);
 		});
-		
+	
 	});
 	
 	describe("TinyStoreGetSetDel", function () {
@@ -69,10 +70,19 @@ require(["TinyStore"], function (TinyStore) {
 			expect(tinyStore.has("test")).toEqual(false);
 			expect(tinyStore.del("fake")).toEqual(false);
 		});
+		
+		it("should call Array.splice on del if init'd with an array", function () {
+			tinyStore.reset([1]);
+			spyOn(Array.prototype, "splice").andCallThrough();
+			expect(tinyStore.del(0)).toEqual(true);
+			expect(Array.prototype.splice.wasCalled).toEqual(true);
+			expect(Array.prototype.splice.mostRecentCall.args[0]).toEqual(0);
+			expect(Array.prototype.splice.mostRecentCall.args[1]).toEqual(1);
+		});
 
 	});
 	
-	describe("TinyStoreWatchUnwatch", function () {
+	describe("TinyStoreObservable", function () {
 		
 		var tinyStore = null;
 		
@@ -100,7 +110,7 @@ require(["TinyStore"], function (TinyStore) {
 			expect(spy.mostRecentCall.args[1]).toEqual("new");
 		});
 		
-		it("should provide value when annonced as available", function () {
+		it("should provide value when said available", function () {
 			var callback = function () {
 				callback.ret = tinyStore.get("test");
 			};
@@ -171,12 +181,12 @@ require(["TinyStore"], function (TinyStore) {
 		});
 		
 		it("can be initialized with an array", function () {
-			tinyStore = TinyStore.create([1, 2, "yes"]);
+			var tinyStore = TinyStore.create([1, 2, "yes"]);
 			expect(tinyStore.get(0)).toEqual(1);
 			expect(tinyStore.get(1)).toEqual(2);
 			expect(tinyStore.get(2)).toEqual("yes");
-
 		});
+		
 	});
 	
 	describe("TinyStoreLength", function () {
@@ -270,7 +280,7 @@ require(["TinyStore"], function (TinyStore) {
 	});
 	
 	
-	describe("TinyStoreArrayManipulation", function () {
+	describe("TinyStoreAlteration", function () {
 		var tinyStore = null,
 			initialData = null;
 		
@@ -279,65 +289,18 @@ require(["TinyStore"], function (TinyStore) {
 			tinyStore = TinyStore.create(initialData);
 		});
 		
-		it("should have the following Array functions", function () {
-			["push",
-			 "pop",
-			 "unshift",
-			 "shift",
-			 "slice",
-			 "splice"
-			 ].forEach(function (name) {
-				 expect(tinyStore[name]).toBeInstanceOf(Function);
-			 });
-		});
-		
-		it("should make push work like Array's", function () {
-			var pushed = tinyStore.push(4);
-			expect(pushed).toEqual(5);
-			expect(tinyStore.get(4)).toEqual(4);
-		});
-
-		it("should make pop work like Array's", function () {
-			var popped = tinyStore.pop();
-			expect(popped).toEqual(3);
-			expect(tinyStore.get(3)).toBeUndefined();
-		});
-
-		it("should make unshift work like Array's", function () {
-			var unshifted = tinyStore.unshift(-1);
-			expect(unshifted).toEqual(5);
-			expect(tinyStore.get(0)).toEqual(-1);
-			expect(tinyStore.get(4)).toEqual(3);
-		});
-		
-		it("should make shift work like Array's", function () {
-			var shifted = tinyStore.shift();
-			expect(shifted).toEqual(0);
-			expect(tinyStore.get(0)).toEqual(1);
-		});
-		
-		it("should make slice work like Array's", function () {
-			var sliced = tinyStore.slice(1, 4);
-			expect(sliced).toBeInstanceOf(Array);
-			expect(sliced[0]).toEqual(1);
-			expect(sliced[1]).toEqual(2);
-			expect(sliced[2]).toEqual(3);
-			expect(sliced.length).toEqual(3);
-		});
-		
-		it("should make splice work like Array's", function () {
-			var spliced = tinyStore.splice(1, 2);
-			expect(spliced).toBeInstanceOf(Array);
-			expect(spliced.length).toEqual(2);
-			expect(spliced[0]).toEqual(1);
-			expect(spliced[1]).toEqual(2);
-			expect(tinyStore.get(0)).toEqual(0);
-			expect(tinyStore.get(1)).toEqual(3);
-			
-			 tinyStore.splice(1, 0, 1, 2);
-			 expect(tinyStore.get(1)).toEqual(1);
-			 expect(tinyStore.get(2)).toEqual(2);
-			 expect(tinyStore.get(3)).toEqual(3);
+		it("should give access to Array's functions", function () {
+			spyOn(Array.prototype, "pop").andCallThrough();
+			spyOn(Array.prototype, "sort").andCallThrough();
+			spyOn(Array.prototype, "splice").andCallThrough();
+			tinyStore.alter("pop");
+			tinyStore.alter("sort");
+			tinyStore.alter("splice", 1, 2);
+			expect(Array.prototype.pop.wasCalled).toEqual(true);
+			expect(Array.prototype.sort.wasCalled).toEqual(true);
+			expect(Array.prototype.splice.wasCalled).toEqual(true);
+			expect(Array.prototype.splice.mostRecentCall.args[0]).toEqual(1);
+			expect(Array.prototype.splice.mostRecentCall.args[1]).toEqual(2);
 		});
 		
 		it("should advertise on changes", function () {
@@ -347,8 +310,8 @@ require(["TinyStore"], function (TinyStore) {
 			tinyStore.watch("updated", spy1);
 			tinyStore.watch("deleted", spy2);
 			
-			tinyStore.splice(1,2);
-			
+			tinyStore.alter("splice", 1, 2);
+
 			expect(spy1.wasCalled).toEqual(true);
 			expect(spy2.wasCalled).toEqual(true);
 			expect(spy1.callCount).toEqual(1);
@@ -361,6 +324,10 @@ require(["TinyStore"], function (TinyStore) {
 				expect(call.args[0] >= 2).toEqual(true);
 				expect(call.args[1]).toBeUndefined();
 			});
+		});
+
+		it("should return false if the function doesn't exist", function () {
+			expect(tinyStore.alter("doesn't exist")).toEqual(false);
 		});
 		
 	});

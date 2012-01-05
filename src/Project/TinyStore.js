@@ -14,28 +14,42 @@ define("TinyStore", ["Observable", "Tools"],
 	 */
 	function _TinyStore(values) {
 		
-		var _data = Tools.clone(values || {}),
-			_observable = Observable.create(),
-			_notifyDiffs = function _notifyDiffs(previousData) {
-				var diffs = Tools.objectsDiffs(previousData, _data);
-				["updated",
-				 "deleted",
-				 "added"].forEach(function (value) {
-					 diffs[value].forEach(function (dataIndex) {
-							_observable.notify(value, dataIndex, _data[dataIndex]);
-					 });
-				});
-			};
+		/**
+		 * Where the data is stored
+		 * @private
+		 */
+		var _data = Tools.clone(values) || {},
+		
+		/**
+		 * The observable
+		 * @private
+		 */
+		_observable = Observable.create(),
+		
+		/**
+		 * Gets the difference between two objects and notifies them
+		 * @private
+		 * @param previousData
+		 * @returns
+		 */
+		_notifyDiffs = function _notifyDiffs(previousData) {
+			var diffs = Tools.objectsDiffs(previousData, _data);
+			["updated",
+			 "deleted",
+			 "added"].forEach(function (value) {
+				 diffs[value].forEach(function (dataIndex) {
+						_observable.notify(value, dataIndex, _data[dataIndex]);
+				 });
+			});
+		};
 		
 		/**
 		 * Get the number of items in the store
 		 * @returns {Number} the number of items in the store
 		 */
 		this.getNbItems = function() {
-			return Tools.count(_data);
+			return _data instanceof Array ? _data.length : Tools.count(_data);
 		};
-		
-
 		
 		/**
 		 * Get a value from its index
@@ -84,7 +98,7 @@ define("TinyStore", ["Observable", "Tools"],
 		 */
 		this.del = function del(name) {
 			if (this.has(name)) {
-				delete _data[name];
+				this.alter("splice", name, 1) || delete _data[name];
 				_observable.notify("deleted", name);
 				return true;
 			} else {
@@ -92,20 +106,25 @@ define("TinyStore", ["Observable", "Tools"],
 			}
 		};
 		
-		["push",
-		 "pop",
-		 "unshift",
-		 "shift",
-		 "slice",
-		 "splice"
-		 ].forEach(function (name) {
-			 this[name] = function () {
-				 var previousData = Tools.clone(_data),
-				 apply = _data[name].apply(_data, arguments);
-				 _notifyDiffs(previousData);
-				 return apply;
-			 };
-		 }, this);
+		/**
+		 * Alter the data be calling one of it's method
+		 * When the modifications are done, it notifies on changes.
+		 * @param {String} func the name of the method
+		 * @returns the result of the method call
+		 */
+		this.alter = function alter(func) {
+			var apply,
+				previousData;
+			
+			if (_data[func]) {
+				previousData = Tools.clone(_data);
+				apply = _data[func].apply(_data, Array.prototype.slice.call(arguments, 1));
+				_notifyDiffs(previousData);
+				return apply;
+			} else {
+				return false;
+			}
+		};
 		
 		/**
 		 * Watch the value's modifications
@@ -127,14 +146,24 @@ define("TinyStore", ["Observable", "Tools"],
 			return _observable.unwatch(handler);
 		};
 
+		/**
+		 * Loop through the data
+		 * @param {Function} func the function to execute on each data
+		 * @param {Object} scope the scope in wich to run the callback
+		 */
 		this.loop = function loop(func, scope) {
 			Tools.loop(_data, func, scope);
 		};
 		
+		/**
+		 * Reset all data and get notifications on changes
+		 * @param {Arra/Object} data the new data
+		 * @returns {Boolean}
+		 */
 		this.reset = function reset(data) {
 			if (data instanceof Object) {
 				var previousData = Tools.clone(_data);
-				_data = Tools.clone(data || {});
+				_data = Tools.clone(data) || {};
 				_notifyDiffs(previousData);
 				return true;
 			} else {
@@ -142,9 +171,6 @@ define("TinyStore", ["Observable", "Tools"],
 			}
 
 		};
-		
-		
-	
 	}
 	
 	return { 
