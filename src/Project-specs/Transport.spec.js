@@ -2,9 +2,8 @@ require(["Transport"], function (Transport) {
 	
 	describe("TransportTest", function () {
 		
-		it("should be an object with a create method", function () {
-			expect(Transport).toBeInstanceOf(Object);
-			expect(Transport.create).toBeInstanceOf(Function);
+		it("should be a constructor function", function () {
+			expect(Transport).toBeInstanceOf(Function);
 		});
 		
 	});
@@ -26,7 +25,7 @@ require(["Transport"], function (Transport) {
 					};
 				}
 			};
-			transport = Transport.create();
+			transport = new Transport();
 		});
 		
 		it("should have the correct API", function () {
@@ -48,7 +47,7 @@ require(["Transport"], function (Transport) {
 		
 		it("can be connected directly from create", function () {
 			var url = "/";
-			transport = Transport.create(url);
+			transport = new Transport(url);
 			
 			expect(io.connect.called).toEqual(true);
 			expect(io.connect.url).toEqual(url);
@@ -61,7 +60,7 @@ require(["Transport"], function (Transport) {
 				event = "event",
 				func = function () {};
 				
-			transport = Transport.create(url);
+			transport = new Transport(url);
 			socket = transport.getSocket();
 			
 			transport.on(event, func);
@@ -79,7 +78,7 @@ require(["Transport"], function (Transport) {
 				func = function () {},
 				socket;
 				
-			transport = Transport.create(url);
+			transport = new Transport(url);
 			
 			socket = transport.getSocket();
 			expect(transport.once).toBeInstanceOf(Function);
@@ -99,7 +98,7 @@ require(["Transport"], function (Transport) {
 				data = {},
 				callback;
 	
-			transport = Transport.create(url);
+			transport = new Transport(url);
 
 			socket = transport.getSocket();
 
@@ -122,7 +121,7 @@ require(["Transport"], function (Transport) {
 				callback = jasmine.createSpy(),
 				eventId;
 			
-			transport = Transport.create(url);
+			transport = new Transport(url);
 			socket = transport.getSocket();
 			
 			expect(transport.request).toBeInstanceOf(Function);
@@ -154,7 +153,7 @@ require(["Transport"], function (Transport) {
 			eventId,
 			listen;
 		
-			transport = Transport.create(url);
+			transport = new Transport(url);
 			socket = transport.getSocket();
 			
 			expect(transport.listen).toBeInstanceOf(Function);

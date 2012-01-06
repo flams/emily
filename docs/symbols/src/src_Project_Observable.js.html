@@ -15,14 +15,14 @@
 <span class='line'>  8</span> * 
 <span class='line'>  9</span> * This service creates an Observable on which you can add subscribers.
 <span class='line'> 10</span> */</span><span class="WHIT">
-<span class='line'> 11</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Observable</span><span class="PUNC">(</span><span class="NAME">Tools</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">ObservableConstructor</span><span class="PUNC">(</span><span class="NAME">Tools</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 12</span> </span><span class="WHIT">	</span><span class="WHIT">
 <span class='line'> 13</span> </span><span class="WHIT">	</span><span class="COMM">/**
 <span class='line'> 14</span> 	 * Defines the Observable
 <span class='line'> 15</span> 	 * @private
 <span class='line'> 16</span> 	 * @returns {_Observable}
 <span class='line'> 17</span> 	 */</span><span class="WHIT">
-<span class='line'> 18</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">_Observable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Observable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 19</span> 
 <span class='line'> 20</span> </span><span class="WHIT">		</span><span class="COMM">/**
 <span class='line'> 21</span> 		 * The list of topics
@@ -106,16 +106,6 @@
 <span class='line'> 99</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>100</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>101</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>102</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>103</span> </span><span class="WHIT">	</span><span class="WHIT">
-<span class='line'>104</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>105</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>106</span> 		 * Returns a new Observable
-<span class='line'>107</span> 		 * @returns {Object} an Observable
-<span class='line'>108</span> 		 */</span><span class="WHIT">
-<span class='line'>109</span> </span><span class="WHIT">		</span><span class="NAME">create</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">create</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>110</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">_Observable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>111</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>112</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>113</span> </span><span class="WHIT">	</span><span class="WHIT">
-<span class='line'>114</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>104</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

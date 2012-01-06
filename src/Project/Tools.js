@@ -3,7 +3,7 @@ define("Tools",
  * @class
  * Tools is a collection of tools 
  */
-function Tools (){
+function Tools(){
 
 	return {
 	    /**

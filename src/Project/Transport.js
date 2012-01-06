@@ -4,7 +4,7 @@ define("Transport",
  * Transport allows for client-server eventing.
  * It's based on socket.io.
  */
-function Transport() {
+function TransportConstructor() {
 
 	/**
 	 * Defines the Transport
@@ -12,7 +12,7 @@ function Transport() {
 	 * @param {url} $url the url to connect Transport to
 	 * @returns
 	 */
-	function _Transport() {
+	return function Transport($url) {
 		
 		/**
 		 * @private
@@ -101,18 +101,10 @@ function Transport() {
 				}
 			};
 		};
-	};
-	
-	return {
+		
 		/**
-		 * Creates a new Transport
-		 * @param {Url} url the url to connect Transport to
-		 * @returns {Object} new Transport
+		 * Initializes the transport to the given url.
 		 */
-		create: function create(url) {
-			var transport = new _Transport(url);
-			transport.connect(url);
-			return transport;
-		}
+		this.connect($url);
 	};
 });

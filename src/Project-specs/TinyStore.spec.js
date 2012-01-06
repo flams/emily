@@ -2,13 +2,12 @@ require(["TinyStore"], function (TinyStore) {
 	
 	describe("TinyStoreTest", function () {
 
-		it("should be an object with a create function", function () {
-			expect(TinyStore).toBeInstanceOf(Object);
-			expect(TinyStore.create).toBeInstanceOf(Function);
+		it("should be an object with a constructor", function () {
+			expect(TinyStore).toBeInstanceOf(Function);
 		});
 		
 		it("should have the following methods once created", function () {
-			var tinyStore = TinyStore.create();
+			var tinyStore = new TinyStore();
 			expect(tinyStore.getNbItems).toBeInstanceOf(Function);
 			expect(tinyStore.get).toBeInstanceOf(Function);
 			expect(tinyStore.set).toBeInstanceOf(Function);
@@ -26,7 +25,7 @@ require(["TinyStore"], function (TinyStore) {
 		var tinyStore = null;
 		
 		beforeEach(function () {
-			tinyStore = TinyStore.create();
+			tinyStore = new TinyStore();
 		});
 		
 		it("should set values of any type", function () {
@@ -87,7 +86,7 @@ require(["TinyStore"], function (TinyStore) {
 		var tinyStore = null;
 		
 		beforeEach(function () {
-			tinyStore = TinyStore.create();
+			tinyStore = new TinyStore();
 		});
 		
 		it("should notify on set", function () {
@@ -174,14 +173,14 @@ require(["TinyStore"], function (TinyStore) {
 		it("can be initialized with an object", function () {
 			var func = function () {};
 			
-			var tinyStore = TinyStore.create({x: 10, y: 20, z:func});
+			var tinyStore = new TinyStore({x: 10, y: 20, z:func});
 			expect(tinyStore.get("x")).toEqual(10);
 			expect(tinyStore.get("y")).toEqual(20);
 			expect(tinyStore.get("z")).toEqual(func);
 		});
 		
 		it("can be initialized with an array", function () {
-			var tinyStore = TinyStore.create([1, 2, "yes"]);
+			var tinyStore = new TinyStore([1, 2, "yes"]);
 			expect(tinyStore.get(0)).toEqual(1);
 			expect(tinyStore.get(1)).toEqual(2);
 			expect(tinyStore.get(2)).toEqual("yes");
@@ -194,7 +193,7 @@ require(["TinyStore"], function (TinyStore) {
 		var tinyStore = null;
 		
 		beforeEach(function () {
-			tinyStore = TinyStore.create();
+			tinyStore = new TinyStore();
 		});
 		
 		it("should return the right number of items", function () {
@@ -214,7 +213,7 @@ require(["TinyStore"], function (TinyStore) {
 		
 		it("should return the right number of items when init with data", function () {
 			var initValue = {x:10, y: 20},
-				tinyStore = TinyStore.create(initValue);
+				tinyStore = new TinyStore(initValue);
 			
 			expect(tinyStore.getNbItems()).toEqual(2);
 		});	
@@ -230,7 +229,7 @@ require(["TinyStore"], function (TinyStore) {
 			};
 		
 		beforeEach(function () {
-			tinyStore = TinyStore.create(data);
+			tinyStore = new TinyStore(data);
 		});
 		
 		it("should allow for looping through it", function () {
@@ -256,7 +255,7 @@ require(["TinyStore"], function (TinyStore) {
 		var tinyStore = null;
 		
 		beforeEach(function () {
-			tinyStore = TinyStore.create([0, 1, 2, 3]);
+			tinyStore = new TinyStore([0, 1, 2, 3]);
 		});
 		
 		it("should be working with arrays as data", function () {
@@ -286,7 +285,7 @@ require(["TinyStore"], function (TinyStore) {
 		
 		beforeEach(function () {
 			initialData = [0, 1, 2, 3];
-			tinyStore = TinyStore.create(initialData);
+			tinyStore = new TinyStore(initialData);
 		});
 		
 		it("should give access to Array's functions", function () {
@@ -339,7 +338,7 @@ require(["TinyStore"], function (TinyStore) {
 			resetData = {b:20};
 		
 		beforeEach(function () {
-			tinyStore = TinyStore.create(initialData);
+			tinyStore = new TinyStore(initialData);
 		});
 		
 		it("should allow for complete data reset", function () {
@@ -383,8 +382,8 @@ require(["TinyStore"], function (TinyStore) {
 		
 		beforeEach(function () {
 			dataSet = {a: 10, b: 20};
-			tinyStore1 = TinyStore.create(dataSet);
-			tinyStore2 = TinyStore.create(dataSet);
+			tinyStore1 = new TinyStore(dataSet);
+			tinyStore2 = new TinyStore(dataSet);
 		});
 		
 		it("shouldn't share data sets that are identical", function () {

@@ -2,14 +2,13 @@ require(["StaticProxy"], function (StaticProxy) {
 	
 	describe("StaticProxyCreate", function () {
 		
-		it("should be an object with a create function", function () {
-			expect(StaticProxy).toBeInstanceOf(Object);
-			expect(StaticProxy.create).toBeInstanceOf(Function);
+		it("should be a constructor function", function () {
+			expect(StaticProxy).toBeInstanceOf(Function);
 		});
 
 		it("should return a new object on create", function () {
 			var proxied = {},
-				staticProxy = StaticProxy.create(proxied);
+				staticProxy = new StaticProxy();
 			
 			expect(staticProxy).toBeInstanceOf(Object);
 		});
@@ -24,7 +23,7 @@ require(["StaticProxy"], function (StaticProxy) {
 			};
 		
 		beforeEach(function () {
-			staticProxy = StaticProxy.create(proxied);
+			staticProxy = new StaticProxy(proxied);
 		});
 		
 		it("should trap a method", function() {

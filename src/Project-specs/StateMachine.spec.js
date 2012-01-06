@@ -2,13 +2,12 @@ require(["StateMachine"], function (StateMachine) {
 	
 	describe("StateMachineTest", function () {
 		
-		it("should be an object with a create function", function () {
-			expect(StateMachine).toBeInstanceOf(Object);
-			expect(StateMachine.create).toBeInstanceOf(Function);
+		it("should be a constructor function", function () {
+			expect(StateMachine).toBeInstanceOf(Function);
 		});
 		
 		it("should create a state machine with the correct API", function () {
-			var stateMachine = StateMachine.create();
+			var stateMachine = new StateMachine();
 			expect(stateMachine.add).toBeInstanceOf(Function);
 			expect(stateMachine.get).toBeInstanceOf(Function);
 			expect(stateMachine.init).toBeInstanceOf(Function);
@@ -23,7 +22,7 @@ require(["StateMachine"], function (StateMachine) {
 		var stateMachine = null;
 		
 		beforeEach(function () {
-			stateMachine = StateMachine.create();
+			stateMachine = new StateMachine();
 		});
 		
 		it("should return a transition object when adding a state", function () {
@@ -64,7 +63,7 @@ require(["StateMachine"], function (StateMachine) {
 			state = null;
 		
 		beforeEach(function () {
-			stateMachine = StateMachine.create();
+			stateMachine = new StateMachine();
 			state = stateMachine.add("state");
 		});
 		
@@ -182,7 +181,7 @@ require(["StateMachine"], function (StateMachine) {
 			state2 = null;
 		
 		beforeEach(function () {
-			stateMachine = StateMachine.create();
+			stateMachine = new StateMachine();
 			state1 = stateMachine.add("state1");
 			state2 = stateMachine.add("state2"); 
 		});
@@ -211,7 +210,7 @@ require(["StateMachine"], function (StateMachine) {
 			close = null;
 		
 		beforeEach(function () {
-			stateMachine = StateMachine.create();
+			stateMachine = new StateMachine();
 			open = jasmine.createSpy();
 			close = jasmine.createSpy();
 			opened = stateMachine.add("opened");
@@ -261,7 +260,7 @@ require(["StateMachine"], function (StateMachine) {
 				]
 			},
 				
-			stateMachine = StateMachine.create("Locked", diagram);
+			stateMachine = new StateMachine("Locked", diagram);
 			
 			it("should have been initialiazed with the given diagram", function () {
 				var locked,

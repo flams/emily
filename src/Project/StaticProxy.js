@@ -1,8 +1,8 @@
 define("StaticProxy", 
 		
-function StaticProxy() {
+function StaticProxyConstructor() {
 	
-	function _StaticProxy(proxied) {
+	return function StaticProxy(proxied) {
 		
 		var _proxied = proxied;
 		
@@ -14,12 +14,6 @@ function StaticProxy() {
 			};
 		};
 		
-	}
-
-	return {
-		create: function (proxied) {
-			return new _StaticProxy(proxied);
-		}
 	};
 	
 });

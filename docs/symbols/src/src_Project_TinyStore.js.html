@@ -11,7 +11,7 @@
 <span class='line'>  4</span>  * TinyStore creates a small NoSQL database
 <span class='line'>  5</span>  * that can publish events on data add/change.
 <span class='line'>  6</span>  */</span><span class="WHIT">
-<span class='line'>  7</span> </span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">TinyStore</span><span class="PUNC">(</span><span class="NAME">Observable</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Tools</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">TinyStoreConstructor</span><span class="PUNC">(</span><span class="NAME">Observable</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Tools</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>  8</span> </span><span class="WHIT">	</span><span class="WHIT">
 <span class='line'>  9</span> </span><span class="WHIT">	</span><span class="COMM">/**
 <span class='line'> 10</span> 	 * Defines the tinyStore
@@ -19,19 +19,19 @@
 <span class='line'> 12</span> 	 * @param values
 <span class='line'> 13</span> 	 * @returns
 <span class='line'> 14</span> 	 */</span><span class="WHIT">
-<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">_TinyStore</span><span class="PUNC">(</span><span class="NAME">values</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">TinyStore</span><span class="PUNC">(</span><span class="NAME">$data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 16</span> </span><span class="WHIT">		</span><span class="WHIT">
 <span class='line'> 17</span> </span><span class="WHIT">		</span><span class="COMM">/**
 <span class='line'> 18</span> 		 * Where the data is stored
 <span class='line'> 19</span> 		 * @private
 <span class='line'> 20</span> 		 */</span><span class="WHIT">
-<span class='line'> 21</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">_data</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">values</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">_data</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">$data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 22</span> </span><span class="WHIT">		</span><span class="WHIT">
 <span class='line'> 23</span> </span><span class="WHIT">		</span><span class="COMM">/**
 <span class='line'> 24</span> 		 * The observable
 <span class='line'> 25</span> 		 * @private
 <span class='line'> 26</span> 		 */</span><span class="WHIT">
-<span class='line'> 27</span> </span><span class="WHIT">		</span><span class="NAME">_observable</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Observable.create</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">		</span><span class="NAME">_observable</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Observable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 28</span> </span><span class="WHIT">		</span><span class="WHIT">
 <span class='line'> 29</span> </span><span class="WHIT">		</span><span class="COMM">/**
 <span class='line'> 30</span> 		 * Gets the difference between two objects and notifies them
@@ -178,16 +178,5 @@
 <span class='line'>171</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>172</span> 
 <span class='line'>173</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>174</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>175</span> </span><span class="WHIT">	</span><span class="WHIT">
-<span class='line'>176</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="WHIT">
-<span class='line'>177</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>178</span> 		 * Creates a new TinyStore
-<span class='line'>179</span> 		 * @param {Object} values the values to initialize the store with
-<span class='line'>180</span> 		 * @returns {Object} the TinyStore
-<span class='line'>181</span> 		 */</span><span class="WHIT">
-<span class='line'>182</span> </span><span class="WHIT">		</span><span class="NAME">create</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">create</span><span class="PUNC">(</span><span class="NAME">values</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>183</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">_TinyStore</span><span class="PUNC">(</span><span class="NAME">values</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>184</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>185</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>186</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>174</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

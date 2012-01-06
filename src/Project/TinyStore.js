@@ -4,7 +4,7 @@ define("TinyStore", ["Observable", "Tools"],
  * TinyStore creates a small NoSQL database
  * that can publish events on data add/change.
  */
- function TinyStore(Observable, Tools) {
+ function TinyStoreConstructor(Observable, Tools) {
 	
 	/**
 	 * Defines the tinyStore
@@ -12,19 +12,19 @@ define("TinyStore", ["Observable", "Tools"],
 	 * @param values
 	 * @returns
 	 */
-	function _TinyStore(values) {
+	return function TinyStore($data) {
 		
 		/**
 		 * Where the data is stored
 		 * @private
 		 */
-		var _data = Tools.clone(values) || {},
+		var _data = Tools.clone($data) || {},
 		
 		/**
 		 * The observable
 		 * @private
 		 */
-		_observable = Observable.create(),
+		_observable = new Observable(),
 		
 		/**
 		 * Gets the difference between two objects and notifies them
@@ -171,16 +171,5 @@ define("TinyStore", ["Observable", "Tools"],
 			}
 
 		};
-	}
-	
-	return { 
-		/**
-		 * Creates a new TinyStore
-		 * @param {Object} values the values to initialize the store with
-		 * @returns {Object} the TinyStore
-		 */
-		create: function create(values) {
-			return new _TinyStore(values);
-		}
 	};
 });

@@ -11,7 +11,7 @@
 <span class='line'>  4</span>  * Transport allows for client-server eventing.
 <span class='line'>  5</span>  * It's based on socket.io.
 <span class='line'>  6</span>  */</span><span class="WHIT">
-<span class='line'>  7</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Transport</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">TransportConstructor</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>  8</span> 
 <span class='line'>  9</span> </span><span class="WHIT">	</span><span class="COMM">/**
 <span class='line'> 10</span> 	 * Defines the Transport
@@ -19,7 +19,7 @@
 <span class='line'> 12</span> 	 * @param {url} $url the url to connect Transport to
 <span class='line'> 13</span> 	 * @returns
 <span class='line'> 14</span> 	 */</span><span class="WHIT">
-<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">_Transport</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Transport</span><span class="PUNC">(</span><span class="NAME">$url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 16</span> </span><span class="WHIT">		
 <span class='line'> 17</span> 		</span><span class="COMM">/**
 <span class='line'> 18</span> 		 * @private
@@ -108,18 +108,10 @@
 <span class='line'>101</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>102</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>103</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>104</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>105</span> </span><span class="WHIT">	
-<span class='line'>106</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>107</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>108</span> 		 * Creates a new Transport
-<span class='line'>109</span> 		 * @param {Url} url the url to connect Transport to
-<span class='line'>110</span> 		 * @returns {Object} new Transport
-<span class='line'>111</span> 		 */</span><span class="WHIT">
-<span class='line'>112</span> </span><span class="WHIT">		</span><span class="NAME">create</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">create</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>113</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">transport</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">_Transport</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>114</span> </span><span class="WHIT">			</span><span class="NAME">transport.connect</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>115</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">transport</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>116</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>117</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>118</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>104</span> </span><span class="WHIT">		
+<span class='line'>105</span> 		</span><span class="COMM">/**
+<span class='line'>106</span> 		 * Initializes the transport to the given url.
+<span class='line'>107</span> 		 */</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">		</span><span class="NAME">this.connect</span><span class="PUNC">(</span><span class="NAME">$url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

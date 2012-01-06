@@ -8,14 +8,14 @@ define("Observable",
 * 
 * This service creates an Observable on which you can add subscribers.
 */
-function Observable(Tools) {
+function ObservableConstructor(Tools) {
 	
 	/**
 	 * Defines the Observable
 	 * @private
 	 * @returns {_Observable}
 	 */
-	function _Observable() {
+	return function Observable() {
 
 		/**
 		 * The list of topics
@@ -99,16 +99,6 @@ function Observable(Tools) {
 			return true;
 		};
 		
-	}
-	
-	return {
-		/**
-		 * Returns a new Observable
-		 * @returns {Object} an Observable
-		 */
-		create: function create() {
-			return new _Observable();
-		}
 	};
 	
 });

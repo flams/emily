@@ -2,13 +2,12 @@ require(["Observable"], function (Observable) {
 	
 	describe("ObservableTest", function () {
 		
-		it("should be an object with a create function", function () {
-			expect(Observable).toBeInstanceOf(Object);
-			expect(Observable.create).toBeInstanceOf(Function);
+		it("should be a function", function () {
+			expect(Observable).toBeInstanceOf(Function);
 		});
 		
 		it("should have the correct API once created", function () {
-			var observable = Observable.create();
+			var observable = new Observable();
 			expect(observable.watch).toBeInstanceOf(Function);
 			expect(observable.unwatch).toBeInstanceOf(Function);
 			expect(observable.notify).toBeInstanceOf(Function);
@@ -23,7 +22,7 @@ require(["Observable"], function (Observable) {
 			testTopic = "testTopic";
 		
 		beforeEach(function() {
-			observable = Observable.create();
+			observable = new Observable();
 		});
 		
 		it("should add an observer", function () {
@@ -144,7 +143,7 @@ require(["Observable"], function (Observable) {
 			testTopic = "testTopic";
 		
 		beforeEach(function () {
-			observable = Observable.create();
+			observable = new Observable();
 		});
 		
 		it("should notify observer", function () {
@@ -218,8 +217,8 @@ require(["Observable"], function (Observable) {
 	
 	describe("ObservablesIsolated", function () {
 		
-		var observable1 = Observable.create(),
-			observable2 = Observable.create(),
+		var observable1 = new Observable(),
+			observable2 = new Observable(),
 			testTopic = "testTopic";
 		
 		it("should add observer to only one observable", function () {

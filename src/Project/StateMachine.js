@@ -1,15 +1,33 @@
 define("StateMachine", 
+		
+["Tools"],
 /**
  * @class
  * Create a stateMachine
  */
-function StateMachine() {
+function StateMachineConstructor(Tools) {
 	
-	/**
-	 * The StateMachine's constructor
-	 */
-	function _State() {
-		
+	 /**
+     * @param initState {String} the initial state
+     * @param diagram {Object} the diagram that describes the state machine
+     * @example
+     *
+     *      diagram = {
+     *              "State1" : [
+     *                      [ message1, action, nextState], // Same as the state's add function
+     *                      [ message2, action2, nextState]
+     *              ],
+     *
+     *              "State2" :
+     *                       [ message3, action3, scope3, nextState]
+     *                      ... and so on ....
+     *
+     *   }
+     *
+     * @return the stateMachine object
+     */
+	function StateMachine($initState, $diagram) {
+
 		/**
 		 * The list of states
 		 * @private
@@ -84,7 +102,21 @@ function StateMachine() {
 				return true;
 			}
 		};
-
+		
+		/**
+		 * Initializes the StateMachine with the given diagram
+		 */
+		Tools.loop($diagram, function (transition, state) {
+			var myState = this.add(state);
+			transition.forEach(function (params){
+				myState.add.apply(null, params);
+			});
+		}, this);
+		
+		/**
+		 * Sets its initial state
+		 */
+		this.init($initState);
 	}
 	
 	/**
@@ -165,47 +197,8 @@ function StateMachine() {
 				return false;
 			}
 		};
-	}
-	
-	return {
-		/**
-		 * @param initState {String} the initial state
-		 * @param diagram {Object} the diagram that describes the state machine
-		 * @example
-		 *
-		 *      diagram = {
-		 *              "State1" : [
-		 *                      [ message1, action, nextState], // Same as the state's add function
-		 *                      [ message2, action2, nextState]
-		 *              ],
-		 *
-		 *              "State2" :
-		 *                	 [ message3, action3, scope3, nextState]
-		 *                      ... and so on ....
-		 *
-		 *   }
-		 *
-		 * @return the stateMachine object
-		 */
-		create: function create(initState, diagram) {
-			
-			var _states = new _State(),
-				state,
-				transition;
-			
-			for (state in diagram) {
-				if (diagram.hasOwnProperty(state)) {
-					transition = _states.add(state);
-					diagram[state].forEach(function (params){
-						transition.add.apply(null, params);
-					});
-				}
-			}
-			
-			_states.init(initState);
-			
-			return _states;
-		}
 	};
+	
+	return StateMachine;
 	
 });
