@@ -12,7 +12,7 @@
 <span class='line'>  5</span>  * @class
 <span class='line'>  6</span>  * Create a stateMachine
 <span class='line'>  7</span>  */</span><span class="WHIT">
-<span class='line'>  8</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">StateMachineConstructor</span><span class="PUNC">(</span><span class="NAME">Tools</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">StateMachine</span><span class="PUNC">(</span><span class="NAME">Tools</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>  9</span> </span><span class="WHIT">	
 <span class='line'> 10</span> 	 </span><span class="COMM">/**
 <span class='line'> 11</span>      * @param initState {String} the initial state
@@ -33,7 +33,7 @@
 <span class='line'> 26</span>      *
 <span class='line'> 27</span>      * @return the stateMachine object
 <span class='line'> 28</span>      */</span><span class="WHIT">
-<span class='line'> 29</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">StateMachine</span><span class="PUNC">(</span><span class="NAME">$initState</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">$diagram</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">StateMachineConstructor</span><span class="PUNC">(</span><span class="NAME">$initState</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">$diagram</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 30</span> 
 <span class='line'> 31</span> </span><span class="WHIT">		</span><span class="COMM">/**
 <span class='line'> 32</span> 		 * The list of states
@@ -68,7 +68,7 @@
 <span class='line'> 61</span> 		 */</span><span class="WHIT">
 <span class='line'> 62</span> </span><span class="WHIT">		</span><span class="NAME">this.add</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">add</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 63</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">_states</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 64</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_states</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">_Transition</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_states</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Transition</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 65</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 66</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 67</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
@@ -129,7 +129,7 @@
 <span class='line'>122</span> 	</span><span class="COMM">/**
 <span class='line'>123</span> 	 * Each state has associated transitions
 <span class='line'>124</span> 	 */</span><span class="WHIT">
-<span class='line'>125</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">_Transition</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Transition</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>126</span> </span><span class="WHIT">		
 <span class='line'>127</span> 		</span><span class="COMM">/**
 <span class='line'>128</span> 		 * The list of transitions associated to a state
@@ -206,6 +206,6 @@
 <span class='line'>199</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>200</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>201</span> </span><span class="WHIT">	
-<span class='line'>202</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">StateMachine</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>202</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">StateMachineConstructor</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>203</span> </span><span class="WHIT">	
 <span class='line'>204</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

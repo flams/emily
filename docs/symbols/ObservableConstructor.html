@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - StateMachine</title>
+		<title>JsDoc Reference - ObservableConstructor</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -191,15 +191,15 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Observable.html">Observable</a></li>
+	<li><a href="../symbols/ObservableConstructor.html">ObservableConstructor</a></li>
 	
-	<li><a href="../symbols/StateMachine.html">StateMachine</a></li>
+	<li><a href="../symbols/StateMachineConstructor.html">StateMachineConstructor</a></li>
 	
-	<li><a href="../symbols/TinyStore.html">TinyStore</a></li>
+	<li><a href="../symbols/TinyStoreConstructor.html">TinyStoreConstructor</a></li>
 	
 	<li><a href="../symbols/Tools.html">Tools</a></li>
 	
-	<li><a href="../symbols/Transport.html">Transport</a></li>
+	<li><a href="../symbols/TransportConstructor.html">TransportConstructor</a></li>
 	
 </ul>
 <hr />
@@ -210,7 +210,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class StateMachine
+				Class ObservableConstructor
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -218,16 +218,16 @@ ul.inheritsList
 				
 				
 			
-				Create a stateMachine
+				Observable is an implementation of the Observer design pattern, which is also known as publish/subscribe.This service creates an Observable on which you can add subscribers.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Project_StateMachine.js.html">StateMachine.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Project_Observable.js.html">Observable.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class StateMachine.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ObservableConstructor.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -240,7 +240,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/StateMachine.html#constructor">StateMachine</a></b>(Tools)
+								<b><a href="../symbols/ObservableConstructor.html#constructor">ObservableConstructor</a></b>(Tools)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -256,7 +256,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class StateMachine.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ObservableConstructor.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -269,72 +269,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#add">add</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/ObservableConstructor.html#hasObserver">hasObserver</a></b>()
 								</div>
-								<div class="description">Add a new state</div>
+								<div class="description">Check if topic has the described observer</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#event">event</a></b>(name, params)
+								<div class="fixedFont"><b><a href="../symbols/ObservableConstructor.html#notify">notify</a></b>(topic, subject)
 								</div>
-								<div class="description">Pass an event to the state machine</div>
+								<div class="description">Notifies observers that a topic has a new message</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#get">get</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/ObservableConstructor.html#unwatch">unwatch</a></b>(handler)
 								</div>
-								<div class="description">Get an existing state</div>
+								<div class="description">Remove an observer</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#getCurrent">getCurrent</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/ObservableConstructor.html#watch">watch</a></b>(topic, callback, scope)
 								</div>
-								<div class="description">Get the current state</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#has">has</a></b>(event)
-								</div>
-								<div class="description">Check if a transition can be triggered with given event</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#init">init</a></b>(name)
-								</div>
-								<div class="description">Set the initialization state</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#-StateMachineConstructor">StateMachineConstructor</a></b>(initState, diagram)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#-Transition">Transition</a></b>()
-								</div>
-								<div class="description">Each state has associated transitions</div>
+								<div class="description">Add an observer</div>
 							</td>
 						</tr>
 					
@@ -355,7 +319,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>StateMachine</b>(Tools)
+						<b>ObservableConstructor</b>(Tools)
 				</div>
 				
 				<div class="description">
@@ -397,58 +361,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="add"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{State}</span>
-					<b>add</b>(name)
-					
-					</div>
-					<div class="description">
-						Add a new state
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>the name of the state</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{State}</span> a new state</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="event"> </a>
+					<a name="hasObserver"> </a>
 					<div class="fixedFont">
 					
 					<span class="light">{Boolean}</span>
-					<b>event</b>(name, params)
+					<b>hasObserver</b>()
 					
 					</div>
 					<div class="description">
-						Pass an event to the state machine
+						Check if topic has the described observer
 						
 						
 					</div>
@@ -460,134 +381,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>the name of the event</dd>
-							
-								<dt>
-									<b>params</b>
+									<span class="light fixedFont">{Handler}</span> <b></b>
 									
 								</dt>
 								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if the event exists in the current state</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="get"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{State}</span>
-					<b>get</b>(name)
-					
-					</div>
-					<div class="description">
-						Get an existing state
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>the name of the state</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{State}</span> the state</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="getCurrent"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{String}</span>
-					<b>getCurrent</b>()
-					
-					</div>
-					<div class="description">
-						Get the current state
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="has"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>has</b>(event)
-					
-					</div>
-					<div class="description">
-						Check if a transition can be triggered with given event
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>event</b>
-									
-								</dt>
-								<dd>the name of the event</dd>
 							
 							</dl>
 						
@@ -607,15 +404,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="init"> </a>
+					<a name="notify"> </a>
 					<div class="fixedFont">
 					
 					<span class="light">{Boolean}</span>
-					<b>init</b>(name)
+					<b>notify</b>(topic, subject)
 					
 					</div>
 					<div class="description">
-						Set the initialization state
+						Notifies observers that a topic has a new message
 						
 						
 					</div>
@@ -627,10 +424,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<span class="light fixedFont">{String}</span> <b>topic</b>
 									
 								</dt>
-								<dd>the name of the init state</dd>
+								<dd>the name of the topic to publish to</dd>
+							
+								<dt>
+									<b>subject</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -641,7 +444,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if there was subscribers</dd>
 							
 							</dl>
 						
@@ -650,33 +453,18 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="-StateMachineConstructor"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
+					<a name="unwatch"> </a>
+					<div class="fixedFont">
 					
-					
-					<b>StateMachineConstructor</b>(initState, diagram)
+					<span class="light">{Boolean}</span>
+					<b>unwatch</b>(handler)
 					
 					</div>
 					<div class="description">
-						
+						Remove an observer
 						
 						
 					</div>
-					
-					
-					
-					<pre class="code">
-     diagram = {
-             "State1" : [
-                     [ message1, action, nextState], // Same as the state's add function
-                     [ message2, action2, nextState]
-             ],
-
-             "State2" :
-                      [ message3, action3, scope3, nextState]
-                     ... and so on ....
-
-  }</pre>
 					
 					
 					
@@ -685,16 +473,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>initState</b>
+									<span class="light fixedFont">{Handler}</span> <b>handler</b>
 									
 								</dt>
-								<dd>{String} the initial state</dd>
-							
-								<dt>
-									<b>diagram</b>
-									
-								</dt>
-								<dd>{Object} the diagram that describes the state machine</dd>
+								<dd>returned by the watch method</dd>
 							
 							</dl>
 						
@@ -705,7 +487,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>the stateMachine object</dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if there were subscribers</dd>
 							
 							</dl>
 						
@@ -714,15 +496,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="-Transition"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
+					<a name="watch"> </a>
+					<div class="fixedFont">
 					
 					
-					<b>Transition</b>()
+					<b>watch</b>(topic, callback, scope)
 					
 					</div>
 					<div class="description">
-						Each state has associated transitions
+						Add an observer
 						
 						
 					</div>
@@ -730,9 +512,39 @@ ul.inheritsList
 					
 					
 						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>topic</b>
+									
+								</dt>
+								<dd>the topic to observe</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>the callback to execute</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>scope</b>
+									
+								</dt>
+								<dd>the scope in which to execute the callback</dd>
+							
+							</dl>
 						
 						
 						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>handler</dd>
+							
+							</dl>
 						
 						
 						
@@ -751,7 +563,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Jan 06 2012 15:27:12 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Jan 06 2012 15:06:02 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

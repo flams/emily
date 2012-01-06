@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - StateMachine</title>
+		<title>JsDoc Reference - TransportConstructor</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -191,15 +191,15 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Observable.html">Observable</a></li>
+	<li><a href="../symbols/ObservableConstructor.html">ObservableConstructor</a></li>
 	
-	<li><a href="../symbols/StateMachine.html">StateMachine</a></li>
+	<li><a href="../symbols/StateMachineConstructor.html">StateMachineConstructor</a></li>
 	
-	<li><a href="../symbols/TinyStore.html">TinyStore</a></li>
+	<li><a href="../symbols/TinyStoreConstructor.html">TinyStoreConstructor</a></li>
 	
 	<li><a href="../symbols/Tools.html">Tools</a></li>
 	
-	<li><a href="../symbols/Transport.html">Transport</a></li>
+	<li><a href="../symbols/TransportConstructor.html">TransportConstructor</a></li>
 	
 </ul>
 <hr />
@@ -210,7 +210,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class StateMachine
+				Class TransportConstructor
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -218,16 +218,17 @@ ul.inheritsList
 				
 				
 			
-				Create a stateMachine
+				Transport allows for client-server eventing.
+It's based on socket.io.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Project_StateMachine.js.html">StateMachine.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Project_Transport.js.html">Transport.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class StateMachine.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class TransportConstructor.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -240,7 +241,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/StateMachine.html#constructor">StateMachine</a></b>(Tools)
+								<b><a href="../symbols/TransportConstructor.html#constructor">TransportConstructor</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -256,7 +257,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class StateMachine.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class TransportConstructor.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -269,72 +270,54 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#add">add</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/TransportConstructor.html#connect">connect</a></b>(url)
 								</div>
-								<div class="description">Add a new state</div>
+								<div class="description">Connect Transport to an url</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#event">event</a></b>(name, params)
+								<div class="fixedFont"><b><a href="../symbols/TransportConstructor.html#emit">emit</a></b>(event, data, callback)
 								</div>
-								<div class="description">Pass an event to the state machine</div>
+								<div class="description">Publish an event on the socket</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#get">get</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/TransportConstructor.html#getSocket">getSocket</a></b>()
 								</div>
-								<div class="description">Get an existing state</div>
+								<div class="description">Get the socket, for debugging purpose</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#getCurrent">getCurrent</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/TransportConstructor.html#on">on</a></b>(event, func)
 								</div>
-								<div class="description">Get the current state</div>
+								<div class="description">Subscribe to a socket event</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#has">has</a></b>(event)
+								<div class="fixedFont"><b><a href="../symbols/TransportConstructor.html#once">once</a></b>(event, func)
 								</div>
-								<div class="description">Check if a transition can be triggered with given event</div>
+								<div class="description">Subscribe to a socket event but disconnect as soon as it fires.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#init">init</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/TransportConstructor.html#request">request</a></b>(channel, requestData, func)
 								</div>
-								<div class="description">Set the initialization state</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#-StateMachineConstructor">StateMachineConstructor</a></b>(initState, diagram)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#-Transition">Transition</a></b>()
-								</div>
-								<div class="description">Each state has associated transitions</div>
+								<div class="description">Make a request on the node server</div>
 							</td>
 						</tr>
 					
@@ -355,7 +338,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>StateMachine</b>(Tools)
+						<b>TransportConstructor</b>()
 				</div>
 				
 				<div class="description">
@@ -366,17 +349,6 @@ ul.inheritsList
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								 <b>Tools</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
 					
 					
@@ -397,15 +369,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="add"> </a>
+					<a name="connect"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{State}</span>
-					<b>add</b>(name)
+					
+					<b>connect</b>(url)
 					
 					</div>
 					<div class="description">
-						Add a new state
+						Connect Transport to an url
 						
 						
 					</div>
@@ -417,38 +389,31 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<span class="light fixedFont">{Url}</span> <b>url</b>
 									
 								</dt>
-								<dd>the name of the state</dd>
+								<dd>the url to connect Transport to</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{State}</span> a new state</dd>
-							
-							</dl>
 						
 						
 						
 
 					<hr />
 				
-					<a name="event"> </a>
+					<a name="emit"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>event</b>(name, params)
+					
+					<b>emit</b>(event, data, callback)
 					
 					</div>
 					<div class="description">
-						Pass an event to the state machine
+						Publish an event on the socket
 						
 						
 					</div>
@@ -460,87 +425,43 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<span class="light fixedFont">{String}</span> <b>event</b>
 									
 								</dt>
-								<dd>the name of the event</dd>
+								<dd>the event to publish</dd>
 							
 								<dt>
-									<b>params</b>
+									<b>data</b>
 									
 								</dt>
 								<dd></dd>
 							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if the event exists in the current state</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="get"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{State}</span>
-					<b>get</b>(name)
-					
-					</div>
-					<div class="description">
-						Get an existing state
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<span class="light fixedFont">{Function}</span> <b>callback</b>
 									
 								</dt>
-								<dd>the name of the state</dd>
+								<dd>is the function to be called for ack</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{State}</span> the state</dd>
-							
-							</dl>
 						
 						
 						
 
 					<hr />
 				
-					<a name="getCurrent"> </a>
+					<a name="getSocket"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{String}</span>
-					<b>getCurrent</b>()
+					<span class="light">{Object}</span>
+					<b>getSocket</b>()
 					
 					</div>
 					<div class="description">
-						Get the current state
+						Get the socket, for debugging purpose
 						
 						
 					</div>
@@ -555,7 +476,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{String}</span> </dd>
+								<dd><span class="light fixedFont">{Object}</span> the socket</dd>
 							
 							</dl>
 						
@@ -564,15 +485,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="has"> </a>
+					<a name="on"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>has</b>(event)
+					
+					<b>on</b>(event, func)
 					
 					</div>
 					<div class="description">
-						Check if a transition can be triggered with given event
+						Subscribe to a socket event
 						
 						
 					</div>
@@ -589,33 +510,32 @@ ul.inheritsList
 								</dt>
 								<dd>the name of the event</dd>
 							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if exists</dd>
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>the function to execute when the event fires</dd>
 							
 							</dl>
+						
+						
+						
+						
 						
 						
 						
 
 					<hr />
 				
-					<a name="init"> </a>
+					<a name="once"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>init</b>(name)
+					
+					<b>once</b>(event, func)
 					
 					</div>
 					<div class="description">
-						Set the initialization state
+						Subscribe to a socket event but disconnect as soon as it fires.
 						
 						
 					</div>
@@ -627,56 +547,40 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<span class="light fixedFont">{String}</span> <b>event</b>
 									
 								</dt>
-								<dd>the name of the init state</dd>
+								<dd>the name of the event</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>the function to execute when the event fires</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
-							
-							</dl>
 						
 						
 						
 
 					<hr />
 				
-					<a name="-StateMachineConstructor"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
+					<a name="request"> </a>
+					<div class="fixedFont">
 					
 					
-					<b>StateMachineConstructor</b>(initState, diagram)
+					<b>request</b>(channel, requestData, func)
 					
 					</div>
 					<div class="description">
-						
+						Make a request on the node server
 						
 						
 					</div>
-					
-					
-					
-					<pre class="code">
-     diagram = {
-             "State1" : [
-                     [ message1, action, nextState], // Same as the state's add function
-                     [ message2, action2, nextState]
-             ],
-
-             "State2" :
-                      [ message3, action3, scope3, nextState]
-                     ... and so on ....
-
-  }</pre>
 					
 					
 					
@@ -685,50 +589,24 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>initState</b>
+									<span class="light fixedFont">{String}</span> <b>channel</b>
 									
 								</dt>
-								<dd>{String} the initial state</dd>
+								<dd>watch the server's documentation to see available channels</dd>
 							
 								<dt>
-									<b>diagram</b>
+									<span class="light fixedFont">{Object}</span> <b>requestData</b>
 									
 								</dt>
-								<dd>{Object} the diagram that describes the state machine</dd>
+								<dd>the JSON that details the request</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>the callback that will get the response.</dd>
 							
 							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>the stateMachine object</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="-Transition"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					
-					<b>Transition</b>()
-					
-					</div>
-					<div class="description">
-						Each state has associated transitions
-						
-						
-					</div>
-					
-					
-					
 						
 						
 						
@@ -751,7 +629,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Jan 06 2012 15:27:12 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Jan 06 2012 15:06:03 GMT+0100 (CET)
 		</div>
 	</body>
 </html>

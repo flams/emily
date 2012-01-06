@@ -5,7 +5,7 @@ define("StateMachine",
  * @class
  * Create a stateMachine
  */
-function StateMachineConstructor(Tools) {
+function StateMachine(Tools) {
 	
 	 /**
      * @param initState {String} the initial state
@@ -26,7 +26,7 @@ function StateMachineConstructor(Tools) {
      *
      * @return the stateMachine object
      */
-	function StateMachine($initState, $diagram) {
+	function StateMachineConstructor($initState, $diagram) {
 
 		/**
 		 * The list of states
@@ -61,7 +61,7 @@ function StateMachineConstructor(Tools) {
 		 */
 		this.add = function add(name) {
 			if (!_states[name]) {
-				return _states[name] = new _Transition();
+				return _states[name] = new Transition();
 			} else {
 				return false;
 			}
@@ -122,7 +122,7 @@ function StateMachineConstructor(Tools) {
 	/**
 	 * Each state has associated transitions
 	 */
-	function _Transition() {
+	function Transition() {
 		
 		/**
 		 * The list of transitions associated to a state
@@ -199,6 +199,6 @@ function StateMachineConstructor(Tools) {
 		};
 	};
 	
-	return StateMachine;
+	return StateMachineConstructor;
 	
 });

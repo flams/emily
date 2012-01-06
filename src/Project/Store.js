@@ -1,18 +1,18 @@
-define("TinyStore", ["Observable", "Tools"],
+define("Store", ["Observable", "Tools"],
 /** 
  * @class
- * TinyStore creates a small NoSQL database
+ * Store creates a small NoSQL database
  * that can publish events on data add/change.
  */
- function TinyStoreConstructor(Observable, Tools) {
+ function Store(Observable, Tools) {
 	
 	/**
-	 * Defines the tinyStore
+	 * Defines the Store
 	 * @private
 	 * @param values
 	 * @returns
 	 */
-	return function TinyStore($data) {
+	return function StoreConstructor($data) {
 		
 		/**
 		 * Where the data is stored

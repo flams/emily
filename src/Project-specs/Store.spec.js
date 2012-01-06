@@ -1,31 +1,31 @@
-require(["TinyStore"], function (TinyStore) {
+require(["Store"], function (Store) {
 	
-	describe("TinyStoreTest", function () {
+	describe("StoreTest", function () {
 
 		it("should be an object with a constructor", function () {
-			expect(TinyStore).toBeInstanceOf(Function);
+			expect(Store).toBeInstanceOf(Function);
 		});
 		
 		it("should have the following methods once created", function () {
-			var tinyStore = new TinyStore();
-			expect(tinyStore.getNbItems).toBeInstanceOf(Function);
-			expect(tinyStore.get).toBeInstanceOf(Function);
-			expect(tinyStore.set).toBeInstanceOf(Function);
-			expect(tinyStore.has).toBeInstanceOf(Function);
-			expect(tinyStore.del).toBeInstanceOf(Function);
-			expect(tinyStore.alter).toBeInstanceOf(Function);
-			expect(tinyStore.watch).toBeInstanceOf(Function);
-			expect(tinyStore.unwatch).toBeInstanceOf(Function);
+			var store = new Store();
+			expect(store.getNbItems).toBeInstanceOf(Function);
+			expect(store.get).toBeInstanceOf(Function);
+			expect(store.set).toBeInstanceOf(Function);
+			expect(store.has).toBeInstanceOf(Function);
+			expect(store.del).toBeInstanceOf(Function);
+			expect(store.alter).toBeInstanceOf(Function);
+			expect(store.watch).toBeInstanceOf(Function);
+			expect(store.unwatch).toBeInstanceOf(Function);
 		});
 	
 	});
 	
-	describe("TinyStoreGetSetDel", function () {
+	describe("StoreGetSetDel", function () {
 		
-		var tinyStore = null;
+		var store = null;
 		
 		beforeEach(function () {
-			tinyStore = new TinyStore();
+			store = new Store();
 		});
 		
 		it("should set values of any type", function () {
@@ -33,47 +33,47 @@ require(["TinyStore"], function (TinyStore) {
 				arr = [],
 				func = function () {};
 				
-			tinyStore.set("test");
-			expect(tinyStore.has("test")).toEqual(true);
-			expect(tinyStore.get("test")).toBeUndefined();
-			tinyStore.set("test", null);
-			expect(tinyStore.get("test")).toEqual(null);
-			tinyStore.set("test", obj);
-			expect(tinyStore.get("test")).toBe(obj)
-			tinyStore.set("test", arr);
-			expect(tinyStore.get("test")).toEqual(arr);
-			tinyStore.set("test", func);
-			expect(tinyStore.get("test")).toEqual(func);
-			tinyStore.set("test", "yes");
-			expect(tinyStore.get("test")).toEqual("yes");
+			store.set("test");
+			expect(store.has("test")).toEqual(true);
+			expect(store.get("test")).toBeUndefined();
+			store.set("test", null);
+			expect(store.get("test")).toEqual(null);
+			store.set("test", obj);
+			expect(store.get("test")).toBe(obj)
+			store.set("test", arr);
+			expect(store.get("test")).toEqual(arr);
+			store.set("test", func);
+			expect(store.get("test")).toEqual(func);
+			store.set("test", "yes");
+			expect(store.get("test")).toEqual("yes");
 		});
 		
 		
 		it("should return undefined if does'nt exist", function () {
-			expect(tinyStore.get("has not")).toBeUndefined();
+			expect(store.get("has not")).toBeUndefined();
 		});
 		
 		it("should update value if it already exists", function () {
-			tinyStore.set("test", true);
-			expect(tinyStore.set("test", false)).toEqual(true);
-			expect(tinyStore.get("test")).toEqual(false);
+			store.set("test", true);
+			expect(store.set("test", false)).toEqual(true);
+			expect(store.get("test")).toEqual(false);
 		});
 		
 		it("should return false if name is not set", function () {
-			expect(tinyStore.set()).toEqual(false);
+			expect(store.set()).toEqual(false);
 		});
 		
 		it("should del value", function () {
-			tinyStore.set("test", true);
-			expect(tinyStore.del("test")).toEqual(true);
-			expect(tinyStore.has("test")).toEqual(false);
-			expect(tinyStore.del("fake")).toEqual(false);
+			store.set("test", true);
+			expect(store.del("test")).toEqual(true);
+			expect(store.has("test")).toEqual(false);
+			expect(store.del("fake")).toEqual(false);
 		});
 		
 		it("should call Array.splice on del if init'd with an array", function () {
-			tinyStore.reset([1]);
+			store.reset([1]);
 			spyOn(Array.prototype, "splice").andCallThrough();
-			expect(tinyStore.del(0)).toEqual(true);
+			expect(store.del(0)).toEqual(true);
 			expect(Array.prototype.splice.wasCalled).toEqual(true);
 			expect(Array.prototype.splice.mostRecentCall.args[0]).toEqual(0);
 			expect(Array.prototype.splice.mostRecentCall.args[1]).toEqual(1);
@@ -81,19 +81,19 @@ require(["TinyStore"], function (TinyStore) {
 
 	});
 	
-	describe("TinyStoreObservable", function () {
+	describe("StoreObservable", function () {
 		
-		var tinyStore = null;
+		var store = null;
 		
 		beforeEach(function () {
-			tinyStore = new TinyStore();
+			store = new Store();
 		});
 		
 		it("should notify on set", function () {
 			var spy = jasmine.createSpy("callback");
 			
-			tinyStore.watch("added", spy);
-			tinyStore.set("test");
+			store.watch("added", spy);
+			store.set("test");
 			expect(spy.wasCalled).toEqual(true);
 			expect(spy.mostRecentCall.args[0]).toEqual("test");
 			expect(spy.mostRecentCall.args[1]).toBeUndefined();
@@ -101,9 +101,9 @@ require(["TinyStore"], function (TinyStore) {
 		
 		it("should notify with new value on update", function () {
 			var spy = jasmine.createSpy("callback");
-			tinyStore.set("test");
-			tinyStore.watch("updated", spy);
-			tinyStore.set("test", "new");
+			store.set("test");
+			store.watch("updated", spy);
+			store.set("test", "new");
 		
 			expect(spy.mostRecentCall.args[0]).toEqual("test");
 			expect(spy.mostRecentCall.args[1]).toEqual("new");
@@ -111,19 +111,19 @@ require(["TinyStore"], function (TinyStore) {
 		
 		it("should provide value when said available", function () {
 			var callback = function () {
-				callback.ret = tinyStore.get("test");
+				callback.ret = store.get("test");
 			};
-			tinyStore.watch("added", callback);
-			tinyStore.set("test", "yes");
+			store.watch("added", callback);
+			store.set("test", "yes");
 			
 			expect(callback.ret).toEqual("yes");
 		});
 		
 		it("should notify on del", function () {
 			var spy = jasmine.createSpy("callback");
-			tinyStore.set("test");
-			tinyStore.watch("deleted", spy);
-			tinyStore.del("test");
+			store.set("test");
+			store.watch("deleted", spy);
+			store.del("test");
 			
 			expect(spy.wasCalled).toEqual(true);
 			expect(spy.mostRecentCall.args[0]).toEqual("test");
@@ -132,10 +132,10 @@ require(["TinyStore"], function (TinyStore) {
 		
 		it("can unwatch value", function () {
 			var spy = jasmine.createSpy("callback");
-			handler = tinyStore.watch("added", spy);
-			tinyStore.unwatch(handler);
-			tinyStore.set("test");
-			tinyStore.del("test");
+			handler = store.watch("added", spy);
+			store.unwatch(handler);
+			store.set("test");
+			store.del("test");
 			expect(spy.wasCalled).toEqual(false);
 		});
 		
@@ -143,8 +143,8 @@ require(["TinyStore"], function (TinyStore) {
 			var spy = jasmine.createSpy("callback");
 				thisObj = {};
 			
-			tinyStore.watch("added", spy, thisObj);
-			tinyStore.set("test");
+			store.watch("added", spy, thisObj);
+			store.set("test");
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 		
@@ -152,8 +152,8 @@ require(["TinyStore"], function (TinyStore) {
 			var spy = jasmine.createSpy("callback");
 				thisObj = {};
 			
-			tinyStore.watch("added", spy, thisObj);
-			tinyStore.set("test");
+			store.watch("added", spy, thisObj);
+			store.set("test");
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 		
@@ -161,67 +161,67 @@ require(["TinyStore"], function (TinyStore) {
 			var spy = jasmine.createSpy("callback"),
 				thisObj = {};
 			
-			tinyStore.set("test");
-			tinyStore.watch("deleted", spy, thisObj);
-			tinyStore.del("test");
+			store.set("test");
+			store.watch("deleted", spy, thisObj);
+			store.del("test");
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 
 	});
 	
-	describe("TinyStoreInit", function () {
+	describe("StoreInit", function () {
 		it("can be initialized with an object", function () {
 			var func = function () {};
 			
-			var tinyStore = new TinyStore({x: 10, y: 20, z:func});
-			expect(tinyStore.get("x")).toEqual(10);
-			expect(tinyStore.get("y")).toEqual(20);
-			expect(tinyStore.get("z")).toEqual(func);
+			var store = new Store({x: 10, y: 20, z:func});
+			expect(store.get("x")).toEqual(10);
+			expect(store.get("y")).toEqual(20);
+			expect(store.get("z")).toEqual(func);
 		});
 		
 		it("can be initialized with an array", function () {
-			var tinyStore = new TinyStore([1, 2, "yes"]);
-			expect(tinyStore.get(0)).toEqual(1);
-			expect(tinyStore.get(1)).toEqual(2);
-			expect(tinyStore.get(2)).toEqual("yes");
+			var store = new Store([1, 2, "yes"]);
+			expect(store.get(0)).toEqual(1);
+			expect(store.get(1)).toEqual(2);
+			expect(store.get(2)).toEqual("yes");
 		});
 		
 	});
 	
-	describe("TinyStoreLength", function () {
+	describe("StoreLength", function () {
 		
-		var tinyStore = null;
+		var store = null;
 		
 		beforeEach(function () {
-			tinyStore = new TinyStore();
+			store = new Store();
 		});
 		
 		it("should return the right number of items", function () {
-			expect(tinyStore.getNbItems()).toEqual(0);
-			tinyStore.set("value1");
-			expect(tinyStore.getNbItems()).toEqual(1);
-			tinyStore.set("value2");
-			tinyStore.set("value3");
-			expect(tinyStore.getNbItems()).toEqual(3);
-			tinyStore.del("value3");
-			expect(tinyStore.getNbItems()).toEqual(2);
-			tinyStore.del("value2");
-			tinyStore.del("value1");
-			tinyStore.del("test");
-			expect(tinyStore.getNbItems()).toEqual(0);
+			expect(store.getNbItems()).toEqual(0);
+			store.set("value1");
+			expect(store.getNbItems()).toEqual(1);
+			store.set("value2");
+			store.set("value3");
+			expect(store.getNbItems()).toEqual(3);
+			store.del("value3");
+			expect(store.getNbItems()).toEqual(2);
+			store.del("value2");
+			store.del("value1");
+			store.del("test");
+			expect(store.getNbItems()).toEqual(0);
 		});
 		
 		it("should return the right number of items when init with data", function () {
 			var initValue = {x:10, y: 20},
-				tinyStore = new TinyStore(initValue);
+				store = new Store(initValue);
 			
-			expect(tinyStore.getNbItems()).toEqual(2);
+			expect(store.getNbItems()).toEqual(2);
 		});	
 	});
 	
-	describe("TinyStoreLoop", function () {
+	describe("StoreLoop", function () {
 		
-		var tinyStore = null,
+		var store = null,
 			data = {
 				"key1": "value1",
 				"key3": 3,
@@ -229,20 +229,20 @@ require(["TinyStore"], function (TinyStore) {
 			};
 		
 		beforeEach(function () {
-			tinyStore = new TinyStore(data);
+			store = new Store(data);
 		});
 		
 		it("should allow for looping through it", function () {
-			expect(tinyStore.loop).toBeInstanceOf(Function);
-			tinyStore.loop(function (val, idx) {
-				expect(tinyStore.get(idx)).toEqual(val);
+			expect(store.loop).toBeInstanceOf(Function);
+			store.loop(function (val, idx) {
+				expect(store.get(idx)).toEqual(val);
 			});
 		});
 		
 		it("should allow for looping in a given scope", function () {
 			var thisObj = {},
 				funcThisObj = null;
-			tinyStore.loop(function () {
+			store.loop(function () {
 				funcThisObj = this;
 			}, thisObj);
 			
@@ -251,27 +251,27 @@ require(["TinyStore"], function (TinyStore) {
 		
 	});
 	
-	describe("TinyStoreOrdered", function () {
-		var tinyStore = null;
+	describe("StoreOrdered", function () {
+		var store = null;
 		
 		beforeEach(function () {
-			tinyStore = new TinyStore([0, 1, 2, 3]);
+			store = new Store([0, 1, 2, 3]);
 		});
 		
 		it("should be working with arrays as data", function () {
-			expect(tinyStore.get(0)).toEqual(0);
-			expect(tinyStore.get(3)).toEqual(3);
-			expect(tinyStore.getNbItems()).toEqual(4);
+			expect(store.get(0)).toEqual(0);
+			expect(store.get(3)).toEqual(3);
+			expect(store.getNbItems()).toEqual(4);
 		});
 		
 		it("should be updatable", function () {
-			expect(tinyStore.set(0, 10)).toEqual(true);
-			expect(tinyStore.get(0)).toEqual(10);
+			expect(store.set(0, 10)).toEqual(true);
+			expect(store.get(0)).toEqual(10);
 		});
 		
 		it("should loop in the correct order", function () {
 			var i = 0;
-			tinyStore.loop(function (val, idx) {
+			store.loop(function (val, idx) {
 				expect(idx).toEqual(i++);
 			});
 		});
@@ -279,22 +279,22 @@ require(["TinyStore"], function (TinyStore) {
 	});
 	
 	
-	describe("TinyStoreAlteration", function () {
-		var tinyStore = null,
+	describe("StoreAlteration", function () {
+		var store = null,
 			initialData = null;
 		
 		beforeEach(function () {
 			initialData = [0, 1, 2, 3];
-			tinyStore = new TinyStore(initialData);
+			store = new Store(initialData);
 		});
 		
 		it("should give access to Array's functions", function () {
 			spyOn(Array.prototype, "pop").andCallThrough();
 			spyOn(Array.prototype, "sort").andCallThrough();
 			spyOn(Array.prototype, "splice").andCallThrough();
-			tinyStore.alter("pop");
-			tinyStore.alter("sort");
-			tinyStore.alter("splice", 1, 2);
+			store.alter("pop");
+			store.alter("sort");
+			store.alter("splice", 1, 2);
 			expect(Array.prototype.pop.wasCalled).toEqual(true);
 			expect(Array.prototype.sort.wasCalled).toEqual(true);
 			expect(Array.prototype.splice.wasCalled).toEqual(true);
@@ -306,10 +306,10 @@ require(["TinyStore"], function (TinyStore) {
 			var spy1 = jasmine.createSpy(),
 				spy2 = jasmine.createSpy();
 			
-			tinyStore.watch("updated", spy1);
-			tinyStore.watch("deleted", spy2);
+			store.watch("updated", spy1);
+			store.watch("deleted", spy2);
 			
-			tinyStore.alter("splice", 1, 2);
+			store.alter("splice", 1, 2);
 
 			expect(spy1.wasCalled).toEqual(true);
 			expect(spy2.wasCalled).toEqual(true);
@@ -326,44 +326,44 @@ require(["TinyStore"], function (TinyStore) {
 		});
 
 		it("should return false if the function doesn't exist", function () {
-			expect(tinyStore.alter("doesn't exist")).toEqual(false);
+			expect(store.alter("doesn't exist")).toEqual(false);
 		});
 		
 	});
 
 	
-	describe("TinyStoreReset", function () {
-		var tinyStore = null,
+	describe("StoreReset", function () {
+		var store = null,
 			initialData = {a:10},
 			resetData = {b:20};
 		
 		beforeEach(function () {
-			tinyStore = new TinyStore(initialData);
+			store = new Store(initialData);
 		});
 		
 		it("should allow for complete data reset", function () {
-			expect(tinyStore.reset).toBeInstanceOf(Function);
-			expect(tinyStore.reset(resetData)).toEqual(true);
-			expect(tinyStore.has("a")).toEqual(false);
-			expect(tinyStore.get("b")).toEqual(20);
+			expect(store.reset).toBeInstanceOf(Function);
+			expect(store.reset(resetData)).toEqual(true);
+			expect(store.has("a")).toEqual(false);
+			expect(store.get("b")).toEqual(20);
 		});
 		
 		it("should only reset if data is object or array", function () {
 			expect(function () {
-				tinyStore.reset();
+				store.reset();
 			}).not.toThrow();
 			
-			expect(tinyStore.reset()).toEqual(false);
-			expect(tinyStore.get("a")).toEqual(10);
+			expect(store.reset()).toEqual(false);
+			expect(store.get("a")).toEqual(10);
 		});
 		
 		it("should advertise for every modified value", function () {
 			var spyA = jasmine.createSpy(),
 				spyB = jasmine.createSpy();
 			
-			tinyStore.watch("deleted", spyA);
-			tinyStore.watch("added", spyB);
-			tinyStore.reset(resetData);
+			store.watch("deleted", spyA);
+			store.watch("added", spyB);
+			store.reset(resetData);
 			expect(spyA.wasCalled).toEqual(true);
 			expect(spyA.mostRecentCall.args[0]).toEqual("a")
 			expect(spyA.mostRecentCall.args[1]).toBeUndefined();
@@ -374,44 +374,44 @@ require(["TinyStore"], function (TinyStore) {
 		});
 	});
 	
-	describe("TinyStoreIsolation", function () {
+	describe("StoreIsolation", function () {
 		
 		var dataSet = null,
-			tinyStore1 = null,
-			tinyStore2 = null;
+			store1 = null,
+			store2 = null;
 		
 		beforeEach(function () {
 			dataSet = {a: 10, b: 20};
-			tinyStore1 = new TinyStore(dataSet);
-			tinyStore2 = new TinyStore(dataSet);
+			store1 = new Store(dataSet);
+			store2 = new Store(dataSet);
 		});
 		
 		it("shouldn't share data sets that are identical", function () {
-			tinyStore1.set("shared", "yes");
-			expect(tinyStore2.get("shared")).toBeUndefined();
+			store1.set("shared", "yes");
+			expect(store2.get("shared")).toBeUndefined();
 		});
 		
 		it("shouldn't share observers", function () {
 			var spyAdded = jasmine.createSpy(),
 				spyUpdated = jasmine.createSpy();
 			
-			tinyStore1.watch("added", spyAdded);
-			tinyStore2.set("shared");
+			store1.watch("added", spyAdded);
+			store2.set("shared");
 			expect(spyAdded.wasCalled).toEqual(false);
 			expect(spyUpdated.wasCalled).toEqual(false);
 		});
 		
 		it("should have the same behaviour on reset", function () {
-			tinyStore1.reset(dataSet);
-			tinyStore2.reset(dataSet);
-			tinyStore1.set("shared", "yes");
-			expect(tinyStore2.get("shared")).toBeUndefined();
+			store1.reset(dataSet);
+			store2.reset(dataSet);
+			store1.set("shared", "yes");
+			expect(store2.get("shared")).toBeUndefined();
 
 			var spyAdded = jasmine.createSpy(),
 			spyUpdated = jasmine.createSpy();
 		
-			tinyStore1.watch("added", spyAdded);
-			tinyStore2.set("shared");
+			store1.watch("added", spyAdded);
+			store2.set("shared");
 			expect(spyAdded.wasCalled).toEqual(false);
 			expect(spyUpdated.wasCalled).toEqual(false);
 		});

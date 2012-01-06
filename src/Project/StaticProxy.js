@@ -1,8 +1,8 @@
 define("StaticProxy", 
 		
-function StaticProxyConstructor() {
+function StaticProxy() {
 	
-	return function StaticProxy(proxied) {
+	return function StaticProxyConstructor(proxied) {
 		
 		var _proxied = proxied;
 		
