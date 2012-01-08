@@ -121,8 +121,13 @@ require(["Transport"], function (Transport) {
 				callback = jasmine.createSpy(),
 				eventId;
 			
+			
 			transport = new Transport(url);
 			socket = transport.getSocket();
+			socket.once = function (id, func) {
+				func();
+			};
+			spyOn(socket, "once").andCallThrough();
 			
 			expect(transport.request).toBeInstanceOf(Function);
 			
@@ -133,12 +138,33 @@ require(["Transport"], function (Transport) {
 			eventId = socket.once.mostRecentCall.args[0];
 			expect(eventId).toBeTruthy();
 			
-			expect(socket.once.mostRecentCall.args[1]).toBe(callback);
-			
+			expect(socket.once.mostRecentCall.args[1]).toBeInstanceOf(Function);
+			expect(callback.wasCalled).toEqual(true);
 			expect(socket.emit.wasCalled).toEqual(true);
 			expect(socket.emit.mostRecentCall.args[0]).toEqual(channel);
 			expect(socket.emit.mostRecentCall.args[1]).toBeInstanceOf(Object);
 			expect(socket.emit.mostRecentCall.args[1].__eventId__).toEqual(eventId);
+		});
+		
+		it("should make requests in scope", function () {
+			var url = "/",
+				transport,
+				channel = "File",
+				requestData = {
+					resource: "image.jpg"
+				},
+				callback = jasmine.createSpy(),
+				thisObj = {},
+				socket;
+
+			transport = new Transport(url);
+			socket = transport.getSocket();
+			socket.once = function (id, func) {
+				func();
+			};
+			spyOn(socket, "once").andCallThrough();
+			transport.request(channel, requestData, callback, thisObj);
+			expect(callback.wasCalled).toEqual(true);
 		});
 		
 		it("should also listen on a kept-alive socket", function () {
@@ -155,9 +181,14 @@ require(["Transport"], function (Transport) {
 		
 			transport = new Transport(url);
 			socket = transport.getSocket();
+			socket.on = function (id, func) {
+				func();
+			};
+			spyOn(socket, "on").andCallThrough();
 			
 			expect(transport.listen).toBeInstanceOf(Function);
 			
+			spyOn(transport, "request").andCallThrough();
 			listen = transport.listen(channel, requestData, callback);
 			expect(listen).toBeInstanceOf(Object);
 			expect(listen.stop).toBeInstanceOf(Function);
@@ -167,17 +198,13 @@ require(["Transport"], function (Transport) {
 			eventId = socket.on.mostRecentCall.args[0];
 			expect(eventId).toBeTruthy();
 			
-			expect(socket.on.mostRecentCall.args[1]).toBe(callback);
-			
-			expect(socket.emit.wasCalled).toEqual(true);
-			expect(socket.emit.mostRecentCall.args[0]).toEqual(channel);
-			expect(socket.emit.mostRecentCall.args[1]).toBeInstanceOf(Object);
-			expect(socket.emit.mostRecentCall.args[1].__eventId__).toEqual(eventId);
-			
 			listen.stop();
 			
 			expect(socket.removeListener.mostRecentCall.args[0]).toEqual(eventId);
-			expect(socket.removeListener.mostRecentCall.args[1]).toBe(callback);
+			expect(socket.removeListener.mostRecentCall.args[1]).toBeInstanceOf(Function);
+			
+			expect(transport.request.wasCalled).toEqual(true);
+			expect(transport.request.mostRecentCall.args[1].keptAlive).toEqual(true);
 		});
 		
 	});

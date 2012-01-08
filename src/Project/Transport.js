@@ -72,34 +72,33 @@ function Transport() {
 		};
 		
 		/**
-		 * 
-		 * NOT HAPPY WITH THE FOLLOWING:
-		 * MUST BE IMPROVED
-		 * 
-		 */
-		/**
 		 * Make a request on the node server
 		 * @param {String} channel watch the server's documentation to see available channels
 		 * @param {Object} requestData the JSON that details the request
 		 * @param {Function} func the callback that will get the response.
+		 * @param {Object} scope the scope in which to execute the callback
 		 */
-		this.request = function request(channel, requestData, func) {
-			var eventId = +new Date + Math.floor(Math.random()*1e6);
-			_socket.once(eventId, func);
+		this.request = function request(channel, requestData, func, scope) {
+			var eventId = Date.now() + Math.floor(Math.random()*1e6),
+				boundCallback = function () {
+					func.apply(scope || null, arguments);
+				};
+				
+			_socket[requestData.keptAlive ? "on" : "once"](eventId, boundCallback);
 			requestData.__eventId__ = eventId;
 			_socket.emit(channel, requestData);
+			if (requestData.keptAlive) {
+				return {
+					stop: function stop() {
+						_socket.removeListener(eventId, boundCallback);
+					}
+				};
+			}
 		};
 		
-		this.listen = function request(channel, requestData, func) {
-			var eventId = +new Date + Math.floor(Math.random()*1e6);
-			_socket.on(eventId, func);
-			requestData.__eventId__ = eventId;
-			_socket.emit(channel, requestData);
-			return {
-				stop: function () {
-					_socket.removeListener(eventId, func);
-				}
-			};
+		this.listen = function listen(channel, requestData, func, scope) {
+			requestData.keptAlive = true;
+			return this.request(channel, requestData, func, scope);
 		};
 		
 		/**
