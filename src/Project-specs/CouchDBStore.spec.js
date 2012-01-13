@@ -126,11 +126,8 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				};
 			};
 			
-			transportMock.listen = function (channel, reqData, callback, scope) {
-				
-			},
+			transportMock.listen = jasmine.createSpy();
 
-			spyOn(transportMock, "listen").andCallThrough();
 			couchDBStore.sync("db", "desgin", "view");
 			asyncRequest();
 			expect(transportMock.listen.wasCalled).toEqual(true);
@@ -140,6 +137,40 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(reqData.path).toEqual("/db/_changes?feed=continuous&heartbeat=20000&since=8");
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			
+		});
+		
+		it("should not fail with empty json from heartbeat", function () {
+			var requestRes = {
+					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
+					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
+					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
+					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}'
+				},
+				asyncRequest,
+				asyncListen,
+				listenRes = '\n',
+				spy = jasmine.createSpy();
+
+				transportMock.request = function (channel, reqData, callback, scope) {
+					asyncRequest = function () {
+						callback.call(scope, requestRes[reqData.path]);
+					};
+				};
+	
+				transportMock.listen = function (channel, reqData, callback, scope) {
+					asyncListen = function () {
+						callback.call(scope, listenRes);
+					};
+				};
+				
+				spyOn(transportMock, "request").andCallThrough();
+				couchDBStore.watch("updated", spy);
+				couchDBStore.sync("db", "design", "view");
+				asyncRequest();
+				expect(function() {
+					asyncListen();
+				}).not.toThrow();
+
 		});
 		
 		it("should reflect changes", function () {
