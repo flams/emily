@@ -111,6 +111,19 @@ require(["StateMachine"], function (StateMachine) {
 			expect(action.mostRecentCall.args[0]).toBe(params);
 		});
 		
+		it("should pass multiple parameters to the action", function () {
+			var action = jasmine.createSpy(),
+				event = "on",
+				params1 = {},
+				params2 = {};
+		
+			state.add(event, action);
+			expect(state.event(event, params1, params2)).toBeUndefined();
+			expect(action.wasCalled).toEqual(true);
+			expect(action.mostRecentCall.args[0]).toBe(params1);
+			expect(action.mostRecentCall.args[1]).toBe(params2);
+		});
+		
 		it("should add an action with scope", function () {
 			var action = jasmine.createSpy(),
 				event = "on",
@@ -197,6 +210,20 @@ require(["StateMachine"], function (StateMachine) {
 			expect(action.wasCalled).toEqual(true);
 			expect(action.mostRecentCall.args[0]).toBe(params);
 			expect(stateMachine.event("noEvent")).toEqual(false);
+		});
+		
+		it('should send multiple params to the current state', function () {
+			var action = jasmine.createSpy(),
+				event = "on",
+				params1 = {},
+				params2 = {};
+			
+			stateMachine.init("state1");
+			state1.add(event, action);
+			expect(stateMachine.event(event, params1, params2)).toEqual(true);
+			expect(action.wasCalled).toEqual(true);
+			expect(action.mostRecentCall.args[0]).toBe(params1);
+			expect(action.mostRecentCall.args[1]).toBe(params2);
 		});
 		
 	});

@@ -98,8 +98,10 @@ define("Store", ["Observable", "Tools"],
 		 */
 		this.del = function del(name) {
 			if (this.has(name)) {
-				this.alter("splice", name, 1) || delete _data[name];
-				_observable.notify("deleted", name);
+				if (!this.alter("splice", name, 1)) {
+					delete _data[name];
+					_observable.notify("deleted", name);
+				}
 				return true;
 			} else {
 				return false;

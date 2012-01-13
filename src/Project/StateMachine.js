@@ -90,8 +90,8 @@ function StateMachine(Tools) {
 		 * @param {String} name the name of the event
 		 * @returns {Boolean} true if the event exists in the current state
 		 */
-		this.event = function event(name, params) {
-			var nextState = _states[_currentState].event(name, params);
+		this.event = function event(name) {
+			var nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
 			// False means that there's no such event
 			// But undefined means that the state doesn't not change
 			if (nextState === false) {
@@ -167,9 +167,7 @@ function StateMachine(Tools) {
 					return true;
 			} 
 				
-			return false;
-			
-			
+			return false;	
 		};
 		
 		/**
@@ -187,11 +185,10 @@ function StateMachine(Tools) {
 		 * @param {params} params to pass to the action
 		 * @returns false if error, the next state or undefined if success (that sounds weird)
 		 */
-		this.event = function event(event, params) {
+		this.event = function event(event) {
 			var _transition = _transitions[event];
 			if (_transition) {
-				
-				_transition[0].call(_transition[1], params);
+				_transition[0].apply(_transition[1], Tools.toArray(arguments).slice(1));
 				return _transition[2];
 			} else {
 				return false;

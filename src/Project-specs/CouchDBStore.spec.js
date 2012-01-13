@@ -1,3 +1,14 @@
+/**
+ * Tested with the following _design/doc
+ * views: {
+ * 	view: 	{
+ * 		map: function(doc) {
+ * 				emit(doc.date, {date:doc.date, title:doc.title, body:doc.body});
+ * 			}
+ * 		}
+ * 	}
+ */
+
 require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 	
 	var transportMock = null;
@@ -48,6 +59,11 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			couchDBStore.setTransport(transportMock);
 		});
 		
+		it("should have a function to get its current state", function () {
+			expect(couchDBStore.getState).toBeInstanceOf(Function);
+			expect(couchDBStore.getState()).toEqual("Unsynched");
+		});
+		
 		it("should have a function to synchronize with a couchdb view", function () {
 			expect(couchDBStore.sync).toBeInstanceOf(Function);
 			expect(couchDBStore.sync("no")).toEqual(false);
@@ -71,9 +87,10 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 		});
 		
 		it("should populate the store on sync and notify", function () {
-			var res =  '{"total_rows":3,"update_seq":96,"offset":0,"rows":[{"id":"e866ed6179417a05c6c93756a7000d0d","key":"e866ed6179417a05c6c93756a7000d0d","value":{"date":"2011/05/30 17:34:23","title":"fishing","body":"Fishing was fun"}},'+
-	            '{"id":"e866ed6179417a05c6c93756a7000d0e","key":"e866ed6179417a05c6c93756a7000d0e","value":{"date":"2011/04/06 08:10:00","title":"going to work","body":"That is fun too"}},' +
-	            '{"id":"e866ed6179417a05c6c93756a7000d0f","key":"e866ed6179417a05c6c93756a7000d0f","value":{"date":"2011/02/12 13:37:00","title":"hello world","body":"opened my new blog"}}]}',
+			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
+						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
+						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
+						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
 	            spy = jasmine.createSpy();
 			
 			transportMock.request = function (channel, reqData, callback, scope) {
@@ -85,67 +102,163 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			couchDBStore.sync("db", "design", "view");
 			expect(spy.callCount).toEqual(3);
 			expect(couchDBStore.getNbItems()).toEqual(3);
-			expect(couchDBStore.get(0).value.date).toEqual("2011/05/30 17:34:23");
-			expect(couchDBStore.get(2).value.title).toEqual("hello world");
+			expect(couchDBStore.get(0).value.date).toEqual("2012/01/13 12:45:56");
+			expect(couchDBStore.get(2).value.title).toEqual("the 3rd document");
 			
 			expect(couchDBStore.getDBInfo).toBeInstanceOf(Function);
-			expect(couchDBStore.getDBInfo("update_seq")).toEqual(96);
+			expect(couchDBStore.getDBInfo("update_seq")).toEqual(8);
 			expect(couchDBStore.getDBInfo("total_rows")).toEqual(3);
 			expect(couchDBStore.getDBInfo("offset")).toEqual(0);
 		});
 		
 		it("should subscribe to changes", function () {
 			
-			var res1 =  '{"total_rows":3,"update_seq":96,"offset":0,"rows":[{"id":"e866ed6179417a05c6c93756a7000d0d","key":"e866ed6179417a05c6c93756a7000d0d","value":{"date":"2011/05/30 17:34:23","title":"fishing","body":"Fishing was fun"}},'+
-	            '{"id":"e866ed6179417a05c6c93756a7000d0e","key":"e866ed6179417a05c6c93756a7000d0e","value":{"date":"2011/04/06 08:10:00","title":"going to work","body":"That is fun too"}},' +
-	            '{"id":"e866ed6179417a05c6c93756a7000d0f","key":"e866ed6179417a05c6c93756a7000d0f","value":{"date":"2011/02/12 13:37:00","title":"hello world","body":"opened my new blog"}}]}',
+			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
+				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
+				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
+				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
 	            reqData,
-				res2 = '{"seq":97,"id":"e866ed6179417a05c6c93756a7000d0f","changes":[{"rev":"7-c4b9fae9173416f5ec6879097d1d850b"}]}';
+	            asyncRequest;
 			
 			transportMock.request = function (channel, reqData, callback, scope) {
-				callback.call(scope, res1);
+				asyncRequest = function () {
+					callback.call(scope, res);
+				};
 			};
 			
 			transportMock.listen = function (channel, reqData, callback, scope) {
-				callback.call(scope, res2);
+				
 			},
 
 			spyOn(transportMock, "listen").andCallThrough();
 			couchDBStore.sync("db", "desgin", "view");
+			asyncRequest();
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
 			reqData = transportMock.listen.mostRecentCall.args[1];
 			expect(reqData.method).toEqual("GET");
-			expect(reqData.path).toEqual("/db/_changes?feed=continuous&heartbeat=20000&since=96");
+			expect(reqData.path).toEqual("/db/_changes?feed=continuous&heartbeat=20000&since=8");
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			
 		});
 		
 		it("should reflect changes", function () {
 			var requestRes = {
-					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":96,"offset":0,"rows":[{"id":"e866ed6179417a05c6c93756a7000d0d","key":"e866ed6179417a05c6c93756a7000d0d","value":{"date":"2011/05/30 17:34:23","title":"fishing","body":"Fishing was fun"}},'+
-    	            '{"id":"e866ed6179417a05c6c93756a7000d0e","key":"e866ed6179417a05c6c93756a7000d0e","value":{"date":"2011/04/06 08:10:00","title":"going to work","body":"That is fun too"}},' +
-    	            '{"id":"e866ed6179417a05c6c93756a7000d0f","key":"e866ed6179417a05c6c93756a7000d0f","value":{"date":"2011/02/12 13:37:00","title":"hello world","body":"opened my new blog"}}]}',
-				'/db/_design/design/_view/view?key="e866ed6179417a05c6c93756a7000d0f"':'{"total_rows":3,"offset":2,"rows":[{"id":"e866ed6179417a05c6c93756a7000d0f","key":"e866ed6179417a05c6c93756a7000d0f","value":{"date":"2011/02/12 13:37:00","title":"hello Emily!","body":"opened my new blog"}}]}'                                                                                    	            
+					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
+					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
+					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
+					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
+				'/db/_design/design/_view/view' : '{"total_rows":3,"offset":0,"rows":[' +
+					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
+					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
+					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}'                                                                                    	            
 				},
-				listenRes = '{"seq":97,"id":"e866ed6179417a05c6c93756a7000d0f","changes":[{"rev":"7-c4b9fae9173416f5ec6879097d1d850b"}]}',
+				asyncRequest,
+				asyncListen,
+				listenRes = '{"seq":9,"id":"document3","changes":[{"rev":"2-4f2957d984aa9d94d4298407f3292a47"}]}',
 				spy = jasmine.createSpy();
 
 			transportMock.request = function (channel, reqData, callback, scope) {
-				callback.call(scope, requestRes[reqData.path]);
+				asyncRequest = function () {
+					callback.call(scope, requestRes[reqData.path]);
+				};
 			};
 
 			transportMock.listen = function (channel, reqData, callback, scope) {
-				callback.call(scope, listenRes);
+				asyncListen = function () {
+					callback.call(scope, listenRes);
+				};
 			};
 			
 			spyOn(transportMock, "request").andCallThrough();
 			couchDBStore.watch("updated", spy);
 			couchDBStore.sync("db", "design", "view");
+			asyncRequest();
+			expect(couchDBStore.getState()).toEqual("Listening");
+			asyncListen();
+			asyncRequest();
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.mostRecentCall.args[0]).toEqual(2);
+			expect(spy.mostRecentCall.args[1].value.title).toEqual("the 3rd document");
+		});
+		
+		it("should add new items", function () {
+			var requestRes = {
+					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":9,"offset":0,"rows":[' +
+						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
+						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
+						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}',
+				'/db/_design/design/_view/view':'{"total_rows":4,"offset":0,"rows":[' +
+						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
+						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
+						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}},' +
+						'{"id":"document4","key":"2012/01/13 23:37:12","value":{"date":"2012/01/13 23:37:12","title":"the 4th\'s just been added","body":"do you see me?"}}]}'                                                                                  	            
+				},
+				asyncRequest,
+				asyncListen,
+				listenRes = '{"seq":10,"id":"document4","changes":[{"rev":"1-5a99f185bc942f626934108bd604bb33"}]}',
+				spy = jasmine.createSpy();
+
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, requestRes[reqData.path]);
+				};
+			};
+
+			transportMock.listen = function (channel, reqData, callback, scope) {
+				asyncListen = function () {
+					callback.call(scope, listenRes);
+				};
+			};
+			
+			spyOn(transportMock, "request").andCallThrough();
+			couchDBStore.watch("added", spy);
+			couchDBStore.sync("db", "design", "view");
+			asyncRequest();
+			expect(couchDBStore.getState()).toEqual("Listening");
+			asyncListen();
+			asyncRequest();
 			expect(spy.wasCalled).toEqual(true);
 			expect(spy.callCount).toEqual(4);
-			expect(spy.mostRecentCall.args[0]).toEqual(2)
-			expect(spy.mostRecentCall.args[1].value.title).toEqual("hello Emily!");
+			expect(spy.mostRecentCall.args[0]).toEqual(3);
+			expect(spy.mostRecentCall.args[1].value.title).toEqual("the 4th\'s just been added");
+		});
+		
+		it("should remove deleted items", function () {
+			var requestRes = {
+					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":4,"update_seq":10,"offset":0,"rows":[' + 
+						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
+						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
+						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}},' +
+						'{"id":"document4","key":"2012/01/13 23:37:12","value":{"date":"2012/01/13 23:37:12","title":"the 4th\'s just been added","body":"do you see me?"}}]}'                                                                          	            
+				},
+				asyncRequest,
+				asyncListen,
+				listenRes = '{"seq":11,"id":"document4","changes":[{"rev":"2-36ec9b80dce993a4a6a9ee311d266807"}],"deleted":true}',
+				spy = jasmine.createSpy();
+
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, requestRes[reqData.path]);
+				};
+			};
+
+			transportMock.listen = function (channel, reqData, callback, scope) {
+				asyncListen = function () {
+					callback.call(scope, listenRes);
+				};
+			};
+			
+			spyOn(transportMock, "request").andCallThrough();
+			couchDBStore.watch("deleted", spy);
+			couchDBStore.sync("db", "design", "view");
+			asyncRequest();
+			asyncListen();
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.callCount).toEqual(1);
+			expect(spy.mostRecentCall.args[0]).toEqual(3);
+			expect(spy.mostRecentCall.args[1]).toBeUndefined();
+			expect(couchDBStore.get(4)).toBeUndefined();
 		});
 	});
 	

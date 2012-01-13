@@ -69,15 +69,6 @@ require(["Store"], function (Store) {
 			expect(store.has("test")).toEqual(false);
 			expect(store.del("fake")).toEqual(false);
 		});
-		
-		it("should call Array.splice on del if init'd with an array", function () {
-			store.reset([1]);
-			spyOn(Array.prototype, "splice").andCallThrough();
-			expect(store.del(0)).toEqual(true);
-			expect(Array.prototype.splice.wasCalled).toEqual(true);
-			expect(Array.prototype.splice.mostRecentCall.args[0]).toEqual(0);
-			expect(Array.prototype.splice.mostRecentCall.args[1]).toEqual(1);
-		});
 
 	});
 	
@@ -327,6 +318,26 @@ require(["Store"], function (Store) {
 
 		it("should return false if the function doesn't exist", function () {
 			expect(store.alter("doesn't exist")).toEqual(false);
+		});
+		
+		
+		it("should call Array.splice on del if init'd with an array", function () {
+			store.reset([0, 1, 2, 3]);
+			spyOn(Array.prototype, "splice").andCallThrough();
+			expect(store.del(1)).toEqual(true);
+			expect(Array.prototype.splice.wasCalled).toEqual(true);
+			expect(Array.prototype.splice.mostRecentCall.args[0]).toEqual(1);
+			expect(Array.prototype.splice.mostRecentCall.args[1]).toEqual(1);
+			expect(store.get(0)).toEqual(0);
+			expect(store.get(1)).toEqual(2);
+		});
+		
+		it("should notify only once on del", function () {
+			var spy = jasmine.createSpy();
+			store.reset([0, 1, 2, 3]);
+			store.watch("deleted", spy);
+			store.del(1);
+			expect(spy.callCount).toEqual(1);
 		});
 		
 	});
