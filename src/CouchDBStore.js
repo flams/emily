@@ -4,7 +4,7 @@ define("CouchDBStore",
 
 /**
  * @class
- * CouchDBStore synchronises a Store with a CouchDB view
+ * CouchDBStore synchronises a Store with a CouchDB view or document
  * It subscribes to _changes to keep its data up to date.
  */
 function CouchDBStore(Store, StateMachine, Tools) {
@@ -40,6 +40,12 @@ function CouchDBStore(Store, StateMachine, Tools) {
 		_view = null,
 		
 		/**
+		 * The name of the document
+		 * @private
+		 */
+		_document = null,
+		
+		/**
 		 * The name of the design document
 		 * @private
 		 */
@@ -73,14 +79,24 @@ function CouchDBStore(Store, StateMachine, Tools) {
 						};
 						
 						this.reset(json.rows);
-						_stateMachine.event("subscribeToChanges", json.update_seq);
+						_stateMachine.event("subscribeToViewChanges", json.update_seq);
 					}, this);
-					
+				}, this, "Synched"],
+				
+				["getDocument", function () {
+					_transport.request(_channel, {
+						method: "GET",
+						path: "/" + _database + "/" + _document
+					}, function (results) {
+						var json = JSON.parse(results);
+						this.reset(json);
+						_stateMachine.event("subscribeToDocumentChanges");
+					}, this);
 				}, this, "Synched"]],
 						
 			"Synched": [
 			            
-			  ["subscribeToChanges", function (update_seq) {
+			  ["subscribeToViewChanges", function (update_seq) {
 					_transport.listen(_channel, {
 						method: "GET",
 						path: "/" + _database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
@@ -97,12 +113,38 @@ function CouchDBStore(Store, StateMachine, Tools) {
 
 						if (json.deleted) {
 							action = "delete";
-						} else if (json.changes[0].rev[0] == "1") {
+						} else if (json.changes[0].rev.search("1-") == 0) {
 							action = "add";
 						} else {
 							action = "change";
 						}
 						_stateMachine.event(action, json.id);
+					}, this);
+				}, this, "Listening"],
+				
+				["subscribeToDocumentChanges", function () {
+					_transport.listen(_channel, {
+						method: "GET",
+						path: "/" + _database + "/_changes?feed=continuous&heartbeat=20000"
+					}, function (changes) {
+						var json;
+						// Should I test for this very special case (heartbeat?)
+						// Or do I have to try catch for any invalid json?
+						if (changes == "\n") {
+							return false;
+						}
+						
+						json = JSON.parse(changes);
+						
+						if (json.id == _document) {
+							if (json.deleted) {
+								_stateMachine.event("deleteDoc");
+							} else {
+								_stateMachine.event("updateDoc");	
+							}
+						 }
+						
+						
 					}, this);
 				}, this, "Listening"]],
 				
@@ -148,7 +190,20 @@ function CouchDBStore(Store, StateMachine, Tools) {
 						}, this);
 						
 					}, this);
-				}, this]]
+				}, this],
+				
+				["updateDoc", function () {
+					_transport.request(_channel,{
+						method: "GET",
+						path: '/'+_database+'/' + _document
+					}, function (doc) {
+						this.reset(JSON.parse(doc));			
+					}, this);
+			    }, this],
+			    
+			    ["deleteDoc", function () {
+			    	this.reset({});			
+			    }, this]]
 			
 		});
 		
@@ -159,17 +214,20 @@ function CouchDBStore(Store, StateMachine, Tools) {
 		 * @param {String} view ...the view is.
 		 * @returns {Boolean}
 		 */
-		this.sync = function sync(database, design, view) {
-			
-			if (typeof database == "string" && typeof design == "string" && typeof view == "string") {
-				_database = database;
-				_design = design;
-				_view = view;
+		this.sync = function sync() {
+			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
+				_database = arguments[0];
+				_design = arguments[1];
+				_view = arguments[2];
 				_stateMachine.event("getView");
 				return true;
-			} else {
-				return false;
+			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "undefined") {
+				_database = arguments[0];
+				_document = arguments[1];
+				_stateMachine.event("getDocument");
+				return true;
 			}
+			return false;
 		};
 		
 		/**

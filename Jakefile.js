@@ -1,5 +1,4 @@
 var requirejs = require("requirejs"),
-	jasmine = require("jasmine-node"),
 	fs = require("fs"),
 	cp = require("child_process"),
 	
@@ -142,10 +141,16 @@ namespace("tests", function () {
 	});
 	
 	task("node", [], function () {
+		// I shouldn't have to get jasmine terminal reporter like this,
+		// i need to contact misko hevery to know why I can't do it like before (new TerminalReporter)
+		var jasmine = require("jasmine-node"),
+			TerminalReporter = require("jasmine-node/lib/jasmine-node/reporter").jasmineNode.TerminalReporter;
 		
 		LIBS_LOADING_ORDER.forEach(_requireList);
 		PROJECT_LOADING_ORDER.forEach(_requireList);
 		SPECS_LOADING_ORDER.forEach(_requireList);
+
+		
 		jasmine.getEnv().addReporter(new TerminalReporter({}));
 		jasmine.getEnv().execute();
 	});
