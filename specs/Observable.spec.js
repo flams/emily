@@ -12,6 +12,7 @@ require(["Observable"], function (Observable) {
 			expect(observable.unwatch).toBeInstanceOf(Function);
 			expect(observable.notify).toBeInstanceOf(Function);
 			expect(observable.hasObserver).toBeInstanceOf(Function);
+			expect(observable.hasTopic).toBeInstanceOf(Function);
 		});
 		
 	});
@@ -124,15 +125,26 @@ require(["Observable"], function (Observable) {
 			var handler1 = null,
 				handler2 = null;
 		
-		handler1 = observable.watch("test", function(){});
-		handler2 = observable.watch("test2", function(){});
-		handler3 = observable.watch("test2", function(){});
+			handler1 = observable.watch("test", function(){});
+			handler2 = observable.watch("test2", function(){});
+			handler3 = observable.watch("test2", function(){});
+			
+			expect(observable.unwatchAll("test2")).toEqual(true);
+			
+			expect(observable.hasObserver(handler1)).toEqual(true);
+			expect(observable.hasObserver(handler2)).toEqual(false);
+			expect(observable.hasObserver(handler3)).toEqual(false);
+		});
 		
-		expect(observable.unwatchAll("test2")).toEqual(true);
-		
-		expect(observable.hasObserver(handler1)).toEqual(true);
-		expect(observable.hasObserver(handler2)).toEqual(false);
-		expect(observable.hasObserver(handler3)).toEqual(false);
+		it("should tell if a topic is already watched", function () {
+			var topic = "topic",
+				handler;
+			
+			handler = observable.watch("topic", function () {});
+			expect(observable.hasTopic("topic")).toEqual(true);
+			expect(observable.hasTopic("notopic")).toEqual(false);
+			observable.unwatch(handler);
+			expect(observable.hasTopic("topic")).toEqual(false);
 		});
 		
 	});

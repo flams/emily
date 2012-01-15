@@ -51,8 +51,14 @@ function Observable(Tools) {
 		this.unwatch = function unwatch(handler) {
 			var topic = handler[0], idx = handler[1];
 			if (_topics[topic] && _topics[topic][idx]) {
-				// set value to null so the indexes don't move.
-				_topics[topic][idx] = null;
+				// delete value so the indexes don't move
+				delete _topics[topic][idx];
+				// If the topic is only set with falsy values, delete it;
+				if (!_topics[topic].some(function (value) {
+					return !!value;
+				})) {
+					delete _topics[topic];
+				}
 				return true;
 			} else {
 				return false;
@@ -90,6 +96,20 @@ function Observable(Tools) {
 			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
 		};
 		
+		/**
+		 * Check if a topic has observers
+		 * @param {String} topic the name of the topic
+		 * @returns {Boolean} true if topic is listened
+		 */
+		this.hasTopic = function hasTopic(topic) {
+			return !!_topics[topic];
+		};
+		
+		/**
+		 * Unwatch all or unwatch all from topic
+		 * @param {String} topic optional unwatch all from topic
+		 * @returns {Boolean} true if ok
+		 */
 		this.unwatchAll = function unwatchAll(topic) {
 			if (_topics[topic]) {
 				delete _topics[topic];

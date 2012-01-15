@@ -1,4 +1,4 @@
-require(["Transport"], function (Transport) {
+require(["Transport", "Observable"], function (Transport, Observable) {
 	
 	describe("TransportTest", function () {
 		
@@ -169,15 +169,13 @@ require(["Transport"], function (Transport) {
 		
 		it("should also listen on a kept-alive socket", function () {
 			var url = "/",
-			transport,
-			socket,
-			channel = "File",
-			requestData = {
-				resource: "image.jpg"
-			},
-			callback = jasmine.createSpy(),
-			eventId,
-			listen;
+				transport,
+				socket,
+				channel = "File",
+				path = "image.jpg",
+				callback = jasmine.createSpy(),
+				listen,
+				eventId;
 		
 			transport = new Transport(url);
 			socket = transport.getSocket();
@@ -189,7 +187,7 @@ require(["Transport"], function (Transport) {
 			expect(transport.listen).toBeInstanceOf(Function);
 			
 			spyOn(transport, "request").andCallThrough();
-			listen = transport.listen(channel, requestData, callback);
+			listen = transport.listen(channel, path, callback);
 			expect(listen).toBeInstanceOf(Object);
 			expect(listen.stop).toBeInstanceOf(Function);
 			
@@ -202,9 +200,52 @@ require(["Transport"], function (Transport) {
 			
 			expect(socket.removeListener.mostRecentCall.args[0]).toEqual(eventId);
 			expect(socket.removeListener.mostRecentCall.args[1]).toBeInstanceOf(Function);
-			
 			expect(transport.request.wasCalled).toEqual(true);
 			expect(transport.request.mostRecentCall.args[1].keptAlive).toEqual(true);
+			
+		});
+		
+		it("should implement an observable for the listen func", function () {
+			var url = "/",
+				transport,
+				channel = "DB",
+				path = "changes",
+				observable, listen;
+
+			transport = new Transport(url);
+			
+			expect(transport.getListenObservable).toBeInstanceOf(Function);
+			observable = transport.getListenObservable();
+			expect(observable).toBeInstanceOf(Observable);
+			
+			spyOn(observable, "watch").andCallThrough();
+			spyOn(observable, "unwatch").andCallThrough();
+			listen = transport.listen(channel, path, function () {});
+			expect(observable.watch.wasCalled).toEqual(true);
+			expect(observable.watch.mostRecentCall.args[0]).toEqual(channel + "/" + path);
+			
+			listen.stop();
+			
+			expect(observable.unwatch.wasCalled).toEqual(true);
+			expect(observable.unwatch.mostRecentCall.args[0]).toBeInstanceOf(Array);
+
+		});
+		
+		it("should listen to the same path only once", function () {
+			var url = "/",
+				transport,
+				channel = "DB",
+				path = "changes",
+				callback = jasmine.createSpy();
+			
+			transport = new Transport(url);
+			spyOn(transport, "request");
+			
+			transport.listen(channel, path, callback);
+			transport.listen(channel, path, callback);
+			expect(transport.request.callCount).toEqual(1);
+			transport.listen(channel, "otherpath", callback);
+			expect(transport.request.callCount).toEqual(2);
 		});
 		
 	});

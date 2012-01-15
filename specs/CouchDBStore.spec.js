@@ -135,9 +135,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			asyncRequest();
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
-			reqData = transportMock.listen.mostRecentCall.args[1];
-			expect(reqData.method).toEqual("GET");
-			expect(reqData.path).toEqual("/db/_changes?feed=continuous&heartbeat=20000&since=8");
+			expect(transportMock.listen.mostRecentCall.args[1]).toEqual("/db/_changes?feed=continuous&heartbeat=20000&since=8");
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			
 		});
@@ -160,7 +158,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 					};
 				};
 	
-				transportMock.listen = function (channel, reqData, callback, scope) {
+				transportMock.listen = function (channel, path, callback, scope) {
 					asyncListen = function () {
 						callback.call(scope, listenRes);
 					};
@@ -198,7 +196,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				};
 			};
 
-			transportMock.listen = function (channel, reqData, callback, scope) {
+			transportMock.listen = function (channel, path, callback, scope) {
 				asyncListen = function () {
 					callback.call(scope, listenRes);
 				};
@@ -239,7 +237,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				};
 			};
 
-			transportMock.listen = function (channel, reqData, callback, scope) {
+			transportMock.listen = function (channel, path, callback, scope) {
 				asyncListen = function () {
 					callback.call(scope, listenRes);
 				};
@@ -277,7 +275,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				};
 			};
 
-			transportMock.listen = function (channel, reqData, callback, scope) {
+			transportMock.listen = function (channel, path, callback, scope) {
 				asyncListen = function () {
 					callback.call(scope, listenRes);
 				};
@@ -368,9 +366,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			asyncRequest();
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
-			reqData = transportMock.listen.mostRecentCall.args[1];
-			expect(reqData.method).toEqual("GET");
-			expect(reqData.path).toEqual("/db/_changes?feed=continuous&heartbeat=20000");
+			expect(transportMock.listen.mostRecentCall.args[1]).toEqual("/db/_changes?feed=continuous&heartbeat=20000");
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			
 		});
@@ -388,7 +384,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 					};
 				};
 	
-				transportMock.listen = function (channel, reqData, callback, scope) {
+				transportMock.listen = function (channel, path, callback, scope) {
 					asyncListen = function () {
 						callback.call(scope, listenRes);
 					};
@@ -416,7 +412,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				};
 			};
 
-			transportMock.listen = function (channel, reqData, callback, scope) {
+			transportMock.listen = function (channel, path, callback, scope) {
 				asyncListen = function () {
 					callback.call(scope, listenRes);
 				};
@@ -452,7 +448,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 					};
 				};
 
-				transportMock.listen = function (channel, reqData, callback, scope) {
+				transportMock.listen = function (channel, path, callback, scope) {
 					asyncListen = function () {
 						callback.call(scope, listenRes);
 					};
@@ -481,7 +477,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 					};
 				};
 
-				transportMock.listen = function (channel, reqData, callback, scope) {
+				transportMock.listen = function (channel, path, callback, scope) {
 					asyncListen = function () {
 						callback.call(scope, listenRes);
 					};
@@ -497,10 +493,6 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				expect(transportMock.request.callCount).toEqual(1);
 				expect(spy.callCount).toEqual(5);
 				
-		});
-		
-		describe("CouchDBStoreShareTransport", function () {
-			
 		});
 		
 	});

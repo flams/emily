@@ -1,10 +1,12 @@
 define("Transport",
+		
+["Observable"],
 /** 
  * @class
  * Transport allows for client-server eventing.
  * It's based on socket.io.
  */
-function Transport() {
+function Transport(Observable) {
 
 	/**
 	 * Defines the Transport
@@ -24,7 +26,13 @@ function Transport() {
 		 * @private
 		 * The socket.io globally defined module
 		 */
-		_io = io;
+		_io = io,
+		
+		/**
+		 * @private
+		 * The Observable that is used for the listen function
+		 */
+		_observable = new Observable();
 		
 		/**
 		 * Connect Transport to an url
@@ -88,17 +96,61 @@ function Transport() {
 			requestData.__eventId__ = eventId;
 			_socket.emit(channel, requestData);
 			if (requestData.keptAlive) {
-				return {
-					stop: function stop() {
+				return function stop() {
 						_socket.removeListener(eventId, boundCallback);
-					}
 				};
 			}
 		};
 		
-		this.listen = function listen(channel, requestData, func, scope) {
-			requestData.keptAlive = true;
-			return this.request(channel, requestData, func, scope);
+		/**
+		 * Listen to an url and get notified on new data
+		 * @param {String} channel watch the server's documentation to see available channels
+		 * @param {String} path the url on which to get new data
+		 * @param {Function} func the callback that will get the data
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns
+		 */
+		this.listen = function listen(channel, path, func, scope) {
+			
+			var topic = channel + "/" + path,
+				handler,
+				stop;
+			
+			// If no such topic
+			if (!_observable.hasTopic(topic)) {
+				// Listen to changes on this topic (an url actually)
+				stop = this.request(channel, {
+					path: path,
+					method: "GET",
+					keptAlive: true
+				// Notify when new data arrives
+				}, function (data) {
+					_observable.notify(topic, data);
+				}, this);
+			}
+			
+			// Add the observer
+			handler = _observable.watch(topic, func, scope);
+
+			return {
+				// If the observer is not interested anymore, unwatch
+				stop: function () {
+					_observable.unwatch(handler);
+					// If no more observers
+					if (!_observable.hasTopic(topic)) {
+						// stop listening
+						stop();
+					}
+				}
+			};
+		};
+		
+		/**
+		 * This function is for debugging only
+		 * @returns {Observable}
+		 */
+		this.getListenObservable = function getListenObservable() {
+			return _observable;
 		};
 		
 		/**

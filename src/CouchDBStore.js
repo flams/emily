@@ -83,7 +83,7 @@ function CouchDBStore(Store, StateMachine, Tools) {
 					}, this);
 				}, this, "Synched"],
 				
-				["getDocument", function () {
+				["getDocument", function () { 
 					_transport.request(_channel, {
 						method: "GET",
 						path: "/" + _database + "/" + _document
@@ -97,11 +97,9 @@ function CouchDBStore(Store, StateMachine, Tools) {
 			"Synched": [
 			            
 			  ["subscribeToViewChanges", function (update_seq) {
-					_transport.listen(_channel, {
-						method: "GET",
-						path: "/" + _database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
-					}, function (changes) {
-						
+					_transport.listen(_channel
+					, "/" + _database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
+					, function (changes) {
 						// Should I test for this very special case (heartbeat?)
 						// Or do I have to try catch for any invalid json?
 						if (changes == "\n") {
@@ -123,10 +121,9 @@ function CouchDBStore(Store, StateMachine, Tools) {
 				}, this, "Listening"],
 				
 				["subscribeToDocumentChanges", function () {
-					_transport.listen(_channel, {
-						method: "GET",
-						path: "/" + _database + "/_changes?feed=continuous&heartbeat=20000"
-					}, function (changes) {
+					_transport.listen(_channel
+					, "/" + _database + "/_changes?feed=continuous&heartbeat=20000"
+					, function (changes) {
 						var json;
 						// Should I test for this very special case (heartbeat?)
 						// Or do I have to try catch for any invalid json?
