@@ -199,6 +199,25 @@ function Tools(){
 			} else {
 				return object;
 			}
+		},
+		
+		/**
+		 * Get the property of an object by giving the object and a string to the prop:
+		 * given an object such as a.b.c.d = 5, getObject(a, "b.c.d") will return 5.
+		 * @param {Object} object the object to get the property from
+		 * @param {String} property the property given as a string
+		 * @returns false if wrong parameters
+		 */
+		getObjectsProperty: function getObjectsProperty(object, property) {
+			if (object instanceof Object && typeof property == "string") {
+				var split = property.split(".");
+				split.unshift(object);
+				return split.reduce(function (obj, prop) {
+					return obj[prop];
+				});
+			} else {
+				return false;
+			}
 		}
 		
 	};

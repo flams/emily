@@ -428,6 +428,4 @@ require(["Store"], function (Store) {
 		});
 
 	});
-
-	
 });

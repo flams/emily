@@ -330,4 +330,25 @@ require(["Tools"], function (Tools) {
 			
 		});
 	});
+	
+	describe("ToolsGetObjectsProperty", function () {
+		
+		var a = {b:{c:{d:{e:1}}}};
+		
+		it("should be a function", function () {
+			expect(Tools.getObjectsProperty).toBeInstanceOf(Function);
+		});
+		
+		it("should return the property value", function () {
+			expect(Tools.getObjectsProperty()).toEqual(false);
+			expect(Tools.getObjectsProperty("")).toEqual(false);
+			expect(Tools.getObjectsProperty(a, "b.c")).toBe(a.b.c);
+			expect(Tools.getObjectsProperty(a, "b.c.d.e")).toEqual(1);
+			expect(Tools.getObjectsProperty(a, "b")).toEqual(a.b);
+			expect(Tools.getObjectsProperty("a.b.c.d.e")).toEqual(false);
+			expect(Tools.getObjectsProperty(a, "b.e")).toBeUndefined();
+		});
+		
+		
+	});
 });
