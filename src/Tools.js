@@ -213,14 +213,15 @@ function Tools(){
 		 * @returns false if wrong parameters
 		 */
 		getObjectsProperty: function getObjectsProperty(object, property) {
-			if (object instanceof Object && typeof property == "string") {
+			if (object && object instanceof Object
+				&& typeof property == "string" && property != "") {
 				var split = property.split(".");
 				split.unshift(object);
 				return split.reduce(function (obj, prop) {
 					return obj[prop];
 				});
 			} else {
-				return false;
+				return object;
 			}
 		}
 		

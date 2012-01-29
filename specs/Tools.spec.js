@@ -350,12 +350,18 @@ require(["Tools"], function (Tools) {
 		});
 		
 		it("should return the property value", function () {
-			expect(Tools.getObjectsProperty()).toEqual(false);
-			expect(Tools.getObjectsProperty("")).toEqual(false);
+			var obj = {};
+			expect(Tools.getObjectsProperty()).toBeUndefined();
+			expect(Tools.getObjectsProperty("")).toEqual("");
+			expect(Tools.getObjectsProperty("a.b.c.d.e")).toEqual("a.b.c.d.e");
+			expect(Tools.getObjectsProperty(true)).toEqual(true);
+			expect(Tools.getObjectsProperty(null)).toEqual(null);
+			expect(Tools.getObjectsProperty(obj)).toEqual(obj);
+			expect(Tools.getObjectsProperty(a.b)).toBe(a.b);
+			expect(Tools.getObjectsProperty(a.b, "")).toBe(a.b);
 			expect(Tools.getObjectsProperty(a, "b.c")).toBe(a.b.c);
 			expect(Tools.getObjectsProperty(a, "b.c.d.e")).toEqual(1);
 			expect(Tools.getObjectsProperty(a, "b")).toEqual(a.b);
-			expect(Tools.getObjectsProperty("a.b.c.d.e")).toEqual(false);
 			expect(Tools.getObjectsProperty(a, "b.e")).toBeUndefined();
 		});
 		
