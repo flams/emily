@@ -64,8 +64,8 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 		});
 		
 		it("should have a function to get its current state", function () {
-			expect(couchDBStore.getState).toBeInstanceOf(Function);
-			expect(couchDBStore.getState()).toEqual("Unsynched");
+			expect(couchDBStore.getStateMachine).toBeInstanceOf(Function);
+			expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Unsynched");
 		});
 		
 		it("should have a function to synchronize with a couchdb view", function () {
@@ -206,7 +206,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			couchDBStore.watch("updated", spy);
 			couchDBStore.sync("db", "design", "view");
 			asyncRequest();
-			expect(couchDBStore.getState()).toEqual("Listening");
+			expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Listening");
 			asyncListen();
 			asyncRequest();
 			expect(spy.wasCalled).toEqual(true);
@@ -247,7 +247,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			couchDBStore.watch("added", spy);
 			couchDBStore.sync("db", "design", "view");
 			asyncRequest();
-			expect(couchDBStore.getState()).toEqual("Listening");
+			expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Listening");
 			asyncListen();
 			asyncRequest();
 			expect(spy.wasCalled).toEqual(true);
@@ -295,7 +295,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 	});
 	
 	/**
-	 * A couchDBstore can synchronise with a document
+	 * A couchDBstore can synchronize with a document
 	 * A document is a JSON object
 	 */
 	describe("CouchDBStoreSyncDocument", function () {
@@ -346,6 +346,46 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(couchDBStore.getNbItems()).toEqual(5);
 			expect(couchDBStore.get("_id")).toEqual("document1");
 			expect(couchDBStore.get("_rev")).toEqual("1-7f5175756a7ab72660278c3c0aed2eee");
+		});
+		
+		it("should add document on sync if it's missing", function () {
+			var asyncRequest,
+				res = {
+						'/db/document4' : '{"error":"not_found","reason":"missing"}'
+					},
+				model = {
+					title: "Emily is funky",
+					body: "it's easy to use",
+					date: "2012/01/30"
+				};
+				stateMachine = couchDBStore.getStateMachine();
+
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, res[reqData.path]);
+				};
+			};
+			couchDBStore.reset(model);
+			couchDBStore.sync("db", "document4");
+			spyOn(transportMock, "request").andCallThrough();
+			spyOn(stateMachine, "event").andCallThrough();
+			asyncRequest();
+			
+			expect(couchDBStore.get("error")).toBeUndefined();
+			expect(couchDBStore.get("reason")).toBeUndefined();
+			expect(stateMachine.getCurrent()).toEqual("Synched");
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("createDocument");
+			
+			expect(transportMock.request.wasCalled).toEqual(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.mostRecentCall.args[1].method).toEqual("PUT");
+			expect(transportMock.request.mostRecentCall.args[1].path).toEqual('/db/document4');
+			expect(transportMock.request.mostRecentCall.args[1].headers["Content-Type"]).toEqual("application/json");
+			expect(JSON.parse(transportMock.request.mostRecentCall.args[1].data).body).toBe("it's easy to use");
+			asyncRequest();
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
+			
+			
 		});
 		
 		it("should subscribe to changes", function () {
@@ -493,6 +533,10 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				expect(transportMock.request.callCount).toEqual(1);
 				expect(spy.callCount).toEqual(5);
 				
+		});
+		
+		it("should update the database on documents changes", function () {
+			
 		});
 		
 	});

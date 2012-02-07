@@ -173,5 +173,13 @@ define("Store", ["Observable", "Tools"],
 			}
 
 		};
+		
+		/**
+		 * Dumps a JSON version of all the data
+		 * @returns {JSON}
+		 */
+		this.toJSON = function toJSON() {
+			return JSON.stringify(_data);
+		};
 	};
 });

@@ -48,7 +48,7 @@ require(["Tools"], function (Tools) {
 		
 		it("should also return the destination", function () {
 			expect(Tools.mixin(source, destination)).toBe(destination);
-		})
+		});
 	});
 	
 	describe("ToolsTestCount", function () {

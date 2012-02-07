@@ -89,12 +89,30 @@ function CouchDBStore(Store, StateMachine, Tools) {
 						path: "/" + _database + "/" + _document
 					}, function (results) {
 						var json = JSON.parse(results);
-						this.reset(json);
-						_stateMachine.event("subscribeToDocumentChanges");
+						if (json._id) {
+							this.reset(json);
+							_stateMachine.event("subscribeToDocumentChanges");
+						} else {
+							_stateMachine.event("createDocument");
+						}
+
 					}, this);
 				}, this, "Synched"]],
 						
 			"Synched": [
+			            
+	            ["createDocument", function () {
+	            	_transport.request(_channel, {
+	            		method: "PUT",
+	            		path: '/' + _database + '/' + _document,
+	            		headers: {
+	            			"Content-Type": "application/json"
+	            		},
+	            		data: this.toJSON()
+	            	}, function () {
+	            		_stateMachine.event("subscribeToDocumentChanges");
+	            	});
+	            }, this],
 			            
 			  ["subscribeToViewChanges", function (update_seq) {
 					_transport.listen(_channel
@@ -253,12 +271,12 @@ function CouchDBStore(Store, StateMachine, Tools) {
 		};
 		
 		/**
-		 * Get the current state machine's state
+		 * Get the state machine
 		 * Also only useful for debugging
-		 * @returns {String} the name of the current state
+		 * @returns {StateMachine} the state machine
 		 */
-		this.getState = function getState() {
-			return _stateMachine.getCurrent();
+		this.getStateMachine = function getStateMachine() {
+			return _stateMachine;
 		};
 		
 		/**

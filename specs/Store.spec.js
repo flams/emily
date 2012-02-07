@@ -13,6 +13,7 @@ require(["Store"], function (Store) {
 			expect(store.set).toBeInstanceOf(Function);
 			expect(store.has).toBeInstanceOf(Function);
 			expect(store.del).toBeInstanceOf(Function);
+			expect(store.toJSON).toBeInstanceOf(Function);
 			expect(store.alter).toBeInstanceOf(Function);
 			expect(store.watch).toBeInstanceOf(Function);
 			expect(store.unwatch).toBeInstanceOf(Function);
@@ -20,7 +21,7 @@ require(["Store"], function (Store) {
 	
 	});
 	
-	describe("StoreGetSetDel", function () {
+	describe("StoreGetSetDelDump", function () {
 		
 		var store = null;
 		
@@ -70,6 +71,19 @@ require(["Store"], function (Store) {
 			expect(store.del("fake")).toEqual(false);
 		});
 
+		it("should allow for returning a JSON version of the store", function () {
+			var values = {
+					key1: "value1",
+					key2: "value2"
+				},
+				json;
+			store.reset(values);
+			json = JSON.parse(store.toJSON());
+			expect(json.key1).toEqual("value1");
+			expect(json.key2).toEqual("value2");
+			expect(Object.getOwnPropertyNames(json).length).toEqual(2);
+		});
+		
 	});
 	
 	describe("StoreObservable", function () {
