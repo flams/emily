@@ -155,8 +155,6 @@ function CouchDBStore(Store, StateMachine, Tools) {
 								_stateMachine.event("updateDoc");	
 							}
 						 }
-						
-						
 					}, this);
 				}, this, "Listening"]],
 				

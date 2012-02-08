@@ -1,4 +1,4 @@
-require(["Promise"], function (Promise) {
+require(["Promise", "Observable", "StateMachine"], function (Promise, Observable, StateMachine) {
 	
 	describe("PromiseInit", function () {
 		
@@ -10,194 +10,251 @@ require(["Promise"], function (Promise) {
 			var promise = new Promise();
 			expect(promise.then).toBeInstanceOf(Function);
 			expect(promise.resolve).toBeInstanceOf(Function);
+			expect(promise.reject).toBeInstanceOf(Function);
+		});
+		
+		it("should return its observer and statemachine for debugging", function () {
+			var promise = new Promise();
+			expect(promise.getStateMachine).toBeInstanceOf(Function);
+			expect(promise.getObservable).toBeInstanceOf(Function);
+			expect(promise.getStateMachine()).toBeInstanceOf(StateMachine);
+			expect(promise.getObservable()).toBeInstanceOf(Observable);
 		});
 		
 	});
 	
-	describe("PromiseTest", function () {
+	describe("PromiseResolve", function () {
 		
-		it("should resolve only if Promise is set and unresolved", function () {
-			var promise = new Promise();
-			expect(promise.resolve()).toEqual(false);
-			promise = new Promise("");
-			expect(promise.resolve()).toEqual(false);
-			promise = new Promise(function(){});
+		var promise = null,
+			stateMachine = null;
+		
+		beforeEach(function () {
+			promise = new Promise();
+			stateMachine = promise.getStateMachine();
+		});
+		
+		it("should have its stateMachine init'd at Unresolved", function () {
+			expect(stateMachine.getCurrent()).toEqual("Unresolved");
+		});
+		
+		it("should resolve the promise", function () {
+			spyOn(stateMachine, "event").andCallThrough();
 			expect(promise.resolve()).toEqual(true);
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("resolve");
+			expect(stateMachine.getCurrent()).toEqual("Resolved");
 		});
 		
-		
-		it("should return its state", function () {
-			var promise = new Promise();
-			expect(promise.getState).toBeInstanceOf(Function);
-			expect(promise.getState()).toEqual("Unresolved");
-		});
-		
-		it("should be init'd to Unresolved", function () {
-			var promise = new Promise();
-			expect(promise.getState()).toEqual("Unresolved");
-		});
-		
-		it("should call the function on resolve with the result handler", function () {
-			var spy = jasmine.createSpy(),
-				promise = new Promise(spy);
-			
-			promise.resolve();
-			expect(spy.wasCalled).toEqual(true);
-			expect(spy.mostRecentCall.args[0]).toBeInstanceOf(Function);
-		});
-		
-		it("should call the function on resolve in scope", function () {
-			var spy = jasmine.createSpy(),
-				thisObj = {},
-				promise = new Promise(spy, thisObj);
-			
-			promise.resolve();
-			expect(spy.mostRecentCall.object).toBe(thisObj);
-		});
-		
-		it("should change state to Resolved on success", function () {
-			var spy = jasmine.createSpy(),
-				promise = new Promise(spy),
-				result;
-			
-			promise.resolve();
-			result = spy.mostRecentCall.args[0];
-			expect(result("don't do much")).toEqual(false);
-			expect(result("success")).toEqual(true);
-			expect(result("success")).toEqual(false);
-			expect(promise.getState()).toEqual("Resolved");
-		});
-		
-		it("should change state to Failed on fail", function () {
-			var spy = jasmine.createSpy(),
-				promise = new Promise(spy),
-				result;
-			
-			promise.resolve();
-			result = spy.mostRecentCall.args[0];
-			expect(result("don't do much")).toEqual(false);
-			expect(result("fail")).toEqual(true);
-			expect(result("fail")).toEqual(false);
-			expect(promise.getState()).toEqual("Failed");
-		});
-		
-		it("should execute the then callback on success", function () {
-			var spyPromise = jasmine.createSpy(),
-				spyThen = jasmine.createSpy(),
-				promise = new Promise(spyPromise),
-				result;
-			
-			promise.then(spyThen),
-			promise.resolve();
-			result = spyPromise.mostRecentCall.args[0];
-			expect(spyThen.wasCalled).toEqual(false);
-			result("success");
-			expect(spyThen.wasCalled).toEqual(true);
-		});
-		
-		it("should pass arguments to the then callback", function () {
-			var spyPromise = jasmine.createSpy(),
-				spyThen = jasmine.createSpy(),
-				args = {},
-				promise = new Promise(spyPromise);
-			
-			promise.then(spyThen),
-			promise.resolve();
-			spyPromise.mostRecentCall.args[0]("success", args);
-			expect(spyThen.wasCalled).toEqual(true);
-			expect(spyThen.mostRecentCall.args[0]).toBe(args);
-		});
-		
-		it("should execute the then callback in scope", function () {
-			var spyPromise = jasmine.createSpy(),
-				spyThen = jasmine.createSpy(),
-				thisObj = {},
-				promise = new Promise(spyPromise);
-			
-			promise.then(spyThen, thisObj),
-			promise.resolve();
-			spyPromise.mostRecentCall.args[0]("success");
-			expect(spyThen.wasCalled).toEqual(true);
-			expect(spyThen.mostRecentCall.object).toBe(thisObj);
-		});
-		
-		it("should execute all then callbacks", function () {
-			var spyPromise = jasmine.createSpy(),
-				spyThen1 = jasmine.createSpy(),
-				spyThen2 = jasmine.createSpy(),
-				spyThen3 = jasmine.createSpy(),
-				promise = new Promise(spyPromise);
-			
-			promise.then(spyThen1);
-			promise.then(spyThen2);
-			promise.then(spyThen3);
-			
-			promise.resolve();
-			spyPromise.mostRecentCall.args[0]("success");
-			expect(spyThen1.wasCalled).toEqual(true);
-			expect(spyThen2.wasCalled).toEqual(true);
-			expect(spyThen3.wasCalled).toEqual(true);
-		});
-		
-		it("should not resolve an already resolved promise", function () {
-			var spy = jasmine.createSpy(),
-				promise = new Promise(spy);
-
-			promise.resolve();
-			spy.mostRecentCall.args[0]("success");
+		it("should resolve the promise only once", function () {
+			expect(promise.resolve()).toEqual(true);
 			expect(promise.resolve()).toEqual(false);
 		});
 		
-		it("should directly return on new then if resolved promise", function () {
-			var spy = jasmine.createSpy(),
-				promise = new Promise(spy),
-				success = {},
-				result;
-			
-			promise.resolve();
-			spy.mostRecentCall.args[0]("success", success);
-			promise.then(function (res) {
-				result = res;
-			});
-			expect(result).toBe(success);
+		it("should reject the promise", function () {
+			spyOn(stateMachine, "event").andCallThrough();
+			expect(promise.reject()).toEqual(true);
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("reject");
+			expect(stateMachine.getCurrent()).toEqual("Rejected");
 		});
 		
-		it("should work the same with errbacks", function () {
-			var spyPromise = jasmine.createSpy(),
-				spyThen1 = jasmine.createSpy(),
-				spyThen2 = jasmine.createSpy(),
-				spyThen3 = jasmine.createSpy(),
-				promise = new Promise(spyPromise),
-				scope={};
-		
-			promise.then(function(){}, spyThen1);
-			promise.then(function(){}, {}, spyThen2);
-			promise.then(function(){}, spyThen3, scope);
-			
-			promise.resolve();
-			spyPromise.mostRecentCall.args[0]("fail");
-			expect(spyThen1.wasCalled).toEqual(true);
-			expect(spyThen2.wasCalled).toEqual(true);
-			expect(spyThen3.wasCalled).toEqual(true);
-			expect(spyThen3.mostRecentCall.object).toBe(scope);
-		});
-		
-		it("should directly return on new then if failed promise", function () {
-			var spy = jasmine.createSpy(),
-				promise = new Promise(spy),
-				failed = {},
-				result;
-			
-			promise.resolve();
-			spy.mostRecentCall.args[0]("fail", failed);
-			promise.then(function(){}, function (res) {
-				result = res;
-			});
-			expect(result).toBe(failed);
+		it("should reject the promise only once", function () {
+			expect(promise.reject()).toEqual(true);
+			expect(promise.reject()).toEqual(false);
 		});
 		
 	});
-
 	
+	describe("PromiseThens", function () {
+	
+		var promise = null,
+			observable = null,
+			stateMachine = null;
+		
+		beforeEach(function () {
+			promise = new Promise();
+			observable = promise.getObservable();
+			stateMachine = promise.getStateMachine();
+		});
+		
+		it("should add a then", function () {
+			var then = jasmine.createSpy();
+			spyOn(observable, "watch");
+			spyOn(stateMachine, "event").andCallThrough();
+			
+			promise.then(then);
+			expect(observable.watch.wasCalled).toEqual(true);
+			expect(observable.watch.mostRecentCall.args[0]).toEqual("success");
+			expect(observable.watch.mostRecentCall.args[1]).toBe(then);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("addSuccess");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(then);
+		});
+		
+		it("should add a then with its scope", function () {
+			var then = jasmine.createSpy(),
+				thisObj = {};
+			spyOn(observable, "watch");
+			spyOn(stateMachine, "event").andCallThrough();
+			
+			promise.then(then, thisObj);
+			expect(observable.watch.wasCalled).toEqual(true);
+			expect(observable.watch.mostRecentCall.args[0]).toEqual("success");
+			expect(observable.watch.mostRecentCall.args[1]).toBe(then);
+			expect(observable.watch.mostRecentCall.args[2]).toBe(thisObj);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("addSuccess");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(then);
+			expect(stateMachine.event.mostRecentCall.args[2]).toBe(thisObj);
+		});
+		
+		it("should add a then and its errback", function () {
+			var then = jasmine.createSpy(),
+				err = jasmine.createSpy();
+			
+			spyOn(observable, "watch");
+			spyOn(stateMachine, "event").andCallThrough();
+			
+			promise.then(then, err);
+			expect(observable.watch.wasCalled).toEqual(true);
+			expect(observable.watch.mostRecentCall.args[0]).toEqual("fail");
+			expect(observable.watch.mostRecentCall.args[1]).toBe(err);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("addFail");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(err);
+		});
+		
+		it("should add a then and its errback with its scope", function () {
+			var then = jasmine.createSpy(),
+				err = jasmine.createSpy(),
+				errThisObj = {};
+			
+			spyOn(observable, "watch");
+			spyOn(stateMachine, "event").andCallThrough();
+			
+			promise.then(then, err, errThisObj);
+			expect(observable.watch.wasCalled).toEqual(true);
+			expect(observable.watch.mostRecentCall.args[0]).toEqual("fail");
+			expect(observable.watch.mostRecentCall.args[1]).toBe(err);
+			expect(observable.watch.mostRecentCall.args[2]).toBe(errThisObj);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("addFail");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(err);
+			expect(stateMachine.event.mostRecentCall.args[2]).toBe(errThisObj);
+		});
+		
+		it("should add a then, its scope, and its errback with its scope", function () {
+			var then = jasmine.createSpy(),
+				thenThisObj = {},
+				err = jasmine.createSpy(),
+				errThisObj = {};
+			
+			spyOn(observable, "watch");
+			spyOn(stateMachine, "event").andCallThrough();
+			
+			promise.then(then, thenThisObj, err, errThisObj);
+			expect(observable.watch.wasCalled).toEqual(true);
+			expect(observable.watch.mostRecentCall.args[0]).toEqual("fail");
+			expect(observable.watch.mostRecentCall.args[1]).toBe(err);
+			expect(observable.watch.mostRecentCall.args[2]).toBe(errThisObj);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("addFail");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(err);
+			expect(stateMachine.event.mostRecentCall.args[2]).toBe(errThisObj);
+		});
+		
+		it("should provide a chainable then", function () {
+			expect(promise.then()).toBe(promise);
+		});
+	});
+	
+	describe("PromiseExecCallbacks", function () {
+		
+		var promise = null,
+			observable = null;
+		
+		beforeEach(function () {
+			promise = new Promise();
+			observable = promise.getObservable();
+		});
+		
+		it("should notify the resolved value", function () {
+			spyOn(observable, "notify");
+			promise.resolve();
+			expect(observable.notify.wasCalled).toEqual(true);
+			expect(observable.notify.mostRecentCall.args[0]).toEqual("success");
+			expect(observable.notify.mostRecentCall.args[1]).toBeUndefined();
+		});
+		
+		it("should notify the rejected value", function () {
+			spyOn(observable, "notify");
+			promise.reject("Emily");
+			expect(observable.notify.wasCalled).toEqual(true);
+			expect(observable.notify.mostRecentCall.args[0]).toEqual("fail");
+			expect(observable.notify.mostRecentCall.args[1]).toEqual("Emily");
+		});
+		
+		it("should resolve only once and return the resolved value for the next thenables", function () {
+			spyOn(observable, "notify");
+			promise.resolve("Emily");
+		});
+		
+	});
+	
+	describe("PromiseAddThenableAfterResolve", function () {
+		
+		var promise = null;
+		
+		beforeEach(function () {
+			promise = new Promise();
+		});
+		
+		it("should directly execute the callback when a then is added after resolution", function () {
+			var spy = jasmine.createSpy();
+			promise.resolve("Emily");
+			promise.then(spy);
+			
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.mostRecentCall.args[0]).toEqual("Emily");
+			
+		});
+		
+		it("should directly execute the callback in scope when a then is added after resolution", function () {
+			var spy = jasmine.createSpy(),
+				thisObj = {};
+			promise.resolve("Emily");
+			promise.then(spy, thisObj);
+			
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.mostRecentCall.object).toBe(thisObj);
+			expect(spy.mostRecentCall.args[0]).toEqual("Emily");
+		});
+		
+		it("should directly execute the callback when a then is added after rejection", function () {
+			var spy = jasmine.createSpy();
+			promise.reject("Emily");
+			promise.then(function(){}, spy);
+			
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.mostRecentCall.args[0]).toEqual("Emily");
+			
+		});
+		
+		it("should directly execute the callback in scope when a then is added after rejection", function () {
+			var spy = jasmine.createSpy(),
+				thisObj = {};
+			promise.reject("Emily");
+			promise.then(function(){}, {}, spy, thisObj);
+			
+			expect(spy.wasCalled).toEqual(true);
+			expect(spy.mostRecentCall.object).toBe(thisObj);
+			expect(spy.mostRecentCall.args[0]).toEqual("Emily");
+		});
+	});
 	
 });

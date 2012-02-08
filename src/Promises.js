@@ -1,132 +1,134 @@
-define("Promise", 
+define("Promise",
 
-["StateMachine", "Observable", "Tools"],
+["Observable", "StateMachine"],
 
 /**
  * @class
- * This is an attempt to implement promises.
- * Not sure it's correct at the moment
+ * Create a Promise
  */
-function Promise(StateMachine, Observable, Tools) {
+function Promise(Observable, StateMachine) {
 	
-	/**
-	 * Defines the promise
-	 */
-	return function PromiseConstructor($func, $scope) {
-		
+	return function PromiseConstructor() {
 		/**
-		 * The function to resolve
+		 * The value once resolved
 		 * @private
 		 */
-		var _toResolve = null,
+		var _resolved,
 		
 		/**
-		 * The scope in which to run the function to resolve
+		 * The value once rejected
 		 * @private
 		 */
-		_scope = null,
+		_rejected,
 		
 		/**
-		 * The value to pass to success callbacks
+		 * The stateMachine
 		 * @private
 		 */
-		_success = null,
+		_stateMachine = new StateMachine("Unresolved", {
+			"Unresolved": [["resolve", function (val) {
+								_resolved = val;
+								_observable.notify("success", val);
+							}, "Resolved"],
+							
+							["reject", function (err) {
+								_rejected = err;
+								_observable.notify("fail", err);
+							}, "Rejected"],
+							
+							["addSuccess", function (func, scope) {
+								_observable.watch("success", func, scope);
+							}],
+							
+							["addFail", function (func, scope) {
+								_observable.watch("fail", func, scope);
+							}]],
+							
+			"Resolved": [["addSuccess", function (func, scope) {
+								func.call(scope, _resolved);
+							}]],
+							
+			"Rejected": [["addFail", function (func, scope) {
+								func.call(scope, _rejected);
+							}]]
+		}),
 		
 		/**
-		 * The value to pass to errbacks
-		 * @private
-		 */
-		_failed = null,
-		
-		/**
-		 * The observable to notifiy the result
+		 * The observable
 		 * @private
 		 */
 		_observable = new Observable();
 		
 		/**
-		 * The state machine
-		 * 3 states : unresolved, resolved, failed
-		 * @private
+		 * Resolve the promise.
+		 * A promise can be resolved only once.
+		 * @param the resolution value
+		 * @returns true if the resolution function was called
 		 */
-		_stateMachine = new StateMachine("Unresolved", {
-			"Unresolved": [["resolve", function () {
-					_toResolve.call(_scope, function () {
-						return _stateMachine.event.apply(_stateMachine, Tools.toArray(arguments));
-					});
-				}],
-				["success", function (args) {
-					_success = args;
-					_observable.notify("success", args);
-				}, "Resolved"],
-				["fail", function (args) {
-					_failed = args;
-					_observable.notify("fail", args);
-				}, "Failed"],
-				["addThen", function (type, func, scope) {
-					_observable.watch(type, func, scope);
-				}]],
-			"Resolved": [["addThen", function (type, func, scope) {
-				func.call(scope, type == "success" ? _success : _failed);
-			}]],
-			"Failed": [["addThen", function (type, func, scope) {
-				func.call(scope, type == "success" ? _success : _failed);
-			}]]
-		});
+		this.resolve = function resolve(val) {
+			return _stateMachine.event("resolve", val);
+		};
 		
 		/**
-		 * The callbacks and errbacks to call after resolution.
-		 * @param {Function} the first parameter is a success function, it can be followed by a scope in which to run it
-		 * @param {Function} the second, or third parameter is an errback, it can also be followed by a scope
-		 * @examples:
-		 * 
-		 * then(callback)
-		 * then(callback, scope, errback, scope)
-		 * then(callback, errback)
-		 * then(callback, errback, scope)
-		 * 
-		 */	
+		 * Reject the promise.
+		 * A promise can be rejected only once.
+		 * @param the rejection value
+		 * @returns true if the rejection function was called
+		 */
+		this.reject = function reject(err) {
+			return _stateMachine.event("reject", err);
+		};
+		
+        /**
+         * The callbacks and errbacks to call after resolution or rejection
+         * @param {Function} the first parameter is a success function, it can be followed by a scope in which to run it
+         * @param {Function} the second, or third parameter is an errback, it can also be followed by a scope
+         * @examples:
+         * 
+         * then(callback)
+         * then(callback, scope, errback, scope)
+         * then(callback, errback)
+         * then(callback, errback, scope)
+         * 
+         */     
 		this.then = function then() {
-
-			if (arguments[0] instanceof Function) {
-				if (arguments[1] instanceof Function) {
-					_stateMachine.event("addThen", "success", arguments[1]);
-				} else {
-					_stateMachine.event("addThen", "success", arguments[0], arguments[1]);
-				}
-			}
-			
-			if (arguments[1] instanceof Function) {
-				_stateMachine.event("addThen", "fail", arguments[1], arguments[2]);
-			} 
-			
-			if (arguments[2] instanceof Function) {
-				_stateMachine.event("addThen", "fail", arguments[2], arguments[3]);
-			}
-
+	       if (arguments[0] instanceof Function) {
+               if (arguments[1] instanceof Function) {
+            	   _stateMachine.event("addSuccess", arguments[0]);
+               } else {
+            	   _stateMachine.event("addSuccess", arguments[0], arguments[1]);
+               }
+           }
+           
+           if (arguments[1] instanceof Function) {
+        	   _stateMachine.event("addFail", arguments[1], arguments[2]);
+           } 
+           
+           if (arguments[2] instanceof Function) {
+        	   _stateMachine.event("addFail", arguments[2], arguments[3]);
+           }
+           return this;
 		};
 		
 		/**
-		 * Launch the promise resolution
-		 * @returns {Boolean} true if the resolution start
+		 * Get the promise's observable
+		 * for debugging only
+		 * @private
+		 * @returns {Observable}
 		 */
-		this.resolve = function resolve() {
-			return !!(_toResolve && _stateMachine.event("resolve"));
+		this.getObservable = function getObservable() {
+			return _observable;
 		};
 		
 		/**
-		 * Get the current state machine's state
-		 * Only useful for debugging
-		 * @returns {String}
+		 * Get the promise's stateMachine
+		 * for debugging only
+		 * @private
+		 * @returns {StateMachine}
 		 */
-		this.getState = function getState() {
-			return _stateMachine.getCurrent();
+		this.getStateMachine = function getStateMachine() {
+			return _stateMachine;
 		};
-		
-		if ($func instanceof Function) {
-			_toResolve = $func;
-			_scope = $scope;
-		}
 		
 	};
 	

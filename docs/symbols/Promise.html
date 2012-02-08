@@ -222,8 +222,7 @@ ul.inheritsList
 				
 				
 			
-				This is an attempt to implement promises.
-Not sure it's correct at the moment
+				Create a Promise
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Promises.js.html">Promises.js</a>.
@@ -245,7 +244,7 @@ Not sure it's correct at the moment
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Promise.html#constructor">Promise</a></b>(StateMachine, Observable, Tools)
+								<b><a href="../symbols/Promise.html#constructor">Promise</a></b>(Observable, StateMachine)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -274,28 +273,18 @@ Not sure it's correct at the moment
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#getState">getState</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#reject">reject</a></b>(the)
 								</div>
-								<div class="description">Get the current state machine's state
-Only useful for debugging</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#-PromiseConstructor">PromiseConstructor</a></b>($func, $scope)
-								</div>
-								<div class="description">Defines the promise</div>
+								<div class="description">Reject the promise.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#resolve">resolve</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#resolve">resolve</a></b>(the)
 								</div>
-								<div class="description">Launch the promise resolution</div>
+								<div class="description">Resolve the promise.</div>
 							</td>
 						</tr>
 					
@@ -304,7 +293,7 @@ Only useful for debugging</div>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Promise.html#then">then</a></b>(the, the)
 								</div>
-								<div class="description">The callbacks and errbacks to call after resolution.</div>
+								<div class="description">The callbacks and errbacks to call after resolution or rejection</div>
 							</td>
 						</tr>
 					
@@ -325,7 +314,7 @@ Only useful for debugging</div>
 				</div>
 				
 				<div class="fixedFont">
-						<b>Promise</b>(StateMachine, Observable, Tools)
+						<b>Promise</b>(Observable, StateMachine)
 				</div>
 				
 				<div class="description">
@@ -341,19 +330,13 @@ Only useful for debugging</div>
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>StateMachine</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
 								 <b>Observable</b>
 								
 							</dt>
 								<dd></dd>
 						
 							<dt>
-								 <b>Tools</b>
+								 <b>StateMachine</b>
 								
 							</dt>
 								<dd></dd>
@@ -379,48 +362,16 @@ Only useful for debugging</div>
 					Method Detail
 				</div>
 				
-					<a name="getState"> </a>
+					<a name="reject"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{String}</span>
-					<b>getState</b>()
+					
+					<b>reject</b>(the)
 					
 					</div>
 					<div class="description">
-						Get the current state machine's state
-Only useful for debugging
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="-PromiseConstructor"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					
-					<b>PromiseConstructor</b>($func, $scope)
-					
-					</div>
-					<div class="description">
-						Defines the promise
+						Reject the promise.
+A promise can be rejected only once.
 						
 						
 					</div>
@@ -432,22 +383,23 @@ Only useful for debugging
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>$func</b>
+									<b>the</b>
 									
 								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>$scope</b>
-									
-								</dt>
-								<dd></dd>
+								<dd>rejection value</dd>
 							
 							</dl>
 						
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if the rejection function was called</dd>
+							
+							</dl>
 						
 						
 						
@@ -457,18 +409,30 @@ Only useful for debugging
 					<a name="resolve"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>resolve</b>()
+					
+					<b>resolve</b>(the)
 					
 					</div>
 					<div class="description">
-						Launch the promise resolution
+						Resolve the promise.
+A promise can be resolved only once.
 						
 						
 					</div>
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>the</b>
+									
+								</dt>
+								<dd>resolution value</dd>
+							
+							</dl>
 						
 						
 						
@@ -477,7 +441,7 @@ Only useful for debugging
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if the resolution start</dd>
+								<dd>true if the resolution function was called</dd>
 							
 							</dl>
 						
@@ -494,7 +458,7 @@ Only useful for debugging
 					
 					</div>
 					<div class="description">
-						The callbacks and errbacks to call after resolution.
+						The callbacks and errbacks to call after resolution or rejection
 						
 						
 					</div>
@@ -540,7 +504,7 @@ Only useful for debugging
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Feb 08 2012 21:07:23 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 09 2012 00:14:02 GMT+0100 (CET)
 		</div>
 	</body>
 </html>
