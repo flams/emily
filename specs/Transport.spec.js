@@ -146,6 +146,25 @@ require(["Transport", "Observable"], function (Transport, Observable) {
 			expect(socket.emit.mostRecentCall.args[1].__eventId__).toEqual(eventId);
 		});
 		
+		it("should not fail if a request is made without callback function", function () {
+			var url = "/",
+				transport,
+				channel = "File",
+				requestData = {
+					resource: "image.jpg"
+				},
+				socket;
+	
+			transport = new Transport(url);
+			socket = transport.getSocket();
+			socket.once = function (id, func) {
+				func();
+			};
+			expect(function () {
+				transport.request(channel, requestData);
+			}).not.toThrow();
+		});
+		
 		it("should make requests in scope", function () {
 			var url = "/",
 				transport,

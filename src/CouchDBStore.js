@@ -91,17 +91,14 @@ function CouchDBStore(Store, StateMachine, Tools) {
 						var json = JSON.parse(results);
 						if (json._id) {
 							this.reset(json);
-							_stateMachine.event("subscribeToDocumentChanges");
-						} else {
-							_stateMachine.event("createDocument");
+							_stateMachine.event("subscribeToDocumentChanges");	
 						}
-
 					}, this);
 				}, this, "Synched"]],
 						
 			"Synched": [
 			            
-	            ["createDocument", function () {
+	            ["updateDatabase", function () {
 	            	_transport.request(_channel, {
 	            		method: "PUT",
 	            		path: '/' + _database + '/' + _document,
@@ -113,7 +110,7 @@ function CouchDBStore(Store, StateMachine, Tools) {
 	            		_stateMachine.event("subscribeToDocumentChanges");
 	            	});
 	            }, this],
-			            
+			           
 			  ["subscribeToViewChanges", function (update_seq) {
 					_transport.listen(_channel
 					, "/" + _database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
@@ -218,7 +215,19 @@ function CouchDBStore(Store, StateMachine, Tools) {
 			    
 			    ["deleteDoc", function () {
 			    	this.reset({});			
-			    }, this]]
+			    }, this],
+			    
+			    ["updateDatabase", function () {
+			    	_transport.request(_channel, {
+	            		method: "PUT",
+	            		path: '/' + _database + '/' + _document,
+	            		headers: {
+	            			"Content-Type": "application/json"
+	            		},
+	            		data: this.toJSON()
+	            	});
+			    }, this]
+			   ]
 			
 		});
 		
@@ -243,6 +252,11 @@ function CouchDBStore(Store, StateMachine, Tools) {
 				return true;
 			}
 			return false;
+		};
+		
+		
+		this.update = function update() {
+			return _stateMachine.event("updateDatabase");
 		};
 		
 		/**

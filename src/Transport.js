@@ -20,7 +20,7 @@ function Transport(Observable) {
 		 * @private
 		 * The socket.io's socket
 		 */
-		var _socket,
+		var _socket = null,
 		
 		/**
 		 * @private
@@ -89,7 +89,7 @@ function Transport(Observable) {
 		this.request = function request(channel, requestData, func, scope) {
 			var eventId = Date.now() + Math.floor(Math.random()*1e6),
 				boundCallback = function () {
-					func.apply(scope || null, arguments);
+					func && func.apply(scope || null, arguments);
 				};
 				
 			_socket[requestData.keptAlive ? "on" : "once"](eventId, boundCallback);

@@ -348,46 +348,6 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(couchDBStore.get("_rev")).toEqual("1-7f5175756a7ab72660278c3c0aed2eee");
 		});
 		
-		it("should add document on sync if it's missing", function () {
-			var asyncRequest,
-				res = {
-						'/db/document4' : '{"error":"not_found","reason":"missing"}'
-					},
-				model = {
-					title: "Emily is funky",
-					body: "it's easy to use",
-					date: "2012/01/30"
-				};
-				stateMachine = couchDBStore.getStateMachine();
-
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, res[reqData.path]);
-				};
-			};
-			couchDBStore.reset(model);
-			couchDBStore.sync("db", "document4");
-			spyOn(transportMock, "request").andCallThrough();
-			spyOn(stateMachine, "event").andCallThrough();
-			asyncRequest();
-			
-			expect(couchDBStore.get("error")).toBeUndefined();
-			expect(couchDBStore.get("reason")).toBeUndefined();
-			expect(stateMachine.getCurrent()).toEqual("Synched");
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("createDocument");
-			
-			expect(transportMock.request.wasCalled).toEqual(true);
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
-			expect(transportMock.request.mostRecentCall.args[1].method).toEqual("PUT");
-			expect(transportMock.request.mostRecentCall.args[1].path).toEqual('/db/document4');
-			expect(transportMock.request.mostRecentCall.args[1].headers["Content-Type"]).toEqual("application/json");
-			expect(JSON.parse(transportMock.request.mostRecentCall.args[1].data).body).toBe("it's easy to use");
-			asyncRequest();
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
-			
-			
-		});
-		
 		it("should subscribe to changes", function () {
 			
 			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
@@ -476,6 +436,48 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(spy2.mostRecentCall.args[1]).toEqual("safe");
 		});
 		
+		it("should update the database on update", function () {
+			var requestRes = ['{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
+								'{"_id":"document1","_rev":"2-0b77a81676739718c23c72a12a131986","date":"2012/01/13 12:45:56","title":"was my first document","body":"in this database","newfield":"safe"}'],
+					asyncRequest,
+					asyncListen,
+					stateMachine = couchDBStore.getStateMachine(),
+					listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}';
+
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, requestRes.shift());
+				};
+			};
+
+			transportMock.listen = function (channel, path, callback, scope) {
+				asyncListen = function () {
+					callback.call(scope, listenRes);
+				};
+			};
+
+			spyOn(stateMachine, "event").andCallThrough();
+			spyOn(transportMock, "request").andCallThrough();
+			couchDBStore.sync("db", "document1");
+			asyncRequest();
+			asyncListen();
+			asyncRequest();
+				
+			expect(couchDBStore.update).toBeInstanceOf(Function);
+			couchDBStore.set("title", "my first update");
+			
+			couchDBStore.update();
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabase");
+			expect(transportMock.request.mostRecentCall.args[1].method).toEqual("PUT");
+			expect(transportMock.request.mostRecentCall.args[1].path).toEqual("/db/document1");
+			expect(transportMock.request.mostRecentCall.args[1].headers["Content-Type"]).toEqual("application/json");
+			json = JSON.parse(transportMock.request.mostRecentCall.args[1].data);
+			expect(json.title).toEqual("my first update");
+			expect(json._rev).toEqual("2-0b77a81676739718c23c72a12a131986");
+			expect(json.body).toEqual("in this database");
+			
+		});
+		
 		it("should not get changes when another document is updated", function () {
 			var requestRes = '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
 					asyncRequest,
@@ -535,10 +537,48 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 				
 		});
 		
-		it("should update the database on documents changes", function () {
+		it("should add document on update if it's missing", function () {
+			var asyncRequest,
+				res = {
+						'/db/document4' : '{"error":"not_found","reason":"missing"}'
+					},
+				model = {
+					title: "Emily is funky",
+					body: "it's easy to use",
+					date: "2012/01/30"
+				};
+				stateMachine = couchDBStore.getStateMachine();
+
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, res[reqData.path]);
+				};
+			};
+
+			couchDBStore.sync("db", "document4");
+			spyOn(transportMock, "request").andCallThrough();
+			spyOn(stateMachine, "event").andCallThrough();
+			asyncRequest();
+			
+			expect(couchDBStore.get("error")).toBeUndefined();
+			expect(couchDBStore.get("reason")).toBeUndefined();
+			expect(stateMachine.getCurrent()).toEqual("Synched");
+			
+			couchDBStore.reset(model);
+			
+			couchDBStore.update();
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabase");
+			
+			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			expect(transportMock.request.mostRecentCall.args[1].method).toEqual("PUT");
+			expect(transportMock.request.mostRecentCall.args[1].path).toEqual('/db/document4');
+			expect(transportMock.request.mostRecentCall.args[1].headers["Content-Type"]).toEqual("application/json");
+			expect(JSON.parse(transportMock.request.mostRecentCall.args[1].data).body).toBe("it's easy to use");
+			asyncRequest();
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
+
 			
 		});
-		
 	});
 	
 });
