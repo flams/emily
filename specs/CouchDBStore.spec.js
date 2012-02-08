@@ -9,7 +9,7 @@
  * 	}
  */
 
-require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
+require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Promise) {
 	
 	var transportMock = null;
 	
@@ -73,7 +73,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(couchDBStore.sync("no")).toEqual(false);
 			expect(couchDBStore.sync("no", true)).toEqual(false);
 			expect(couchDBStore.sync("yes", "no", false)).toEqual(false);
-			expect(couchDBStore.sync("yes", "yes", "yes")).toEqual(true);
+			expect(couchDBStore.sync("yes", "yes", "yes")).toBeInstanceOf(Promise);
 		});
 		
 		it("should call Transport to issue the sync request", function () {
@@ -112,6 +112,30 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(couchDBStore.getDBInfo("update_seq")).toEqual(8);
 			expect(couchDBStore.getDBInfo("total_rows")).toEqual(3);
 			expect(couchDBStore.getDBInfo("offset")).toEqual(0);
+		});
+		
+		
+		it("should call the promise resolution on sync", function () {
+			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
+				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
+				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
+				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
+			    promise,
+			    asyncRequest;
+			
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, res);
+				};
+			};
+
+			promise = couchDBStore.sync("db", "design", "view");
+			spyOn(promise, "resolve");
+			asyncRequest();
+			
+			expect(promise.resolve.wasCalled).toEqual(true);
+			expect(promise.resolve.mostRecentCall.args[0]).toEqual(couchDBStore);
+
 		});
 		
 		it("should subscribe to changes", function () {
@@ -309,7 +333,7 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(couchDBStore.sync).toBeInstanceOf(Function);
 			expect(couchDBStore.sync("no")).toEqual(false);
 			expect(couchDBStore.sync("no", true)).toEqual(false);
-			expect(couchDBStore.sync("yes", "yes")).toEqual(true);
+			expect(couchDBStore.sync("yes", "yes")).toBeInstanceOf(Promise);
 		});
 		
 		it("should call Transport to issue the sync request", function () {
@@ -344,6 +368,47 @@ require(["CouchDBStore", "Store"], function (CouchDBStore, Store) {
 			expect(couchDBStore.getNbItems()).toEqual(5);
 			expect(couchDBStore.get("_id")).toEqual("document1");
 			expect(couchDBStore.get("_rev")).toEqual("1-7f5175756a7ab72660278c3c0aed2eee");
+		});
+		
+		it("should call the promise resolution on sync", function () {
+			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
+	            asyncRequest,
+	            promise;
+		
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, res);
+				};
+			};
+			
+			spyOn(transportMock, "request").andCallThrough();
+			promise = couchDBStore.sync("db", "document1");
+			spyOn(promise, "resolve");
+			
+			asyncRequest();
+			expect(promise.resolve.wasCalled).toEqual(true);
+			expect(promise.resolve.mostRecentCall.args[0]).toEqual(couchDBStore);
+		});
+		
+		it("should call the promise rejection on sync if document doesn't exist", function () {
+			var asyncRequest,
+				res = {
+					'/db/document4' : '{"error":"not_found","reason":"missing"}'
+				},
+				promise;
+			
+			transportMock.request = function (channel, reqData, callback, scope) {
+				asyncRequest = function () {
+					callback.call(scope, res[reqData.path]);
+				};
+			};
+	
+			promise = couchDBStore.sync("db", "document4");
+			spyOn(promise, "reject");
+			asyncRequest();
+			
+			expect(promise.reject.wasCalled).toEqual(true);
+			expect(promise.reject.mostRecentCall.args[0]).toEqual(couchDBStore);
 		});
 		
 		it("should subscribe to changes", function () {

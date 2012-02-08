@@ -1,13 +1,13 @@
 define("CouchDBStore", 
 
-["Store", "StateMachine", "Tools"], 
+["Store", "StateMachine", "Tools", "Promise"], 
 
 /**
  * @class
  * CouchDBStore synchronises a Store with a CouchDB view or document
  * It subscribes to _changes to keep its data up to date.
  */
-function CouchDBStore(Store, StateMachine, Tools) {
+function CouchDBStore(Store, StateMachine, Tools, Promise) {
 	
 	/**
 	 * Defines the CouchDBStore
@@ -66,7 +66,7 @@ function CouchDBStore(Store, StateMachine, Tools) {
 		_stateMachine = new StateMachine("Unsynched", {
 			"Unsynched": [
 			              
-			 ["getView", function () {
+			 ["getView", function (promise) {
 					_transport.request(_channel, {
 						method: "GET",
 						path: "/" + _database + "/_design/" + _design + "/" + "_view/" + _view +"?update_seq=true"
@@ -79,19 +79,23 @@ function CouchDBStore(Store, StateMachine, Tools) {
 						};
 						
 						this.reset(json.rows);
+						promise.resolve(this);
 						_stateMachine.event("subscribeToViewChanges", json.update_seq);
 					}, this);
 				}, this, "Synched"],
 				
-				["getDocument", function () { 
+				["getDocument", function (promise) { 
 					_transport.request(_channel, {
 						method: "GET",
 						path: "/" + _database + "/" + _document
 					}, function (results) {
 						var json = JSON.parse(results);
 						if (json._id) {
+							promise.resolve(this);
 							this.reset(json);
 							_stateMachine.event("subscribeToDocumentChanges");	
+						} else {
+							promise.reject(this);
 						}
 					}, this);
 				}, this, "Synched"]],
@@ -244,17 +248,18 @@ function CouchDBStore(Store, StateMachine, Tools) {
 		 * @returns {Boolean}
 		 */
 		this.sync = function sync() {
+			var promise = new Promise();
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
 				_database = arguments[0];
 				_design = arguments[1];
 				_view = arguments[2];
-				_stateMachine.event("getView");
-				return true;
+				_stateMachine.event("getView", promise);
+				return promise;
 			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "undefined") {
 				_database = arguments[0];
 				_document = arguments[1];
-				_stateMachine.event("getDocument");
-				return true;
+				_stateMachine.event("getDocument", promise);
+				return promise;
 			}
 			return false;
 		};
