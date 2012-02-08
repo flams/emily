@@ -226,6 +226,13 @@ function CouchDBStore(Store, StateMachine, Tools) {
 	            		},
 	            		data: this.toJSON()
 	            	});
+			    }, this],
+			    
+			    ["removeFromDatabase", function () {
+			    	_transport.request(_channel, {
+	            		method: "DELETE",
+	            		path: '/' + _database + '/' + _document + '?rev=' + this.get("_rev")
+	            	});
 			    }, this]
 			   ]
 			
@@ -254,9 +261,20 @@ function CouchDBStore(Store, StateMachine, Tools) {
 			return false;
 		};
 		
-		
+		/**
+		 * Update the database with the current document
+		 * @returns true if update called
+		 */
 		this.update = function update() {
 			return _stateMachine.event("updateDatabase");
+		};
+		
+		/**
+		 * Remove the document from the database
+		 * @returns true if remove called
+		 */
+		this.remove = function remove() {
+			return _stateMachine.event("removeFromDatabase");
 		};
 		
 		/**
