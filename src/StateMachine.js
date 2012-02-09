@@ -93,9 +93,6 @@ function StateMachine(Tools) {
 		this.event = function event(name) {
 			var nextState;
 			
-			// Call the exit action if any
-			_states[_currentState].event("exit");
-			
 			nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
 			// False means that there's no such event
 			// But undefined means that the state doesn't not change
@@ -103,9 +100,13 @@ function StateMachine(Tools) {
 				return false;
 			} else {
 				// There could be no next state, so the current one remains
-				_currentState = nextState || _currentState;
-				// Call the new state's entry action if any
-				_states[_currentState].event("entry");
+				if (nextState) {
+					// Call the exit action if any
+					_states[_currentState].event("exit");
+					_currentState = nextState;
+					// Call the new state's entry action if any
+					_states[_currentState].event("entry");
+				} 
 				return true;
 			}
 		};

@@ -196,7 +196,7 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 
 		});
 		
-		it("should reflect changes", function () {
+		it("should reflect changes and resolve the sync promise", function () {
 			var requestRes = {
 					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
 					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
@@ -210,7 +210,8 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 				asyncRequest,
 				asyncListen,
 				listenRes = '{"seq":9,"id":"document3","changes":[{"rev":"2-4f2957d984aa9d94d4298407f3292a47"}]}',
-				spy = jasmine.createSpy();
+				spy = jasmine.createSpy(),
+				promise;
 
 			transportMock.request = function (channel, reqData, callback, scope) {
 				asyncRequest = function () {
@@ -224,11 +225,15 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 				};
 			};
 			
+
 			spyOn(transportMock, "request").andCallThrough();
 			couchDBStore.watch("updated", spy);
-			couchDBStore.sync("db", "design", "view");
+			promise = couchDBStore.sync("db", "design", "view");
+			spyOn(promise, "resolve");
 			asyncRequest();
 			expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Listening");
+			expect(promise.resolve.wasCalled).toEqual(true);
+			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
 			asyncListen();
 			asyncRequest();
 			expect(spy.wasCalled).toEqual(true);
@@ -370,26 +375,6 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 			expect(couchDBStore.get("_rev")).toEqual("1-7f5175756a7ab72660278c3c0aed2eee");
 		});
 		
-		/*it("should call the promise resolution on sync", function () {
-			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-	            asyncRequest,
-	            promise;
-		
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, res);
-				};
-			};
-			
-			spyOn(transportMock, "request").andCallThrough();
-			promise = couchDBStore.sync("db", "document1");
-			spyOn(promise, "resolve");
-			
-			asyncRequest();
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0]).toEqual(couchDBStore);
-		});*/
-		
 		it("should call the promise rejection on sync if document doesn't exist", function () {
 			var asyncRequest,
 				res = {
@@ -458,14 +443,15 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 				}).not.toThrow();
 		});
 		
-		it("should reflect changes", function () {
+		it("should reflect changes and resolve the sync promise", function () {
 			var requestRes = ['{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
 							'{"_id":"document1","_rev":"2-0b77a81676739718c23c72a12a131986","date":"2012/01/13 12:45:56","title":"was my first document","body":"in this database","newfield":"safe"}'],
 				asyncRequest,
 				asyncListen,
 				listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}',
 				spy1 = jasmine.createSpy(),
-				spy2 = jasmine.createSpy();
+				spy2 = jasmine.createSpy(),
+				promise;
 
 			transportMock.request = function (channel, reqData, callback, scope) {
 				asyncRequest = function () {
@@ -481,9 +467,14 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 
 			couchDBStore.watch("updated", spy1);
 			couchDBStore.watch("added", spy2);
-			couchDBStore.sync("db", "document1");
+			promise = couchDBStore.sync("db", "document1");
+			spyOn(promise, "resolve");
 			asyncRequest();
 			asyncListen();
+
+			expect(promise.resolve.wasCalled).toEqual(true);
+			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
+			
 			asyncRequest();
 			expect(spy1.wasCalled).toEqual(true);
 			// _rev and title have been updated
@@ -544,6 +535,34 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 					asyncRequest,
 					asyncListen,
 					listenRes = '{"seq":12,"id":"document5","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}';
+
+				transportMock.request = function (channel, reqData, callback, scope) {
+					asyncRequest = function () {
+						callback.call(scope, requestRes);
+					};
+				};
+
+				transportMock.listen = function (channel, path, callback, scope) {
+					asyncListen = function () {
+						callback.call(scope, listenRes);
+					};
+				};
+
+				spyOn(transportMock, "request").andCallThrough();
+				couchDBStore.sync("db", "document1");
+				asyncRequest();
+				asyncListen();
+				asyncRequest();
+				
+				expect(transportMock.request.callCount).toEqual(1);
+				
+		});
+		
+		it("should not get changes if the rev is the same", function () {
+			var requestRes = '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
+					asyncRequest,
+					asyncListen,
+					listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"1-7f5175756a7ab72660278c3c0aed2eee"}]}';
 
 				transportMock.request = function (channel, reqData, callback, scope) {
 					asyncRequest = function () {
@@ -675,6 +694,8 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 			expect(transportMock.request.mostRecentCall.args[1].method).toEqual("DELETE");
 			expect(transportMock.request.mostRecentCall.args[1].path).toEqual("/db/document1?rev=2-0b77a81676739718c23c72a12a131986");
 		});
+		
+		
 	});
 	
 });

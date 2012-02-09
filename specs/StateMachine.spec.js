@@ -328,8 +328,11 @@ require(["StateMachine"], function (StateMachine) {
 		
 		var goodBye = jasmine.createSpy(),
 			unlock = jasmine.createSpy(),
-			hello = jasmine.createSpy(),
+			hello = jasmine.createSpy().andCallFake(function () {
+				stateMachine.event("action");
+			}),
 			dontCallMe  = jasmine.createSpy(),
+			action = jasmine.createSpy(),
 			thisObj = {},
 			diagram = {
 				Locked: [["entry", dontCallMe],
@@ -337,6 +340,7 @@ require(["StateMachine"], function (StateMachine) {
 				         ["coin", unlock, "Unlocked"]
 				   ],
 				Unlocked: [["exit", dontCallMe],
+				           ["action", action],
 				           ["entry", hello, thisObj]]
 			},
 			
@@ -367,6 +371,6 @@ require(["StateMachine"], function (StateMachine) {
 			stateMachine.event("coin");
 			expect(dontCallMe.wasCalled).toEqual(false);
 		});
-		
+
 	});
 });

@@ -57,6 +57,12 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		_dbInfo = {},
 		
+		/**
+		 * The promise that is returned by sync
+		 * It's resolved when entering listening state
+		 * It's rejected when no such document to sync to
+		 * @private
+		 */
 		_syncPromise = new Promise(),
 		
 		/**
@@ -152,7 +158,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						
 						json = JSON.parse(changes);
 						
-						if (json.id == _document) {
+						// The document is the modified document is the current one
+						if (json.id == _document && 
+							// And if it has a new revision
+							json.changes.pop().rev != this.get("_rev")) {
+							
 							if (json.deleted) {
 								_stateMachine.event("deleteDoc");
 							} else {
@@ -163,6 +173,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				}, this, "Listening"]],
 				
 			"Listening": [
+			              
+	              ["entry", function () {
+	            	  _syncPromise.resolve(this);
+	              }, this],
 			              
 			    ["change", function (id) {
 					_transport.request(_channel,{
