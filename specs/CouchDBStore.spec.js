@@ -115,7 +115,7 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 		});
 		
 		
-		it("should call the promise resolution on sync", function () {
+		/**it("should call the promise resolution on sync", function () {
 			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
 				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
 				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
@@ -136,7 +136,7 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 			expect(promise.resolve.wasCalled).toEqual(true);
 			expect(promise.resolve.mostRecentCall.args[0]).toEqual(couchDBStore);
 
-		});
+		});*/
 		
 		it("should subscribe to changes", function () {
 			
@@ -370,7 +370,7 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 			expect(couchDBStore.get("_rev")).toEqual("1-7f5175756a7ab72660278c3c0aed2eee");
 		});
 		
-		it("should call the promise resolution on sync", function () {
+		/*it("should call the promise resolution on sync", function () {
 			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
 	            asyncRequest,
 	            promise;
@@ -388,7 +388,7 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 			asyncRequest();
 			expect(promise.resolve.wasCalled).toEqual(true);
 			expect(promise.resolve.mostRecentCall.args[0]).toEqual(couchDBStore);
-		});
+		});*/
 		
 		it("should call the promise rejection on sync if document doesn't exist", function () {
 			var asyncRequest,

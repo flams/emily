@@ -57,6 +57,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		_dbInfo = {},
 		
+		_syncPromise = new Promise(),
+		
 		/**
 		 * The state machine
 		 * @private
@@ -66,7 +68,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		_stateMachine = new StateMachine("Unsynched", {
 			"Unsynched": [
 			              
-			 ["getView", function (promise) {
+			 ["getView", function () {
 					_transport.request(_channel, {
 						method: "GET",
 						path: "/" + _database + "/_design/" + _design + "/" + "_view/" + _view +"?update_seq=true"
@@ -79,23 +81,21 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						};
 						
 						this.reset(json.rows);
-						promise.resolve(this);
 						_stateMachine.event("subscribeToViewChanges", json.update_seq);
 					}, this);
 				}, this, "Synched"],
 				
-				["getDocument", function (promise) { 
+				["getDocument", function () { 
 					_transport.request(_channel, {
 						method: "GET",
 						path: "/" + _database + "/" + _document
 					}, function (results) {
 						var json = JSON.parse(results);
 						if (json._id) {
-							promise.resolve(this);
 							this.reset(json);
 							_stateMachine.event("subscribeToDocumentChanges");	
 						} else {
-							promise.reject(this);
+							_syncPromise.reject(this);
 						}
 					}, this);
 				}, this, "Synched"]],
@@ -248,18 +248,17 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 * @returns {Boolean}
 		 */
 		this.sync = function sync() {
-			var promise = new Promise();
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
 				_database = arguments[0];
 				_design = arguments[1];
 				_view = arguments[2];
-				_stateMachine.event("getView", promise);
-				return promise;
+				_stateMachine.event("getView");
+				return _syncPromise;
 			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "undefined") {
 				_database = arguments[0];
 				_document = arguments[1];
-				_stateMachine.event("getDocument", promise);
-				return promise;
+				_stateMachine.event("getDocument");
+				return _syncPromise;
 			}
 			return false;
 		};

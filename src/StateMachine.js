@@ -91,14 +91,21 @@ function StateMachine(Tools) {
 		 * @returns {Boolean} true if the event exists in the current state
 		 */
 		this.event = function event(name) {
-			var nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
+			var nextState;
+			
+			// Call the exit action if any
+			_states[_currentState].event("exit");
+			
+			nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
 			// False means that there's no such event
 			// But undefined means that the state doesn't not change
 			if (nextState === false) {
 				return false;
 			} else {
-				// There could be no next state
+				// There could be no next state, so the current one remains
 				_currentState = nextState || _currentState;
+				// Call the new state's entry action if any
+				_states[_currentState].event("entry");
 				return true;
 			}
 		};

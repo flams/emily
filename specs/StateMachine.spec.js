@@ -264,26 +264,26 @@ require(["StateMachine"], function (StateMachine) {
 	describe("StateMachineInit", function () {
 		
 			// The actions :
-			var Unlock = jasmine.createSpy(),
+			var unlock = jasmine.createSpy(),
 				UnlockObj = {},
 				
-				Alarm = jasmine.createSpy(),
+				alarm = jasmine.createSpy(),
 				
-				Thankyou = jasmine.createSpy(),
-				ThankyouObj = {},
+				thankyou = jasmine.createSpy(),
+				thankyouObj = {},
 				
-				Lock = jasmine.createSpy(),
+				lock = jasmine.createSpy(),
 			
 			// The State Diagram
 			diagram = {	
 				"Unlocked" : [
-			           ["Coin", Thankyou, ThankyouObj],
-			           ["Pass", Lock, "Locked"]
+			           ["coin", thankyou, thankyouObj],
+			           ["pass", lock, "Locked"]
 				],
 		
 				"Locked" : [
-					["Coin", Unlock, UnlockObj, "Unlocked"],
-					["Pass", Alarm]
+					["coin", unlock, UnlockObj, "Unlocked"],
+					["pass", alarm]
 				]
 			},
 				
@@ -296,31 +296,77 @@ require(["StateMachine"], function (StateMachine) {
 				expect(unlocked = stateMachine.get("Unlocked")).toBeTruthy();
 				expect(locked = stateMachine.get("Locked")).toBeTruthy();
 				
-				expect(locked.has("Coin")).toBeTruthy();
-				expect(locked.has("Pass")).toBeTruthy();
-				expect(unlocked.has("Coin")).toBeTruthy();
-				expect(unlocked.has("Pass")).toBeTruthy();
+				expect(locked.has("coin")).toBeTruthy();
+				expect(locked.has("pass")).toBeTruthy();
+				expect(unlocked.has("coin")).toBeTruthy();
+				expect(unlocked.has("pass")).toBeTruthy();
 				
 				expect(stateMachine.getCurrent()).toEqual("Locked");
 				
-				stateMachine.event("Pass");
-				expect(Alarm.wasCalled).toEqual(true);
+				stateMachine.event("pass");
+				expect(alarm.wasCalled).toEqual(true);
 				expect(stateMachine.getCurrent()).toEqual("Locked");
 				
-				stateMachine.event("Coin");
-				expect(Unlock.wasCalled).toEqual(true);
-				expect(Unlock.mostRecentCall.object).toBe(UnlockObj);
+				stateMachine.event("coin");
+				expect(unlock.wasCalled).toEqual(true);
+				expect(unlock.mostRecentCall.object).toBe(UnlockObj);
 				expect(stateMachine.getCurrent()).toEqual("Unlocked");
 				
-				stateMachine.event("Coin");
-				expect(Thankyou.wasCalled).toEqual(true);
-				expect(Thankyou.mostRecentCall.object).toBe(ThankyouObj);
+				stateMachine.event("coin");
+				expect(thankyou.wasCalled).toEqual(true);
+				expect(thankyou.mostRecentCall.object).toBe(thankyouObj);
 				expect(stateMachine.getCurrent()).toEqual("Unlocked");
 				
-				stateMachine.event("Pass");
-				expect(Lock.wasCalled).toEqual(true);
+				stateMachine.event("pass");
+				expect(lock.wasCalled).toEqual(true);
 				expect(stateMachine.getCurrent()).toEqual("Locked");
 			});
+		
+	});
+	
+	describe("StateMachineEntryExitAction", function () {
+		
+		var goodBye = jasmine.createSpy(),
+			unlock = jasmine.createSpy(),
+			hello = jasmine.createSpy(),
+			dontCallMe  = jasmine.createSpy(),
+			thisObj = {},
+			diagram = {
+				Locked: [["entry", dontCallMe],
+				         ["exit", goodBye, thisObj],
+				         ["coin", unlock, "Unlocked"]
+				   ],
+				Unlocked: [["exit", dontCallMe],
+				           ["entry", hello, thisObj]]
+			},
+			
+			stateMachine = null;
+		
+		beforeEach(function () {
+			stateMachine = new StateMachine("Locked", diagram);
+		});
+		
+		it("should call the exit action in scope on exiting the Locked state", function () {
+			stateMachine.event("coin");
+			expect(goodBye.wasCalled).toEqual(true);
+			expect(goodBye.mostRecentCall.object).toBe(thisObj);
+		});
+		
+		it("should call the entry action in scope on exiting the Locked state", function () {
+			stateMachine.event("coin");
+			expect(hello.wasCalled).toEqual(true);
+			expect(hello.mostRecentCall.object).toBe(thisObj);
+		});
+		
+		it("shouldn't call the entry from the current state", function () {
+			stateMachine.event("coin");
+			expect(dontCallMe.wasCalled).toEqual(false);
+		});
+
+		it("shouldn't call the exit from the next state", function () {
+			stateMachine.event("coin");
+			expect(dontCallMe.wasCalled).toEqual(false);
+		});
 		
 	});
 });
