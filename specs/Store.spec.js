@@ -1,4 +1,4 @@
-require(["Store"], function (Store) {
+require(["Store", "Observable"], function (Store, Observable) {
 	
 	describe("StoreTest", function () {
 
@@ -17,6 +17,10 @@ require(["Store"], function (Store) {
 			expect(store.alter).toBeInstanceOf(Function);
 			expect(store.watch).toBeInstanceOf(Function);
 			expect(store.unwatch).toBeInstanceOf(Function);
+			expect(store.getStoreObservable).toBeInstanceOf(Function);
+			expect(store.getValueObservable).toBeInstanceOf(Function);
+			expect(store.watchValue).toBeInstanceOf(Function);
+			expect(store.unwatchValue).toBeInstanceOf(Function);
 		});
 	
 	});
@@ -88,30 +92,51 @@ require(["Store"], function (Store) {
 	
 	describe("StoreObservable", function () {
 		
-		var store = null;
+		var store = null,
+			storeObservable = null;
 		
 		beforeEach(function () {
 			store = new Store();
+			storeObservable = store.getStoreObservable();
+		});
+		
+		it("should implement an Observable", function () {
+			expect(storeObservable).toBeInstanceOf(Observable);
+		});
+		
+		it("should have a function to watch the store", function () {
+			var spy = jasmine.createSpy(),
+				name = "value",
+				scope = {};
+			
+			spyOn(storeObservable, "watch").andCallThrough();
+			
+			expect(store.watch(name, spy, scope)).toBeTruthy();
+			expect(storeObservable.watch.wasCalled).toEqual(true);
+			expect(storeObservable.watch.mostRecentCall.args[0]).toEqual(name);
+			expect(storeObservable.watch.mostRecentCall.args[1]).toBe(spy);
+			expect(storeObservable.watch.mostRecentCall.args[2]).toBe(scope);
 		});
 		
 		it("should notify on set", function () {
-			var spy = jasmine.createSpy("callback");
-			
-			store.watch("added", spy);
+			spyOn(storeObservable, "notify");
+
 			store.set("test");
-			expect(spy.wasCalled).toEqual(true);
-			expect(spy.mostRecentCall.args[0]).toEqual("test");
-			expect(spy.mostRecentCall.args[1]).toBeUndefined();
+			expect(storeObservable.notify.wasCalled).toEqual(true);
+			expect(storeObservable.notify.mostRecentCall.args[0]).toEqual("added");
+			expect(storeObservable.notify.mostRecentCall.args[1]).toEqual("test");
+			expect(storeObservable.notify.mostRecentCall.args[2]).toBeUndefined();
 		});
 		
 		it("should notify with new value on update", function () {
-			var spy = jasmine.createSpy("callback");
+			spyOn(storeObservable, "notify");
+
 			store.set("test");
-			store.watch("updated", spy);
-			store.set("test", "new");
-		
-			expect(spy.mostRecentCall.args[0]).toEqual("test");
-			expect(spy.mostRecentCall.args[1]).toEqual("new");
+			store.set("test", "newValue");
+			expect(storeObservable.notify.wasCalled).toEqual(true);
+			expect(storeObservable.notify.mostRecentCall.args[0]).toEqual("updated");
+			expect(storeObservable.notify.mostRecentCall.args[1]).toEqual("test");
+			expect(storeObservable.notify.mostRecentCall.args[2]).toEqual("newValue");
 		});
 		
 		it("should provide value when said available", function () {
@@ -125,53 +150,105 @@ require(["Store"], function (Store) {
 		});
 		
 		it("should notify on del", function () {
-			var spy = jasmine.createSpy("callback");
+			spyOn(storeObservable, "notify");
+
 			store.set("test");
-			store.watch("deleted", spy);
 			store.del("test");
-			
-			expect(spy.wasCalled).toEqual(true);
-			expect(spy.mostRecentCall.args[0]).toEqual("test");
-			expect(spy.mostRecentCall.args[1]).toBeUndefined();
+			expect(storeObservable.notify.wasCalled).toEqual(true);
+			expect(storeObservable.notify.mostRecentCall.args[0]).toEqual("deleted");
+			expect(storeObservable.notify.mostRecentCall.args[1]).toEqual("test");
+			expect(storeObservable.notify.mostRecentCall.args[2]).toBeUndefined();
 		});
 		
 		it("can unwatch value", function () {
-			var spy = jasmine.createSpy("callback");
-			handler = store.watch("added", spy);
+			spyOn(storeObservable, "unwatch");
+
+			handler = store.watch("added", function(){});
 			store.unwatch(handler);
-			store.set("test");
-			store.del("test");
-			expect(spy.wasCalled).toEqual(false);
-		});
-		
-		it("should execute in scope on set", function () {
-			var spy = jasmine.createSpy("callback");
-				thisObj = {};
 			
-			store.watch("added", spy, thisObj);
-			store.set("test");
-			expect(spy.mostRecentCall.object).toBe(thisObj);
-		});
-		
-		it("should execute in scope on update", function () {
-			var spy = jasmine.createSpy("callback");
-				thisObj = {};
-			
-			store.watch("added", spy, thisObj);
-			store.set("test");
-			expect(spy.mostRecentCall.object).toBe(thisObj);
-		});
-		
-		it("should execute in scope on del", function () {
-			var spy = jasmine.createSpy("callback"),
-				thisObj = {};
-			
-			store.set("test");
-			store.watch("deleted", spy, thisObj);
-			store.del("test");
-			expect(spy.mostRecentCall.object).toBe(thisObj);
+			expect(storeObservable.unwatch.wasCalled).toEqual(true);
+			expect(storeObservable.unwatch.mostRecentCall.args[0]).toBe(handler);
 		});
 
+	});
+	
+	describe("StoreValueObservable", function () {
+		var store = null,
+			storeObservable = null;
+		
+		beforeEach(function () {
+			store = new Store();
+			valueObservable = store.getValueObservable();
+		});
+		
+		it("should implement an Observable", function () {
+			expect(valueObservable).toBeInstanceOf(Observable);
+		});
+		
+		it("should have a function to watch the value", function () {
+			var spy = jasmine.createSpy(),
+				name = "value",
+				scope = {};
+			
+			spyOn(valueObservable, "watch").andCallThrough();
+			
+			expect(store.watchValue(name, spy, scope)).toBeTruthy();
+			expect(valueObservable.watch.wasCalled).toEqual(true);
+			expect(valueObservable.watch.mostRecentCall.args[0]).toEqual(name);
+			expect(valueObservable.watch.mostRecentCall.args[1]).toBe(spy);
+			expect(valueObservable.watch.mostRecentCall.args[2]).toBe(scope);
+		});
+		
+		it("should notify on set", function () {
+			spyOn(valueObservable, "notify");
+
+			store.set("test");
+			expect(valueObservable.notify.wasCalled).toEqual(true);
+			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
+			expect(valueObservable.notify.mostRecentCall.args[1]).toBeUndefined();
+		});
+		
+		it("should notify with new value on update", function () {
+			spyOn(valueObservable, "notify");
+
+			store.set("test");
+			store.set("test", "newValue");
+			expect(valueObservable.notify.wasCalled).toEqual(true);
+			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
+			expect(valueObservable.notify.mostRecentCall.args[1]).toEqual("newValue");
+		});
+		
+		it("should provide value when said available", function () {
+			var callback = function () {
+				callback.ret = store.get("test");
+			};
+			store.watchValue("test", callback);
+			store.set("test", "yes");
+			
+			expect(callback.ret).toEqual("yes");
+		});
+		
+		it("should notify on del", function () {
+			spyOn(valueObservable, "notify");
+
+			store.set("test");
+			store.del("test");
+			expect(valueObservable.notify.wasCalled).toEqual(true);
+			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
+			expect(valueObservable.notify.mostRecentCall.args[1]).toBeUndefined();
+		});
+		
+		it("can unwatch value", function () {
+			spyOn(valueObservable, "unwatch");
+
+			handler = store.watchValue("added", function(){});
+			store.unwatchValue(handler);
+			
+			expect(valueObservable.unwatch.wasCalled).toEqual(true);
+			expect(valueObservable.unwatch.mostRecentCall.args[0]).toBe(handler);
+		});
+
+		
 	});
 	
 	describe("StoreInit", function () {

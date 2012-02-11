@@ -1,8 +1,8 @@
 define("Store", ["Observable", "Tools"],
 /** 
  * @class
- * Store creates a small NoSQL database
- * that can publish events on data add/change.
+ * Store creates a small NoSQL database with observables
+ * It can publish events on store/data changes
  */
  function Store(Observable, Tools) {
 	
@@ -24,7 +24,9 @@ define("Store", ["Observable", "Tools"],
 		 * The observable
 		 * @private
 		 */
-		_observable = new Observable(),
+		_storeObservable = new Observable(),
+		
+		_valueObservable = new Observable(),
 		
 		/**
 		 * Gets the difference between two objects and notifies them
@@ -38,7 +40,8 @@ define("Store", ["Observable", "Tools"],
 			 "deleted",
 			 "added"].forEach(function (value) {
 				 diffs[value].forEach(function (dataIndex) {
-						_observable.notify(value, dataIndex, _data[dataIndex]);
+						_storeObservable.notify(value, dataIndex, _data[dataIndex]);
+						_valueObservable.notify(dataIndex, _data[dataIndex]);
 				 });
 			});
 		};
@@ -81,9 +84,11 @@ define("Store", ["Observable", "Tools"],
 				ante = this.has(name);
 				_data[name] = value;
 				if (ante) {
-					_observable.notify("updated", name, _data[name]);	
+					_storeObservable.notify("updated", name, _data[name]);	
+					_valueObservable.notify(name, _data[name]);
 				} else {
-					_observable.notify("added", name, _data[name]);
+					_storeObservable.notify("added", name, _data[name]);
+					_valueObservable.notify(name, _data[name]);
 				}
 				return true;
 			} else {
@@ -100,7 +105,8 @@ define("Store", ["Observable", "Tools"],
 			if (this.has(name)) {
 				if (!this.alter("splice", name, 1)) {
 					delete _data[name];
-					_observable.notify("deleted", name);
+					_storeObservable.notify("deleted", name);
+					_valueObservable.notify(name);
 				}
 				return true;
 			} else {
@@ -129,23 +135,61 @@ define("Store", ["Observable", "Tools"],
 		};
 		
 		/**
-		 * Watch the value's modifications
-		 * @param {String} name the index of the value
-		 * @param {Function} func the function to execute when the value changes
+		 * Watch the store's modifications
+		 * @param {String} added/updated/deleted
+		 * @param {Function} func the function to execute
 		 * @param {Object} scope the scope in which to execute the function
 		 * @returns {Handler} the subscribe's handler to use to stop watching
 		 */
 		this.watch = function watch(name, func, scope) {
-			return _observable.watch(name, func, scope);
+			return _storeObservable.watch(name, func, scope);
 		};
 		
 		/**
-		 * Unwatch the value's modifications
+		 * Unwatch the store modifications
 		 * @param {Handler} handler the handler returned by the watch function
 		 * @returns
 		 */
 		this.unwatch = function unwatch(handler) {
-			return _observable.unwatch(handler);
+			return _storeObservable.unwatch(handler);
+		};
+		
+		/**
+		 * Get the observable used for watching store's modifications
+		 * Should be used only for debugging
+		 * @returns {Observable} the Observable
+		 */
+		this.getStoreObservable = function getStoreObservable() {
+			return _storeObservable;
+		};
+		
+		/**
+		 * Watch a value's modifications
+		 * @param {String} name the name of the value to watch for
+		 * @param {Function} func the function to execute
+		 * @param {Object} scope the scope in which to execute the function
+		 * @returns true if unwatched
+		 */
+		this.watchValue = function watchValue(name, func, scope) {
+			return _valueObservable.watch(name, func, scope);
+		};
+		
+		/**
+		 * Unwatch the value's modifications
+		 * @param {Handler} handler the handler returned by the watchValue function
+		 * @returns true if unwatched
+		 */
+		this.unwatchValue = function unwatchValue(handler) {
+			return _valueObservable.unwatch(handler);
+		};
+		
+		/**
+		 * Get the observable used for watching value's modifications
+		 * Should be used only for debugging
+		 * @returns {Observable} the Observable
+		 */
+		this.getValueObservable = function getValueObservable() {
+			return _valueObservable;
 		};
 
 		/**

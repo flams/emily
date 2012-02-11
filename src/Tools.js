@@ -73,6 +73,7 @@ function Tools(){
 		
 		/**
 		 * Small adapter for looping over objects and arrays
+		 * Warning: it's not meant to be used with nodeList
 		 * @param {Array/Object} iterated the array or object to loop through
 		 * @param {Function} callback the function to execute for each iteration
 		 * @param {Object} scope the scope in which to execute the callback
@@ -206,13 +207,13 @@ function Tools(){
 		},
 		
 		/**
-		 * Get the property of an object by giving the object and a string to the prop:
+		 * Get the property of an object nested in on or more other objects
 		 * given an object such as a.b.c.d = 5, getObject(a, "b.c.d") will return 5.
 		 * @param {Object} object the object to get the property from
-		 * @param {String} property the property given as a string
+		 * @param {String} property the path to the property as a string
 		 * @returns false if wrong parameters
 		 */
-		getObjectsProperty: function getObjectsProperty(object, property) {
+		getNestedProperty: function getNestedProperty(object, property) {
 			if (object && object instanceof Object
 				&& typeof property == "string" && property != "") {
 				var split = property.split(".");

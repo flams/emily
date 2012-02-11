@@ -346,23 +346,23 @@ require(["Tools"], function (Tools) {
 		var a = {b:{c:{d:{e:1}}}};
 		
 		it("should be a function", function () {
-			expect(Tools.getObjectsProperty).toBeInstanceOf(Function);
+			expect(Tools.getNestedProperty).toBeInstanceOf(Function);
 		});
 		
 		it("should return the property value", function () {
 			var obj = {};
-			expect(Tools.getObjectsProperty()).toBeUndefined();
-			expect(Tools.getObjectsProperty("")).toEqual("");
-			expect(Tools.getObjectsProperty("a.b.c.d.e")).toEqual("a.b.c.d.e");
-			expect(Tools.getObjectsProperty(true)).toEqual(true);
-			expect(Tools.getObjectsProperty(null)).toEqual(null);
-			expect(Tools.getObjectsProperty(obj)).toEqual(obj);
-			expect(Tools.getObjectsProperty(a.b)).toBe(a.b);
-			expect(Tools.getObjectsProperty(a.b, "")).toBe(a.b);
-			expect(Tools.getObjectsProperty(a, "b.c")).toBe(a.b.c);
-			expect(Tools.getObjectsProperty(a, "b.c.d.e")).toEqual(1);
-			expect(Tools.getObjectsProperty(a, "b")).toEqual(a.b);
-			expect(Tools.getObjectsProperty(a, "b.e")).toBeUndefined();
+			expect(Tools.getNestedProperty()).toBeUndefined();
+			expect(Tools.getNestedProperty("")).toEqual("");
+			expect(Tools.getNestedProperty("a.b.c.d.e")).toEqual("a.b.c.d.e");
+			expect(Tools.getNestedProperty(true)).toEqual(true);
+			expect(Tools.getNestedProperty(null)).toEqual(null);
+			expect(Tools.getNestedProperty(obj)).toEqual(obj);
+			expect(Tools.getNestedProperty(a.b)).toBe(a.b);
+			expect(Tools.getNestedProperty(a.b, "")).toBe(a.b);
+			expect(Tools.getNestedProperty(a, "b.c")).toBe(a.b.c);
+			expect(Tools.getNestedProperty(a, "b.c.d.e")).toEqual(1);
+			expect(Tools.getNestedProperty(a, "b")).toEqual(a.b);
+			expect(Tools.getNestedProperty(a, "b.e")).toBeUndefined();
 		});
 		
 		

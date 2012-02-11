@@ -222,7 +222,7 @@ ul.inheritsList
 				
 				
 			
-				Store creates a small NoSQL databasethat can publish events on data add/change.
+				Store creates a small NoSQL database with observablesIt can publish events on store/data changes
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Store.js.html">Store.js</a>.
@@ -309,6 +309,24 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Store.html#getStoreObservable">getStoreObservable</a></b>()
+								</div>
+								<div class="description">Get the observable used for watching store's modificationsShould be used only for debugging</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Store.html#getValueObservable">getValueObservable</a></b>()
+								</div>
+								<div class="description">Get the observable used for watching value's modificationsShould be used only for debugging</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Store.html#has">has</a></b>(name)
 								</div>
 								<div class="description">Checks if the store has a given value</div>
@@ -356,6 +374,15 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Store.html#unwatch">unwatch</a></b>(handler)
 								</div>
+								<div class="description">Unwatch the store modifications</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Store.html#unwatchValue">unwatchValue</a></b>(handler)
+								</div>
 								<div class="description">Unwatch the value's modifications</div>
 							</td>
 						</tr>
@@ -363,9 +390,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Store.html#watch">watch</a></b>(name, func, scope)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#watch">watch</a></b>(added/updated/deleted, func, scope)
 								</div>
-								<div class="description">Watch the value's modifications</div>
+								<div class="description">Watch the store's modifications</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Store.html#watchValue">watchValue</a></b>(name, func, scope)
+								</div>
+								<div class="description">Watch a value's modifications</div>
 							</td>
 						</tr>
 					
@@ -595,6 +631,70 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="getStoreObservable"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/Observable.html">Observable</a>}</span>
+					<b>getStoreObservable</b>()
+					
+					</div>
+					<div class="description">
+						Get the observable used for watching store's modificationsShould be used only for debugging
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/Observable.html">Observable</a>}</span> the Observable</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getValueObservable"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/Observable.html">Observable</a>}</span>
+					<b>getValueObservable</b>()
+					
+					</div>
+					<div class="description">
+						Get the observable used for watching value's modificationsShould be used only for debugging
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/Observable.html">Observable</a>}</span> the Observable</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name="has"> </a>
 					<div class="fixedFont">
 					
@@ -812,7 +912,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Unwatch the value's modifications
+						Unwatch the store modifications
 						
 						
 					</div>
@@ -847,15 +947,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="watch"> </a>
+					<a name="unwatchValue"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Handler}</span>
-					<b>watch</b>(name, func, scope)
+					
+					<b>unwatchValue</b>(handler)
 					
 					</div>
 					<div class="description">
-						Watch the value's modifications
+						Unwatch the value's modifications
 						
 						
 					</div>
@@ -867,16 +967,59 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<span class="light fixedFont">{Handler}</span> <b>handler</b>
 									
 								</dt>
-								<dd>the index of the value</dd>
+								<dd>the handler returned by the watchValue function</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if unwatched</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="watch"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Handler}</span>
+					<b>watch</b>(added/updated/deleted, func, scope)
+					
+					</div>
+					<div class="description">
+						Watch the store's modifications
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>added/updated/deleted</b>
+									
+								</dt>
+								<dd></dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>func</b>
 									
 								</dt>
-								<dd>the function to execute when the value changes</dd>
+								<dd>the function to execute</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>scope</b>
@@ -900,6 +1043,61 @@ ul.inheritsList
 						
 						
 
+					<hr />
+				
+					<a name="watchValue"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>watchValue</b>(name, func, scope)
+					
+					</div>
+					<div class="description">
+						Watch a value's modifications
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>the name of the value to watch for</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>the function to execute</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>scope</b>
+									
+								</dt>
+								<dd>the scope in which to execute the function</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if unwatched</dd>
+							
+							</dl>
+						
+						
+						
+
 					
 				
 			
@@ -914,7 +1112,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 09 2012 10:15:18 GMT+0100 (CET)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Feb 11 2012 15:03:36 GMT+0100 (CET)
 		</div>
 	</body>
 </html>
