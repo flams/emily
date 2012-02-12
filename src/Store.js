@@ -79,17 +79,15 @@ define("Store", ["Observable", "Tools"],
 		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
-			var ante;
+			var ante,
+				action;
+			
 			if (typeof name != "undefined") {
 				ante = this.has(name);
 				_data[name] = value;
-				if (ante) {
-					_storeObservable.notify("updated", name, _data[name]);	
-					_valueObservable.notify(name, _data[name]);
-				} else {
-					_storeObservable.notify("added", name, _data[name]);
-					_valueObservable.notify(name, _data[name]);
-				}
+				action = ante ? "updated" : "added";
+				_storeObservable.notify(action, name, _data[name]);	
+				_valueObservable.notify(name, _data[name]);
 				return true;
 			} else {
 				return false;

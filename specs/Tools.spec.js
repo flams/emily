@@ -341,22 +341,23 @@ require(["Tools"], function (Tools) {
 		});
 	});
 	
-	describe("ToolsGetObjectsProperty", function () {
-		
-		var a = {b:{c:{d:{e:1}}}};
+	describe("ToolsGetNestedProperty", function () {
+
+		var a = {b:{c:{d:{e:1}}}},
+			b = [{c:{d:10}}];
 		
 		it("should be a function", function () {
 			expect(Tools.getNestedProperty).toBeInstanceOf(Function);
 		});
 		
 		it("should return the property value", function () {
-			var obj = {};
+
 			expect(Tools.getNestedProperty()).toBeUndefined();
 			expect(Tools.getNestedProperty("")).toEqual("");
 			expect(Tools.getNestedProperty("a.b.c.d.e")).toEqual("a.b.c.d.e");
 			expect(Tools.getNestedProperty(true)).toEqual(true);
 			expect(Tools.getNestedProperty(null)).toEqual(null);
-			expect(Tools.getNestedProperty(obj)).toEqual(obj);
+			expect(Tools.getNestedProperty(a)).toEqual(a);
 			expect(Tools.getNestedProperty(a.b)).toBe(a.b);
 			expect(Tools.getNestedProperty(a.b, "")).toBe(a.b);
 			expect(Tools.getNestedProperty(a, "b.c")).toBe(a.b.c);
@@ -365,6 +366,47 @@ require(["Tools"], function (Tools) {
 			expect(Tools.getNestedProperty(a, "b.e")).toBeUndefined();
 		});
 		
+		it("should get the property through an array too", function () {
+			expect(Tools.getNestedProperty(b, "0.c.d")).toEqual(10);
+		});
 		
+		it("should work with numbers as property", function () {
+			expect(Tools.getNestedProperty(b, 0)).toEqual(b[0]);
+		});
+
 	});
+	
+	describe("ToolsSetNestedProperty", function () {
+		
+		var a = {b:{c:{d:{e:1}}}},
+			b = [{c:{d:10}}];
+		
+		it("should be a function", function () {
+			expect(Tools.setNestedProperty).toBeInstanceOf(Function);
+		});
+		
+		it("should set the property value", function () {
+			var obj = {};
+			expect(Tools.setNestedProperty()).toBeUndefined();
+			expect(Tools.setNestedProperty("")).toEqual("");
+			expect(Tools.setNestedProperty(true)).toEqual(true);
+			expect(Tools.setNestedProperty(null)).toEqual(null);
+			expect(Tools.setNestedProperty(a)).toEqual(a);
+			expect(Tools.setNestedProperty(a, "b.c.d.e", 2)).toEqual(2);
+			expect(a.b.c.d.e).toEqual(2);
+			expect(Tools.setNestedProperty(a, "b.c", obj)).toEqual(obj);
+			expect(a.b.c).toEqual(obj);
+		});
+		
+		it("should set the property through an array too", function () {
+			expect(Tools.setNestedProperty(b, "0.c.d", 20)).toEqual(20);
+			expect(b[0].c.d).toEqual(20);
+		});
+		
+		it("should work with numbers as property", function () {
+			expect(Tools.setNestedProperty(b, 0, 20)).toEqual(20);
+			expect(b[0]).toEqual(20);
+		});
+	});
+
 });

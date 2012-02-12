@@ -206,25 +206,75 @@ function Tools(){
 			}
 		},
 		
+		
 		/**
-		 * Get the property of an object nested in on or more other objects
+		 * 
+		 * 
+		 * 
+		 * 
+		 * Refactoring needed for the following 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		/**
+		 * Get the property of an object nested in one or more objects
 		 * given an object such as a.b.c.d = 5, getObject(a, "b.c.d") will return 5.
 		 * @param {Object} object the object to get the property from
 		 * @param {String} property the path to the property as a string
-		 * @returns false if wrong parameters
+		 * @returns the object or the the property value if found
 		 */
 		getNestedProperty: function getNestedProperty(object, property) {
-			if (object && object instanceof Object
-				&& typeof property == "string" && property != "") {
-				var split = property.split(".");
-				split.unshift(object);
-				return split.reduce(function (obj, prop) {
-					return obj[prop];
-				});
+			if (object && object instanceof Object) {
+				if (typeof property == "string" && property != "") {
+					var split = property.split(".");
+					split.unshift(object);
+					return split.reduce(function (obj, prop) {
+						return obj[prop];
+					});
+				} else if (typeof property == "number") {
+					return object[property];
+				} else {
+					return object;
+				}
+			} else {
+				return object;
+			}
+		},
+		
+		/**
+		 * Set the property of an object nested in oen or more objects
+		 * @param {Object} object
+		 * @param {String} property
+		 * @param value the value to set
+		 * @returns object if no assignment was made or the value if the assignment was made
+		 */
+		setNestedProperty: function setNestedProperty(object, property, value) {
+			if (object && object instanceof Object) {
+				if (typeof property == "string" && property != "") {
+					var split = property.split(".");
+					split.unshift(object);
+					return split.reduce(function (obj, prop, idx) {
+						if (split.length == (idx + 1)) {
+							obj[prop] = value;
+						}
+						return obj[prop];
+					});
+				} else if (typeof property == "number") {
+					object[property] = value;
+					return object[property];
+				} else {
+					return object;
+				}
 			} else {
 				return object;
 			}
 		}
+		
+		
 		
 	};
 	
