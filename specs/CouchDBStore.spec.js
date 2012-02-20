@@ -1,4 +1,10 @@
 /**
+ * Emily
+ * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+/**
  * Tested with the following _design/doc
  * views: {
  * 	view: 	{

@@ -1,3 +1,9 @@
+/**
+ * Emily
+ * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
 var requirejs = require("requirejs"),
 	fs = require("fs"),
 	cp = require("child_process"),
@@ -77,7 +83,7 @@ namespace("build", function () {
 	
 	task("concat", ["build:clean"], function () {
 		var files = _getFiles(PROJECT_SRC_DIR),
-			concat = "";
+			concat = fs.readFileSync(LICENSE,"utf8");
 		
 		files.forEach(function (file) {
 			concat += fs.readFileSync(PROJECT_SRC_DIR + "/" + file,"utf8");

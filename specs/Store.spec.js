@@ -1,3 +1,9 @@
+/**
+ * Emily
+ * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
 require(["Store", "Observable"], function (Store, Observable) {
 	
 	describe("StoreTest", function () {
