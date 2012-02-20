@@ -28,31 +28,21 @@
 
 Emily is to be released by the end of march 2012.
 
-
 Until then the JSDoc is available in the docs/ directory.
 There's a demo in my fork of Addy Osmani's Todo app : https://github.com/podefr/todomvc/tree/master/architecture-examples/emily
 
 ##Inspiration
 
 http://vimeo.com/36579366
-----
+
 http://www.webmonkey.com/2012/02/webkit-isnt-breaking-the-web-you-are/
-----
+
 http://vimeo.com/34017777
-The only intuitive interface is the nipple. Everything after that is learned.
------
+
 http://www.mikealrogers.com/posts/a-new-direction-for-web-applications-.html
-----
-On Nov 29, 2011, at 1:09 PM, Nicholas C. Zakas wrote:
-
-> A word of caution that I usually throw out in API discussions: I think it's a mistake to design an API with the intent that a library will smooth out the interface for you. IMHO, core language features should be usable out-of-the-box.
-
-+°
-
-/be
 
 https://mail.mozilla.org/pipermail/es-discuss/2011-November/018793.html
-----
+
 http://paulbakaus.com/2011/10/11/on-creating-great-products/
-----
+
 http://almaer.com/blog/the-rise-and-fall-of-webos-is-an-epic-tale-webos-web-os
