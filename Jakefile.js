@@ -108,7 +108,7 @@ namespace("build", function () {
 namespace("tests", function () {
 	
 	task("jstd", function () {
-		var cmd = "java -jar tools/JsTestDriver/JsTestDriver-1.3.3d.jar " +
+		var cmd = "java -jar tools/JsTestDriver/JsTestDriver-1.3.4-a.jar " +
 				" --tests all" +
 				" --testOutput reports/";
 		
