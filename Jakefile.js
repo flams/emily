@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-var PROJECT_NAME = "Olives";
+var PROJECT_NAME = "Emily";
 
 var requirejs = require("requirejs"),
 	fs = require("fs"),
