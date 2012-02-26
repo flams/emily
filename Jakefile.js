@@ -106,10 +106,9 @@ namespace("build", function () {
 });
 
 namespace("tests", function () {
-
+	
 	task("jstd", function () {
 		var cmd = "java -jar tools/JsTestDriver/JsTestDriver-1.3.3d.jar " +
-				" --port 4224" +
 				" --tests all" +
 				" --testOutput reports/";
 		
