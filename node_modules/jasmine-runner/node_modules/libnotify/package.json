@@ -1,0 +1,11 @@
+{ "name": "libnotify"
+, "version": "1.0.1"
+, "description": "libnotify unobtrusive notifications"
+, "homepage":"http://github.com/mitkok/node-libnotify"
+, "directories": { "lib":"./lib" }
+, "main": "./lib/libnotify"
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/mitkok/node-libnotify.git"
+  }
+}

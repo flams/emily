@@ -7,7 +7,9 @@
 /**
  * These will be global. I need to find a way to make them easy to override
  */
-PROJECT_NAME = "Emily", LICENSE = "LICENSE",
+PROJECT_NAME = "Emily", 
+
+LICENSE = "LICENSE",
 // External libs directory (like jasmine)
 LIBS_DIR = "lib",
 // The main project's js sources
@@ -44,8 +46,7 @@ JSTD_URL = "http://localhost",
 JSTD_PORT = 4224,
 
 		// The order in which to load the libraries
-		LIBS_LOADING_ORDER = [ LIBS_DIR + "/require.js",
-				LIBS_DIR + "/socket.io.min.js" ];
+		LIBS_LOADING_ORDER = [ LIBS_DIR + "/require.js"];
 
 PROJECT_LOADING_ORDER = [ PROJECT_SRC_DIR + "/*.js" ];
 
@@ -64,11 +65,11 @@ JSTD_CONFIG = {
 				.concat(LIBS_LOADING_ORDER).concat(PROJECT_LOADING_ORDER),
 
 		test : SPECS_LOADING_ORDER,
-		/**
-		 * plugin: ['name: "coverage" \n' + ' jar:
-		 * "../tools/JsTestDriver/coverage-1.3.3d.jar" \n' + ' module:
-		 * "com.google.jstestdriver.coverage.CoverageModule"' ],
-		 */
+		
+		plugin : [ 'name: "coverage" \n'
+				+ '   jar: "../tools/JsTestDriver/coverage-1.3.3d.jar" \n'
+				+ '   module: "com.google.jstestdriver.coverage.CoverageModule"' ],
+
 		timeout : 90
 	},
 	browsers : [ "/Applications/Firefox.app/Contents/MacOS/Firefox",
