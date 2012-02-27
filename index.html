@@ -11,16 +11,21 @@
 			 margin-left: auto;
 			 margin-right: auto;
 			 background-color: #fafafa;
+			 color: #333;
 			}
 			h1, h2, h3 {
 				margin: 0;
-				padding: 0;
+				padding: 2px;
+				padding-left: 10px;
 				color: #78aadd;
+				text-shadow: -1px -1px -1px #333;
+				box-shadow: 1px 1px 1px #333;
 			}
 			header h1 {
 				font-size: 48px;
 				margin-bottom: 5px;
-				text-shadow: 1px 1px 1px black;
+				text-shadow: 1px 1px 1px #333;
+				box-shadow: none;
 			}
 			header span {
 				font-weight: bold;
@@ -35,10 +40,10 @@
 			header, section, nav, footer {
 				padding: 10px 0px 10px 0px;
 				border-bottom: 1px solid white;
-				box-shadow: 1px 0px 5px #aaa;
-				margin: 10px;
+				box-shadow: 0px 2px 5px #aaa;
+				margin: 5px 0 0 0;
 				padding: 10px;
-				border-radius: 10px;
+				border-radius: 3px;
 				background-color: white;
 				font-size: 12px;
 			}
@@ -59,23 +64,21 @@
 			header a:hover {
 				box-shadow: 0 0 0;
 			}
-			.example p {
+			 p {
 				margin-left: 20px;
 			} 
-			.example h2 {
+			 h2 {
 				background-color: #78aadd;
-				border-radius: 10px;
+				border-radius: 3px;
 				color: white;
-				padding: 2px;
 				font-size: 16px;
 			}
-			.example h3 {
-				background-color: grey;
-				border-radius: 6px;
+			 h3 {
+				background-color: #333;
+				border-radius: 2px;
 				color: white;
 				font-weight: normal;
 				font-size: 12px;
-				padding: 2px;
 				margin-left: 20px;	
 			}
 			.example pre {
@@ -102,27 +105,69 @@
 		</header>
 			
 		<nav>
-			<a href="#presentation">What is Emily?</a> | <a href="#examples">Examples</a> | <a href="#doc">Documentation</a>
+			<a href="#presentation">What is Emily?</a> | <a href="#install">Installation</a> | <a href="#examples">Examples</a>
 		</nav>
 			
 		<section id="presentation">
+			<h2>What is Emily?</h2>
 			<p>
 				Emily is a JavaScript Framework that offers convenient tools for building MVC applications. </br>
-				It's nothing else than a set of AMD modules.
+				It's nothing else than a set of modules in AMD format. <br />
+				All Emily's modules work both in the browser and in node.js
 			</p>
-			<h3>Loading an Emily module</h3>
+			<p>
+			 The tools are:
+			</p>
+			<ul>
+				<li><strong>Observable</strong>: the all mighty observer design pattern.</li>
+				<li><strong>Store</strong>: the spine of your MV* application.</li>
+				<li><strong>Promise</strong>: a simple promises interpretation.</li>
+				<li><strong>StateMachine</strong>: don't hide your states and transitions behind if/else anymore.</li>
+				<li><strong>Transport</strong>: the excellent socket.io used as the only way to communicate with your server.</li>
+				<li><strong>CouchDBStore</strong>: combines Store+Transport to serve a CouchDB in real-time.</li>
+				<li><strong>Tools</strong>: these functions you always need and rewrite.</li>
+			</ul>
+		</section>
+		
+		<section id="install">
+		
+			<h2>Installing Emily</h2>
+			<p>
+				Emily requires an AMD compatible launcher like requirejs to work.
+			</p>
+			<h3>In a browser</h3>
+			<pre>
+	&lt;script src="./require.js"&gt;&lt;/script&gt;
+	&lt;script src="./Emily.js"&gt;&lt;/script&gt;
+			</pre>
 			<pre class="prettyprint">
-require(["Module"], function (Module) {
-	// Do what you want with Module
-});
+	require(["Module"], function (Module) {
+		// Do what you want with Module
+	});
+			</pre>
+			
+			<h3>In node</h3>
+			<pre class="prettyprint">
+	var requirejs = require("requirejs");
+	require("./Emily.js");
+		
+		
+	requirejs.config({
+		baseUrl: "./",
+		nodeRequire: require
+	});
+	
+	requirejs(["Module"], function (Module) {
+		// Do what you want with Module
+	});
 			</pre>
 		</section>
 		
 		<section id="examples">
 			<div class="example">
-				<h2>Observable: the all mighty observable design pattern</h2>
+				<h2>Observable: the all mighty observer design pattern.</h2>
 				<p>The well known Observer design pattern.<br/>
-					It's especially useful in MV* applications to advertise views on data changes</p>
+					It's especially useful in MV* applications to advertise views on data changes.</p>
 				<h3>Watch a topic</h3>
 				<pre class="prettyprint">
  var observable = new Observable;
@@ -130,6 +175,14 @@ require(["Module"], function (Module) {
  observable.watch("greetings", function (greet) {
   console.log(greet, "world!");
  });
+ 
+ // Execute callback in scope
+ observable.watch("greetings", function (greet) {
+  console.log(greet, "world!");
+ }, 
+ // The scope. In Emily the scope can be given right after the callback. 
+ // Works everytime in the whole API. It's a requirement.
+ this);
 </pre>
 				<h3>Notify on a topic</h3>
 				<pre class="prettyprint">
@@ -138,30 +191,94 @@ require(["Module"], function (Module) {
 				
 				<h3>Stop watching</h3>
 				<pre class="prettyprint">
-var handler = observable.watch(notify, function(){});
+var handler = observable.watch("topic", function(){});
  observable.unwatch(hander);
+ 
+ // Unwatch all from a topic
+ observable.unwatchAll("topic");
+ 
+ // Unwatch all
+ observable.unwatchAll();
 				</pre>
 			</div>
 </section>
 
 <section>
 			<div class="example">
-				<h2>Store: store data and get notified on changes</h2>
+				<h2>Store: the spine of your MV* application.</h2>
+				<p>
+					Store is your applications' model. It's values can be observed.<br />
+					It can store data in an Array or in an Object.
+				</p>
+				<h3>Set, Get, del value</h3>
 				<pre class="prettyprint">
-	require(["Store"], function (Store) {
-	
-		var store = new Store;
-		
-		store.set("greeting", "Hello World!");
-		store.get("greeting");
-	});
+var store = new Store;
+
+store.set("greeting", "Hello World!");
+store.get("greeting"); // returns Hello world!
+store.del("greeting");
+store.has("greeting"); // false
 				</pre>
+				
+				<h3>Watch a value's modification</h3>
+				<pre class="prettyprint">
+store.watchValue("greeting", function (value) {
+	console.log("Hello", value);
+}, /* after the callback comes the scope */scope);
+
+// Will also call the callback.
+store.set("greeting", "world!"); 
+				</pre>
+				
+				<h3>Array-based Store manipulation</h3>
+				<pre class="prettyprint">
+var store = new Store(["Hello"]);
+store.alter("push", "world!");
+store.get(1); // world!
+store.alter("pop"); // world!
+store.get(1); // undefined;
+				</pre>
+				
+				<h3>Observing an Array-based Store</h3>
+				<pre class="prettyprint">
+var store = new Store(["Hello"]);
+
+// Watch for new values, works with deleted, updated as well
+store.watch("added", function (idx, value) {
+ console.log(idx, value);
+}, /* after the callback comes the scope */scope);
+
+store.alter("push", "world!"); // Will console.log(1, "world!"),
+				</pre>
+				
+				<h3>Looping through a Store</h3>
+				<pre class="prettyprint">
+var store = new Store(["Hello", "world!"]);
+
+// will loop through all items. The params are in the same order as
+// a foreach
+store.loop(function (value, idx) {
+	console.log(value, idx); // 
+}, /* after the callback... */ scope);
+				</pre>
+				
+				<h3>Misc</h3>
+				<pre class="prettyprint">
+var store = new Store(["Hello", "world!"]);
+
+store.getNbItems(); // 2
+store.toJSON(); // ["Hello","world!"]
+store.reset({}); // is now an empty object
+
+
+				</pre>
+				
 			</div>
 </section>
 
 <section>
 		<div class="example">
-				<h2>Promise: A simple interpretation of promises</h2>
+				<h2>Promise: a simple promises interpretation.</h2>
 				<pre class="prettyprint">
 	require(["Promise"], function (Promise) {
 	
@@ -179,7 +296,7 @@ var handler = observable.watch(notify, function(){});
 
 <section>
 		<div class="example">
-				<h2>Finite State Machine: Replace your if else if then else if by a nice state machine!</h2>
+				<h2>Finite State Machine: don't hide your states and transitions behind if/else anymore.</h2>
 				<pre class="prettyprint">
 	require(["StateMachine"], function (StateMachine) {
 	
@@ -198,7 +315,7 @@ var handler = observable.watch(notify, function(){});
 
 <section>
 		<div class="example">
-				<h2>CouchDBStore: Represents a CouchDB view or a document, real-time synchronized</h2>
+				<h2>CouchDBStore: the excellent socket.io used as the only way to communicate with your server.</h2>
 				<pre class="prettyprint">
 	require(["CouchDBStore"], function (CouchDBStore) {
 	
@@ -210,7 +327,7 @@ var handler = observable.watch(notify, function(){});
 
 <section>
 		<div class="example">
-				<h2>Transport: Based on socket.io, for REST and push</h2>
+				<h2>Transport: combines Store+Transport to serve a CouchDB in real-time.</h2>
 				<pre class="prettyprint">
 	require(["Transport"], function (Transport) {
 		
@@ -220,9 +337,14 @@ var handler = observable.watch(notify, function(){});
 			</div>
 			
 		</section>
-		
-		<section id="doc">
+		<section>
+		<div class="example">
+				<h2>Tools: these functions you always need and rewrite.</h2>
+				<pre class="prettyprint">
 
+				</pre>
+			</div>
+			
 		</section>
 		
 		<footer>
