@@ -1,173 +1,204 @@
 <!doctype html>
 <html>
-	<head>
-		<title>Emily - real time applications made easy</title>
-		<style type="text/css">
-			html {
-				font-family: "verdana";
-			}
-			body {
-			 width: 1000px;
-			 margin-left: auto;
-			 margin-right: auto;
-			 background-color: #fafafa;
-			 color: #666;
-			}
-			h1, h2, h3 {
-				margin: 0;
-				padding: 2px;
-				padding-left: 10px;
-				color: #4a7d94;
-				text-shadow: -1px -1px -1px #666;
-				box-shadow: 1px 1px 1px #666;
-			}
-			header h1 {
-				font-size: 48px;
-				margin-bottom: 5px;
-				text-shadow: 1px 1px 1px #666;
-				box-shadow: none;
-			}
-			header span {
-				font-weight: bold;
-			}
-			nav a,footer a {
-				color: #4a7d94;
-				text-decoration: none;
-			}
-			nav a:hover, footer a:hover {
-				text-decoration:underline;
-			}
-			header, section, nav, footer {
-				padding: 10px 0px 10px 0px;
-				border-bottom: 1px solid white;
-				box-shadow: 0px 2px 5px #aaa;
-				margin: 5px 0 0 0;
-				padding: 10px;
-				border-radius: 3px;
-				background-color: white;
-				font-size: 12px;
-			}
-			nav {
-			 font-size: 24px;
-			}
-			.menu a {
-				color: #666;
-				text-decoration: none;
-				
-			}
-			.menu a strong {
-				color: #4a7d94;
-			}
-			header a {
-				background-color: #4a7d94;
-				color: white;
-				border-radius: 10px;
-				display: block;
-				padding: 10px;
-				float: right;
-				text-shadow: -1px -1px 1px black;
-				text-decoration: none;
-				box-shadow: 1px 1px 1px black;
-			}
-			header a:hover {
-				box-shadow: 0 0 0;
-			}
-			 p {
-				margin-left: 20px;
-			} 
-			 h2 {
-				background-color: #4a7d94;
-				border-radius: 3px;
-				color: white;
-				font-size: 16px;
-			}
-			 h3 {
-				background-color: #666;
-				border-radius: 2px;
-				color: white;
-				font-weight: normal;
-				font-size: 12px;
-				margin-left: 20px;	
-			}
-			.example pre {
-				border: 0px;
-				margin-left: 20px;
-			}
-		</style>
-		<link href="prettify.css" type="text/css" rel="stylesheet" />
-		<script type="text/javascript" src="prettify.js"></script>
-		<script>
-			window.addEventListener("load", function (event, menu) {
-				prettyPrint();
-				
-				// Created an arg called menu to avoid polluting the global namespace
-				menu = document.querySelector(".menu");
-				
-				// For each h2 in my examples
-				Array.prototype.slice.call(document.querySelectorAll(".example > h2"), 0).forEach(function (node) {
-					
-					// Create an li node
-					var li = document.createElement("li"),
-						split = node.innerHTML.split(":");
-				
-					// split[0] is the name of the Module
-					node.setAttribute("id", split[0]);
-					
-					// That is appended to the menu. It's a link to the chapter now.
-					li.innerHTML = '<a href="#'+ split[0] +'"><strong>' + split.shift() + '</strong>:' + split.join(":") + '</a>';
-					menu.appendChild(li);
-				});
-				
-				
-			}, true);
-		</script>
-	</head>
-	<body>
-	<a href="http://github.com/flams/emily">
-		<img alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" style="position: absolute; top: 0; right: 0; border: 0;">
-	</a>
-		<header>
-			<a href="./Emily.js">Download Emily Alpha</a>
-			<h1>Emily</h1>
-			<span>Real time web applications made easy</span>
-		</header>
-			
-		<nav>
-			<a href="#presentation">What is Emily?</a> | <a href="#install">Installation</a> | <a href="#examples">Examples</a>
-		</nav>
-			
-		<section id="presentation">
-			<h2>What is Emily?</h2>
-			<p>
-				Emily is a JavaScript Framework that offers convenient tools for building MVC applications. </br>
-				It's nothing else than a set of modules in AMD format. <br />
-				All Emily's modules work both in the browser and in node.js
-			</p>
-			<p>
-			 The tools are:
-			</p>
-			<ul class="menu"></ul>
-		</section>
-		
-		<section id="install">
-		
-			<h2>Installing Emily</h2>
-			<p>
-				Emily requires an AMD compatible loader like requirejs to work.
-			</p>
-			<h3>In a browser</h3>
-			<pre>
+<head>
+<title>Emily - real time applications made easy</title>
+<style type="text/css">
+html {
+	font-family: "verdana";
+}
+
+body {
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #fafafa;
+	color: #666;
+}
+
+h1,h2,h3 {
+	margin: 0;
+	padding: 2px;
+	padding-left: 10px;
+	color: #4a7d94;
+	text-shadow: -1px -1px -1px #666;
+	box-shadow: 1px 1px 1px #666;
+}
+
+header h1 {
+	font-size: 48px;
+	margin-bottom: 5px;
+	text-shadow: 1px 1px 1px #666;
+	box-shadow: none;
+}
+
+header span {
+	font-weight: bold;
+}
+
+nav a,footer a {
+	color: #4a7d94;
+	text-decoration: none;
+}
+
+nav a:hover,footer a:hover {
+	text-decoration: underline;
+}
+
+header,section,nav,footer {
+	padding: 10px 0px 10px 0px;
+	border-bottom: 1px solid white;
+	box-shadow: 0px 2px 5px #aaa;
+	margin: 5px 0 0 0;
+	padding: 10px;
+	border-radius: 3px;
+	background-color: white;
+	font-size: 12px;
+}
+
+nav {
+	font-size: 24px;
+}
+
+.menu a {
+	color: #666;
+	text-decoration: none;
+}
+
+.menu a:hover {
+	text-decoration: underline;
+}
+
+.menu a strong {
+	color: #4a7d94;
+}
+
+header a {
+	background-color: #4a7d94;
+	color: white;
+	border-radius: 10px;
+	display: block;
+	padding: 10px;
+	float: right;
+	text-shadow: -1px -1px 1px black;
+	text-decoration: none;
+	box-shadow: 1px 1px 1px black;
+}
+
+header a:hover {
+	box-shadow: 0 0 0;
+}
+
+p {
+	margin-left: 20px;
+}
+
+h2 {
+	background-color: #4a7d94;
+	border-radius: 3px;
+	color: white;
+	font-size: 16px;
+}
+
+h3 {
+	background-color: #666;
+	border-radius: 2px;
+	color: white;
+	font-weight: normal;
+	font-size: 12px;
+	margin-left: 20px;
+}
+
+.example pre {
+	border: 0px;
+	margin-left: 20px;
+}
+</style>
+<link href="prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="prettify.js"></script>
+<script>
+	window
+			.addEventListener(
+					"load",
+					function(event, menu) {
+						prettyPrint();
+
+						// Created an arg called menu to avoid polluting the global namespace
+						menu = document.querySelector(".menu");
+
+						// For each h2 in my examples
+						Array.prototype.slice
+								.call(
+										document
+												.querySelectorAll(".example > h2"),
+										0)
+								.forEach(
+										function(node) {
+
+											// Create an li node
+											var li = document
+													.createElement("li"), split = node.innerHTML
+													.split(":");
+
+											// split[0] is the name of the Module
+											node.setAttribute("id", split[0]);
+
+											// That is appended to the menu. It's a link to the chapter now.
+											li.innerHTML = '<a href="#'+ split[0] +'"><strong>'
+													+ split.shift()
+													+ '</strong>:'
+													+ split.join(":") + '</a>';
+											menu.appendChild(li);
+										});
+
+					}, true);
+</script>
+</head>
+<body>
+	<a href="http://github.com/flams/emily"> <img
+		alt="Fork me on GitHub"
+		src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
+		style="position: absolute; top: 0; right: 0; border: 0;"> </a>
+	<header>
+		<a href="./Emily.js">Download Emily Alpha</a>
+		<h1>Emily</h1>
+		<span>Real time web applications made easy</span>
+	</header>
+
+	<nav>
+		<a href="#presentation">What is Emily?</a> | <a href="#install">Installation</a>
+		| <a href="#examples">Examples</a>
+	</nav>
+
+	<section id="presentation">
+		<h2>What is Emily?</h2>
+		<p>
+			Emily is a JavaScript Framework that offers convenient tools for
+			building MVC applications. </br> It's nothing else than a set of modules
+			in AMD format. <br /> All Emily's modules work both in the browser
+			and in node.js
+		</p>
+		<p>The tools are:</p>
+		<ul class="menu"></ul>
+	</section>
+
+	<section id="install">
+
+		<h2>Installing Emily</h2>
+		<p>Emily requires an AMD compatible loader like requirejs to work.
+		</p>
+		<h3>In a browser</h3>
+		<pre>
 	&lt;script src="./require.js"&gt;&lt;/script&gt;
 	&lt;script src="./Emily.js"&gt;&lt;/script&gt;
 			</pre>
-			<pre class="prettyprint">
+		<pre class="prettyprint">
 	require(["Module"], function (Module) {
 		// Do what you want with Module
 	});
 			</pre>
-			
-			<h3>In node</h3>
-			<pre class="prettyprint">
+
+		<h3>In node</h3>
+		<pre class="prettyprint">
 	var requirejs = require("requirejs");
 	require("./Emily.js");
 		
@@ -181,15 +212,17 @@
 		// Do what you want with Module
 	});
 			</pre>
-		</section>
-		
-		<section id="examples">
-			<div class="example">
-				<h2>Observable: the all mighty observer design pattern.</h2>
-				<p>The well known Observer design pattern.<br/>
-					It's especially useful in MV* applications to advertise views on data changes.</p>
-				<h3>Watch a topic</h3>
-				<pre class="prettyprint">
+	</section>
+
+	<section id="examples">
+		<div class="example">
+			<h2>Observable: the all mighty observer design pattern.</h2>
+			<p>
+				The well known Observer design pattern.<br /> It's especially useful
+				in MV* applications to advertise views on data changes.
+			</p>
+			<h3>Watch a topic</h3>
+			<pre class="prettyprint">
  var observable = new Observable;
  
  observable.watch("greetings", function (greet) {
@@ -204,13 +237,13 @@
  // Works everytime in the whole API. It's a requirement.
  this);
 </pre>
-				<h3>Notify on a topic</h3>
-				<pre class="prettyprint">
+			<h3>Notify on a topic</h3>
+			<pre class="prettyprint">
  observable.notify("greetings", "hello");
 				</pre>
-				
-				<h3>Stop watching</h3>
-				<pre class="prettyprint">
+
+			<h3>Stop watching</h3>
+			<pre class="prettyprint">
 var handler = observable.watch("topic", function(){});
  observable.unwatch(hander);
  
@@ -220,18 +253,18 @@ var handler = observable.watch("topic", function(){});
  // Unwatch all
  observable.unwatchAll();
 				</pre>
-			</div>
-</section>
+		</div>
+	</section>
 
-<section>
-			<div class="example">
-				<h2>Store: the spine of your MV* application.</h2>
-				<p>
-					Store is your applications' model. It's values can be observed.<br />
-					It can store data in an Array or in an Object.
-				</p>
-				<h3>Set, Get, del value</h3>
-				<pre class="prettyprint">
+	<section>
+		<div class="example">
+			<h2>Store: the spine of your MV* application.</h2>
+			<p>
+				Store is your applications' model. It's values can be observed.<br />
+				It can store data in an Array or in an Object.
+			</p>
+			<h3>Set, Get, del value</h3>
+			<pre class="prettyprint">
 var store = new Store;
 
 store.set("greeting", "Hello World!");
@@ -239,85 +272,102 @@ store.get("greeting"); // returns Hello world!
 store.del("greeting");
 store.has("greeting"); // false
 				</pre>
-				
-				<h3>Watch a value's modification</h3>
-				<pre class="prettyprint">
+
+			<h3>Watch a value's modification</h3>
+			<pre class="prettyprint">
 store.watchValue("greeting", function (value) {
 	console.log("Hello", value);
-}, /* after the callback comes the scope */scope);
+}, /* after the callback comes the scope */ this);
 
 // Will also call the callback.
 store.set("greeting", "world!"); 
 				</pre>
-				
-				<h3>Array-based Store manipulation</h3>
-				<pre class="prettyprint">
+
+			<h3>Array-based Store manipulation</h3>
+			<pre class="prettyprint">
 var store = new Store(["Hello"]);
 store.alter("push", "world!");
 store.get(1); // world!
 store.alter("pop"); // world!
 store.get(1); // undefined;
 				</pre>
-				
-				<h3>Observing an Array-based Store</h3>
-				<pre class="prettyprint">
+
+			<h3>Observing an Array-based Store</h3>
+			<pre class="prettyprint">
 var store = new Store(["Hello"]);
 
 // Watch for new values, works with deleted, updated as well
 store.watch("added", function (idx, value) {
  console.log(idx, value);
-}, /* after the callback comes the scope */scope);
+}, /* after the callback comes the scope */ this);
 
 store.alter("push", "world!"); // Will console.log(1, "world!"),
 				</pre>
-				
-				<h3>Looping through a Store</h3>
-				<pre class="prettyprint">
+
+			<h3>Looping through a Store</h3>
+			<pre class="prettyprint">
 var store = new Store(["Hello", "world!"]);
 
 // will loop through all items. The params are in the same order as
 // a foreach
 store.loop(function (value, idx) {
 	console.log(value, idx); // 
-}, /* after the callback... */ scope);
+}, /* after the callback... */ this);
 				</pre>
-				
-				<h3>Misc</h3>
-				<pre class="prettyprint">
+
+			<h3>Misc</h3>
+			<pre class="prettyprint">
 var store = new Store(["Hello", "world!"]);
 
 store.getNbItems(); // 2
 store.toJSON(); // ["Hello","world!"]
 store.reset({}); // is now an empty object
-
-
 				</pre>
-				
-			</div>
-</section>
 
-<section>
+		</div>
+	</section>
+
+	<section>
 		<div class="example">
-				<h2>Promise: a simple promises interpretation.</h2>
-				<pre class="prettyprint">
-	require(["Promise"], function (Promise) {
-	
-		var promise = new Promise;
-		
-		promise.then(function () {
-			console.log("Hello World!");
-		});
-		
-		promise.resolve();
-	});
+			<h2>Promise: a simple promises interpretation.</h2>
+			<p>
+				This is a simple interpretation of promises. <br /> This
+				implementation is a state machine with an observer. <br /> It helps
+				plumbing asynchronous code.
+			</p>
+			<h3>A resolved promise with an observer</h3>
+			<pre class="prettyprint">
+var promise = new Promise;
+
+promise.then(function () {
+	console.log("Hello World!");
+});
+
+promise.resolve();
 				</pre>
-			</div>
-</section>
+			<h3>A rejected promise with an observer</h3>
+			<pre class="prettyprint">
+var promise = new Promise;
 
-<section>
+promise.then(function resolved() {
+	// Code to execute if promise is resolved
+}, /* after the callback comes... */ this,
+function rejected() {
+	// Code to execute if promise is rejected
+	console.log("Hello World!");
+}, /* after the callback comes... */ this);
+
+promise.reject();
+		</pre>
+
+		</div>
+	</section>
+
+	<section>
 		<div class="example">
-				<h2>StateMachine: don't hide your states and transitions behind if/else anymore.</h2>
-				<pre class="prettyprint">
+			<h2>StateMachine: don't hide your states and transitions behind
+				if/else anymore.</h2>
+			<pre class="prettyprint">
 	require(["StateMachine"], function (StateMachine) {
 	
 		var stateMachine = new StateMachine("Init", {
@@ -330,46 +380,50 @@ store.reset({}); // is now an empty object
 		stateMachine.event("world!");
 	});
 				</pre>
-			</div>
-</section>
+		</div>
+	</section>
 
-<section>
+	<section>
 		<div class="example">
-				<h2>CouchDBStore: combines Store+Transport to serve a CouchDB in real-time.</h2>
-				<pre class="prettyprint">
+			<h2>CouchDBStore: combines Store+Transport to serve a CouchDB in
+				real-time.</h2>
+			<pre class="prettyprint">
 	require(["CouchDBStore"], function (CouchDBStore) {
 	
 		
 	});
 				</pre>
-			</div>
-</section>
+		</div>
+	</section>
 
-<section>
+	<section>
 		<div class="example">
-				<h2>Transport: the excellent socket.io used as the only way to communicate with your server.</h2>
-				<pre class="prettyprint">
+			<h2>Transport: the excellent socket.io used as the only way to
+				communicate with your server.</h2>
+			<pre class="prettyprint">
 	require(["Transport"], function (Transport) {
 		
 		
 	});
 				</pre>
-			</div>
-			
-		</section>
-		<section>
+		</div>
+
+	</section>
+	<section>
 		<div class="example">
-				<h2>Tools: these functions you always need and rewrite.</h2>
-				<pre class="prettyprint">
+			<h2>Tools: these functions you always need and rewrite.</h2>
+			<pre class="prettyprint">
 
 				</pre>
-			</div>
-			
-		</section>
-		
-		<footer>
-			<a href="https://github.com/flams/emily">Emily</a> by <a href="https://github.com/podefr">Olivier Scherrer</a>. Copyright 2012 - MIT licensed
-		</footer>
-	</body>
+		</div>
+
+	</section>
+
+	<footer>
+		<a href="https://github.com/flams/emily">Emily</a> by <a
+			href="https://github.com/podefr">Olivier Scherrer</a>. Copyright 2012
+		- MIT licensed
+	</footer>
+</body>
 
 </html>
