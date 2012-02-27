@@ -4,20 +4,13 @@
 		<title>Emily - real time applications made easy</title>
 		<style type="text/css">
 			html {
-				background-color: #ddd;
-				font-family: "Lucida Console", verdana;
+				font-family: "verdana";
 			}
 			body {
-				background-color: #fafafa;
-				color: #666;
-				margin-left: auto;
-				margin-right: auto;
-				padding: 20px;
-				width: 1000px;
-				font-size: 12px;
-				border: 1px solid white;
-				border-radius: 10px;
-				box-shadow: 0px 1px 1px #333;
+			 width: 1000px;
+			 margin-left: auto;
+			 margin-right: auto;
+			 background-color: #fafafa;
 			}
 			h1, h2, h3 {
 				margin: 0;
@@ -27,28 +20,71 @@
 			header h1 {
 				font-size: 48px;
 				margin-bottom: 5px;
-				text-shadow: 1px 1px 1px white;
+				text-shadow: 1px 1px 1px black;
 			}
 			header span {
 				font-weight: bold;
 			}
-			a {
+			nav a,footer a {
 				color: #78aadd;
 				text-decoration: none;
 			}
-			a:hover {
+			nav a:hover, footer a:hover {
 				text-decoration:underline;
 			}
-			section, nav {
+			header, section, nav, footer {
 				padding: 10px 0px 10px 0px;
+				border-bottom: 1px solid white;
+				box-shadow: 1px 0px 10px #aaa;
+				margin: 10px;
+				padding: 10px;
+				border-radius: 10px;
+				background-color: white;
 			}
 			nav {
 			 font-size: 24px;
 			}
+			header a {
+				background-color: #78aadd;
+				color: white;
+				border-radius: 10px;
+				display: block;
+				padding: 10px;
+				float: right;
+				text-shadow: -1px -1px 1px black;
+				text-decoration: none;
+				box-shadow: 1px 1px 1px black;
+			}
+			header a:hover {
+				box-shadow: 0 0 0;
+			}
+			.example p {
+				background-color: #ccc;
+				border-radius: 10px;
+				color: white;
+				font-size: 16px;
+				padding: 2px;
+				padding-left: 10px;
+			}
+			.example pre {
+				border: 0px;
+				padding-left: 10px;
+			}
 		</style>
+		<link href="prettify.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="prettify.js"></script>
+		<script>
+			window.addEventListener("load", function () {
+				prettyPrint();
+			}, true);
+		</script>
 	</head>
 	<body>
+	<a href="http://github.com/flams/emily">
+<img alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png" style="position: absolute; top: 0; left: 0; border: 0;">
+</a>
 		<header>
+			<a href="./Emily.js">Download Emily Alpha</a>
 			<h1>Emily</h1>
 			<span>Real time web applications made easy</span>
 		</header>
@@ -59,21 +95,96 @@
 			
 		<section id="presentation">
 			<p>
-				Emily is a JavaScript Framework. It offers convenient tools for building MVC applications. </br>
-				It has the following requirements:
+				Emily is a JavaScript Framework.<br />
+				It offers convenient tools for building MVC applications. </br>
+				It's nothing else than a set of AMD modules.
 			</p>
-			<ul>
-				<li>Emily should use only standard technologies.</li>
-				<li>Emily should let native features be usable out of the box and not re-implement them</li>
-				<li>Emily should use the new HTML5 features when they're the best way to achieve something</li>
-				<li>Emily should be 100% TDD with 100% code coverage</li>
-				<li>Emily's modules should follow the commonJS AMD</li>
-				<li>Emily should run in any JavaScript runtime</li>
-			</ul>
 		</section>
 		
 		<section id="examples">
-		ok
+			<div class="example">
+				<p>Observable: the all mighty observable design pattern</p>
+				<pre class="prettyprint">
+	require(["Observable"], function (Observable) {
+	
+	 var observable = new Observable;
+	 
+	 observable.watch("greetings", function (greet) {
+	  console.log(greet, "world!");
+	 });
+	 
+	 observable.notify("greetings", "hello");
+	
+	});
+				</pre>
+			</div>
+			
+			<div class="example">
+				<p>Store: store data and get notified on changes</p>
+				<pre class="prettyprint">
+	require(["Store"], function (Store) {
+	
+		var store = new Store;
+		
+		store.set("greeting", "Hello World!");
+		store.get("greeting");
+	});
+				</pre>
+			</div>
+			
+		<div class="example">
+				<p>Promise: A simple interpretation of promises</p>
+				<pre class="prettyprint">
+	require(["Promise"], function (Promise) {
+	
+		var promise = new Promise;
+		
+		promise.then(function () {
+			console.log("Hello World!");
+		});
+		
+		promise.resolve();
+	});
+				</pre>
+			</div>
+			
+		<div class="example">
+				<p>Finite State Machine: Replace your if else if then else if by a nice state machine!</p>
+				<pre class="prettyprint">
+	require(["StateMachine"], function (StateMachine) {
+	
+		var stateMachine = new StateMachine("Init", {
+			"Init": [["hello", function (greeting) {
+						console.log("Hello", greeting);
+					}, "Greetd"]],
+			"Greetd": []
+		});
+		
+		stateMachine.event("world!");
+	});
+				</pre>
+			</div>
+			
+		<div class="example">
+				<p>CouchDBStore: Represents a CouchDB view or a document, real-time synchronized</p>
+				<pre class="prettyprint">
+	require(["CouchDBStore"], function (CouchDBStore) {
+	
+		
+	});
+				</pre>
+			</div>
+			
+		<div class="example">
+				<p>Transport: Based on socket.io, for REST and push</p>
+				<pre class="prettyprint">
+	require(["Transport"], function (Transport) {
+		
+		
+	});
+				</pre>
+			</div>
+			
 		</section>
 		
 		<section id="doc">
