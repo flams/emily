@@ -50,6 +50,14 @@
 			nav {
 			 font-size: 24px;
 			}
+			.menu a {
+				color: #666;
+				text-decoration: none;
+				
+			}
+			.menu a strong {
+				color: #4a7d94;
+			}
 			header a {
 				background-color: #4a7d94;
 				color: white;
@@ -89,8 +97,28 @@
 		<link href="prettify.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="prettify.js"></script>
 		<script>
-			window.addEventListener("load", function () {
+			window.addEventListener("load", function (event, menu) {
 				prettyPrint();
+				
+				// Created an arg called menu to avoid polluting the global namespace
+				menu = document.querySelector(".menu");
+				
+				// For each h2 in my examples
+				Array.prototype.slice.call(document.querySelectorAll(".example > h2"), 0).forEach(function (node) {
+					
+					// Create an li node
+					var li = document.createElement("li"),
+						split = node.innerHTML.split(":");
+				
+					// split[0] is the name of the Module
+					node.setAttribute("id", split[0]);
+					
+					// That is appended to the menu. It's a link to the chapter now.
+					li.innerHTML = '<a href="#'+ split[0] +'"><strong>' + split.shift() + '</strong>:' + split.join(":") + '</a>';
+					menu.appendChild(li);
+				});
+				
+				
 			}, true);
 		</script>
 	</head>
@@ -118,22 +146,14 @@
 			<p>
 			 The tools are:
 			</p>
-			<ul>
-				<li><strong>Observable</strong>: the all mighty observer design pattern.</li>
-				<li><strong>Store</strong>: the spine of your MV* application.</li>
-				<li><strong>Promise</strong>: a simple promises interpretation.</li>
-				<li><strong>StateMachine</strong>: don't hide your states and transitions behind if/else anymore.</li>
-				<li><strong>Transport</strong>: the excellent socket.io used as the only way to communicate with your server.</li>
-				<li><strong>CouchDBStore</strong>: combines Store+Transport to serve a CouchDB in real-time.</li>
-				<li><strong>Tools</strong>: these functions you always need and rewrite.</li>
-			</ul>
+			<ul class="menu"></ul>
 		</section>
 		
 		<section id="install">
 		
 			<h2>Installing Emily</h2>
 			<p>
-				Emily requires an AMD compatible launcher like requirejs to work.
+				Emily requires an AMD compatible loader like requirejs to work.
 			</p>
 			<h3>In a browser</h3>
 			<pre>
@@ -296,7 +316,7 @@ store.reset({}); // is now an empty object
 
 <section>
 		<div class="example">
-				<h2>Finite State Machine: don't hide your states and transitions behind if/else anymore.</h2>
+				<h2>StateMachine: don't hide your states and transitions behind if/else anymore.</h2>
 				<pre class="prettyprint">
 	require(["StateMachine"], function (StateMachine) {
 	
@@ -315,7 +335,7 @@ store.reset({}); // is now an empty object
 
 <section>
 		<div class="example">
-				<h2>CouchDBStore: the excellent socket.io used as the only way to communicate with your server.</h2>
+				<h2>CouchDBStore: combines Store+Transport to serve a CouchDB in real-time.</h2>
 				<pre class="prettyprint">
 	require(["CouchDBStore"], function (CouchDBStore) {
 	
@@ -327,7 +347,7 @@ store.reset({}); // is now an empty object
 
 <section>
 		<div class="example">
-				<h2>Transport: combines Store+Transport to serve a CouchDB in real-time.</h2>
+				<h2>Transport: the excellent socket.io used as the only way to communicate with your server.</h2>
 				<pre class="prettyprint">
 	require(["Transport"], function (Transport) {
 		
