@@ -35,11 +35,12 @@
 			header, section, nav, footer {
 				padding: 10px 0px 10px 0px;
 				border-bottom: 1px solid white;
-				box-shadow: 1px 0px 10px #aaa;
+				box-shadow: 1px 0px 5px #aaa;
 				margin: 10px;
 				padding: 10px;
 				border-radius: 10px;
 				background-color: white;
+				font-size: 12px;
 			}
 			nav {
 			 font-size: 24px;
@@ -59,16 +60,27 @@
 				box-shadow: 0 0 0;
 			}
 			.example p {
-				background-color: #ccc;
+				margin-left: 20px;
+			} 
+			.example h2 {
+				background-color: #78aadd;
 				border-radius: 10px;
 				color: white;
-				font-size: 16px;
 				padding: 2px;
-				padding-left: 10px;
+				font-size: 16px;
+			}
+			.example h3 {
+				background-color: grey;
+				border-radius: 6px;
+				color: white;
+				font-weight: normal;
+				font-size: 12px;
+				padding: 2px;
+				margin-left: 20px;	
 			}
 			.example pre {
 				border: 0px;
-				padding-left: 10px;
+				margin-left: 20px;
 			}
 		</style>
 		<link href="prettify.css" type="text/css" rel="stylesheet" />
@@ -81,8 +93,8 @@
 	</head>
 	<body>
 	<a href="http://github.com/flams/emily">
-<img alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png" style="position: absolute; top: 0; left: 0; border: 0;">
-</a>
+		<img alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" style="position: absolute; top: 0; right: 0; border: 0;">
+	</a>
 		<header>
 			<a href="./Emily.js">Download Emily Alpha</a>
 			<h1>Emily</h1>
@@ -95,32 +107,46 @@
 			
 		<section id="presentation">
 			<p>
-				Emily is a JavaScript Framework.<br />
-				It offers convenient tools for building MVC applications. </br>
+				Emily is a JavaScript Framework that offers convenient tools for building MVC applications. </br>
 				It's nothing else than a set of AMD modules.
 			</p>
+			<h3>Loading an Emily module</h3>
+			<pre class="prettyprint">
+require(["Module"], function (Module) {
+	// Do what you want with Module
+});
+			</pre>
 		</section>
 		
 		<section id="examples">
 			<div class="example">
-				<p>Observable: the all mighty observable design pattern</p>
+				<h2>Observable: the all mighty observable design pattern</h2>
+				<p>The well known Observer design pattern.<br/>
+					It's especially useful in MV* applications to advertise views on data changes</p>
+				<h3>Watch a topic</h3>
 				<pre class="prettyprint">
-	require(["Observable"], function (Observable) {
-	
-	 var observable = new Observable;
-	 
-	 observable.watch("greetings", function (greet) {
-	  console.log(greet, "world!");
-	 });
-	 
-	 observable.notify("greetings", "hello");
-	
-	});
+ var observable = new Observable;
+ 
+ observable.watch("greetings", function (greet) {
+  console.log(greet, "world!");
+ });
+</pre>
+				<h3>Notify on a topic</h3>
+				<pre class="prettyprint">
+ observable.notify("greetings", "hello");
+				</pre>
+				
+				<h3>Stop watching</h3>
+				<pre class="prettyprint">
+var handler = observable.watch(notify, function(){});
+ observable.unwatch(hander);
 				</pre>
 			</div>
-			
+</section>
+
+<section>
 			<div class="example">
-				<p>Store: store data and get notified on changes</p>
+				<h2>Store: store data and get notified on changes</h2>
 				<pre class="prettyprint">
 	require(["Store"], function (Store) {
 	
@@ -131,9 +157,11 @@
 	});
 				</pre>
 			</div>
-			
+</section>
+
+<section>
 		<div class="example">
-				<p>Promise: A simple interpretation of promises</p>
+				<h2>Promise: A simple interpretation of promises</h2>
 				<pre class="prettyprint">
 	require(["Promise"], function (Promise) {
 	
@@ -147,9 +175,11 @@
 	});
 				</pre>
 			</div>
-			
+</section>
+
+<section>
 		<div class="example">
-				<p>Finite State Machine: Replace your if else if then else if by a nice state machine!</p>
+				<h2>Finite State Machine: Replace your if else if then else if by a nice state machine!</h2>
 				<pre class="prettyprint">
 	require(["StateMachine"], function (StateMachine) {
 	
@@ -164,9 +194,11 @@
 	});
 				</pre>
 			</div>
-			
+</section>
+
+<section>
 		<div class="example">
-				<p>CouchDBStore: Represents a CouchDB view or a document, real-time synchronized</p>
+				<h2>CouchDBStore: Represents a CouchDB view or a document, real-time synchronized</h2>
 				<pre class="prettyprint">
 	require(["CouchDBStore"], function (CouchDBStore) {
 	
@@ -174,9 +206,11 @@
 	});
 				</pre>
 			</div>
-			
+</section>
+
+<section>
 		<div class="example">
-				<p>Transport: Based on socket.io, for REST and push</p>
+				<h2>Transport: Based on socket.io, for REST and push</h2>
 				<pre class="prettyprint">
 	require(["Transport"], function (Transport) {
 		
@@ -188,12 +222,7 @@
 		</section>
 		
 		<section id="doc">
-		<dl>
-			<dt>
-			</dt>
-			<dd>
-			</dd>
-		</dl>
+
 		</section>
 		
 		<footer>
