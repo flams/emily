@@ -367,32 +367,114 @@ promise.reject();
 		<div class="example">
 			<h2>StateMachine: don't hide your states and transitions behind
 				if/else anymore.</h2>
+		<p>This allows to create a Finite State Machine to help sequence your program.<br />
+			More often than not, if/else are used to create transitions and states.<br />
+			This is just what is needed to create maintainable and readable code.<br />
+			The following example is the Figure 1 from <a href="http://www.objectmentor.com/resources/articles/umlfsm.pdf">this documentation</a>.
+		</p>
+				
+		<h3>The State Machine initialization</h3>
 			<pre class="prettyprint">
-	require(["StateMachine"], function (StateMachine) {
-	
-		var stateMachine = new StateMachine("Init", {
-			"Init": [["hello", function (greeting) {
-						console.log("Hello", greeting);
-					}, "Greetd"]],
-			"Greetd": []
-		});
-		
-		stateMachine.event("world!");
+var stateMachine = new StateMachine(
+	// The init state		
+	"closed", 
+	// The description
+	{
+		// When in closed state, if the event is "open!" then execute the open action and transit to opened state.
+		"closed":[["open!", function open(){}, this, "opened"]],
+		// The opposite
+		"opened":[['close!", function close(){}, this, "closed"]]
 	});
+		
+		stateMachine.event("open!");
 				</pre>
+				
+			<h3>A state machine with entry/exit actions</h3>
+			<pre class="prettyprint">
+var stateMachine = new StateMachine(
+	// The init state		
+	"closed", 
+	// The description
+	{
+		// It's possible to add an action on entry by adding a transition called "entry"
+		"closed":[["entry", function onEntry() {}, this],
+			["open!", function open(){}, this, "opened"],
+			// As well as an action on exit by adding a transition called "exit"
+			["exit", function onExit() {}, this]],
+
+		"opened":[['close!", function close(){}, this, "closed"]]
+	});
+		
+		// This will fire open! and then, exit
+		stateMachine.event("open!");
+				</pre>
+				
+					
 		</div>
 	</section>
 
 	<section>
 		<div class="example">
-			<h2>CouchDBStore: combines Store+Transport to serve a CouchDB in
-				real-time.</h2>
+			<h2>CouchDBStore: a Store that displays a CouchDB view or document and gets updated on changes.</h2>
+			<p>
+				CouchDBStore synchronizes a Store with a CouchDB Document or View.<br />
+				It listens to CouchDB _changes to be always up-to-date and uses the Store's observer to notify your application.<br />
+				Of course it works they other way round, you can update the database from a CouchDBStore.<br />
+				Simply focus on what you want to do with your data, not how you have to handle it.
+			</p>
+			<h3>Synchronize a CouchDBStore with a Document</h3>
 			<pre class="prettyprint">
-	require(["CouchDBStore"], function (CouchDBStore) {
+var transport = new Transport("http://localhost:8000"),
+	couchDBStore = new CouchDBStore(transport);
 	
-		
-	});
+// this couchDBStore will always reflect document1 last value in the database
+couchDBStore.sync("database", "document1");
 				</pre>
+				
+			<h3>Synchronize a CouchDBStore with a View</h3>
+			<pre class="prettyprint">
+var transport = new Transport("http://localhost:8000"),
+	couchDBStore = new CouchDBStore(transport);
+	
+// this couchDBStore will always reflect views values
+couchDBStore.sync("database", "design/document", "view");
+				</pre>
+				
+			<h3>Create a document on CouchDB</h3>
+			<pre class="prettyprint">
+var transport = new Transport("http://localhost:8000"),
+	couchDBStore = new CouchDBStore(transport);
+	
+// If the document doesn't exist in the database, it's not created yet
+couchDBStore.sync("database", "newDocument");
+
+// So you can manipulate the data
+couchDBStore.set("greetings", "Hello World!");
+
+// And put the document on the CouchDBStore
+couchDBStore.update();
+				</pre>
+				
+			<h3>Delete document on CouchDB</h3>
+			<pre class="prettyprint">
+var transport = new Transport("http://localhost:8000"),
+	couchDBStore = new CouchDBStore(transport);
+	
+couchDBStore.sync("database", "newDocument");
+
+couchDBStore.remove();
+				</pre>
+	<h3>Using the CouchDBStore promise</h3>
+	<pre class="prettyprint">
+var transport = new Transport("http://localhost:8000"),
+	couchDBStore = new CouchDBStore(transport);
+	
+// The synchronization is asynchronous so it returns a promise.
+couchDBStore.sync("database", "document").then(function () {
+	this.get("greetings");
+}, couchDBStore);
+	</pre>
+
 		</div>
 	</section>
 
