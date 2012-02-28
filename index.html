@@ -480,14 +480,77 @@ couchDBStore.sync("database", "document").then(function () {
 
 	<section>
 		<div class="example">
-			<h2>Transport: the excellent socket.io used as the only way to
-				communicate with your server.</h2>
+			<h2>Transport: the only connection between the server and the client.</h2>
+			<p>
+				socket.io is fast, fun, and a nice level of abstraction.<br />
+				Transport uses socket.io to convey any kind of data between the server and the client.<br />
+				The web is the platform.
+			</p>
+			<h3>On the server side</h3>
+			<strong>This code needs to be packed in an npm module. For now it serves the example.</strong>
 			<pre class="prettyprint">
-	require(["Transport"], function (Transport) {
+io.sockets.on("connection", function (socket) {
+	// there's a handler for CouchDB requests
+	socket.on("CouchDB", function (data) {
 		
+		var req;
 		
+		data.hostname = "127.0.0.1";
+		data.port = 5984;
+		data.auth = "couchdb:couchdb";
+
+		req = http.request(data, function (res) {
+			var body = "";
+			res.on('data', function (chunk) {
+				data.keptAlive && socket.emit(data.__eventId__, ""+chunk);
+				body += chunk;
+			});
+			res.on('end', function () {
+				socket.emit(data.__eventId__, body);
+			});
+		});
+		
+		if (data.data) {
+			req.write(data.data);
+		}
+		req.end();
 	});
-				</pre>
+	
+	// An example with the File System
+	socket.on("FileSystem", function (data) {
+		socket.emit(data.__eventId__, fs.readFileSync("./" + data.file, "utf8"));
+	});
+
+});
+			</pre>
+			<h3>Issuing a request</h3>
+			<pre class="prettyprint">
+var transport = new Transport("http://localhost:8000");
+
+// CouchDB is a request handler, you can have as many handlers as you want
+transport.request("CouchDB", 
+
+// This object is directly passed to Node.js' HTTPClient
+{ method: "GET", path: "db/document"},
+
+// The callback
+function (result) {
+	// Do what you want to do with the result
+}, this);
+			</pre>
+			<h3>Create a kept-alive socket</h3>
+			<pre class="prettyprint">
+// Notice the listen function
+transport.listen("CouchDB"
+
+// The url on which to create the kept-alive socket
+"/database/_changes?feed=continuous&heartbeat=20000",
+
+// How you want to handle the changes
+function (changes) {
+	// Do what you want to do with the new data
+}, this);
+			</pre>
 		</div>
 
 	</section>
