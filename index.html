@@ -9,10 +9,11 @@ html {
 
 body {
 	width: 1000px;
-	margin-left: auto;
-	margin-right: auto;
+	margin: 0px;
+	padding-left: 200px;
 	background-color: #fafafa;
 	color: #666;
+	margin-bottom: 100px;
 }
 
 h1,h2,h3 {
@@ -44,7 +45,7 @@ nav a:hover,footer a:hover {
 	text-decoration: underline;
 }
 
-header,section,nav,footer {
+header,nav,section section, footer {
 	padding: 10px 0px 10px 0px;
 	border-bottom: 1px solid white;
 	box-shadow: 0px 2px 5px #aaa;
@@ -54,17 +55,40 @@ header,section,nav,footer {
 	background-color: white;
 	font-size: 12px;
 }
-
 nav {
-	font-size: 24px;
+	font-size: 16px;
+	width:150px;
+	position:fixed;
+	left: 20px;
+}
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-.menu a {
+nav ul > li a {
+ color: white;
+}
+
+nav li {
+ margin-top: 4px;
+ margin-bottom: 4px;
+}
+
+nav ul ul {
+ margin-left: 5px;
+ font-size: 14px;
+}
+nav ul ul li a {
+	color: #4a7d94;
+}
+ a {
 	color: #666;
 	text-decoration: none;
 }
 
-.menu a:hover {
+ a:hover {
 	text-decoration: underline;
 }
 
@@ -116,57 +140,56 @@ h3 {
 <link href="prettify.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="prettify.js"></script>
 <script>
-	window
-			.addEventListener(
-					"load",
-					function(event, menu) {
-						prettyPrint();
+	window.addEventListener("load", function(event, menu, nav) {
+		prettyPrint();
 
-						// Created an arg called menu to avoid polluting the global namespace
-						menu = document.querySelector(".menu");
+		// Created an arg called menu to avoid polluting the global namespace
+		menu = document.querySelector(".menu");
+		nav = document.querySelector("nav ul ul");
 
-						// For each h2 in my examples
-						Array.prototype.slice
-								.call(
-										document
-												.querySelectorAll(".example > h2"),
-										0)
-								.forEach(
-										function(node) {
+		// For each h2 in my examples
+		Array.prototype.slice.call(document.querySelectorAll(".example > h2"),0).forEach(function(node) {
 
-											// Create an li node
-											var li = document
-													.createElement("li"), split = node.innerHTML
-													.split(":");
+							// Create an li node
+							var liNav = document.createElement("li"),
+								liMenu = document.createElement("li"),
+								split = node.innerHTML.split(":");
 
-											// split[0] is the name of the Module
-											node.setAttribute("id", split[0]);
+							// split[0] is the name of the Module
+							node.setAttribute("id", split[0]);
 
-											// That is appended to the menu. It's a link to the chapter now.
-											li.innerHTML = '<a href="#'+ split[0] +'"><strong>'
-													+ split.shift()
-													+ '</strong>:'
-													+ split.join(":") + '</a>';
-											menu.appendChild(li);
-										});
+							liNav.innerHTML = '<a href="#' + split[0] + '">' + split[0] + '</a>'
+							// That is appended to the menu. It's a link to the chapter now.
+							liMenu.innerHTML = '<a href="#'+ split[0] +'"><strong>'
+									+ split.shift()
+									+ '</strong>:'
+									+ split.join(":") + '</a>';
+							menu.appendChild(liMenu);
+							nav.appendChild(liNav);
+						});
 
-					}, true);
+	}, true);
 </script>
 </head>
 <body>
-	<a href="http://github.com/flams/emily"> <img
-		alt="Fork me on GitHub"
-		src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
-		style="position: absolute; top: 0; right: 0; border: 0;"> </a>
+	<section>
+
 	<header>
 		<a href="./Emily.js">Download Emily Alpha</a>
 		<h1>Emily</h1>
 		<span>Real time web applications made easy</span>
 	</header>
-
-	<nav>
-		<a href="#presentation">What is Emily?</a> | <a href="#install">Installation</a>
-		| <a href="#examples">Examples</a>
+	
+		<nav>
+		<ul>
+			<li><h2><a href="#presentation">What is Emily?</a></h2></li>
+			<li><h2><a href="#install">Installation</a></h2></li>
+			<li><h2><a href="#examples">Documentation</a></h2>
+				<ul>
+				</ul>
+			</li>
+			<li><h2><a href="#philosophy">Philosophy</a></h2></li>
+		</ul> 
 	</nav>
 
 	<section id="presentation">
@@ -487,7 +510,7 @@ couchDBStore.sync("database", "document").then(function () {
 				The web is the platform.
 			</p>
 			<h3>On the server side</h3>
-			<strong>This code needs to be packed in an npm module. For now it serves the example.</strong>
+			<p><strong>This code needs to be packed in an npm module. For now it serves the example.</strong></p>
 			<pre class="prettyprint">
 io.sockets.on("connection", function (socket) {
 	// there's a handler for CouchDB requests
@@ -557,11 +580,187 @@ function (changes) {
 	<section>
 		<div class="example">
 			<h2>Tools: these functions you always need and rewrite.</h2>
+			<p>
+				These are a set of functions that are used in Emily.
+			</p>
+			<h3>Get the global object</h3>
 			<pre class="prettyprint">
+tools.getGlobal();
+			</pre>
+			
+			<h3>Mix an object into an other one.</h3>
+			<pre class="prettyprint">
+var source = {a:10},
+	destination = {b:20};
+	
+tools.mixin(source, destination); // {a:10, b:20}
+			</pre>
+			
+			<h3>Count the number of own properties in an object.</h3>
+			<pre class="prettyprint">
+var object = {a:1, b:2, c:3};
 
-				</pre>
-		</div>
+tools.count(object); // 3
+			</pre>
+			
+			<h3>Compare objects.</h3>
+			<pre class="prettyprint">
+var object1 = {a:1, b:2},
+	object2 = {a:2, b:5};
 
+// Returns true if both objects have the exact same properties
+tools.compareObject(object1, object2); // true
+			</pre>
+			
+			<h3>Transforms an array-like object, like arguments, to an array.</h3>
+			<pre class="prettyprint">
+tools.toArray(arguments);
+			</pre>
+			
+			<h3>Loop through an array/object. It doesn't work with NodeList!</h3>
+			<pre class="prettyprint">
+tools.loop(function (value, index) {
+	// Value, index in this order like with forEach, filter...
+}, this);
+			</pre>
+			
+			<h3>Get a diff between two Objects</h3>
+			<pre class="prettyprint">
+var before = {a:1, b:2, c:3, d:4, f:6},
+ after = {a:1, b:20, d: 4, e: 5};
+
+/*
+ * will return : 
+ *  {
+ *   unchanged: ["a", "d"],
+ *   updated: ["b"], 
+ *   deleted: ["f"],
+ *  added: ["e"]
+ * }
+ */
+tools.objectsDiffs(before, after);
+
+			</pre>
+			
+			<h3>Get a diff between two Arrays</h3>
+			<pre class="prettyprint">
+ var before = [10, 20, 30],
+  after = [15, 20]
+
+/*
+ * will return : 
+ * {
+ *  unchanged: [1],
+ *  updated: [0],
+ *  deleted: [2],
+ *  added: []
+ * }
+ */
+tools.objectsDiffs(before, after);
+			</pre>
+		
+			<h3>Get the JSON version of an object</h3>
+			<pre class="prettyprint">
+var object = {a: function(){}, b: 10, c: false, d: "Hello"};
+ 
+tools.jsonify(object); // {b:10,c:false,d:"Hello"}
+			</pre>
+
+			<h3>Clone an object</h3>
+			<pre class="prettyprint">
+var object = {a:10, b:30, c:40};
+
+// This will return a new object
+// if immutable, the properties get copied
+// if mutable (object) they're a reference to it
+tools.clone(object);
+			</pre>
+			
+			<h3>Clone an array</h3>
+			<pre class="prettyprint">
+var array = [10, 20, 30];
+
+// This will return a new array
+// if immutable, the values get copied
+// if mutable (object) they're a reference to it
+tools.clone(array);
+			</pre>
+			
+			<h3>Get the nested property of an object</h3>
+			<pre class="prettyprint">
+var object = {a: {b: c: 10};
+
+tools.getNestedProperty(object, "b.c"); // returns 10
+			</pre>
+			
+			<h3>Set the nested property of an object</h3>
+			<pre class="prettyprint">
+var object = {a: {b: c: 10};
+
+tools.setNestedProperty(object, "b.c", 20); // a.b.c equals 20
+			</pre>
+			
+				</div>
+	</section>
+	
+	<section id="philosophy">
+		<h2>Philosophy: what's Emily's DNA?</h2>
+		<p>
+			Emily was born from considerations.<br />
+			Everytime I had to start a new project I had mixed feelings.<br />
+			Excitement of the new challenge but fear of failure. <br />
+			Determination to do my best but I sense my weaknesses.<br />
+			I want to create new stuff that adds up value to the project, but I have to start, again, by coding stuff I did one zillion time before.
+		</p>
+		
+		<h3>Emily the first</h3>
+		<p>
+			The first thing that came up to my mind is: build your own framework.<br />
+			I would write it once, and reuse it at will. It would save me sooo much time.<br />
+			I was excited by this new challenge, but I feared I could failed.<br />
+			I always failed at writing reusable code, why would I succeed now?<br />
+			I was determinated to do my best but I sensed I was lacking knowledge.<br />
+			Nevermind, I started creating Emily. I developped the module launcher.<br />
+			I created a new way to write modules and I felt it was nice. I started struggling with inheritance. Single, multiple? Traits! Yes traits!<br />
+			It started to get overwhelming as I discovered that I was creating something that already existed.<br />
+			Module launcher? AMD commonJS is the perfect fit.<br />
+			Inheritance? I won't do a better job than what JavaScript already has.<br />
+			I erased my Emily folder and started all over again. 
+		</p>
+		
+		<h3>Emily the second</h3>
+		<p>
+			This time I started to download require.js in my lib folder.<br />
+			It has even more features than I would have built in Emily the first.<br />
+			Then I wrote my first modules and the fear of not writing reusable code disappeared.<br />
+			Inheritance is left to the developer discretion.<br />
+			I learned not to redevelop a feature that already existed (in HTML, JS, whatever).<br />
+			Then I started writing the features that really mattered.
+		</p>
+		
+		<h3>Emily's modules</h3>
+		<p>
+			Each major feature in Emily is a module on its own. <br />
+			Emily is more a set of tools than a big one.<br />
+			Emily is not aware of what composes it. Any AMD/commonJS module works with Emily and any of Emily's module can work in an AMD/commonJS module launcher.
+		</p>
+		
+		<h3>Emily's development's principles</h3>
+		<p>
+			<ul>
+				<li><a href="http://en.wikipedia.org/wiki/DRY">DRY</a></li>
+				<li><a href="http://en.wikipedia.org/wiki/Solid_(object-oriented_design)">SOLID</a></li>
+				<li>TDD/BDD with 100% coverage with <a href="http://pivotal.github.com/jasmine/">Jasmine BDD</a></li>
+				<li>JS runtime agnostic, also works in node.js</li>
+				<li>Avoid proprietary technologies</li>
+			</ul>
+		</p>
+		
+		
+		
+		
+		
+	
 	</section>
 
 	<footer>
@@ -569,6 +768,14 @@ function (changes) {
 			href="https://github.com/podefr">Olivier Scherrer</a>. Copyright 2012
 		- MIT licensed
 	</footer>
+	
+		
+	</section>
+	
+		<a href="http://github.com/flams/emily"> <img
+		alt="Fork me on GitHub"
+		src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
+		style="position: fixed; top: 0; right: 0; border: 0;"> </a>
 </body>
 
 </html>
