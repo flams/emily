@@ -8,7 +8,7 @@
  * Test dependencies.
  */
 
-var sio = require('socket.io')
+var sio = require('../')
   , http = require('http')
   , should = require('./common')
   , ports = 15100;
@@ -277,6 +277,23 @@ module.exports = {
     });
   },
 
+  'test that a referer with implicit port 80 is accepted for foo.bar.com:80 origin': function (done) {
+    var port = ++ports
+      , io = sio.listen(port)
+      , cl = client(port);
+
+    io.configure(function () {
+      io.set('origins', 'foo.bar.com:80');
+    });
+
+    cl.get('/socket.io/{protocol}', { headers: { referer: 'http://foo.bar.com/something' } }, function (res, data) {
+      res.statusCode.should.eql(200);
+      cl.end();
+      io.server.close();
+      done();
+    });
+  },
+
   'test that erroneous referer is denied for addr:* origin': function (done) {
     var port = ++ports
       , io = sio.listen(port)
@@ -339,7 +356,7 @@ module.exports = {
 
     cl.get('/socket.io/{protocol}/', { headers:headers }, function (res, data) {
       res.statusCode.should.eql(200);
-      res.headers['access-control-allow-origin'].should.eql('*');
+      res.headers['access-control-allow-origin'].should.eql('http://example.org:1337');
       res.headers['access-control-allow-credentials'].should.eql('true');
 
       cl.end();

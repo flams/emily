@@ -5,7 +5,7 @@
  * @api private
  */
 
-var sio = require('socket.io')
+var sio = require('../')
   , should = require('should')
   , MemoryStore = sio.MemoryStore;
 
@@ -45,7 +45,7 @@ module.exports = {
 
                 client.set('b', 'c', function (err) {
                   should.strictEqual(err, null);
-                  
+
                   client.set('c', 'd', function (err) {
                     should.strictEqual(err, null);
 

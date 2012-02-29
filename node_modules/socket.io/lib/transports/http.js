@@ -51,6 +51,11 @@ HTTPTransport.prototype.handleRequest = function (req) {
 
     req.on('data', function (data) {
       buffer += data;
+
+      if (Buffer.byteLength(buffer) >= self.manager.get('destroy buffer size')) {
+        buffer = '';
+        req.connection.destroy();
+      }
     });
 
     req.on('end', function () {
@@ -60,13 +65,15 @@ HTTPTransport.prototype.handleRequest = function (req) {
       self.onData(self.postEncoded ? qs.parse(buffer).d : buffer);
     });
 
+    // prevent memory leaks for uncompleted requests
+    req.on('close', function () {
+      buffer = '';
+    });
+
     if (origin) {
       // https://developer.mozilla.org/En/HTTP_Access_Control
-      headers['Access-Control-Allow-Origin'] = '*';
-
-      if (req.headers.cookie) {
-        headers['Access-Control-Allow-Credentials'] = 'true';
-      }
+      headers['Access-Control-Allow-Origin'] = origin;
+      headers['Access-Control-Allow-Credentials'] = 'true';
     }
   } else {
     this.response = req.res;

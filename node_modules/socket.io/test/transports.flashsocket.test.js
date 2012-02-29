@@ -9,7 +9,7 @@
  * Test dependencies.
  */
 
-var sio = require('socket.io')
+var sio = require('../')
   , net = require('net')
   , http = require('http')
   , should = require('./common')
@@ -30,7 +30,7 @@ function FlashSocket (port, sid) {
 
   WebSocket.call(
       this
-    , 'ws://localhost:' + port + '/socket.io/' 
+    , 'ws://localhost:' + port + '/socket.io/'
         + sio.protocol + '/flashsocket/' + sid
   );
 };

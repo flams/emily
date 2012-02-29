@@ -9,7 +9,7 @@
  * Test dependencies.
  */
 
-var io = require('socket.io')
+var io = require('../')
   , parser = io.parser
   , http = require('http')
   , https = require('https')
@@ -227,7 +227,7 @@ function WSClient (port, sid, transport) {
   this.transportName = transport || 'websocket';
   WebSocket.call(
       this
-    , 'ws://localhost:' + port + '/socket.io/' 
+    , 'ws://localhost:' + port + '/socket.io/'
         + io.protocol + '/' + this.transportName + '/' + sid
   );
 };
