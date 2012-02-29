@@ -47,7 +47,7 @@ define("Store", ["Observable", "Tools"],
 			 "added"].forEach(function (value) {
 				 diffs[value].forEach(function (dataIndex) {
 						_storeObservable.notify(value, dataIndex, _data[dataIndex]);
-						_valueObservable.notify(dataIndex, _data[dataIndex]);
+						_valueObservable.notify(dataIndex, _data[dataIndex], value);
 				 });
 			});
 		};
@@ -93,7 +93,7 @@ define("Store", ["Observable", "Tools"],
 				_data[name] = value;
 				action = ante ? "updated" : "added";
 				_storeObservable.notify(action, name, _data[name]);	
-				_valueObservable.notify(name, _data[name]);
+				_valueObservable.notify(name, _data[name], action);
 				return true;
 			} else {
 				return false;
@@ -110,7 +110,7 @@ define("Store", ["Observable", "Tools"],
 				if (!this.alter("splice", name, 1)) {
 					delete _data[name];
 					_storeObservable.notify("deleted", name);
-					_valueObservable.notify(name);
+					_valueObservable.notify(name, _data[name], "deleted");
 				}
 				return true;
 			} else {

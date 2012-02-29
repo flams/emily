@@ -212,6 +212,7 @@ require(["Store", "Observable"], function (Store, Observable) {
 			expect(valueObservable.notify.wasCalled).toEqual(true);
 			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
 			expect(valueObservable.notify.mostRecentCall.args[1]).toBeUndefined();
+			expect(valueObservable.notify.mostRecentCall.args[2]).toEqual("added");
 		});
 		
 		it("should notify with new value on update", function () {
@@ -222,6 +223,7 @@ require(["Store", "Observable"], function (Store, Observable) {
 			expect(valueObservable.notify.wasCalled).toEqual(true);
 			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
 			expect(valueObservable.notify.mostRecentCall.args[1]).toEqual("newValue");
+			expect(valueObservable.notify.mostRecentCall.args[2]).toEqual("updated");
 		});
 		
 		it("should provide value when said available", function () {
@@ -242,6 +244,7 @@ require(["Store", "Observable"], function (Store, Observable) {
 			expect(valueObservable.notify.wasCalled).toEqual(true);
 			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
 			expect(valueObservable.notify.mostRecentCall.args[1]).toBeUndefined();
+			expect(valueObservable.notify.mostRecentCall.args[2]).toEqual("deleted");
 		});
 		
 		it("can unwatch value", function () {
