@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<title>Emily - real time applications made easy</title>
+<title>Emily - realtime applications made easy</title>
 <style type="text/css">
 html {
 	font-family: "verdana";
@@ -177,7 +177,7 @@ h3 {
 	<header>
 		<a href="https://github.com/flams/emily/blob/master/build/Emily.js">Download Emily Alpha</a>
 		<h1>Emily</h1>
-		<span>Real time web applications made easy</span>
+		<span>Realtime web applications made easy</span>
 	</header>
 	
 		<nav>
@@ -222,16 +222,11 @@ h3 {
 
 		<h3>In node</h3>
 		<pre class="prettyprint">
-	var requirejs = require("requirejs");
-	require("./Emily.js");
-		
-		
-	requirejs.config({
-		baseUrl: "./",
-		nodeRequire: require
-	});
-	
-	requirejs(["Module"], function (Module) {
+	var requirejs = require("requirejs"),
+		emily = require("emily");
+
+	// emily.require is an instance of requirejs that is configured to have access to Emily's modules
+	emily.require(["Module"], function (Module) {
 		// Do what you want with Module
 	});
 			</pre>
@@ -436,119 +431,21 @@ var stateMachine = new StateMachine(
 		</div>
 	</section>
 
-	<section>
+<section>
 		<div class="example">
-			<h2>CouchDBStore: a Store that displays a CouchDB view or document and gets updated on changes.</h2>
+			<h2>Transport: make requests to anything node.js has access to.</h2>
 			<p>
-				CouchDBStore synchronizes a Store with a CouchDB Document or View.<br />
-				It listens to CouchDB _changes to be always up-to-date and uses the Store's observer to notify your application.<br />
-				Of course it works they other way round, you can update the database from a CouchDBStore.<br />
-				Simply focus on what you want to do with your data, not how you have to handle it.
+				Use Transport in combination with Emily's server to issue request on anything that node.js has access to.<br />
+				Emily's default handlers are CouchDB and the FileSystem.
 			</p>
-			<h3>Synchronize a CouchDBStore with a Document</h3>
+			<h3>Loading Emily in your node.js application</h3>
 			<pre class="prettyprint">
-var transport = new Transport("http://localhost:8000"),
-	couchDBStore = new CouchDBStore(transport);
-	
-// this couchDBStore will always reflect document1 last value in the database
-couchDBStore.sync("database", "document1");
-				</pre>
-				
-			<h3>Synchronize a CouchDBStore with a View</h3>
-			<pre class="prettyprint">
-var transport = new Transport("http://localhost:8000"),
-	couchDBStore = new CouchDBStore(transport);
-	
-// this couchDBStore will always reflect views values
-couchDBStore.sync("database", "design/document", "view");
-				</pre>
-				
-			<h3>Create a document on CouchDB</h3>
-			<pre class="prettyprint">
-var transport = new Transport("http://localhost:8000"),
-	couchDBStore = new CouchDBStore(transport);
-	
-// If the document doesn't exist in the database, it's not created yet
-couchDBStore.sync("database", "newDocument");
-
-// So you can manipulate the data
-couchDBStore.set("greetings", "Hello World!");
-
-// And put the document on the CouchDBStore
-couchDBStore.update();
-				</pre>
-				
-			<h3>Delete document on CouchDB</h3>
-			<pre class="prettyprint">
-var transport = new Transport("http://localhost:8000"),
-	couchDBStore = new CouchDBStore(transport);
-	
-couchDBStore.sync("database", "newDocument");
-
-couchDBStore.remove();
-				</pre>
-	<h3>Using the CouchDBStore promise</h3>
-	<pre class="prettyprint">
-var transport = new Transport("http://localhost:8000"),
-	couchDBStore = new CouchDBStore(transport);
-	
-// The synchronization is asynchronous so it returns a promise.
-couchDBStore.sync("database", "document").then(function () {
-	this.get("greetings");
-}, couchDBStore);
-	</pre>
-
-		</div>
-	</section>
-
-	<section>
-		<div class="example">
-			<h2>Transport: the only connection between the server and the client.</h2>
-			<p>
-				socket.io is fast, fun, and a nice level of abstraction.<br />
-				Transport uses socket.io to convey any kind of data between the server and the client.<br />
-				The web is the platform.
-			</p>
-			<h3>On the server side</h3>
-			<p><strong>This code needs to be packed in an npm module. For now it serves the example.</strong></p>
-			<pre class="prettyprint">
-io.sockets.on("connection", function (socket) {
-	// there's a handler for CouchDB requests
-	socket.on("CouchDB", function (data) {
-		
-		var req;
-		
-		data.hostname = "127.0.0.1";
-		data.port = 5984;
-		data.auth = "couchdb:couchdb";
-
-		req = http.request(data, function (res) {
-			var body = "";
-			res.on('data', function (chunk) {
-				data.keptAlive && socket.emit(data.__eventId__, ""+chunk);
-				body += chunk;
-			});
-			res.on('end', function () {
-				socket.emit(data.__eventId__, body);
-			});
-		});
-		
-		if (data.data) {
-			req.write(data.data);
-		}
-		req.end();
-	});
-	
-	// An example with the File System
-	socket.on("FileSystem", function (data) {
-		socket.emit(data.__eventId__, fs.readFileSync("./" + data.file, "utf8"));
-	});
-
-});
+// first, make sure you have installed emily's npm.
+ var emily = require("emily");
 			</pre>
 			<h3>Issuing a request</h3>
 			<pre class="prettyprint">
-var transport = new Transport("http://localhost:8000");
+var transport = new Transport(emily.handlers);
 
 // CouchDB is a request handler, you can have as many handlers as you want
 transport.request("CouchDB", 
@@ -574,9 +471,94 @@ function (changes) {
 	// Do what you want to do with the new data
 }, this);
 			</pre>
+			
+			<h3>Create your own handler</h3>
+			<pre class="prettyprint">
+// Defining a new handler
+emily.handlers.myHandler = function (greeting, callback) {
+	callback("Hello " + greeting);
+};
+
+// Calling the handler somewhere in a module
+var transport = new Transport(emily.handlers);
+
+transport.request("myHandler", "world!", function (txt) {
+	console.log(txt); // Hello world!
+}, this);
+			</pre>
+			
+			<h3>I don't need to use Transport, I could directly manage my requests.</h3>
+			<p>
+				That's right. But centralizing the handlers is a good thing in general.<br />
+				Plus, if you're planning on using Olives on top of Emily, you can use them in your browser through socket.io the exact same way you do in your node.js application!<br />
+				Check out <a href="http://flams.github.com/olives/">https://flams.github.com/olives/</a> for an example of a CouchDBStore running on the browser, realtime!
+			</p>
 		</div>
 
 	</section>
+
+	<section>
+		<div class="example">
+			<h2>CouchDBStore: a Store that displays a CouchDB view or document and gets updated on changes.</h2>
+			<p>
+				CouchDBStore synchronizes a Store with a CouchDB Document or View.<br />
+				It listens to CouchDB _changes to be always up-to-date and uses the Store's observer to notify your application.<br />
+				Of course it works they other way round, you can update the database from a CouchDBStore.<br />
+				Simply focus on what you want to do with your data, not how you have to handle it.
+			</p>
+			<h3>Synchronize a CouchDBStore with a Document</h3>
+			<pre class="prettyprint">
+// See transport for mon info on Transport
+var transport = new Transport(emily.handlers),
+	couchDBStore = new CouchDBStore(transport);
+	
+// this couchDBStore will always reflect document1 last value in the database
+couchDBStore.sync("database", "document1");
+				</pre>
+				
+			<h3>Synchronize a CouchDBStore with a View</h3>
+			<pre class="prettyprint">
+var couchDBStore = new CouchDBStore(transport);
+	
+// this couchDBStore will always reflect views values
+couchDBStore.sync("database", "design/document", "view");
+				</pre>
+				
+			<h3>Create a document on CouchDB</h3>
+			<pre class="prettyprint">
+var couchDBStore = new CouchDBStore(transport);
+	
+// If the document doesn't exist in the database, it's not created yet
+couchDBStore.sync("database", "newDocument");
+
+// So you can manipulate the data
+couchDBStore.set("greetings", "Hello World!");
+
+// And put the document on the CouchDBStore
+couchDBStore.update();
+				</pre>
+				
+			<h3>Delete document on CouchDB</h3>
+			<pre class="prettyprint">
+var couchDBStore = new CouchDBStore(transport);
+	
+couchDBStore.sync("database", "newDocument");
+
+couchDBStore.remove();
+				</pre>
+	<h3>Using the CouchDBStore promise</h3>
+	<pre class="prettyprint">
+var couchDBStore = new CouchDBStore(transport);
+	
+// The synchronization is asynchronous so it returns a promise.
+couchDBStore.sync("database", "document").then(function () {
+	this.get("greetings");
+}, couchDBStore);
+	</pre>
+
+		</div>
+	</section>
+	
 	<section>
 		<div class="example">
 			<h2>Tools: these functions you always need and rewrite.</h2>
