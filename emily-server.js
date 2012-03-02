@@ -1,10 +1,4 @@
-var requirejs = require("requirejs"),
-	http = require("http");
-
-requirejs.config({
-	baseUrl: __dirname + "/src",
-	nodeRequire: require
-});
+var http = require("http");
 
 var config = {
 	"CouchDB": {
@@ -14,6 +8,8 @@ var config = {
 };
 
 exports.config = config;
+
+exports.path = __dirname + "/src";
 
 exports.handlers = {
  "CouchDB" : function (data, onEnd, onData) {
@@ -44,5 +40,3 @@ exports.handlers = {
  		onEnd(fs.readFileSync("./" + data.file, "utf8"));
  	}
 };
-
-exports.require = requirejs;

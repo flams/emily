@@ -3,7 +3,8 @@
 * It assumes you have a CouchDB up and running on localhost:5984
 * With a database called "db" and a document "document2" with a property "hey"
 */
-var emily = require("../emily-server.js");
+var requirejs = require("requirejs"),
+	emily = require("../emily-server.js");
 // should be
 // var emily = require("emily"); once published
 
@@ -11,7 +12,27 @@ var emily = require("../emily-server.js");
 //emily.config.CouchDB.hostname = "ip address here";
 //emily.config.CouchDB.port = "port number here";
 
-emily.require(["Transport", "CouchDBStore"], function (Transport, CouchDBStore) {
+requirejs.config({
+	baseUrl: emily.path,
+	nodeRequire: require
+});
+
+/**
+ * This should work too
+ * requirejs.config({
+ * 	baseUrl: "./",
+ *  nodeRequire: require,
+ *  paths: {
+ *  	"emily": emily.path
+ *  }
+ * });
+ * 
+ * 
+ * then requirejs(["emily/Module"], function (Module) {
+ * 	...
+ * });
+ */
+requirejs(["Transport", "CouchDBStore"], function (Transport, CouchDBStore) {
 
 	var store = new CouchDBStore();
 	store.setTransport(new Transport(emily.handlers));
