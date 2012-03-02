@@ -2,7 +2,7 @@ var requirejs = require("requirejs"),
 	http = require("http");
 
 requirejs.config({
-	baseUrl: "src",
+	baseUrl: __dirname + "/src",
 	nodeRequire: require
 });
 
