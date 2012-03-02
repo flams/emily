@@ -3,10 +3,10 @@
  "description": "runtime agnostic & realtime applications framework",
  "version": "1.0.0alpha",
  "homepage": "http://flams.github.com/emily/",
- "licenses": {
+ "licenses": [{
   "type":"MIT",
-  "url":"http://raw.github.com/flams/emily/master/LICENSE"
- },
+  "url":"https://raw.github.com/flams/emily/master/LICENSE"
+ }],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
  "dependencies": {
   "requirejs": ">=1.0.7"
@@ -24,7 +24,7 @@
  "bugs": {
   "url": "https://github.com/flams/emily/issues"
  },
- "main":"./emily-server",
+ "main":"emily-server.js",
  "engines": { 
  	"node":">= 0.6.0"
  }, 
