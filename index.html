@@ -226,19 +226,6 @@ h3 {
 	// npm install emily
 	emily = require("emily");
 
-	/**
-	 * This is wrong for two reasons:
-	 * 1/ What if I want requirejs to be able to load stuff from another node_module?
-	 * 2/ The doc says that node modules shouldn't be linked in the config: http://requirejs.org/docs/node.html#2
-	 * But it's the best solution I came up with for now.
-	 * using paths: { "emily": emily.path } doesn't work even if it'd have solved the 1/
-	 * Still investigating
-	 */
-	requirejs.config({
-		baseUrl: emily.path,
-		nodeRequire: require
-	});
-	
 	requirejs(["Module"], function (Module) {
 		// Do what you want with Module
 	});
