@@ -10,7 +10,7 @@ var config = {
 
 exports.config = config;
 
-requirejs("build/Emily.js");
+requirejs(__dirname + "/build/Emily.js");
 
 exports.handlers = {
  "CouchDB" : function (data, onEnd, onData) {
