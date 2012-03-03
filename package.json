@@ -7,14 +7,14 @@
   "type":"MIT",
   "url":"https://raw.github.com/flams/emily/master/LICENSE"
  }],
+ "files": [
+ 	"./build",
+ 	"./LICENSE",
+ 	"./emily-server.js"
+ ],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
  "dependencies": {
   "requirejs": ">=1.0.7"
-  },
- "devDependencies": {
-  "jasmine-node": ">=1.0.0",
-  "jasmine-runner": ">=0.2.9",
-  "jake": ">=0.2.19"
   },
  "keywords": ["framework", "web", "realtime", "CouchDB", "AMD/commonJS", "requirejs"],
  "repository": {
