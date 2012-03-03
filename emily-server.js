@@ -1,4 +1,5 @@
-var http = require("http");
+var http = require("http"),
+	requirejs = require("requirejs");
 
 var config = {
 	"CouchDB": {
@@ -9,7 +10,7 @@ var config = {
 
 exports.config = config;
 
-exports.path = __dirname + "/src";
+requirejs("build/Emily.js");
 
 exports.handlers = {
  "CouchDB" : function (data, onEnd, onData) {

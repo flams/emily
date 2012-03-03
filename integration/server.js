@@ -4,45 +4,10 @@
 * With a database called "db" and a document "document2" with a property "hey"
 */
 var requirejs = require("requirejs"),
+	// This should be require("emily"); once published
 	emily = require("../emily-server.js");
-// should be
-// var emily = require("emily"); once published
 
-// To change the configuration
-//emily.config.CouchDB.hostname = "ip address here";
-//emily.config.CouchDB.port = "port number here";
-
-requirejs.config({
-	baseUrl: emily.path,
-	nodeRequire: require
+requirejs(["Store"], function (Store) {
+	var store = new Store(["Hello"]);
+	console.log(store.get(0) + " world!");
 });
-
-/**
- * This should work too
- * requirejs.config({
- * 	baseUrl: "./",
- *  nodeRequire: require,
- *  paths: {
- *  	"emily": emily.path
- *  }
- * });
- * 
- * 
- * then requirejs(["emily/Module"], function (Module) {
- * 	...
- * });
- */
-requirejs(["Transport", "CouchDBStore"], function (Transport, CouchDBStore) {
-
-	var store = new CouchDBStore();
-	store.setTransport(new Transport(emily.handlers));
-	store.sync("db", "document2").then(function () {
-		
-		this.watchValue("hey", function (value) {
-			console.log(value);
-		});
-		
-	}, store);
-});
-
-
