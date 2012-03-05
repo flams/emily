@@ -214,14 +214,14 @@ h3 {
 	&lt;script src="./require.js"&gt;&lt;/script&gt;
 	&lt;script src="./Emily.js"&gt;&lt;/script&gt;
 			</pre>
-		<pre class="prettyprint">
+		<pre class="prettyprint linenums linenums">
 	require(["Module"], function (Module) {
 		// Do what you want with Module
 	});
 			</pre>
 
 		<h3>In node</h3>
-		<pre class="prettyprint">
+		<pre class="prettyprint linenums">
 	var requirejs = require("requirejs"),
 	// npm install emily
 	emily = require("emily");
@@ -240,7 +240,7 @@ h3 {
 				in MV* applications to advertise views on data changes.
 			</p>
 			<h3>Watch a topic</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
  var observable = new Observable;
  
  observable.watch("greetings", function (greet) {
@@ -256,12 +256,12 @@ h3 {
  this);
 </pre>
 			<h3>Notify on a topic</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
  observable.notify("greetings", "hello");
 				</pre>
 
 			<h3>Stop watching</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var handler = observable.watch("topic", function(){});
  observable.unwatch(hander);
  
@@ -282,7 +282,7 @@ var handler = observable.watch("topic", function(){});
 				It can store data in an Array or in an Object.
 			</p>
 			<h3>Set, Get, del value</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var store = new Store;
 
 store.set("greeting", "Hello World!");
@@ -292,7 +292,7 @@ store.has("greeting"); // false
 				</pre>
 
 			<h3>Watch a value's modification</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 store.watchValue("greeting", function (value) {
 	console.log("Hello", value);
 }, /* after the callback comes the scope */ this);
@@ -302,7 +302,7 @@ store.set("greeting", "world!");
 				</pre>
 
 			<h3>Array-based Store manipulation</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var store = new Store(["Hello"]);
 store.alter("push", "world!");
 store.get(1); // world!
@@ -311,7 +311,7 @@ store.get(1); // undefined;
 				</pre>
 
 			<h3>Observing an Array-based Store</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var store = new Store(["Hello"]);
 
 // Watch for new values, works with deleted, updated as well
@@ -323,7 +323,7 @@ store.alter("push", "world!"); // Will console.log(1, "world!"),
 				</pre>
 
 			<h3>Looping through a Store</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var store = new Store(["Hello", "world!"]);
 
 // will loop through all items. The params are in the same order as
@@ -334,7 +334,7 @@ store.loop(function (value, idx) {
 				</pre>
 
 			<h3>Misc</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var store = new Store(["Hello", "world!"]);
 
 store.getNbItems(); // 2
@@ -354,7 +354,7 @@ store.reset({}); // is now an empty object
 				plumbing asynchronous code.
 			</p>
 			<h3>A resolved promise with an observer</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var promise = new Promise;
 
 promise.then(function () {
@@ -364,7 +364,7 @@ promise.then(function () {
 promise.resolve();
 				</pre>
 			<h3>A rejected promise with an observer</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var promise = new Promise;
 
 promise.then(function resolved() {
@@ -392,7 +392,7 @@ promise.reject();
 		</p>
 				
 		<h3>The State Machine initialization</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var stateMachine = new StateMachine(
 	// The init state		
 	"closed", 
@@ -408,7 +408,7 @@ var stateMachine = new StateMachine(
 				</pre>
 				
 			<h3>A state machine with entry/exit actions</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var stateMachine = new StateMachine(
 	// The init state		
 	"closed", 
@@ -439,12 +439,12 @@ var stateMachine = new StateMachine(
 				Emily's default handlers are CouchDB and the FileSystem.
 			</p>
 			<h3>Loading Emily in your node.js application</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 // first, make sure you have installed emily's npm.
  var emily = require("emily");
 			</pre>
 			<h3>Issuing a request</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var transport = new Transport(emily.handlers);
 
 // CouchDB is a request handler, you can have as many handlers as you want
@@ -459,7 +459,7 @@ function (result) {
 }, this);
 			</pre>
 			<h3>Create a kept-alive socket</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 // Notice the listen function
 transport.listen("CouchDB"
 
@@ -473,7 +473,7 @@ function (changes) {
 			</pre>
 			
 			<h3>Create your own handler</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 // Defining a new handler
 emily.handlers.myHandler = function (greeting, callback) {
 	callback("Hello " + greeting);
@@ -507,7 +507,7 @@ transport.request("myHandler", "world!", function (txt) {
 				Simply focus on what you want to do with your data, not how you have to handle it.
 			</p>
 			<h3>Synchronize a CouchDBStore with a Document</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 // See transport for mon info on Transport
 var transport = new Transport(emily.handlers),
 	couchDBStore = new CouchDBStore(transport);
@@ -517,7 +517,7 @@ couchDBStore.sync("database", "document1");
 				</pre>
 				
 			<h3>Synchronize a CouchDBStore with a View</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var couchDBStore = new CouchDBStore(transport);
 	
 // this couchDBStore will always reflect views values
@@ -525,7 +525,7 @@ couchDBStore.sync("database", "design/document", "view");
 				</pre>
 				
 			<h3>Create a document on CouchDB</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var couchDBStore = new CouchDBStore(transport);
 	
 // If the document doesn't exist in the database, it's not created yet
@@ -539,7 +539,7 @@ couchDBStore.update();
 				</pre>
 				
 			<h3>Delete document on CouchDB</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var couchDBStore = new CouchDBStore(transport);
 	
 couchDBStore.sync("database", "newDocument");
@@ -547,7 +547,7 @@ couchDBStore.sync("database", "newDocument");
 couchDBStore.remove();
 				</pre>
 	<h3>Using the CouchDBStore promise</h3>
-	<pre class="prettyprint">
+	<pre class="prettyprint linenums">
 var couchDBStore = new CouchDBStore(transport);
 	
 // The synchronization is asynchronous so it returns a promise.
@@ -566,12 +566,12 @@ couchDBStore.sync("database", "document").then(function () {
 				These are a set of functions that are used in Emily.
 			</p>
 			<h3>Get the global object</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 tools.getGlobal();
 			</pre>
 			
 			<h3>Mix an object into an other one.</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var source = {a:10},
 	destination = {b:20};
 	
@@ -579,14 +579,14 @@ tools.mixin(source, destination); // {a:10, b:20}
 			</pre>
 			
 			<h3>Count the number of own properties in an object.</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var object = {a:1, b:2, c:3};
 
 tools.count(object); // 3
 			</pre>
 			
 			<h3>Compare objects.</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var object1 = {a:1, b:2},
 	object2 = {a:2, b:5};
 
@@ -595,19 +595,19 @@ tools.compareObject(object1, object2); // true
 			</pre>
 			
 			<h3>Transforms an array-like object, like arguments, to an array.</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 tools.toArray(arguments);
 			</pre>
 			
 			<h3>Loop through an array/object. It doesn't work with NodeList!</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 tools.loop(function (value, index) {
 	// Value, index in this order like with forEach, filter...
 }, this);
 			</pre>
 			
 			<h3>Get a diff between two Objects</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var before = {a:1, b:2, c:3, d:4, f:6},
  after = {a:1, b:20, d: 4, e: 5};
 
@@ -625,7 +625,7 @@ tools.objectsDiffs(before, after);
 			</pre>
 			
 			<h3>Get a diff between two Arrays</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
  var before = [10, 20, 30],
   after = [15, 20]
 
@@ -642,14 +642,14 @@ tools.objectsDiffs(before, after);
 			</pre>
 		
 			<h3>Get the JSON version of an object</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var object = {a: function(){}, b: 10, c: false, d: "Hello"};
  
 tools.jsonify(object); // {b:10,c:false,d:"Hello"}
 			</pre>
 
 			<h3>Clone an object</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var object = {a:10, b:30, c:40};
 
 // This will return a new object
@@ -659,7 +659,7 @@ tools.clone(object);
 			</pre>
 			
 			<h3>Clone an array</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var array = [10, 20, 30];
 
 // This will return a new array
@@ -669,14 +669,14 @@ tools.clone(array);
 			</pre>
 			
 			<h3>Get the nested property of an object</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var object = {a: {b: c: 10};
 
 tools.getNestedProperty(object, "b.c"); // returns 10
 			</pre>
 			
 			<h3>Set the nested property of an object</h3>
-			<pre class="prettyprint">
+			<pre class="prettyprint linenums">
 var object = {a: {b: c: 10};
 
 tools.setNestedProperty(object, "b.c", 20); // a.b.c equals 20
