@@ -1,3 +1,9 @@
+/**
+ * Emily
+ * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
 var http = require("http"),
 	requirejs = require("requirejs");
 
