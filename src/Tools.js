@@ -149,7 +149,6 @@ function Tools(){
 				 // Look through the after object
 				 this.loop(after, function (value, idx) {
 
-
 					 // To get the added
 					 if (typeof before[idx] == "undefined") {
 						 added.push(idx);
