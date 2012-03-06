@@ -741,7 +741,7 @@ function StateMachine(Tools) {
 			
 			nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
 			// False means that there's no such event
-			// But undefined means that the state doesn't not change
+			// But undefined means that the state doesn't change
 			if (nextState === false) {
 				return false;
 			} else {
