@@ -1231,40 +1231,42 @@ function Tools(){
 					updated = [],
 					deleted = [],
 					added = [];
-				
+
 				 // Look through the after object
 				 this.loop(after, function (value, idx) {
-					 
-					 // To get the updated
-					 if (value !== before[idx] && typeof before[idx] != "undefined") {
+
+
+					 // To get the added
+					 if (typeof before[idx] == "undefined") {
+						 added.push(idx);
+
+					 // The updated
+					 } else if (value !== before[idx]) {
 						 updated.push(idx);
-						 
-					 // The unchanged	 
+
+					 // And the unchanged
 					 } else if (value === before[idx]) {
 						 unchanged.push(idx);
-					
-					 // And the added
-					 } else if (typeof before[idx] == "undefined") {
-						 added.push(idx);
 					 }
+
 				 });
-				 
+
 				 // Loop through the before object
 				 this.loop(before, function (value, idx) {
-					 
+
 					// To get the deleted 
 					if (typeof after[idx] == "undefined") {
 						deleted.push(idx);
 					} 
 				 });
-				 
+
 				return {
 					updated: updated,
 					unchanged: unchanged,
 					added: added,
 					deleted: deleted
 				};
-				
+
 			} else {
 				return false;
 			}
