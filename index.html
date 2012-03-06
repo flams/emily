@@ -420,7 +420,7 @@ var stateMachine = new StateMachine(
 			// As well as an action on exit by adding a transition called "exit"
 			["exit", function onExit() {}, this]],
 
-		"opened":[['close!", function close(){}, this, "closed"]]
+		"opened":[["close!", function close(){}, this, "closed"]]
 	});
 		
 		// This will fire open! and then, exit
