@@ -1315,7 +1315,7 @@ function Tools(){
 		
 		/**
 		 * Get the property of an object nested in one or more objects
-		 * given an object such as a.b.c.d = 5, getObject(a, "b.c.d") will return 5.
+		 * given an object such as a.b.c.d = 5, getNestedProperty(a, "b.c.d") will return 5.
 		 * @param {Object} object the object to get the property from
 		 * @param {String} property the path to the property as a string
 		 * @returns the object or the the property value if found
@@ -1324,10 +1324,9 @@ function Tools(){
 			if (object && object instanceof Object) {
 				if (typeof property == "string" && property != "") {
 					var split = property.split(".");
-					split.unshift(object);
 					return split.reduce(function (obj, prop) {
 						return obj[prop];
-					});
+					}, object);
 				} else if (typeof property == "number") {
 					return object[property];
 				} else {
@@ -1349,13 +1348,12 @@ function Tools(){
 			if (object && object instanceof Object) {
 				if (typeof property == "string" && property != "") {
 					var split = property.split(".");
-					split.unshift(object);
 					return split.reduce(function (obj, prop, idx) {
 						if (split.length == (idx + 1)) {
 							obj[prop] = value;
 						}
 						return obj[prop];
-					});
+					}, object);
 				} else if (typeof property == "number") {
 					object[property] = value;
 					return object[property];
