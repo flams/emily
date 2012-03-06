@@ -401,7 +401,7 @@ var stateMachine = new StateMachine(
 		// When in closed state, if the event is "open!" then execute the open action and transit to opened state.
 		"closed":[["open!", function open(){}, this, "opened"]],
 		// The opposite
-		"opened":[['close!", function close(){}, this, "closed"]]
+		"opened":[["close!", function close(){}, this, "closed"]]
 	});
 		
 		stateMachine.event("open!");
