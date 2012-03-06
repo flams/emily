@@ -161,6 +161,7 @@ function Tools(){
 					 // And the unchanged
 					 } else if (value === before[idx]) {
 						 unchanged.push(idx);
+					 }
 					
 				 });
 				 
