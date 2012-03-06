@@ -339,10 +339,10 @@ require(["Tools"], function (Tools) {
 			var func = function () {},
 				regExp = /o/;
 		
-			expect(Tools.clone("yes")).toEqual("yes");
-			expect(Tools.clone(null)).toEqual(null);
-			expect(Tools.clone(func)).toBe(func);
-			expect(Tools.clone(regExp)).toBe(regExp);
+			expect(Tools.clone("yes")).toEqual(false);
+			expect(Tools.clone(null)).toEqual(false);
+			expect(Tools.clone(func)).toBe(false);
+			expect(Tools.clone(regExp)).toBe(false);
 			
 		});
 	});

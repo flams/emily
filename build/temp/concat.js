@@ -1294,7 +1294,7 @@ function Tools(){
 			} else if (typeof object == "object" && object !== null && !(object instanceof RegExp)) {
 				return this.mixin(object, {});
 			} else {
-				return object;
+				return false;
 			}
 		},
 		
