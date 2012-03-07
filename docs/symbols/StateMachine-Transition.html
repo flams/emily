@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Promise</title>
+		<title>JsDoc Reference - StateMachine-Transition</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Promise
+				Class StateMachine-Transition
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,16 +224,16 @@ ul.inheritsList
 				
 				
 			
-				Create a Promise
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Promise.js.html">Promise.js</a>.
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_StateMachine.js.html">StateMachine.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Promise.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class StateMachine-Transition.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -243,12 +243,12 @@ ul.inheritsList
 				</thead>
 				<tbody>
 					<tr>
-						<td class="attributes">&nbsp;</td>
+						<td class="attributes">&lt;inner&gt; &nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Promise.html#constructor">Promise</a></b>(Observable, StateMachine)
+								<b><a href="../symbols/StateMachine-Transition.html#constructor">StateMachine-Transition</a></b>()
 							</div>
-							<div class="description"></div>
+							<div class="description">Each state has associated transitions</div>
 						</td>
 					</tr>
 				</tbody>
@@ -262,7 +262,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Promise.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class StateMachine-Transition.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -275,27 +275,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#reject">reject</a></b>(the)
+								<div class="fixedFont"><b><a href="../symbols/StateMachine-Transition.html#add">add</a></b>(event, action, scope, next)
 								</div>
-								<div class="description">Reject the promise.</div>
+								<div class="description">Add a new transition</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#resolve">resolve</a></b>(the)
+								<div class="fixedFont"><b><a href="../symbols/StateMachine-Transition.html#event">event</a></b>(event, params)
 								</div>
-								<div class="description">Resolve the promise.</div>
+								<div class="description">Execute the action associated to the given event</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#then">then</a></b>(the, the)
+								<div class="fixedFont"><b><a href="../symbols/StateMachine-Transition.html#has">has</a></b>(event)
 								</div>
-								<div class="description">The callbacks and errbacks to call after resolution or rejection</div>
+								<div class="description">Check if a transition can be triggered with given event</div>
 							</td>
 						</tr>
 					
@@ -315,35 +315,18 @@ ul.inheritsList
 					Class Detail
 				</div>
 				
-				<div class="fixedFont">
-						<b>Promise</b>(Observable, StateMachine)
+				<div class="fixedFont">&lt;inner&gt; 
+						<b>StateMachine-Transition</b>()
 				</div>
 				
 				<div class="description">
-					
+					Each state has associated transitions
 					
 				</div>
 				
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								 <b>Observable</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>StateMachine</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
 					
 					
@@ -364,16 +347,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="reject"> </a>
+					<a name="add"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>reject</b>(the)
+					<span class="light">{Boolean}</span>
+					<b>add</b>(event, action, scope, next)
 					
 					</div>
 					<div class="description">
-						Reject the promise.
-A promise can be rejected only once.
+						Add a new transition
 						
 						
 					</div>
@@ -385,10 +367,28 @@ A promise can be rejected only once.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>the</b>
+									<span class="light fixedFont">{String}</span> <b>event</b>
 									
 								</dt>
-								<dd>rejection value</dd>
+								<dd>the event that will trigger the transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>action</b>
+									
+								</dt>
+								<dd>the function that is executed</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>scope</b>
+									
+								</dt>
+								<dd>[optional] the scope in which to execute the action</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>next</b>
+									
+								</dt>
+								<dd>[optional] the name of the state to transit to.</dd>
 							
 							</dl>
 						
@@ -399,7 +399,7 @@ A promise can be rejected only once.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>true if the rejection function was called</dd>
+								<dd><span class="light fixedFont">{Boolean}</span> true if success, false if the transition already exists</dd>
 							
 							</dl>
 						
@@ -408,16 +408,15 @@ A promise can be rejected only once.
 
 					<hr />
 				
-					<a name="resolve"> </a>
+					<a name="event"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>resolve</b>(the)
+					<b>event</b>(event, params)
 					
 					</div>
 					<div class="description">
-						Resolve the promise.
-A promise can be resolved only once.
+						Execute the action associated to the given event
 						
 						
 					</div>
@@ -429,10 +428,16 @@ A promise can be resolved only once.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>the</b>
+									<span class="light fixedFont">{String}</span> <b>event</b>
 									
 								</dt>
-								<dd>resolution value</dd>
+								<dd>the name of the event</dd>
+							
+								<dt>
+									<span class="light fixedFont">{params}</span> <b>params</b>
+									
+								</dt>
+								<dd>to pass to the action</dd>
 							
 							</dl>
 						
@@ -443,7 +448,7 @@ A promise can be resolved only once.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>true if the resolution function was called</dd>
+								<dd>false if error, the next state or undefined if success (that sounds weird)</dd>
 							
 							</dl>
 						
@@ -452,15 +457,15 @@ A promise can be resolved only once.
 
 					<hr />
 				
-					<a name="then"> </a>
+					<a name="has"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>then</b>(the, the)
+					<span class="light">{Boolean}</span>
+					<b>has</b>(event)
 					
 					</div>
 					<div class="description">
-						The callbacks and errbacks to call after resolution or rejection
+						Check if a transition can be triggered with given event
 						
 						
 					</div>
@@ -472,22 +477,23 @@ A promise can be resolved only once.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Function}</span> <b>the</b>
+									<span class="light fixedFont">{String}</span> <b>event</b>
 									
 								</dt>
-								<dd>first parameter is a success function, it can be followed by a scope in which to run it</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>the</b>
-									
-								</dt>
-								<dd>second, or third parameter is an errback, it can also be followed by a scope</dd>
+								<dd>the name of the event</dd>
 							
 							</dl>
 						
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if exists</dd>
+							
+							</dl>
 						
 						
 						
