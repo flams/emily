@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-require(["Store", "Observable"], function (Store, Observable) {
+require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 	
 	describe("StoreTest", function () {
 
@@ -19,6 +19,7 @@ require(["Store", "Observable"], function (Store, Observable) {
 			expect(store.set).toBeInstanceOf(Function);
 			expect(store.has).toBeInstanceOf(Function);
 			expect(store.del).toBeInstanceOf(Function);
+			expect(store.delAll).toBeInstanceOf(Function);
 			expect(store.toJSON).toBeInstanceOf(Function);
 			expect(store.alter).toBeInstanceOf(Function);
 			expect(store.watch).toBeInstanceOf(Function);
@@ -92,6 +93,29 @@ require(["Store", "Observable"], function (Store, Observable) {
 			expect(json.key1).toEqual("value1");
 			expect(json.key2).toEqual("value2");
 			expect(Object.getOwnPropertyNames(json).length).toEqual(2);
+		});
+		
+		it("should allow for deleting multiple indexes at once", function () {
+			// I'd like to keep [2, 7, 10] in the end
+			var indexes = [0, 9, 12, 4, 5, 6, 8, 1, 11, 3];
+			store.reset([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+			spyOn(indexes, "sort").andCallThrough();
+			spyOn(indexes, "reverse").andCallThrough();
+			spyOn(indexes, "forEach").andCallThrough();
+			
+			expect(store.delAll()).toEqual(false);
+			expect(store.delAll({})).toEqual(false);
+			expect(store.delAll(indexes)).toEqual(true);
+			
+			expect(indexes.sort.mostRecentCall.args[0]).toBe(Tools.compareNumbers);
+			expect(indexes.reverse.wasCalled).toEqual(true);
+			expect(indexes.forEach.mostRecentCall.args[0]).toBe(store.del);
+			expect(indexes.forEach.mostRecentCall.args[1]).toBe(store);
+			
+			expect(store.get(0)).toEqual(2);
+			expect(store.get(1)).toEqual(7);
+			expect(store.get(2)).toEqual(10);
+			
 		});
 		
 	});

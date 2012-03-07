@@ -69,6 +69,22 @@ function Tools(){
 		},
 		
 		/**
+		 * Compares two numbers and tells if the first one is bigger (1), smaller (-1) or equal (0)
+		 * @param {Number} number1 the first number
+		 * @param {Number} number2 the second number
+		 * @returns 1 if number1>number2, -1 if number2>number1, 0 if equal
+		 */
+		compareNumbers: function compareNumbers(number1, number2) {
+			  if (number1>number2) {
+			    return 1;  
+			  } else if (number1<number2) {
+			    return -1;				  
+			  } else {
+				 return 0;
+			  }
+		},
+		
+		/**
 		 * Transform array-like objects to array, such as nodeLists or arguments
 		 * @param {Array-like object}
 		 * @returns {Array}

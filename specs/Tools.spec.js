@@ -88,6 +88,28 @@ require(["Tools"], function (Tools) {
 		});
 	});
 	
+	describe("ToolsTestCompareNumbers", function () {
+		
+		it("should return 1 if first number is greater than the second", function () {
+			expect(Tools.compareNumbers(100, 10)).toEqual(1);
+			expect(Tools.compareNumbers(2.3, 2.2)).toEqual(1);
+			expect(Tools.compareNumbers(1, -1)).toEqual(1);
+		});
+		
+		it("should return -1 if first number is lower than the second", function () {
+			expect(Tools.compareNumbers(0, 1)).toEqual(-1);
+			expect(Tools.compareNumbers(2.3,2.35)).toEqual(-1);
+			expect(Tools.compareNumbers(-1, -.9)).toEqual(-1);
+		});
+		
+		it("should return 0 if they're the same", function () {
+			expect(Tools.compareNumbers(0,0)).toEqual(0);
+			expect(Tools.compareNumbers(-1, -1)).toEqual(0);
+			expect(Tools.compareNumbers(2.3, 2.3)).toEqual(0);
+		});
+		
+	});
+	
 	describe("ToolsTestToArray", function () {
 		
 		it("should be a function", function () {

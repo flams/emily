@@ -973,6 +973,23 @@ define("Store", ["Observable", "Tools"],
 		};
 		
 		/**
+		 * Delete multiple indexes. Prefer this one over multiple del calls.
+		 * @param {Array} 
+		 * @returns false if param is not an array.
+		 */
+		this.delAll = function delAll(indexes) {
+			if (indexes instanceof Array) {
+				// Indexes must be removed from the greatest to the lowest
+				// To avoid trying to remove indexes that don't exist.
+				// i.e: given [0, 1, 2], remove 1, then 2, 2 doesn't exist anymore
+				indexes.sort(Tools.compareNumbers).reverse().forEach(this.del, this);
+				return true;
+			} else {
+				return false;
+			}
+		};
+		
+		/**
 		 * Alter the data be calling one of it's method
 		 * When the modifications are done, it notifies on changes.
 		 * @param {String} func the name of the method
@@ -1152,6 +1169,22 @@ function Tools(){
 				return Object.getOwnPropertyNames(object).sort().join("");
 			};
 			return getOwnProperties(object1) == getOwnProperties(object2);
+		},
+		
+		/**
+		 * Compares two numbers and tells if the first one is bigger (1), smaller (-1) or equal (0)
+		 * @param {Number} number1 the first number
+		 * @param {Number} number2 the second number
+		 * @returns 1 if number1>number2, -1 if number2>number1, 0 if equal
+		 */
+		compareNumbers: function compareNumbers(number1, number2) {
+			  if (number1>number2) {
+			    return 1;  
+			  } else if (number1<number2) {
+			    return -1;				  
+			  } else {
+				 return 0;
+			  }
 		},
 		
 		/**

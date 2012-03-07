@@ -126,115 +126,132 @@
 <span class='line'>119</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>120</span> </span><span class="WHIT">		</span><span class="WHIT">
 <span class='line'>121</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>122</span> 		 * Alter the data be calling one of it's method
-<span class='line'>123</span> 		 * When the modifications are done, it notifies on changes.
-<span class='line'>124</span> 		 * @param {String} func the name of the method
-<span class='line'>125</span> 		 * @returns the result of the method call
-<span class='line'>126</span> 		 */</span><span class="WHIT">
-<span class='line'>127</span> </span><span class="WHIT">		</span><span class="NAME">this.alter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">alter</span><span class="PUNC">(</span><span class="NAME">func</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>128</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">apply</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>129</span> </span><span class="WHIT">				</span><span class="NAME">previousData</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>130</span> </span><span class="WHIT">			</span><span class="WHIT">
-<span class='line'>131</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">[</span><span class="NAME">func</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>132</span> </span><span class="WHIT">				</span><span class="NAME">previousData</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>133</span> </span><span class="WHIT">				</span><span class="NAME">apply</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_data</span><span class="PUNC">[</span><span class="NAME">func</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">apply</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Array.prototype.slice.call</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>134</span> </span><span class="WHIT">				</span><span class="NAME">_notifyDiffs</span><span class="PUNC">(</span><span class="NAME">previousData</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>135</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">apply</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>136</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>137</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>138</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>139</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>140</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>141</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>142</span> 		 * Watch the store's modifications
-<span class='line'>143</span> 		 * @param {String} added/updated/deleted
-<span class='line'>144</span> 		 * @param {Function} func the function to execute
-<span class='line'>145</span> 		 * @param {Object} scope the scope in which to execute the function
-<span class='line'>146</span> 		 * @returns {Handler} the subscribe's handler to use to stop watching
-<span class='line'>147</span> 		 */</span><span class="WHIT">
-<span class='line'>148</span> </span><span class="WHIT">		</span><span class="NAME">this.watch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>149</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_storeObservable.watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>150</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>151</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>152</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>153</span> 		 * Unwatch the store modifications
-<span class='line'>154</span> 		 * @param {Handler} handler the handler returned by the watch function
-<span class='line'>155</span> 		 * @returns
-<span class='line'>156</span> 		 */</span><span class="WHIT">
-<span class='line'>157</span> </span><span class="WHIT">		</span><span class="NAME">this.unwatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>158</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_storeObservable.unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>159</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>160</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>161</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>162</span> 		 * Get the observable used for watching store's modifications
-<span class='line'>163</span> 		 * Should be used only for debugging
-<span class='line'>164</span> 		 * @returns {Observable} the Observable
-<span class='line'>165</span> 		 */</span><span class="WHIT">
-<span class='line'>166</span> </span><span class="WHIT">		</span><span class="NAME">this.getStoreObservable</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getStoreObservable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>167</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_storeObservable</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>168</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>169</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>170</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>171</span> 		 * Watch a value's modifications
-<span class='line'>172</span> 		 * @param {String} name the name of the value to watch for
-<span class='line'>173</span> 		 * @param {Function} func the function to execute
-<span class='line'>174</span> 		 * @param {Object} scope the scope in which to execute the function
-<span class='line'>175</span> 		 * @returns true if unwatched
-<span class='line'>176</span> 		 */</span><span class="WHIT">
-<span class='line'>177</span> </span><span class="WHIT">		</span><span class="NAME">this.watchValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">watchValue</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>178</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_valueObservable.watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>179</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>180</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>181</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>182</span> 		 * Unwatch the value's modifications
-<span class='line'>183</span> 		 * @param {Handler} handler the handler returned by the watchValue function
-<span class='line'>184</span> 		 * @returns true if unwatched
-<span class='line'>185</span> 		 */</span><span class="WHIT">
-<span class='line'>186</span> </span><span class="WHIT">		</span><span class="NAME">this.unwatchValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">unwatchValue</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>187</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_valueObservable.unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>188</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>189</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>190</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>191</span> 		 * Get the observable used for watching value's modifications
-<span class='line'>192</span> 		 * Should be used only for debugging
-<span class='line'>193</span> 		 * @returns {Observable} the Observable
-<span class='line'>194</span> 		 */</span><span class="WHIT">
-<span class='line'>195</span> </span><span class="WHIT">		</span><span class="NAME">this.getValueObservable</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getValueObservable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>196</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_valueObservable</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>197</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>198</span> 
-<span class='line'>199</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>200</span> 		 * Loop through the data
-<span class='line'>201</span> 		 * @param {Function} func the function to execute on each data
-<span class='line'>202</span> 		 * @param {Object} scope the scope in wich to run the callback
-<span class='line'>203</span> 		 */</span><span class="WHIT">
-<span class='line'>204</span> </span><span class="WHIT">		</span><span class="NAME">this.loop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">loop</span><span class="PUNC">(</span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>205</span> </span><span class="WHIT">			</span><span class="NAME">Tools.loop</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>206</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>207</span> </span><span class="WHIT">		</span><span class="WHIT">
-<span class='line'>208</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>209</span> 		 * Reset all data and get notifications on changes
-<span class='line'>210</span> 		 * @param {Arra/Object} data the new data
-<span class='line'>211</span> 		 * @returns {Boolean}
-<span class='line'>212</span> 		 */</span><span class="WHIT">
-<span class='line'>213</span> </span><span class="WHIT">		</span><span class="NAME">this.reset</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">reset</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>214</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">data</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">Object</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>215</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">previousData</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>216</span> </span><span class="WHIT">				</span><span class="NAME">_data</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>217</span> </span><span class="WHIT">				</span><span class="NAME">_notifyDiffs</span><span class="PUNC">(</span><span class="NAME">previousData</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>218</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>219</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>220</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>221</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>222</span> 
+<span class='line'>122</span> 		 * Delete multiple indexes. Prefer this one over multiple del calls.
+<span class='line'>123</span> 		 * @param {Array} 
+<span class='line'>124</span> 		 * @returns false if param is not an array.
+<span class='line'>125</span> 		 */</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">		</span><span class="NAME">this.delAll</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">delAll</span><span class="PUNC">(</span><span class="NAME">indexes</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">indexes</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">				</span><span class="COMM">// Indexes must be removed from the greatest to the lowest</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">				</span><span class="COMM">// To avoid trying to remove indexes that don't exist.</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">				</span><span class="COMM">// i.e: given [0, 1, 2], remove 1, then 2, 2 doesn't exist anymore</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">				</span><span class="NAME">indexes.sort</span><span class="PUNC">(</span><span class="NAME">Tools.compareNumbers</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">reverse</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">forEach</span><span class="PUNC">(</span><span class="NAME">this.del</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>139</span> 		 * Alter the data be calling one of it's method
+<span class='line'>140</span> 		 * When the modifications are done, it notifies on changes.
+<span class='line'>141</span> 		 * @param {String} func the name of the method
+<span class='line'>142</span> 		 * @returns the result of the method call
+<span class='line'>143</span> 		 */</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">		</span><span class="NAME">this.alter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">alter</span><span class="PUNC">(</span><span class="NAME">func</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">apply</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">				</span><span class="NAME">previousData</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">			</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">[</span><span class="NAME">func</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">				</span><span class="NAME">previousData</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">				</span><span class="NAME">apply</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_data</span><span class="PUNC">[</span><span class="NAME">func</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">apply</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Array.prototype.slice.call</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">				</span><span class="NAME">_notifyDiffs</span><span class="PUNC">(</span><span class="NAME">previousData</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">apply</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>159</span> 		 * Watch the store's modifications
+<span class='line'>160</span> 		 * @param {String} added/updated/deleted
+<span class='line'>161</span> 		 * @param {Function} func the function to execute
+<span class='line'>162</span> 		 * @param {Object} scope the scope in which to execute the function
+<span class='line'>163</span> 		 * @returns {Handler} the subscribe's handler to use to stop watching
+<span class='line'>164</span> 		 */</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">		</span><span class="NAME">this.watch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>166</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_storeObservable.watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>170</span> 		 * Unwatch the store modifications
+<span class='line'>171</span> 		 * @param {Handler} handler the handler returned by the watch function
+<span class='line'>172</span> 		 * @returns
+<span class='line'>173</span> 		 */</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">		</span><span class="NAME">this.unwatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_storeObservable.unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>179</span> 		 * Get the observable used for watching store's modifications
+<span class='line'>180</span> 		 * Should be used only for debugging
+<span class='line'>181</span> 		 * @returns {Observable} the Observable
+<span class='line'>182</span> 		 */</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">		</span><span class="NAME">this.getStoreObservable</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getStoreObservable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_storeObservable</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>188</span> 		 * Watch a value's modifications
+<span class='line'>189</span> 		 * @param {String} name the name of the value to watch for
+<span class='line'>190</span> 		 * @param {Function} func the function to execute
+<span class='line'>191</span> 		 * @param {Object} scope the scope in which to execute the function
+<span class='line'>192</span> 		 * @returns true if unwatched
+<span class='line'>193</span> 		 */</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">		</span><span class="NAME">this.watchValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">watchValue</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_valueObservable.watch</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>197</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>199</span> 		 * Unwatch the value's modifications
+<span class='line'>200</span> 		 * @param {Handler} handler the handler returned by the watchValue function
+<span class='line'>201</span> 		 * @returns true if unwatched
+<span class='line'>202</span> 		 */</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">		</span><span class="NAME">this.unwatchValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">unwatchValue</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_valueObservable.unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>208</span> 		 * Get the observable used for watching value's modifications
+<span class='line'>209</span> 		 * Should be used only for debugging
+<span class='line'>210</span> 		 * @returns {Observable} the Observable
+<span class='line'>211</span> 		 */</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="WHIT">		</span><span class="NAME">this.getValueObservable</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getValueObservable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_valueObservable</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>215</span> 
+<span class='line'>216</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>217</span> 		 * Loop through the data
+<span class='line'>218</span> 		 * @param {Function} func the function to execute on each data
+<span class='line'>219</span> 		 * @param {Object} scope the scope in wich to run the callback
+<span class='line'>220</span> 		 */</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="WHIT">		</span><span class="NAME">this.loop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">loop</span><span class="PUNC">(</span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">			</span><span class="NAME">Tools.loop</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>223</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>224</span> </span><span class="WHIT">		</span><span class="WHIT">
 <span class='line'>225</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>226</span> 		 * Dumps a JSON version of all the data
-<span class='line'>227</span> 		 * @returns {JSON}
-<span class='line'>228</span> 		 */</span><span class="WHIT">
-<span class='line'>229</span> </span><span class="WHIT">		</span><span class="NAME">this.toJSON</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">toJSON</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>230</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">JSON.stringify</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>231</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>232</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>233</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>226</span> 		 * Reset all data and get notifications on changes
+<span class='line'>227</span> 		 * @param {Arra/Object} data the new data
+<span class='line'>228</span> 		 * @returns {Boolean}
+<span class='line'>229</span> 		 */</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT">		</span><span class="NAME">this.reset</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">reset</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">data</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">Object</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">previousData</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">				</span><span class="NAME">_data</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Tools.clone</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="WHIT">				</span><span class="NAME">_notifyDiffs</span><span class="PUNC">(</span><span class="NAME">previousData</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>235</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>239</span> 
+<span class='line'>240</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>243</span> 		 * Dumps a JSON version of all the data
+<span class='line'>244</span> 		 * @returns {JSON}
+<span class='line'>245</span> 		 */</span><span class="WHIT">
+<span class='line'>246</span> </span><span class="WHIT">		</span><span class="NAME">this.toJSON</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">toJSON</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">JSON.stringify</span><span class="PUNC">(</span><span class="NAME">_data</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
