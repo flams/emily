@@ -132,12 +132,13 @@ function StateMachine(Tools) {
 		 */
 		this.init($initState);
 	}
-	
+
 	/**
 	 * Each state has associated transitions
+     * @constructor
 	 */
 	function Transition() {
-		
+
 		/**
 		 * The list of transitions associated to a state
 		 * @private
