@@ -139,84 +139,86 @@
 <span class='line'>132</span> 		 */</span><span class="WHIT">
 <span class='line'>133</span> </span><span class="WHIT">		</span><span class="NAME">this.init</span><span class="PUNC">(</span><span class="NAME">$initState</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>134</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>135</span> </span><span class="WHIT">	
-<span class='line'>136</span> 	</span><span class="COMM">/**
+<span class='line'>135</span> 
+<span class='line'>136</span> </span><span class="WHIT">	</span><span class="COMM">/**
 <span class='line'>137</span> 	 * Each state has associated transitions
-<span class='line'>138</span> 	 */</span><span class="WHIT">
-<span class='line'>139</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Transition</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>140</span> </span><span class="WHIT">		
-<span class='line'>141</span> 		</span><span class="COMM">/**
-<span class='line'>142</span> 		 * The list of transitions associated to a state
-<span class='line'>143</span> 		 * @private
-<span class='line'>144</span> 		 */</span><span class="WHIT">
-<span class='line'>145</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">_transitions</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>146</span> </span><span class="WHIT">		
-<span class='line'>147</span> 		</span><span class="COMM">/**
-<span class='line'>148</span> 		 * Add a new transition
-<span class='line'>149</span> 		 * @param {String} event the event that will trigger the transition
-<span class='line'>150</span> 		 * @param {Function} action the function that is executed
-<span class='line'>151</span> 		 * @param {Object} scope [optional] the scope in which to execute the action
-<span class='line'>152</span> 		 * @param {String} next [optional] the name of the state to transit to.
-<span class='line'>153</span> 		 * @returns {Boolean} true if success, false if the transition already exists
-<span class='line'>154</span> 		 */</span><span class="WHIT">
-<span class='line'>155</span> </span><span class="WHIT">		</span><span class="NAME">this.add</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">add</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">action</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">next</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>156</span> </span><span class="WHIT">			
-<span class='line'>157</span> 			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">arr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>158</span> </span><span class="WHIT">		
-<span class='line'>159</span> 			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>160</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>161</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>162</span> </span><span class="WHIT">			
-<span class='line'>163</span> 			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">event</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="WHIT">
-<span class='line'>164</span> </span><span class="WHIT">				</span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">action</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"function"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">	
-<span class='line'>165</span> 					
-<span class='line'>166</span> 					</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">action</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>167</span> </span><span class="WHIT">				
-<span class='line'>168</span> 					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"object"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>169</span> </span><span class="WHIT">						</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>170</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT"> 
-<span class='line'>171</span> 					
-<span class='line'>172</span> 					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>173</span> </span><span class="WHIT">						</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>174</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT"> 
-<span class='line'>175</span> 					
-<span class='line'>176</span> 					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">next</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>177</span> </span><span class="WHIT">						</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">next</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>178</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>179</span> </span><span class="WHIT">				
-<span class='line'>180</span> 					</span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">arr</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>181</span> </span><span class="WHIT">					</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>182</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> 
-<span class='line'>183</span> 				
-<span class='line'>184</span> 			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">	
-<span class='line'>185</span> 		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>186</span> </span><span class="WHIT">		
-<span class='line'>187</span> 		</span><span class="COMM">/**
-<span class='line'>188</span> 		 * Check if a transition can be triggered with given event
-<span class='line'>189</span> 		 * @param {String} event the name of the event
-<span class='line'>190</span> 		 * @returns {Boolean} true if exists
-<span class='line'>191</span> 		 */</span><span class="WHIT">
-<span class='line'>192</span> </span><span class="WHIT">		</span><span class="NAME">this.has</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">has</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>193</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="PUNC">!</span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>194</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>195</span> </span><span class="WHIT">		
-<span class='line'>196</span> 		</span><span class="COMM">/**
-<span class='line'>197</span> 		 * Execute the action associated to the given event
-<span class='line'>198</span> 		 * @param {String} event the name of the event
-<span class='line'>199</span> 		 * @param {params} params to pass to the action
-<span class='line'>200</span> 		 * @returns false if error, the next state or undefined if success (that sounds weird)
-<span class='line'>201</span> 		 */</span><span class="WHIT">
-<span class='line'>202</span> </span><span class="WHIT">		</span><span class="NAME">this.event</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>203</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">_transition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>204</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_transition</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>205</span> </span><span class="WHIT">				</span><span class="NAME">_transition</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">apply</span><span class="PUNC">(</span><span class="NAME">_transition</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Tools.toArray</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">slice</span><span class="PUNC">(</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>206</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_transition</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>207</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>208</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>209</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>210</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>211</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>212</span> </span><span class="WHIT">	
-<span class='line'>213</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">StateMachineConstructor</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>214</span> </span><span class="WHIT">	
-<span class='line'>215</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>138</span>      * @constructor
+<span class='line'>139</span> 	 */</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Transition</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>141</span> 
+<span class='line'>142</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>143</span> 		 * The list of transitions associated to a state
+<span class='line'>144</span> 		 * @private
+<span class='line'>145</span> 		 */</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">_transitions</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">		
+<span class='line'>148</span> 		</span><span class="COMM">/**
+<span class='line'>149</span> 		 * Add a new transition
+<span class='line'>150</span> 		 * @param {String} event the event that will trigger the transition
+<span class='line'>151</span> 		 * @param {Function} action the function that is executed
+<span class='line'>152</span> 		 * @param {Object} scope [optional] the scope in which to execute the action
+<span class='line'>153</span> 		 * @param {String} next [optional] the name of the state to transit to.
+<span class='line'>154</span> 		 * @returns {Boolean} true if success, false if the transition already exists
+<span class='line'>155</span> 		 */</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT">		</span><span class="NAME">this.add</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">add</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">action</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">next</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="WHIT">			
+<span class='line'>158</span> 			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">arr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="WHIT">		
+<span class='line'>160</span> 			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">			
+<span class='line'>164</span> 			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">event</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">				</span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">action</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"function"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">	
+<span class='line'>166</span> 					
+<span class='line'>167</span> 					</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">action</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">				
+<span class='line'>169</span> 					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"object"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">						</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>172</span> 					
+<span class='line'>173</span> 					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">						</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>176</span> 					
+<span class='line'>177</span> 					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">next</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"string"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">						</span><span class="NAME">arr</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">next</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>180</span> </span><span class="WHIT">				
+<span class='line'>181</span> 					</span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">arr</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>182</span> </span><span class="WHIT">					</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>184</span> 				
+<span class='line'>185</span> 			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">	
+<span class='line'>186</span> 		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">		
+<span class='line'>188</span> 		</span><span class="COMM">/**
+<span class='line'>189</span> 		 * Check if a transition can be triggered with given event
+<span class='line'>190</span> 		 * @param {String} event the name of the event
+<span class='line'>191</span> 		 * @returns {Boolean} true if exists
+<span class='line'>192</span> 		 */</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="WHIT">		</span><span class="NAME">this.has</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">has</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="PUNC">!</span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="WHIT">		
+<span class='line'>197</span> 		</span><span class="COMM">/**
+<span class='line'>198</span> 		 * Execute the action associated to the given event
+<span class='line'>199</span> 		 * @param {String} event the name of the event
+<span class='line'>200</span> 		 * @param {params} params to pass to the action
+<span class='line'>201</span> 		 * @returns false if error, the next state or undefined if success (that sounds weird)
+<span class='line'>202</span> 		 */</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">		</span><span class="NAME">this.event</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">_transition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_transitions</span><span class="PUNC">[</span><span class="NAME">event</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_transition</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">				</span><span class="NAME">_transition</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">apply</span><span class="PUNC">(</span><span class="NAME">_transition</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Tools.toArray</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">slice</span><span class="PUNC">(</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">_transition</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>210</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>211</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">	
+<span class='line'>214</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">StateMachineConstructor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">	
+<span class='line'>216</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>217</span> </span></pre></body></html>
