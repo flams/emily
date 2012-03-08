@@ -1,4 +1,4 @@
-##What is Emily?
+###What is Emily?
 
  * Emily is a JS Framework for building MVC applications.
  * It's runtime agnostic as it doesn't rely on the DOM.
@@ -73,4 +73,4 @@ Contributors are more than welcome. To be part of Emily, a new module should fol
  * It should be in AMD format.
  * It should run in any JavaScript runtime.
  
-##Emily is just a tool. I share mine, do you share yours?
+###Emily is just a tool. I share mine, do you share yours?
