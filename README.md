@@ -24,7 +24,7 @@ In the browser:
 ```html
 	<script src="require.js"></script>
 	<script src="Emily.js"></script>
-```js
+```
 
 ```js
 	require(["Module"], function (Module) {
