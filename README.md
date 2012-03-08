@@ -21,10 +21,12 @@
 
 In the browser:
 
-```js
+```html
 	<script src="require.js"></script>
 	<script src="Emily.js"></script>
-			
+```js
+
+```js
 	require(["Module"], function (Module) {
 		// Do what you want with Module
 	});
@@ -51,14 +53,14 @@ The documentation for each module can be found here: http://flams.github.com/emi
 ##There are already so many frameworks out there, why would I choose Emily?
 
 Emily is only a set of AMD/commonJS modules. You can pick up the parts that you need, or like, and build stuff around them.
-If you decide to go for e Emily's modules, then you have a set of powerful tools to base your MVC application on.
+If you decide to go for all Emily's modules, then you have a set of powerful tools to base your MVC applications on.
 Emily lets you decide what piece of software best suites you and your projects.
 
 ##It's doesn't rely on the DOM. So what about the V in MVC?
 
 Following Emily's principles, you can use any tool you want to create nice UIs.
 But if you like it, you might want to have a look at Olives: http://flams.github.com/olives/
-Olives is only a set of AMD/commonJS modules to build realtime UIs, in the browser!
+Olives is only a set of AMD/commonJS modules to build realtime UIs in a browser!
 
 ##Contributing to Emily
 
