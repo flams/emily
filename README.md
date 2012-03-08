@@ -16,10 +16,14 @@
  * Transport: make requests to anything node.js has access to.
  * CouchDBStore: a Store that displays a CouchDB view or document and gets updated on changes.
  * Tools: these functions you always need and rewrite.
+ 
+ The documentation for each module can be found here: http://flams.github.com/emily/ 
 
-###How do I get started?
+###How do I install it?
 
 In the browser:
+
+Olives requires an AMD/commonJS compatible loader. I use requirejs: http://requirejs.org/
 
 ```html
 	<script src="require.js"></script>
@@ -48,18 +52,20 @@ npm install emily
 	});
 ```		
 
-The documentation for each module can be found here: http://flams.github.com/emily/ 
-
 ###There are already so many frameworks out there, why would I choose Emily?
 
 Emily is only a set of AMD/commonJS modules. You can pick up the parts that you need, or like, and build stuff around them.
+
 If you decide to go for all Emily's modules, then you have a set of powerful tools to base your MVC applications on.
+
 Emily lets you decide what piece of software best suites you and your projects.
 
 ###It's doesn't rely on the DOM. So what about the V in MVC?
 
 Following Emily's principles, you can use any tool you want to create nice UIs.
+
 But if you like it, you might want to have a look at Olives: http://flams.github.com/olives/
+
 Olives is only a set of AMD/commonJS modules to build realtime UIs in a browser!
 
 ###Contributing to Emily
