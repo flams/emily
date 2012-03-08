@@ -194,12 +194,14 @@ h3 {
 
 	<section id="presentation">
 		<h2>What is Emily?</h2>
-		<p>
-			Emily is a JavaScript Framework that offers convenient tools for
-			building MVC applications. </br> It's nothing else than a set of modules
-			in AMD format. <br /> All Emily's modules work both in the browser
-			and in node.js
-		</p>
+		<ul>
+			<li>Emily is a JS Framework for building MVC applications.</li>
+			<li>It's runtime agnostic as it doesn't rely on the DOM.</li>
+			<li>It's ready for realtime applications.</li>
+			<li>It's only a set of AMD/commonJS modules.</li>
+			<li>It's ready for being used with other frameworks.</li>
+			<li>It doesn't use any proprietary technology.</li>
+		</ul>
 		<p>The tools are:</p>
 		<ul class="menu"></ul>
 	</section>
@@ -726,7 +728,7 @@ tools.setNestedProperty(object, "b.c", 20); // a.b.c equals 20
 			Each major feature in Emily is a module on its own. <br />
 			Emily is more a set of tools than a big one.<br />
 			Emily is not aware of what composes it. <br />
-			Any AMD/commonJS module works with Emily and any of Emily's module can work in an AMD/commonJS module launcher.
+			Any AMD/commonJS module works with Emily and any of Emily's module can work in an AMD/commonJS module loader.
 		</p>
 		
 		<h3>Emily's features. This is nice but what does it do?</h3>
