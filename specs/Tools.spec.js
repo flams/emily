@@ -424,6 +424,8 @@ require(["Tools"], function (Tools) {
 			expect(a.b.c.d.e).toEqual(2);
 			expect(Tools.setNestedProperty(a, "b.c", obj)).toEqual(obj);
 			expect(a.b.c).toEqual(obj);
+			expect(Tools.setNestedProperty(a, "b", obj)).toEqual(obj);
+			expect(a.b).toEqual(obj);
 		});
 		
 		it("should set the property through an array too", function () {

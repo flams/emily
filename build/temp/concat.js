@@ -772,12 +772,13 @@ function StateMachine(Tools) {
 		 */
 		this.init($initState);
 	}
-	
+
 	/**
 	 * Each state has associated transitions
+     * @constructor
 	 */
 	function Transition() {
-		
+
 		/**
 		 * The list of transitions associated to a state
 		 * @private
@@ -852,7 +853,8 @@ function StateMachine(Tools) {
 	
 	return StateMachineConstructor;
 	
-});/**
+});
+/**
  * Emily
  * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
@@ -934,7 +936,7 @@ define("Store", ["Observable", "Tools"],
 		
 		/**
 		 * Set a new value and overrides an existing one
-		 * @param {String} name the name of the value
+		 * @param {String} name the name of the index
 		 * @param value the value to assign
 		 * @returns true if value is set
 		 */
@@ -948,6 +950,26 @@ define("Store", ["Observable", "Tools"],
 				action = ante ? "updated" : "added";
 				_storeObservable.notify(action, name, _data[name]);	
 				_valueObservable.notify(name, _data[name], action);
+				return true;
+			} else {
+				return false;
+			}
+		};
+		
+		/**
+		 * Update the property of an item.
+		 * @param {String} name the name of the index
+		 * @param {String} property the property to modify.
+		 * @param value the value to assign
+		 * @returns false if the Store has no name index
+		 */
+		this.update = function update(name, property, value) {
+			var item;
+			if (this.has(name)) {
+				item = this.get(name);
+				Tools.setNestedProperty(item, property, value);
+				_storeObservable.notify("updated", property, value);
+				_valueObservable.notify(name, item, "updated");
 				return true;
 			} else {
 				return false;
