@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-require(["Transport"], function (Transport) {
+require(["Transport", "Store"], function (Transport, Store) {
 	
 	describe("TransportTest", function () {
 		
@@ -31,17 +31,18 @@ require(["Transport"], function (Transport) {
 		});
 		
 		it("should set the requests handlers", function () {
-			var reqHandlers = {};
+			var reqHandlers = new Store;
 			transport = new Transport();
 			
 			expect(transport.getReqHandlers()).toBeNull();
 			expect(transport.setReqHandlers()).toEqual(false);
+			expect(transport.setReqHandlers({})).toEqual(false);
 			expect(transport.setReqHandlers(reqHandlers)).toEqual(true);
 			expect(transport.getReqHandlers()).toBe(reqHandlers);
 		});
 		
 		it("shoud set the requests handler at init", function () {
-			var reqHandlers = {};
+			var reqHandlers = new Store;
 			transport = new Transport(reqHandlers);
 			
 			expect(transport.getReqHandlers()).toBe(reqHandlers);
@@ -55,9 +56,9 @@ require(["Transport"], function (Transport) {
 			reqData = null;
 		
 		beforeEach(function () {
-			reqHandlers =  {
+			reqHandlers =  new Store({
 					"channel": jasmine.createSpy()
-			};
+			});
 			reqData = {};
 			transport = new Transport(reqHandlers);
 		});
@@ -66,8 +67,8 @@ require(["Transport"], function (Transport) {
 			expect(transport.request()).toEqual(false);
 			expect(transport.request("channel")).toEqual(false);
 			expect(transport.request("channel", reqData)).toEqual(true);
-			expect(reqHandlers.channel.wasCalled).toEqual(true);
-			expect(reqHandlers.channel.mostRecentCall.args[0]).toBe(reqData);
+			expect(reqHandlers.get("channel").wasCalled).toEqual(true);
+			expect(reqHandlers.get("channel").mostRecentCall.args[0]).toBe(reqData);
 		});
 		
 		it("should pass the request with the callback", function () {
@@ -75,7 +76,7 @@ require(["Transport"], function (Transport) {
 				cb,
 				args = {};
 			expect(transport.request("channel", reqData, spy)).toEqual(true);
-			cb = reqHandlers.channel.mostRecentCall.args[1];
+			cb = reqHandlers.get("channel").mostRecentCall.args[1];
 			cb(args);
 			
 			expect(spy.wasCalled).toEqual(true);
@@ -89,7 +90,7 @@ require(["Transport"], function (Transport) {
 				cb;
 			
 			expect(transport.request("channel", reqData, spy, thisObj)).toEqual(true);
-			cb = reqHandlers.channel.mostRecentCall.args[1];
+			cb = reqHandlers.get("channel").mostRecentCall.args[1];
 			expect(typeof cb).toEqual("function");
 			cb();
 			
@@ -108,16 +109,13 @@ require(["Transport"], function (Transport) {
 		obj = jasmine.createSpy();
 	
 		beforeEach(function () {
-			reqHandlers =  {
-					"channel": function () {
-						return {
-							scope:obj,
-							func: func
-						};
-					}
-			};
+			reqHandlers =  new Store({
+				"channel": jasmine.createSpy().andReturn({
+						scope:obj,
+						func: func
+					})
+			});
 			transport = new Transport(reqHandlers);
-			spyOn(reqHandlers, "channel").andCallThrough();
 		});
 		
 		it("should allow to listen on a given url", function () {
@@ -136,17 +134,17 @@ require(["Transport"], function (Transport) {
 				args = {};
 			transport.listen("channel", url, spy);
 			
-			expect(reqHandlers.channel.wasCalled).toEqual(true);
-			reqData = reqHandlers.channel.mostRecentCall.args[0];
+			expect(reqHandlers.get("channel").wasCalled).toEqual(true);
+			reqData = reqHandlers.get("channel").mostRecentCall.args[0];
 			expect(reqData.keptAlive).toEqual(true);
 			expect(reqData.method).toEqual("get");
 			expect(reqData.path).toEqual(url);
-			cb = reqHandlers.channel.mostRecentCall.args[1];
+			cb = reqHandlers.get("channel").mostRecentCall.args[1];
 			expect(typeof cb).toEqual("function");
 			cb(args);
 			expect(spy.wasCalled).toEqual(true);
 			expect(spy.mostRecentCall.args[0]).toBe(args);
-			expect(reqHandlers.channel.mostRecentCall.args[2]).toBe(cb);
+			expect(reqHandlers.get("channel").mostRecentCall.args[2]).toBe(cb);
 		});
 		
 		it("should execute the callback in scope", function () {
@@ -154,7 +152,7 @@ require(["Transport"], function (Transport) {
 				thisObj = {};
 			
 			transport.listen("channel", url, spy, thisObj);
-			reqHandlers.channel.mostRecentCall.args[1]();
+			reqHandlers.get("channel").mostRecentCall.args[1]();
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 		

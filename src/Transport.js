@@ -5,13 +5,15 @@
  */
 
 define("Transport", 
+		
+["Store"],
 /**
  * @class
  * Transport creates the link between your requests and Emily's requests handlers.
  * A request handler can be defined to make requets of any kind as long as it's supported
  * by your node.js. (HTTP, FileSystem, SIP...)
  */
-function Transport() {
+function Transport(Store) {
 	
 	/**
 	 * Create a Transport
@@ -32,7 +34,7 @@ function Transport() {
 		 * @returns
 		 */
 		this.setReqHandlers = function setReqHandlers(reqHandlers) {
-			if (typeof reqHandlers == "object") {
+			if (reqHandlers instanceof Store) {
 				_reqHandlers = reqHandlers;
 				return true;
 			} else {
@@ -58,8 +60,8 @@ function Transport() {
 		 * @returns
 		 */
 		this.request = function request(channel, reqData, callback, scope) {
-			if (_reqHandlers && _reqHandlers[channel] && typeof reqData == "object") {
-				_reqHandlers[channel](reqData, function () {
+			if (_reqHandlers.has(channel) && typeof reqData == "object") {
+				_reqHandlers.get(channel)(reqData, function () {
 					callback.apply(scope, arguments);
 				});
 				return true;
@@ -77,7 +79,7 @@ function Transport() {
 		 * @returns
 		 */
 		this.listen = function listen(channel, url, callback, scope) {
-			if (_reqHandlers && _reqHandlers[channel] &&
+			if (_reqHandlers.has(channel) &&
 				typeof url == "string" && typeof callback == "function") {
 				var func = function () {
 					callback.apply(scope, arguments);
@@ -87,7 +89,7 @@ function Transport() {
 						method: "get",
 						path: url
 				},
-				abort = _reqHandlers[channel](reqData, func, func);
+				abort = _reqHandlers.get(channel)(reqData, func, func);
 				return function () {
 					abort.func.call(abort.scope);
 				};
