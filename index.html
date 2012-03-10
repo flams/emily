@@ -175,7 +175,7 @@ h3 {
 	<section>
 
 	<header>
-		<a href="https://github.com/flams/emily/blob/master/build/Emily.js">Download Emily Alpha</a>
+		<a href="https://github.com/flams/emily/tags">Download Emily Alpha</a>
 		<h1>Emily</h1>
 		<span>Realtime web applications made easy</span>
 	</header>
@@ -477,9 +477,10 @@ function (changes) {
 			<h3>Create your own handler</h3>
 			<pre class="prettyprint linenums">
 // Defining a new handler
-emily.handlers.myHandler = function (greeting, callback) {
+// Handlers are stored in an Emily Store, so you know how it works!
+emily.handlers.set("myHandler", function (greeting, callback) {
 	callback("Hello " + greeting);
-};
+});
 
 // Calling the handler somewhere in a module
 var transport = new Transport(emily.handlers);
