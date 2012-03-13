@@ -71,64 +71,72 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		_syncPromise = new Promise(),
 		
-		/**
-		 * The state machine
-		 * @private
-		 * it concentrates almost the whole logic.
-		 * It can already be extended to handle reconnect for instance
-		 */
-		_stateMachine = new StateMachine("Unsynched", {
-			"Unsynched": [
-			              
-			 ["getView", function () {
-					_transport.request(_channel, {
-						method: "GET",
-						path: "/" + _database + "/_design/" + _design + "/" + "_view/" + _view +"?update_seq=true"
-					}, function (results) {
-						var json = JSON.parse(results);
-						_dbInfo = {
-								total_rows: json.total_rows,
-								update_seq: json.update_seq,
-								offset: json.offset
-						};
-						
-						this.reset(json.rows);
-						_stateMachine.event("subscribeToViewChanges", json.update_seq);
-					}, this);
-				}, this, "Synched"],
-				
-				["getDocument", function () { 
-					_transport.request(_channel, {
-						method: "GET",
-						path: "/" + _database + "/" + _document
-					}, function (results) {
-						var json = JSON.parse(results);
-						if (json._id) {
-							this.reset(json);
-							_stateMachine.event("subscribeToDocumentChanges");	
-						} else {
-							_syncPromise.reject(this);
-						}
-					}, this);
-				}, this, "Synched"]],
-						
-			"Synched": [
-			            
-	            ["updateDatabase", function () {
-	            	_transport.request(_channel, {
-	            		method: "PUT",
-	            		path: '/' + _database + '/' + _document,
-	            		headers: {
-	            			"Content-Type": "application/json"
-	            		},
-	            		data: this.toJSON()
-	            	}, function () {
-	            		_stateMachine.event("subscribeToDocumentChanges");
-	            	});
-	            }, this],
-			           
-			  ["subscribeToViewChanges", function (update_seq) {
-					_transport.listen(_channel
+		actions = {
+			
+			/**
+			 * Get a CouchDB view
+			 * @private
+			 */
+			getView: function () {
+				_transport.request(_channel, {
+					method: "GET",
+					path: "/" + _database + "/_design/" + _design + "/" + "_view/" + _view +"?update_seq=true"
+				}, function (results) {
+					var json = JSON.parse(results);
+					_dbInfo = {
+							total_rows: json.total_rows,
+							update_seq: json.update_seq,
+							offset: json.offset
+					};
+					
+					this.reset(json.rows);
+					_stateMachine.event("subscribeToViewChanges", json.update_seq);
+				}, this);
+			},
+			
+			/**
+			 * Get a CouchDB document
+			 * @private
+			 */
+			getDocument: function () { 
+				_transport.request(_channel, {
+					method: "GET",
+					path: "/" + _database + "/" + _document
+				}, function (results) {
+					var json = JSON.parse(results);
+					if (json._id) {
+						this.reset(json);
+						_stateMachine.event("subscribeToDocumentChanges");	
+					} else {
+						_syncPromise.reject(this);
+					}
+				}, this);
+			},
+			
+			/**
+			 * Put a new document in CouchDB
+			 * @private
+			 */
+			createDocument: function () {
+            	_transport.request(_channel, {
+            		method: "PUT",
+            		path: '/' + _database + '/' + _document,
+            		headers: {
+            			"Content-Type": "application/json"
+            		},
+            		data: this.toJSON()
+            	}, function () {
+            		_stateMachine.event("subscribeToDocumentChanges");
+            	});
+            },
+            
+            /**
+             * Subscribe to changes when synchronized with a view
+             * @param {Number} the update_seq given by getView, it'll be passed to since in the GET request
+             * @private
+             */
+            subscribeToViewChanges: function (update_seq) {
+				_transport.listen(_channel
 					, "/" + _database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
 					, function (changes) {
 						// Should I test for this very special case (heartbeat?)
@@ -149,9 +157,13 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						}
 						_stateMachine.event(action, json.id);
 					}, this);
-				}, this, "Listening"],
+				},
 				
-				["subscribeToDocumentChanges", function () {
+				/**
+				 * Subscribe to changes when synchronized with a document
+				 * @private
+				 */
+				subscribeToDocumentChanges: function () {
 					_transport.listen(_channel
 					, "/" + _database + "/_changes?feed=continuous&heartbeat=20000"
 					, function (changes) {
@@ -176,15 +188,17 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 							}
 						 }
 					}, this);
-				}, this, "Listening"]],
+				},
 				
-			"Listening": [
-			              
-	              ["entry", function () {
-	            	  _syncPromise.resolve(this);
-	              }, this],
-			              
-			    ["change", function (id) {
+				/**
+				 * Update in the Store a document that was updated in CouchDB
+				 * Get the whole view :(, then get the modified document and update it.
+				 * I have no choice but to request the whole view and look for the document
+				 * so I can also retrieve its position in the store (idx) and update the item.
+				 * Maybe I've missed something
+				 * @private
+				 */
+				updateDocumentInStore: function (id) {
 					_transport.request(_channel,{
 						method: "GET",
 						path: '/'+_database+'/_design/'+_design+'/_view/'+_view
@@ -200,17 +214,25 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						
 					}, this);
 					
-				}, this],
+				},
 				
-				["delete", function (id) {
+				/**
+				 * Remove from the Store a document that was removed in CouchDB
+				 * @private
+				 */
+				removeDocInStore: function (id) {
 					this.loop(function (value, idx) {
 						if (value.id == id) {
 							this.del(idx);
 						}
 					}, this);
-				}, this],
+				},
 				
-				["add", function (id) {
+				/**
+				 * Add in the Store a document that was added in CouchDB
+				 * @private
+				 */
+				addDocInStore: function (id) {
 					_transport.request(_channel,{
 						method: "GET",
 						path: '/'+_database+'/_design/'+_design+'/_view/'+_view
@@ -224,22 +246,35 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						}, this);
 						
 					}, this);
-				}, this],
+				},
 				
-				["updateDoc", function () {
+				/**
+				 * Update the document when synchronized with a document.
+				 * This differs than updating a document in a View
+				 * @private
+				 */
+				updateDoc: function () {
 					_transport.request(_channel,{
 						method: "GET",
 						path: '/'+_database+'/' + _document
 					}, function (doc) {
 						this.reset(JSON.parse(doc));			
 					}, this);
-			    }, this],
+			    },
 			    
-			    ["deleteDoc", function () {
+			    /**
+			     * Delete all document's properties
+			     * @private
+			     */
+			    deleteDoc: function () {
 			    	this.reset({});			
-			    }, this],
+			    },
 			    
-			    ["updateDatabase", function () {
+			    /**
+			     * Update a document in CouchDB through a PUT request
+			     * @private
+			     */
+			    updateDatabase: function () {
 			    	_transport.request(_channel, {
 	            		method: "PUT",
 	            		path: '/' + _database + '/' + _document,
@@ -248,14 +283,48 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 	            		},
 	            		data: this.toJSON()
 	            	});
-			    }, this],
+			    },
 			    
-			    ["removeFromDatabase", function () {
+			    /**
+			     * Remove a document from CouchDB through a DELETE request
+			     * @private
+			     */
+			    removeFromDatabase: function () {
 			    	_transport.request(_channel, {
 	            		method: "DELETE",
 	            		path: '/' + _database + '/' + _document + '?rev=' + this.get("_rev")
 	            	});
-			    }, this]
+			    }
+		},
+		
+		/**
+		 * The state machine
+		 * @private
+		 * it concentrates almost the whole logic.
+		 */
+		_stateMachine = new StateMachine("Unsynched", {
+			"Unsynched": [
+			    ["getView", actions.getView, this, "Synched"],
+				["getDocument", actions.getDocument, this, "Synched"]
+			 ],
+						
+			"Synched": [
+			    ["updateDatabase", actions.createDocument, this],
+			    ["subscribeToViewChanges", actions.subscribeToViewChanges, this, "Listening"],
+				["subscribeToDocumentChanges", actions.subscribeToDocumentChanges, this, "Listening"]
+			 ],
+				
+			"Listening": [
+			    ["entry", function () {
+	            	  _syncPromise.resolve(this);
+	             }, this],
+			    ["change", actions.updateDocInStore, this],
+				["delete", actions.removeDocInStore, this],
+				["add", actions.addDocInStore, this],
+				["updateDoc", actions.updateDoc, this],
+			    ["deleteDoc", actions.deleteDoc, this],
+			    ["updateDatabase", actions.updateDatabase, this],
+			    ["removeFromDatabase", actions.removeFromDatabase, this]
 			   ]
 			
 		});
