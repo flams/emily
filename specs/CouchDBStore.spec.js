@@ -246,7 +246,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		});
 		
 		it("should not fail with empty json from heartbeat", function () {
-			
 			var callback;
 			
 			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
@@ -258,49 +257,53 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 
 		});
 		
-		it("should reflect changes and resolve the sync promise", function () {
-			var requestRes = {
-					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
-					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
-					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
-					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-				'/db/_design/design/_view/view' : '{"total_rows":3,"offset":0,"rows":[' +
-					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
-					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
-					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}'                                                                                    	            
-				},
-				asyncRequest,
-				asyncListen,
-				listenRes = '{"seq":9,"id":"document3","changes":[{"rev":"2-4f2957d984aa9d94d4298407f3292a47"}]}',
-				spy = jasmine.createSpy(),
-				promise;
+		it("should call for document update if one of them has changed", function () {
+			var listenRes = '{"seq":9,"id":"document3","changes":[{"rev":"2-4f2957d984aa9d94d4298407f3292a47"}]}',
+				callback;
 
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, requestRes[reqData.path]);
-				};
-			};
-
-			transportMock.listen = function (channel, path, callback, scope) {
-				asyncListen = function () {
-					callback.call(scope, listenRes);
-				};
-			};
+			spyOn(stateMachine, "event");
 			
-
-			spyOn(transportMock, "request").andCallThrough();
-			couchDBStore.watch("updated", spy);
-			promise = couchDBStore.sync("db", "design", "view");
-			spyOn(promise, "resolve");
-			asyncRequest();
-			expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Listening");
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
-			asyncListen();
-			asyncRequest();
-			expect(spy.wasCalled).toEqual(true);
-			expect(spy.mostRecentCall.args[0]).toEqual(2);
-			expect(spy.mostRecentCall.args[1].value.title).toEqual("the 3rd document");
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			callback(listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("change");
+			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document3");
+		});
+		
+		it("should call for document addition if one of them was added", function () {
+			var listenRes = '{"seq":10,"id":"document4","changes":[{"rev":"1-5a99f185bc942f626934108bd604bb33"}]}',
+				callback;
+	
+			spyOn(stateMachine, "event");
+			
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			callback(listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("add");
+			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document4");
+		});
+		
+		it("should call for document removal if one of them was removed", function () {
+			var listenRes = '{"seq":11,"id":"document4","changes":[{"rev":"2-36ec9b80dce993a4a6a9ee311d266807"}],"deleted":true}',
+				callback;
+	
+			spyOn(stateMachine, "event");
+			
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			callback(listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("delete");
+			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document4");
+		});
+		
+		it("should update the selected document", function () {
+			
 		});
 		
 		it("should add new items", function () {
