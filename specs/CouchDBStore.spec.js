@@ -332,83 +332,80 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			
 		});
 		
-		it("should add new items", function () {
-			var requestRes = {
-					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":9,"offset":0,"rows":[' +
-						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
-						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
-						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}',
-				'/db/_design/design/_view/view':'{"total_rows":4,"offset":0,"rows":[' +
-						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
-						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
-						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}},' +
-						'{"id":"document4","key":"2012/01/13 23:37:12","value":{"date":"2012/01/13 23:37:12","title":"the 4th\'s just been added","body":"do you see me?"}}]}'                                                                                  	            
-				},
-				asyncRequest,
-				asyncListen,
-				listenRes = '{"seq":10,"id":"document4","changes":[{"rev":"1-5a99f185bc942f626934108bd604bb33"}]}',
-				spy = jasmine.createSpy();
-
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, requestRes[reqData.path]);
-				};
-			};
-
-			transportMock.listen = function (channel, path, callback, scope) {
-				asyncListen = function () {
-					callback.call(scope, listenRes);
-				};
-			};
+		it("should add the new document", function () {
+			var reqData,
+				value,
+				listenRes = '{"total_rows":4,"offset":0,"rows":[' +
+					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
+					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
+					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}},' +
+					'{"id":"document4","key":"2012/01/13 23:37:12","value":{"date":"2012/01/13 23:37:12","title":"the 4th\'s just been added","body":"do you see me?"}}]}';                                                                                   	            
 			
-			spyOn(transportMock, "request").andCallThrough();
-			couchDBStore.watch("added", spy);
-			couchDBStore.sync("db", "design", "view");
-			asyncRequest();
-			expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Listening");
-			asyncListen();
-			asyncRequest();
-			expect(spy.wasCalled).toEqual(true);
-			expect(spy.callCount).toEqual(4);
-			expect(spy.mostRecentCall.args[0]).toEqual(3);
-			expect(spy.mostRecentCall.args[1].value.title).toEqual("the 4th\'s just been added");
+			spyOn(couchDBStore, "alter");
+			
+			couchDBStore.actions.addDocInStore.call(couchDBStore, "document4");
+			expect(transportMock.request.wasCalled).toEqual(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+	
+			reqData = transportMock.request.mostRecentCall.args[1];
+			expect(reqData["method"]).toEqual("GET");
+			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
+		
+			callback = transportMock.request.mostRecentCall.args[2];
+			expect(callback).toBeInstanceOf(Function);
+			callback.call(couchDBStore, listenRes);
+			
+			expect(couchDBStore.alter.wasCalled).toEqual(true);
+			expect(couchDBStore.alter.mostRecentCall.args[0]).toEqual("splice");
+			expect(couchDBStore.alter.mostRecentCall.args[1]).toEqual(3);
+			expect(couchDBStore.alter.mostRecentCall.args[2]).toEqual(0);
+			value = couchDBStore.alter.mostRecentCall.args[3];
+			
+			expect(value.value.body).toEqual("do you see me?");
 		});
 		
-		it("should remove deleted items", function () {
-			var requestRes = {
-					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":4,"update_seq":10,"offset":0,"rows":[' + 
-						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
-						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
-						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}},' +
-						'{"id":"document4","key":"2012/01/13 23:37:12","value":{"date":"2012/01/13 23:37:12","title":"the 4th\'s just been added","body":"do you see me?"}}]}'                                                                          	            
-				},
-				asyncRequest,
-				asyncListen,
-				listenRes = '{"seq":11,"id":"document4","changes":[{"rev":"2-36ec9b80dce993a4a6a9ee311d266807"}],"deleted":true}',
-				spy = jasmine.createSpy();
-
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, requestRes[reqData.path]);
-				};
-			};
-
-			transportMock.listen = function (channel, path, callback, scope) {
-				asyncListen = function () {
-					callback.call(scope, listenRes);
-				};
-			};
+		it("should delete the removed document", function () {
+			couchDBStore.reset([{
+				"id":"document1",
+				"key":"2012/01/13 12:45:56",
+				"value":{
+					"date":"2012/01/13 12:45:56",
+					"title":"my first document",
+					"body":"in this database"
+				}
+			},
+			{
+				"id":"document2",
+				"key":"2012/01/13 13:45:21",
+				"value":{
+					"date":"2012/01/13 13:45:21",
+					"title":"this is a new document",
+					"body":"in the database"
+				}
+			},
+			{
+				"id":"document3",
+				"key":"2012/01/13 21:45:12",
+				"value":{
+					"date":"2012/01/13 21:45:12",
+					"title":"the 3rd document",
+					"body":"a change for the example"
+				}
+			},
+			{
+				"id":"document4",
+				"key":"2012/01/13 23:37:12",
+				"value":{
+					"date":"2012/01/13 23:37:12",
+					"title":"the 4th\'s just been added",
+					"body":"do you see me?"
+				}
+			}]);
 			
-			spyOn(transportMock, "request").andCallThrough();
-			couchDBStore.watch("deleted", spy);
-			couchDBStore.sync("db", "design", "view");
-			asyncRequest();
-			asyncListen();
-			expect(spy.wasCalled).toEqual(true);
-			expect(spy.callCount).toEqual(1);
-			expect(spy.mostRecentCall.args[0]).toEqual(3);
-			expect(spy.mostRecentCall.args[1]).toBeUndefined();
-			expect(couchDBStore.get(4)).toBeUndefined();
+			spyOn(couchDBStore, "del");
+			couchDBStore.actions.removeDocInStore.call(couchDBStore, "document4");
+			expect(couchDBStore.del.wasCalled).toEqual(true);
+			expect(couchDBStore.del.mostRecentCall.args[0]).toEqual(3);
 		});
 	});
 	
