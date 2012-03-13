@@ -188,12 +188,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 	
 	describe("CouchDBStoreViewData", function () {
 		
-		var couchDBStore = null;
+		var couchDBStore = null,
+			stateMachine = null;
 		
 		beforeEach(function () {
 			couchDBStore = new CouchDBStore;
 			couchDBStore.setTransport(transportMock);
 			couchDBStore.setSyncInfo("db", "design", "view");
+			stateMachine = couchDBStore.getStateMachine();
 		});
 		
 		it("should get a view's data", function () {
@@ -209,105 +211,50 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData["path"]).toEqual("/db/_design/design/_view/view?update_seq=true");
 		});
 		
-		it("should populate the store on sync and notify", function () {
+		it("should reset the store on sync and ask for changes subscribtion", function () {
 			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
 						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
 						'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-	            spy = jasmine.createSpy();
+	           callback;
 			
-			transportMock.request = function (channel, reqData, callback, scope) {
-				callback.call(scope, res);
-			};
+			spyOn(stateMachine, "event");
+			spyOn(couchDBStore, "reset");
+			couchDBStore.actions.getView.call(couchDBStore);
+			callback = transportMock.request.mostRecentCall.args[2];
 			
-			couchDBStore.watch("added", spy);
-
-			couchDBStore.sync("db", "design", "view");
-			expect(spy.callCount).toEqual(3);
-			expect(couchDBStore.getNbItems()).toEqual(3);
-			expect(couchDBStore.get(0).value.date).toEqual("2012/01/13 12:45:56");
-			expect(couchDBStore.get(2).value.title).toEqual("the 3rd document");
+			callback.call(couchDBStore, res);
+			expect(couchDBStore.reset.wasCalled).toEqual(true);
+			expect(couchDBStore.reset.mostRecentCall.args[0]).toBeInstanceOf(Object);
+			expect(couchDBStore.reset.mostRecentCall.args[0][0].value.date).toEqual("2012/01/13 12:45:56");
+			expect(couchDBStore.reset.mostRecentCall.args[0][2].value.title).toEqual("the 3rd document");
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToViewChanges");
+			expect(stateMachine.event.mostRecentCall.args[1]).toEqual(8);
+			
+			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
 		
-		
-		/**it("should call the promise resolution on sync", function () {
-			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
-				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
-				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
-				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-			    promise,
-			    asyncRequest;
-			
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, res);
-				};
-			};
-
-			promise = couchDBStore.sync("db", "design", "view");
-			spyOn(promise, "resolve");
-			asyncRequest();
-			
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0]).toEqual(couchDBStore);
-
-		});*/
-		
-		it("should subscribe to changes", function () {
-			
-			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
-				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
-				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
-				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}',
-	            asyncRequest;
-			
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, res);
-				};
-			};
-			
-			transportMock.listen = jasmine.createSpy();
-
-			couchDBStore.sync("db", "desgin", "view");
-			asyncRequest();
+		it("should subscribe to view changes", function () {
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
 			expect(transportMock.listen.mostRecentCall.args[1]).toEqual("/db/_changes?feed=continuous&heartbeat=20000&since=8");
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
-			
+			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
 		
 		it("should not fail with empty json from heartbeat", function () {
-			var requestRes = {
-					'/db/_design/design/_view/view?update_seq=true': '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
-					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
-					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
-					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"for the example"}}]}'
-				},
-				asyncRequest,
-				asyncListen,
-				listenRes = '\n';
-
-				transportMock.request = function (channel, reqData, callback, scope) {
-					asyncRequest = function () {
-						callback.call(scope, requestRes[reqData.path]);
-					};
-				};
-	
-				transportMock.listen = function (channel, path, callback, scope) {
-					asyncListen = function () {
-						callback.call(scope, listenRes);
-					};
-				};
-				
-				spyOn(transportMock, "request").andCallThrough();
-
-				couchDBStore.sync("db", "design", "view");
-				asyncRequest();
-				expect(function() {
-					asyncListen();
-				}).not.toThrow();
+			
+			var callback;
+			
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			
+			expect(function() {
+				callback("\n");
+			}).not.toThrow();
 
 		});
 		
