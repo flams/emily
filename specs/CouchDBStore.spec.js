@@ -15,15 +15,17 @@
  * 	}
  */
 
-require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Promise) {
+require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBStore, Store, Promise, StateMachine) {
 	
-	var transportMock = null;
+	var transportMock = null,
+		couchDBStore = null;
 	
 	beforeEach(function () {
 		transportMock = {
 				listen: jasmine.createSpy("listen"),
 				request: jasmine.createSpy("request")
 			};
+		couchDBStore = new CouchDBStore;
 	});
 	
 	describe("CouchDBStoreTest", function () {
@@ -56,30 +58,130 @@ require(["CouchDBStore", "Store", "Promise"], function (CouchDBStore, Store, Pro
 		});
 	});
 	
+	describe("CouchDBStoreStateMachine", function () {
+		it("should have a function to get the StateMachine", function () {
+			expect(couchDBStore.getStateMachine).toBeInstanceOf(Function);
+			expect(couchDBStore.getStateMachine()).toBeInstanceOf(StateMachine);
+		});
+	});
+	
+	describe("CouchDBStoreSyncInfo", function () {
+		it("should have a function to set sync info", function () {
+			expect(couchDBStore.setSyncInfo).toBeInstanceOf(Function);
+			expect(couchDBStore.setSyncInfo("db")).toEqual(false);
+			expect(couchDBStore.setSyncInfo("db", "document")).toEqual(true);
+			expect(couchDBStore.setSyncInfo("db", "design", "view")).toEqual(true);
+		});
+		
+		it("should have a function to get sync info for a document", function () {
+			var syncInfo;
+			
+			expect(couchDBStore.getSyncInfo).toBeInstanceOf(Function);
+			couchDBStore.setSyncInfo("db", "document");
+			syncInfo = couchDBStore.getSyncInfo();
+			
+			expect(syncInfo).toBeInstanceOf(Object);
+			expect(syncInfo["database"]).toEqual("db");
+			expect(syncInfo["document"]).toEqual("document");
+			expect(syncInfo["design"]).toBeUndefined();
+			expect(syncInfo["view"]).toBeUndefined();
+		});
+		
+		it("should have a function to get sync info for a view", function () {
+			var syncInfo;
+			
+			couchDBStore.setSyncInfo("db", "design", "view");
+			syncInfo = couchDBStore.getSyncInfo();
+			
+			expect(syncInfo["database"]).toEqual("db");
+			expect(syncInfo["document"]).toBeUndefined();
+			expect(syncInfo["design"]).toEqual("design");
+			expect(syncInfo["view"]).toEqual("view");
+		});
+	});
+	
 	/**
 	 * A couchDB Store can synchronize with a view
 	 * A view is a list of documents
 	 */
 	describe("CouchDBStoreSyncView", function () {
 		
-		var couchDBStore = null;
+		var couchDBStore = null,
+			stateMachine = null;
 		
 		beforeEach(function () {
 			couchDBStore = new CouchDBStore;
 			couchDBStore.setTransport(transportMock);
+			stateMachine = couchDBStore.getStateMachine();
 		});
 		
-		it("should have a function to get its current state", function () {
-			expect(couchDBStore.getStateMachine).toBeInstanceOf(Function);
+		it("should initialize in Unynched state", function () {
 			expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Unsynched");
 		});
 		
-		it("should have a function to synchronize with a couchdb view", function () {
-			expect(couchDBStore.sync).toBeInstanceOf(Function);
-			expect(couchDBStore.sync("no")).toEqual(false);
-			expect(couchDBStore.sync("no", true)).toEqual(false);
-			expect(couchDBStore.sync("yes", "no", false)).toEqual(false);
-			expect(couchDBStore.sync("yes", "yes", "yes")).toBeInstanceOf(Promise);
+		it("should have the following states, transitions and actions", function () {
+			var Unsynched,
+				Synched,
+				Listening,
+				getView,
+				subscribeToViewChanges,
+				entry,
+				change,
+				del,
+				add;
+			
+			Unsynched = stateMachine.get("Unsynched");
+			expect(Unsynched).toBeTruthy();
+			getView = Unsynched.get("getView");
+			expect(getView[0]).toBe(couchDBStore.actions.getView);
+			expect(getView[1]).toBe(couchDBStore);
+			expect(getView[2]).toEqual("Synched");
+			
+			Synched = stateMachine.get("Synched");
+			expect(Synched).toBeTruthy();
+			subscribeToViewChanges = Synched.get("subscribeToViewChanges");
+			expect(subscribeToViewChanges[0]).toBe(couchDBStore.actions.subscribeToViewChanges);
+			expect(subscribeToViewChanges[1]).toBe(couchDBStore);
+			expect(subscribeToViewChanges[2]).toEqual("Listening");
+			
+			Listening = stateMachine.get("Listening");
+			expect(Listening).toBeTruthy();
+			
+			entry = Listening.get("entry");
+			expect(entry[0]).toBe(couchDBStore.actions.resolve);
+			expect(entry[1]).toBe(couchDBStore);
+			
+			change = Listening.get("change");
+			expect(change[0]).toBe(couchDBStore.actions.updateDocInStore);
+			expect(change[1]).toBe(couchDBStore);
+			
+			del = Listening.get("delete");
+			expect(del[0]).toBe(couchDBStore.actions.removeDocInStore);
+			expect(del[1]).toBe(couchDBStore);
+			
+			add = Listening.get("add");
+			expect(add[0]).toBe(couchDBStore.actions.addDocInStore);
+			expect(add[1]).toBe(couchDBStore);
+		});
+		
+		it("should call setSyncInfo on sync", function () {
+			spyOn(couchDBStore, "setSyncInfo");
+			couchDBStore.sync("database", "document", "view");
+			expect(couchDBStore.setSyncInfo.wasCalled).toEqual(true);
+			expect(couchDBStore.setSyncInfo.mostRecentCall.args[0]).toEqual("database");
+			expect(couchDBStore.setSyncInfo.mostRecentCall.args[1]).toEqual("document");
+			expect(couchDBStore.setSyncInfo.mostRecentCall.args[2]).toEqual("view");
+		});
+		
+		it("should return a promise on sync", function () {
+			expect(couchDBStore.sync("database", "document", "view")).toBeInstanceOf(Promise);
+		});
+		
+		it("should call getView on sync", function () {
+			spyOn(stateMachine, "event"),
+			couchDBStore.sync("document", "design", "view");
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("getView");
 		});
 		
 		it("should call Transport to issue the sync request", function () {

@@ -147,6 +147,7 @@ function StateMachine(Tools) {
 		
 		/**
 		 * Add a new transition
+		 * @private
 		 * @param {String} event the event that will trigger the transition
 		 * @param {Function} action the function that is executed
 		 * @param {Object} scope [optional] the scope in which to execute the action
@@ -187,6 +188,7 @@ function StateMachine(Tools) {
 		
 		/**
 		 * Check if a transition can be triggered with given event
+		 * @private
 		 * @param {String} event the name of the event
 		 * @returns {Boolean} true if exists
 		 */
@@ -195,9 +197,20 @@ function StateMachine(Tools) {
 		};
 		
 		/**
+		 * Get a transition from it's event
+		 * @private
+		 * @param {String} event the name of the event
+		 * @return the transition
+		 */
+		this.get = function get(event) {
+			return _transitions[event] || false;
+		};
+		
+		/**
 		 * Execute the action associated to the given event
 		 * @param {String} event the name of the event
 		 * @param {params} params to pass to the action
+		 * @private
 		 * @returns false if error, the next state or undefined if success (that sounds weird)
 		 */
 		this.event = function event(event) {

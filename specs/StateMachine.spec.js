@@ -77,6 +77,7 @@ require(["StateMachine"], function (StateMachine) {
 			expect(state.add).toBeInstanceOf(Function);
 			expect(state.event).toBeInstanceOf(Function);
 			expect(state.has).toBeInstanceOf(Function);
+			expect(state.get).toBeInstanceOf(Function);
 		});
 		
 		it("should add an action without transition", function () {
@@ -91,6 +92,19 @@ require(["StateMachine"], function (StateMachine) {
 			expect(state.add(event, action)).toEqual(false);
 			
 			expect(state.has(event));
+		});
+		
+		it("should get a previously added transition", function () {
+			var action = jasmine.createSpy(),
+				event = "on",
+				transition;
+			
+			state.add(event, action);
+			expect(state.get()).toEqual(false);
+			expect(state.get("off")).toEqual(false);
+			transition = state.get(event);
+			expect(transition).toBeTruthy();
+			expect(transition[0]).toBe(action);
 		});
 		
 		it("should execute action on message", function () {

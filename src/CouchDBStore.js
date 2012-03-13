@@ -33,30 +33,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		_transport = null,
 		
-		/**
-		 * The database name
-		 * @private
-		 */
-		_database = null,
-		
-		/**
-		 * The name of the view
-		 * @private
-		 */
-		_view = null,
-		
-		/**
-		 * The name of the document
-		 * @private
-		 */
-		_document = null,
-		
-		/**
-		 * The name of the design document
-		 * @private
-		 */
-		_design = null,
-		
+		_syncInfo = {},
+				
 		/**
 		 * An object to store info like update_sq
 		 * @private
@@ -80,7 +58,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			getView: function () {
 				_transport.request(_channel, {
 					method: "GET",
-					path: "/" + _database + "/_design/" + _design + "/" + "_view/" + _view +"?update_seq=true"
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + "_view/" + _syncInfo.view +"?update_seq=true"
 				}, function (results) {
 					var json = JSON.parse(results);
 					_dbInfo = {
@@ -101,7 +79,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			getDocument: function () { 
 				_transport.request(_channel, {
 					method: "GET",
-					path: "/" + _database + "/" + _document
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document
 				}, function (results) {
 					var json = JSON.parse(results);
 					if (json._id) {
@@ -120,7 +98,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			createDocument: function () {
             	_transport.request(_channel, {
             		method: "PUT",
-            		path: '/' + _database + '/' + _document,
+            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
             		headers: {
             			"Content-Type": "application/json"
             		},
@@ -137,7 +115,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
              */
             subscribeToViewChanges: function (update_seq) {
 				_transport.listen(_channel
-					, "/" + _database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
+					, "/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
 					, function (changes) {
 						// Should I test for this very special case (heartbeat?)
 						// Or do I have to try catch for any invalid json?
@@ -165,7 +143,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				 */
 				subscribeToDocumentChanges: function () {
 					_transport.listen(_channel
-					, "/" + _database + "/_changes?feed=continuous&heartbeat=20000"
+					, "/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000"
 					, function (changes) {
 						var json;
 						// Should I test for this very special case (heartbeat?)
@@ -177,7 +155,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						json = JSON.parse(changes);
 						
 						// The document is the modified document is the current one
-						if (json.id == _document && 
+						if (json.id == _syncInfo.document && 
 							// And if it has a new revision
 							json.changes.pop().rev != this.get("_rev")) {
 							
@@ -198,10 +176,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				 * Maybe I've missed something
 				 * @private
 				 */
-				updateDocumentInStore: function (id) {
+				updateDocInStore: function (id) {
 					_transport.request(_channel,{
 						method: "GET",
-						path: '/'+_database+'/_design/'+_design+'/_view/'+_view
+						path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
 					}, function (view) {
 						var json = JSON.parse(view);
 						
@@ -235,7 +213,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				addDocInStore: function (id) {
 					_transport.request(_channel,{
 						method: "GET",
-						path: '/'+_database+'/_design/'+_design+'/_view/'+_view
+						path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
 					}, function (view) {
 						var json = JSON.parse(view);
 						
@@ -256,7 +234,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				updateDoc: function () {
 					_transport.request(_channel,{
 						method: "GET",
-						path: '/'+_database+'/' + _document
+						path: '/'+_syncInfo.database+'/' + _syncInfo.document
 					}, function (doc) {
 						this.reset(JSON.parse(doc));			
 					}, this);
@@ -277,7 +255,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			    updateDatabase: function () {
 			    	_transport.request(_channel, {
 	            		method: "PUT",
-	            		path: '/' + _database + '/' + _document,
+	            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
 	            		headers: {
 	            			"Content-Type": "application/json"
 	            		},
@@ -292,9 +270,13 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			    removeFromDatabase: function () {
 			    	_transport.request(_channel, {
 	            		method: "DELETE",
-	            		path: '/' + _database + '/' + _document + '?rev=' + this.get("_rev")
+	            		path: '/' + _syncInfo.database + '/' + _syncInfo.document + '?rev=' + this.get("_rev")
 	            	});
-			    }
+			    },
+			    
+			    resolve: function () {
+	            	  _syncPromise.resolve(this);
+	             }
 		},
 		
 		/**
@@ -315,9 +297,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 ],
 				
 			"Listening": [
-			    ["entry", function () {
-	            	  _syncPromise.resolve(this);
-	             }, this],
+			    ["entry", actions.resolve, this],
 			    ["change", actions.updateDocInStore, this],
 				["delete", actions.removeDocInStore, this],
 				["add", actions.addDocInStore, this],
@@ -338,18 +318,33 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		this.sync = function sync() {
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
-				_database = arguments[0];
-				_design = arguments[1];
-				_view = arguments[2];
+				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
 				_stateMachine.event("getView");
 				return _syncPromise;
 			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "undefined") {
-				_database = arguments[0];
-				_document = arguments[1];
+				this.setSyncInfo(arguments[0], arguments[1]);
 				_stateMachine.event("getDocument");
 				return _syncPromise;
 			}
 			return false;
+		};
+		
+		this.setSyncInfo = function setSyncInfo() {
+			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
+				_syncInfo["database"] = arguments[0];
+				_syncInfo["design"] = arguments[1];
+				_syncInfo["view"] = arguments[2];
+				return true;
+			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "undefined") {
+				_syncInfo["database"] = arguments[0];
+				_syncInfo["document"] = arguments[1];
+				return true;
+			}
+			return false;
+		};
+		
+		this.getSyncInfo = function getSyncInfo() {
+			return _syncInfo;
 		};
 		
 		/**
@@ -410,6 +405,12 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		this.getTransport = function getTransport() {
 			return _transport;
 		};
+		
+		/**
+		 * The functions called by the stateMachine made available for testing purpose
+		 * @private
+		 */
+		this.actions = actions;
 
 	};
 	
