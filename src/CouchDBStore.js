@@ -34,12 +34,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		_transport = null,
 		
 		_syncInfo = {},
-				
-		/**
-		 * An object to store info like update_sq
-		 * @private
-		 */
-		_dbInfo = {},
 		
 		/**
 		 * The promise that is returned by sync
@@ -61,12 +55,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + "_view/" + _syncInfo.view +"?update_seq=true"
 				}, function (results) {
 					var json = JSON.parse(results);
-					_dbInfo = {
-							total_rows: json.total_rows,
-							update_seq: json.update_seq,
-							offset: json.offset
-					};
-					
 					this.reset(json.rows);
 					_stateMachine.event("subscribeToViewChanges", json.update_seq);
 				}, this);
@@ -361,17 +349,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		this.remove = function remove() {
 			return _stateMachine.event("removeFromDatabase");
-		};
-		
-		/**
-		 * Get a specific info about the current view
-		 * Should be used only for debugging
-		 * @param {String} name (update_seq/offset/total_rows)
-		 * Note: if you want to get the number of items, store.getNbItems() is the func for that
-		 * @returns the info
-		 */
-		this.getDBInfo = function getDBInfo(name) {
-			return _dbInfo[name];
 		};
 		
 		/**

@@ -184,10 +184,23 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("getView");
 		});
 		
-		it("should call Transport to issue the sync request", function () {
+	});
+	
+	describe("CouchDBStoreViewData", function () {
+		
+		var couchDBStore = null;
+		
+		beforeEach(function () {
+			couchDBStore = new CouchDBStore;
+			couchDBStore.setTransport(transportMock);
+			couchDBStore.setSyncInfo("db", "design", "view");
+		});
+		
+		it("should get a view's data", function () {
 			var reqData;
 			
-			couchDBStore.sync("db", "design", "view"),
+			couchDBStore.setSyncInfo("db", "design", "view");
+			couchDBStore.actions.getView();
 			expect(transportMock.request).toHaveBeenCalled();
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 			
@@ -215,11 +228,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(couchDBStore.getNbItems()).toEqual(3);
 			expect(couchDBStore.get(0).value.date).toEqual("2012/01/13 12:45:56");
 			expect(couchDBStore.get(2).value.title).toEqual("the 3rd document");
-			
-			expect(couchDBStore.getDBInfo).toBeInstanceOf(Function);
-			expect(couchDBStore.getDBInfo("update_seq")).toEqual(8);
-			expect(couchDBStore.getDBInfo("total_rows")).toEqual(3);
-			expect(couchDBStore.getDBInfo("offset")).toEqual(0);
 		});
 		
 		
