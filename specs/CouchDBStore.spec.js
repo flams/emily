@@ -198,8 +198,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		
 		it("should get a view's data", function () {
 			var reqData;
-			
-			couchDBStore.setSyncInfo("db", "design", "view");
+
 			couchDBStore.actions.getView();
 			expect(transportMock.request).toHaveBeenCalled();
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
