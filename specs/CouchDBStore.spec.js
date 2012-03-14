@@ -470,9 +470,9 @@ describe("CouchDBStoreSyncDocument", function () {
 			expect(deleteDoc[0]).toBe(couchDBStore.actions.deleteDoc);
 			expect(deleteDoc[1]).toBe(couchDBStore);
 			
-			updateDatabase = Listening.get("updateDatabase");
-			expect(updateDatabase[0]).toBe(couchDBStore.actions.updateDatabase);
-			expect(updateDatabase[1]).toBe(couchDBStore);
+			ListeningUpdateDatabase = Listening.get("updateDatabase");
+			expect(ListeningUpdateDatabase[0]).toBe(couchDBStore.actions.updateDatabase);
+			expect(ListeningUpdateDatabase[1]).toBe(couchDBStore);
 			
 			removeFromDatabase = Listening.get("removeFromDatabase");
 			expect(removeFromDatabase[0]).toBe(couchDBStore.actions.removeFromDatabase);
@@ -505,167 +505,98 @@ describe("CouchDBStoreSyncDocument", function () {
 	 * A couchDBstore can synchronize with a document
 	 * A document is a JSON object
 	 */
-	describe("CouchDBStoreSyncDocument", function () {
+	describe("CouchDBStoreDocumentData", function () {
 		
-		var couchDBStore = null;
+		var couchDBStore = null,
+			stateMachine = null;
 		
 		beforeEach(function () {
 			couchDBStore = new CouchDBStore;
 			couchDBStore.setTransport(transportMock);
+			couchDBStore.setSyncInfo("db", "document1");
+			stateMachine = couchDBStore.getStateMachine();
 		});
 		
-		it("should have a function to synchronize with a couchdb document", function () {
-			expect(couchDBStore.sync).toBeInstanceOf(Function);
-			expect(couchDBStore.sync("no")).toEqual(false);
-			expect(couchDBStore.sync("no", true)).toEqual(false);
-			expect(couchDBStore.sync("yes", "yes")).toBeInstanceOf(Promise);
-		});
-		
-		it("should call Transport to issue the sync request", function () {
+		it("get a document's data", function () {
 			var reqData; 
 			
-			couchDBStore.sync("db", "document1");
-			expect(transportMock.request).toHaveBeenCalled();
-			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			couchDBStore.actions.getDocument.call(couchDBStore);
 			
+			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 			reqData = transportMock.request.mostRecentCall.args[1];
 			expect(reqData).toBeInstanceOf(Object);
 			expect(reqData["method"]).toEqual("GET");
 			expect(reqData["path"]).toEqual("/db/document1");
+			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
+			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
 		
-		it("should populate the store on sync and notify", function () {
+		it("should reset the store on sync and ask fro changes subscribtion", function () {
 			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-	            spy = jasmine.createSpy(),
-	            asyncRequest;
+				callback,
+				doc;
 			
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, res);
-				};
-			};
+			couchDBStore.actions.getDocument.call(couchDBStore);
 			
-			spyOn(transportMock, "request").andCallThrough();
-			couchDBStore.watch("added", spy);
-			couchDBStore.sync("db", "document1");
-			asyncRequest();
-			expect(spy.callCount).toEqual(5);
-			expect(couchDBStore.getNbItems()).toEqual(5);
-			expect(couchDBStore.get("_id")).toEqual("document1");
-			expect(couchDBStore.get("_rev")).toEqual("1-7f5175756a7ab72660278c3c0aed2eee");
+			callback = transportMock.request.mostRecentCall.args[2];
+			spyOn(stateMachine, "event");
+			spyOn(couchDBStore, "reset");
+			
+			callback.call(couchDBStore, res);
+
+			expect(couchDBStore.reset.wasCalled).toEqual(true);
+			doc = couchDBStore.reset.mostRecentCall.args[0];
+			expect(doc).toBeInstanceOf(Object);
+			
+			expect(doc["_rev"]).toEqual("1-7f5175756a7ab72660278c3c0aed2eee")
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
 		});
 		
-		it("should call the promise rejection on sync if document doesn't exist", function () {
-			var asyncRequest,
-				res = {
-					'/db/document4' : '{"error":"not_found","reason":"missing"}'
-				},
-				promise;
+		it("should reject the callback if the document doesn't exist", function () {
+			couchDBStore.actions.getDocument.call(couchDBStore);
+			var promise = couchDBStore.sync("db", "document2"),
+				callback = transportMock.request.mostRecentCall.args[2];
 			
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, res[reqData.path]);
-				};
-			};
-	
-			promise = couchDBStore.sync("db", "document4");
 			spyOn(promise, "reject");
-			asyncRequest();
+			callback.call(couchDBStore, "{}");
 			
 			expect(promise.reject.wasCalled).toEqual(true);
-			expect(promise.reject.mostRecentCall.args[0]).toEqual(couchDBStore);
+			expect(promise.reject.mostRecentCall.args[0]).toBe(couchDBStore);
 		});
 		
-		it("should subscribe to changes", function () {
-			
-			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-	            asyncRequest;
-			
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, res);
-				};
-			};
-			
-			transportMock.listen = jasmine.createSpy();
-
-			couchDBStore.sync("db", "document1");
-			asyncRequest();
+		it("should subscribe to document changes", function () {			
+			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
 			expect(transportMock.listen.mostRecentCall.args[1]).toEqual("/db/_changes?feed=continuous&heartbeat=20000");
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
-			
+			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
 		
 		it("should not fail with empty json from heartbeat", function () {
-			var requestRes = '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-				asyncRequest,
-				asyncListen,
-				listenRes = '\n';
-
-				transportMock.request = function (channel, reqData, callback, scope) {
-					asyncRequest = function () {
-						callback.call(scope, requestRes);
-					};
-				};
-	
-				transportMock.listen = function (channel, path, callback, scope) {
-					asyncListen = function () {
-						callback.call(scope, listenRes);
-					};
-				};
-
-				couchDBStore.sync("db", "design", "view");
-				asyncRequest();
-				expect(function() {
-					asyncListen();
-				}).not.toThrow();
+			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			
+			expect(function() {
+				callback("\n");
+			}).not.toThrow();
 		});
 		
-		it("should reflect changes and resolve the sync promise", function () {
-			var requestRes = ['{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-							'{"_id":"document1","_rev":"2-0b77a81676739718c23c72a12a131986","date":"2012/01/13 12:45:56","title":"was my first document","body":"in this database","newfield":"safe"}'],
-				asyncRequest,
-				asyncListen,
-				listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}',
-				spy1 = jasmine.createSpy(),
-				spy2 = jasmine.createSpy(),
-				promise;
+		it("should call for store update on document update", function () {
+			var listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}',
+				callback;
 
-			transportMock.request = function (channel, reqData, callback, scope) {
-				asyncRequest = function () {
-					callback.call(scope, requestRes.shift());
-				};
-			};
-
-			transportMock.listen = function (channel, path, callback, scope) {
-				asyncListen = function () {
-					callback.call(scope, listenRes);
-				};
-			};
-
-			couchDBStore.watch("updated", spy1);
-			couchDBStore.watch("added", spy2);
-			promise = couchDBStore.sync("db", "document1");
-			spyOn(promise, "resolve");
-			asyncRequest();
-			asyncListen();
-
-			expect(promise.resolve.wasCalled).toEqual(true);
-			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
+			spyOn(stateMachine, "event");
 			
-			asyncRequest();
-			expect(spy1.wasCalled).toEqual(true);
-			// _rev and title have been updated
-			expect(spy1.callCount).toEqual(2);
-			expect(spy1.mostRecentCall.args[0]).toEqual("title");
-			expect(spy1.mostRecentCall.args[1]).toEqual("was my first document");
-			expect(spy2.wasCalled).toEqual(true);
-			// The first 5, then the newfield
-			expect(spy2.callCount).toEqual(6);
-			expect(spy2.mostRecentCall.args[0]).toEqual("newfield");
-			expect(spy2.mostRecentCall.args[1]).toEqual("safe");
+			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			
+			callback.call(couchDBStore, listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDoc");
 		});
 		
 		it("should update the database on update", function () {
