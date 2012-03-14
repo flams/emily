@@ -599,6 +599,84 @@ describe("CouchDBStoreSyncDocument", function () {
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDoc");
 		});
 		
+		it("should not get changes when another document is updated", function () {
+			var listenRes = '{"seq":12,"id":"document5","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}',
+				callback;
+	
+			spyOn(stateMachine, "event");
+			
+			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			
+			callback.call(couchDBStore, listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(false);
+		});
+		
+		it("should not get changes if the rev is the same", function () {
+			var listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}',
+				callback;
+	
+			couchDBStore.set("_rev", "2-0b77a81676739718c23c72a12a131986");
+			
+			spyOn(stateMachine, "event");
+			
+			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			
+			callback.call(couchDBStore, listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(false);
+		});
+		
+		it("should call for document deletion when the document is removed", function () {
+			var listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}], "deleted": true}',
+				callback;
+			
+			spyOn(stateMachine, "event");
+			
+			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			
+			callback.call(couchDBStore, listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("deleteDoc");
+		});
+		
+		it("should update store on call for update", function () {
+			var reqData,
+				callback;
+			
+			couchDBStore.actions.updateDoc.call(couchDBStore);
+			
+			expect(transportMock.request.wasCalled).toEqual(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+			
+			reqData = transportMock.request.mostRecentCall.args[1];
+			expect(reqData).toBeInstanceOf(Object);
+			expect(reqData["method"]).toEqual("GET");
+			expect(reqData["path"]).toEqual("/db/document1");
+			
+			spyOn(couchDBStore, "reset");
+			callback = transportMock.request.mostRecentCall.args[2];
+			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
+			callback.call(couchDBStore, '{"_id":"document1","_rev":"2-0b77a81676739718c23c72a12a131986","date":"2012/01/13 12:45:56","title":"was my first document","body":"in this database","newfield":"safe"}');
+			expect(couchDBStore.reset.wasCalled).toEqual(true);
+			expect(couchDBStore.reset.mostRecentCall.args[0]._rev).toEqual("2-0b77a81676739718c23c72a12a131986");
+			
+			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
+		});
+		
+		it("should empty the store on document deletion", function () {
+			spyOn(couchDBStore, "reset");
+			couchDBStore.actions.deleteDoc.call(couchDBStore);
+			expect(couchDBStore.reset.wasCalled).toEqual(true);
+			expect(couchDBStore.getNbItems()).toEqual(0);
+		});
+		
+		
+		
 		it("should update the database on update", function () {
 			var requestRes = ['{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
 								'{"_id":"document1","_rev":"2-0b77a81676739718c23c72a12a131986","date":"2012/01/13 12:45:56","title":"was my first document","body":"in this database","newfield":"safe"}'],
@@ -641,93 +719,7 @@ describe("CouchDBStoreSyncDocument", function () {
 			
 		});
 		
-		it("should not get changes when another document is updated", function () {
-			var requestRes = '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-					asyncRequest,
-					asyncListen,
-					listenRes = '{"seq":12,"id":"document5","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}]}';
-
-				transportMock.request = function (channel, reqData, callback, scope) {
-					asyncRequest = function () {
-						callback.call(scope, requestRes);
-					};
-				};
-
-				transportMock.listen = function (channel, path, callback, scope) {
-					asyncListen = function () {
-						callback.call(scope, listenRes);
-					};
-				};
-
-				spyOn(transportMock, "request").andCallThrough();
-				couchDBStore.sync("db", "document1");
-				asyncRequest();
-				asyncListen();
-				asyncRequest();
-				
-				expect(transportMock.request.callCount).toEqual(1);
-				
-		});
-		
-		it("should not get changes if the rev is the same", function () {
-			var requestRes = '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-					asyncRequest,
-					asyncListen,
-					listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"1-7f5175756a7ab72660278c3c0aed2eee"}]}';
-
-				transportMock.request = function (channel, reqData, callback, scope) {
-					asyncRequest = function () {
-						callback.call(scope, requestRes);
-					};
-				};
-
-				transportMock.listen = function (channel, path, callback, scope) {
-					asyncListen = function () {
-						callback.call(scope, listenRes);
-					};
-				};
-
-				spyOn(transportMock, "request").andCallThrough();
-				couchDBStore.sync("db", "document1");
-				asyncRequest();
-				asyncListen();
-				asyncRequest();
-				
-				expect(transportMock.request.callCount).toEqual(1);
-				
-		});
-		
-		it("should not get changes if document is deleted", function () {
-			var requestRes = '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
-					asyncRequest,
-					asyncListen,
-					listenRes = '{"seq":12,"id":"document1","changes":[{"rev":"2-0b77a81676739718c23c72a12a131986"}], "deleted": true}',
-					spy = jasmine.createSpy();
-
-				transportMock.request = function (channel, reqData, callback, scope) {
-					asyncRequest = function () {
-						callback.call(scope, requestRes);
-					};
-				};
-
-				transportMock.listen = function (channel, path, callback, scope) {
-					asyncListen = function () {
-						callback.call(scope, listenRes);
-					};
-				};
-
-				couchDBStore.watch("deleted", spy);
-				spyOn(transportMock, "request").andCallThrough();
-				couchDBStore.sync("db", "document1");
-				asyncRequest();
-				asyncListen();
-				asyncRequest();
-				
-				expect(transportMock.request.callCount).toEqual(1);
-				expect(spy.callCount).toEqual(5);
-				
-		});
-		
+	
 		it("should add document on update if it's missing", function () {
 			var asyncRequest,
 				res = {
