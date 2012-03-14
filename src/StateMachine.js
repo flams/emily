@@ -62,6 +62,7 @@ function StateMachine(Tools) {
 		
 		/**
 		 * Add a new state
+		 * @private
 		 * @param {String} name the name of the state
 		 * @returns {State} a new state
 		 */
@@ -76,6 +77,7 @@ function StateMachine(Tools) {
 		
 		/**
 		 * Get an existing state
+		 * @private
 		 * @param {String} name the name of the state
 		 * @returns {State} the state
 		 */

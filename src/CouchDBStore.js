@@ -262,6 +262,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 	            	});
 			    },
 			    
+			    /**
+			     * Resolve the promise
+			     * @private
+			     */
 			    resolve: function () {
 	            	  _syncPromise.resolve(this);
 	             }
@@ -368,6 +372,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		/**
 		 * Get the state machine
 		 * Also only useful for debugging
+		 * @private
 		 * @returns {StateMachine} the state machine
 		 */
 		this.getStateMachine = function getStateMachine() {
@@ -377,6 +382,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		/**
 		 * Get the current transport
 		 * Also only useful for debugging
+		 * @private
 		 * @returns {Object} the current transport
 		 */
 		this.getTransport = function getTransport() {

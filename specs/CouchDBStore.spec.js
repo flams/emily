@@ -165,10 +165,10 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		});
 		
 		it("should call setSyncInfo on sync", function () {
-			spyOn(couchDBStore, "setSyncInfo");
-			couchDBStore.sync("database", "document", "view");
+			spyOn(couchDBStore, "setSyncInfo").andCallThrough();
+			couchDBStore.sync("db", "document", "view");
 			expect(couchDBStore.setSyncInfo.wasCalled).toEqual(true);
-			expect(couchDBStore.setSyncInfo.mostRecentCall.args[0]).toEqual("database");
+			expect(couchDBStore.setSyncInfo.mostRecentCall.args[0]).toEqual("db");
 			expect(couchDBStore.setSyncInfo.mostRecentCall.args[1]).toEqual("document");
 			expect(couchDBStore.setSyncInfo.mostRecentCall.args[2]).toEqual("view");
 		});
@@ -493,10 +493,18 @@ describe("CouchDBStoreSyncDocument", function () {
 		});
 		
 		it("should call getDocument on sync", function () {
-			spyOn(stateMachine, "event"),
-			couchDBStore.sync("document", "document");
+			spyOn(stateMachine, "event");
+			couchDBStore.sync("db", "documentsss");
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("getDocument");
+		});
+		
+		it("should resolve the promise", function () {
+			var promise = couchDBStore.sync("db", "document");
+			spyOn(promise, "resolve");
+			couchDBStore.actions.resolve.call(couchDBStore);
+			expect(promise.resolve.wasCalled).toEqual(true);
+			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
 		});
 		
 	});
@@ -687,6 +695,22 @@ describe("CouchDBStoreSyncDocument", function () {
 			couchDBStore.setTransport(transportMock);
 			couchDBStore.setSyncInfo("db", "document1");
 			stateMachine = couchDBStore.getStateMachine();
+		});
+		
+		it("should have a function to update a document", function () {
+			expect(couchDBStore.update).toBeInstanceOf(Function);
+			spyOn(stateMachine, "event");
+			couchDBStore.update();
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabase");
+		});
+		
+		it("should have a function to remove a document", function () {
+			expect(couchDBStore.remove).toBeInstanceOf(Function);
+			spyOn(stateMachine, "event");
+			couchDBStore.remove();
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("removeFromDatabase");
 		});
 		
 		it("should update the database on update", function () {

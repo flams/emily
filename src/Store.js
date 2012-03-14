@@ -218,6 +218,7 @@ define("Store", ["Observable", "Tools"],
 		/**
 		 * Unwatch the value's modifications
 		 * @param {Handler} handler the handler returned by the watchValue function
+		 * @private
 		 * @returns true if unwatched
 		 */
 		this.unwatchValue = function unwatchValue(handler) {
@@ -227,6 +228,7 @@ define("Store", ["Observable", "Tools"],
 		/**
 		 * Get the observable used for watching value's modifications
 		 * Should be used only for debugging
+		 * @private
 		 * @returns {Observable} the Observable
 		 */
 		this.getValueObservable = function getValueObservable() {
