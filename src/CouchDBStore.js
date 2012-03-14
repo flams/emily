@@ -340,10 +340,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		};
 		
 		/**
-		 * Update the database with the current document
+		 * Upload the document to the database
 		 * @returns true if update called
 		 */
-		this.update = function update() {
+		this.upload = function upload() {
 			return _stateMachine.event("updateDatabase");
 		};
 		

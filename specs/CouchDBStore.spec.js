@@ -697,10 +697,10 @@ describe("CouchDBStoreSyncDocument", function () {
 			stateMachine = couchDBStore.getStateMachine();
 		});
 		
-		it("should have a function to update a document", function () {
-			expect(couchDBStore.update).toBeInstanceOf(Function);
+		it("should have a function to upload a document", function () {
+			expect(couchDBStore.upload).toBeInstanceOf(Function);
 			spyOn(stateMachine, "event");
-			couchDBStore.update();
+			couchDBStore.upload();
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabase");
 		});
