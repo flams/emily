@@ -53,10 +53,9 @@ requirejs(["Store"], function (Store) {
 			
 			req.end(data.data, "utf8");
 			
-			return {
-				scope: req,
-				func: req.abort
-			};
+			return function () {
+				req.abort();
+			};;
 
 		}
 		
