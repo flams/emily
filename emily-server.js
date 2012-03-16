@@ -47,15 +47,13 @@ requirejs(["Store"], function (Store) {
 				res.on('end', function () {
 						onEnd(body);
 					});
-				
-				
 			});
 			
 			req.end(data.data, "utf8");
 			
 			return function () {
 				req.abort();
-			};;
+			};
 
 		}
 		
