@@ -18,11 +18,12 @@
 require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBStore, Store, Promise, StateMachine) {
 	
 	var transportMock = null,
-		couchDBStore = null;
+		couchDBStore = null,
+		stopListening = jasmine.createSpy();
 	
 	beforeEach(function () {
 		transportMock = {
-				listen: jasmine.createSpy("listen"),
+				listen: jasmine.createSpy("listen").andReturn(stopListening),
 				request: jasmine.createSpy("request")
 			};
 		couchDBStore = new CouchDBStore;
@@ -128,7 +129,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				entry,
 				change,
 				del,
-				add;
+				add,
+				unsync;
 			
 			Unsynched = stateMachine.get("Unsynched");
 			expect(Unsynched).toBeTruthy();
@@ -162,6 +164,11 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			add = Listening.get("add");
 			expect(add[0]).toBe(couchDBStore.actions.addDocInStore);
 			expect(add[1]).toBe(couchDBStore);
+			
+			unsync = Listening.get("unsync");
+			expect(unsync[0]).toBe(couchDBStore.actions.unsync);
+			expect(unsync[1]).toBe(couchDBStore);
+			expect(unsync[2]).toBe("Unsynched");
 		});
 		
 		it("should call setSyncInfo on sync", function () {
@@ -182,6 +189,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			couchDBStore.sync("document", "design", "view");
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("getView");
+		});
+		
+		it("should have a function to unsynch a view", function () {
+			expect(couchDBStore.unsync).toBeInstanceOf(Function);
+			spyOn(stateMachine, "event");
+			couchDBStore.unsync();
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("unsync");
 		});
 		
 	});
@@ -211,7 +226,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData["path"]).toEqual("/db/_design/design/_view/view?update_seq=true");
 		});
 		
-		it("should reset the store on sync and ask for changes subscribtion", function () {
+		it("should reset the store on sync and ask for changes subscription", function () {
 			var res =  '{"total_rows":3,"update_seq":8,"offset":0,"rows":[' +
 						'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' + 
 						'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' + 
@@ -237,7 +252,9 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		});
 		
 		it("should subscribe to view changes", function () {
+			expect(couchDBStore.stopListening).toBeUndefined();
 			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			expect(couchDBStore.stopListening).toBe(stopListening);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
 			expect(transportMock.listen.mostRecentCall.args[1]).toEqual("/db/_changes?feed=continuous&heartbeat=20000&since=8");
@@ -407,6 +424,16 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(couchDBStore.del.wasCalled).toEqual(true);
 			expect(couchDBStore.del.mostRecentCall.args[0]).toEqual(3);
 		});
+		
+		it("should unsync a view, ie. stop listening to changes and reset it", function () {
+			var spy = jasmine.createSpy();
+			couchDBStore.stopListening = spy;
+			couchDBStore.actions.unsync.call(couchDBStore);
+			expect(spy.wasCalled).toEqual(true);
+			expect(couchDBStore.stopListening).toBeUndefined();
+		});
+		
+
 	});
 	
 describe("CouchDBStoreSyncDocument", function () {
@@ -435,7 +462,8 @@ describe("CouchDBStoreSyncDocument", function () {
 				updateDoc,
 				deleteDoc,
 				ListeningUpdateDatabase,
-				removeFromDatabase
+				removeFromDatabase,
+				unsync;
 			
 			Unsynched = stateMachine.get("Unsynched");
 			expect(Unsynched).toBeTruthy();
@@ -477,6 +505,11 @@ describe("CouchDBStoreSyncDocument", function () {
 			removeFromDatabase = Listening.get("removeFromDatabase");
 			expect(removeFromDatabase[0]).toBe(couchDBStore.actions.removeFromDatabase);
 			expect(removeFromDatabase[1]).toBe(couchDBStore);
+			
+			unsync = Listening.get("unsync");
+			expect(unsync[0]).toBe(couchDBStore.actions.unsync);
+			expect(unsync[1]).toBe(couchDBStore);
+			expect(unsync[2]).toBe("Unsynched");
 		});
 		
 		it("should call setSyncInfo on sync", function () {
@@ -505,6 +538,14 @@ describe("CouchDBStoreSyncDocument", function () {
 			couchDBStore.actions.resolve.call(couchDBStore);
 			expect(promise.resolve.wasCalled).toEqual(true);
 			expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
+		});
+		
+		it("should have a function to unsynch a document", function () {
+			expect(couchDBStore.unsync).toBeInstanceOf(Function);
+			spyOn(stateMachine, "event");
+			couchDBStore.unsync();
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("unsync");
 		});
 		
 	});
@@ -539,7 +580,7 @@ describe("CouchDBStoreSyncDocument", function () {
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
 		
-		it("should reset the store on sync and ask fro changes subscribtion", function () {
+		it("should reset the store on sync and ask fro changes subscription", function () {
 			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
 				callback,
 				doc;
@@ -574,8 +615,10 @@ describe("CouchDBStoreSyncDocument", function () {
 			expect(promise.reject.mostRecentCall.args[0]).toBe(couchDBStore);
 		});
 		
-		it("should subscribe to document changes", function () {			
+		it("should subscribe to document changes", function () {	
+			expect(couchDBStore.stopListening).toBeUndefined();
 			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
+			expect(couchDBStore.stopListening).toBe(stopListening);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
 			expect(transportMock.listen.mostRecentCall.args[1]).toEqual("/db/_changes?feed=continuous&heartbeat=20000");
@@ -682,6 +725,15 @@ describe("CouchDBStoreSyncDocument", function () {
 			expect(couchDBStore.reset.wasCalled).toEqual(true);
 			expect(couchDBStore.getNbItems()).toEqual(0);
 		});
+		
+		it("should unsync a document, ie. stop listening to changes", function () {
+			var spy = jasmine.createSpy();
+			couchDBStore.stopListening = spy;
+			couchDBStore.actions.unsync.call(couchDBStore);
+			expect(spy.wasCalled).toEqual(true);
+			expect(couchDBStore.stopListening).toBeUndefined();
+		});
+
 		
 	});
 		

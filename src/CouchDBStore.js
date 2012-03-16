@@ -33,6 +33,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		_transport = null,
 		
+		/**
+		 * That will store the synchronization info
+		 * @private
+		 */
 		_syncInfo = {},
 		
 		/**
@@ -43,6 +47,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		_syncPromise = new Promise(),
 		
+		/**
+		 * All the actions performed by the couchDBStore
+		 * They'll feed the stateMachine
+		 * @private
+		 */
 		actions = {
 			
 			/**
@@ -102,9 +111,13 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
              * @private
              */
             subscribeToViewChanges: function (update_seq) {
-				_transport.listen(_channel
-					, "/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq
-					, function (changes) {
+            	/**
+            	 * stop listening func is 
+            	 * @private
+            	 */
+            	this.stopListening = _transport.listen(_channel,
+					"/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq,
+					function (changes) {
 						// Should I test for this very special case (heartbeat?)
 						// Or do I have to try catch for any invalid json?
 						if (changes == "\n") {
@@ -123,152 +136,164 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						}
 						_stateMachine.event(action, json.id);
 					}, this);
-				},
-				
-				/**
-				 * Subscribe to changes when synchronized with a document
-				 * @private
-				 */
-				subscribeToDocumentChanges: function () {
-					_transport.listen(_channel
-					, "/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000"
-					, function (changes) {
-						var json;
-						// Should I test for this very special case (heartbeat?)
-						// Or do I have to try catch for any invalid json?
-						if (changes == "\n") {
-							return false;
+			},
+			
+			/**
+			 * Subscribe to changes when synchronized with a document
+			 * @private
+			 */
+			subscribeToDocumentChanges: function () {
+            	/**
+            	 * @private
+            	 */
+				this.stopListening = _transport.listen(_channel,
+				"/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000",
+				function (changes) {
+					var json;
+					// Should I test for this very special case (heartbeat?)
+					// Or do I have to try catch for any invalid json?
+					if (changes == "\n") {
+						return false;
+					}
+					
+					json = JSON.parse(changes);
+					
+					// The document is the modified document is the current one
+					if (json.id == _syncInfo.document && 
+						// And if it has a new revision
+						json.changes.pop().rev != this.get("_rev")) {
+						
+						if (json.deleted) {
+							_stateMachine.event("deleteDoc");
+						} else {
+							_stateMachine.event("updateDoc");	
 						}
-						
-						json = JSON.parse(changes);
-						
-						// The document is the modified document is the current one
-						if (json.id == _syncInfo.document && 
-							// And if it has a new revision
-							json.changes.pop().rev != this.get("_rev")) {
-							
-							if (json.deleted) {
-								_stateMachine.event("deleteDoc");
-							} else {
-								_stateMachine.event("updateDoc");	
-							}
-						 }
+					 }
+				}, this);
+			},
+			
+			/**
+			 * Update in the Store a document that was updated in CouchDB
+			 * Get the whole view :(, then get the modified document and update it.
+			 * I have no choice but to request the whole view and look for the document
+			 * so I can also retrieve its position in the store (idx) and update the item.
+			 * Maybe I've missed something
+			 * @private
+			 */
+			updateDocInStore: function (id) {
+				_transport.request(_channel,{
+					method: "GET",
+					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
+				}, function (view) {
+					var json = JSON.parse(view);
+					
+					json.rows.some(function (value, idx) {
+						if (value.id == id) {
+							this.set(idx, value);
+						}
 					}, this);
-				},
-				
-				/**
-				 * Update in the Store a document that was updated in CouchDB
-				 * Get the whole view :(, then get the modified document and update it.
-				 * I have no choice but to request the whole view and look for the document
-				 * so I can also retrieve its position in the store (idx) and update the item.
-				 * Maybe I've missed something
-				 * @private
-				 */
-				updateDocInStore: function (id) {
-					_transport.request(_channel,{
-						method: "GET",
-						path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
-					}, function (view) {
-						var json = JSON.parse(view);
-						
-						json.rows.some(function (value, idx) {
-							if (value.id == id) {
-								this.set(idx, value);
-							}
-						}, this);
 
-						
+					
+				}, this);
+				
+			},
+			
+			/**
+			 * Remove from the Store a document that was removed in CouchDB
+			 * @private
+			 */
+			removeDocInStore: function (id) {
+				this.loop(function (value, idx) {
+					if (value.id == id) {
+						this.del(idx);
+					}
+				}, this);
+			},
+			
+			/**
+			 * Add in the Store a document that was added in CouchDB
+			 * @private
+			 */
+			addDocInStore: function (id) {
+				_transport.request(_channel,{
+					method: "GET",
+					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
+				}, function (view) {
+					var json = JSON.parse(view);
+					
+					json.rows.some(function (value, idx) {
+						if (value.id == id) {
+							this.alter("splice", idx, 0, value);	
+						}
 					}, this);
 					
-				},
-				
-				/**
-				 * Remove from the Store a document that was removed in CouchDB
-				 * @private
-				 */
-				removeDocInStore: function (id) {
-					this.loop(function (value, idx) {
-						if (value.id == id) {
-							this.del(idx);
-						}
-					}, this);
-				},
-				
-				/**
-				 * Add in the Store a document that was added in CouchDB
-				 * @private
-				 */
-				addDocInStore: function (id) {
-					_transport.request(_channel,{
-						method: "GET",
-						path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
-					}, function (view) {
-						var json = JSON.parse(view);
-						
-						json.rows.some(function (value, idx) {
-							if (value.id == id) {
-								this.alter("splice", idx, 0, value);	
-							}
-						}, this);
-						
-					}, this);
-				},
-				
-				/**
-				 * Update the document when synchronized with a document.
-				 * This differs than updating a document in a View
-				 * @private
-				 */
-				updateDoc: function () {
-					_transport.request(_channel,{
-						method: "GET",
-						path: '/'+_syncInfo.database+'/' + _syncInfo.document
-					}, function (doc) {
-						this.reset(JSON.parse(doc));			
-					}, this);
-			    },
-			    
-			    /**
-			     * Delete all document's properties
-			     * @private
-			     */
-			    deleteDoc: function () {
-			    	this.reset({});			
-			    },
-			    
-			    /**
-			     * Update a document in CouchDB through a PUT request
-			     * @private
-			     */
-			    updateDatabase: function () {
-			    	_transport.request(_channel, {
-	            		method: "PUT",
-	            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
-	            		headers: {
-	            			"Content-Type": "application/json"
-	            		},
-	            		data: this.toJSON()
-	            	});
-			    },
-			    
-			    /**
-			     * Remove a document from CouchDB through a DELETE request
-			     * @private
-			     */
-			    removeFromDatabase: function () {
-			    	_transport.request(_channel, {
-	            		method: "DELETE",
-	            		path: '/' + _syncInfo.database + '/' + _syncInfo.document + '?rev=' + this.get("_rev")
-	            	});
-			    },
-			    
-			    /**
-			     * Resolve the promise
-			     * @private
-			     */
-			    resolve: function () {
-	            	  _syncPromise.resolve(this);
-	             }
+				}, this);
+			},
+			
+			/**
+			 * Update the document when synchronized with a document.
+			 * This differs than updating a document in a View
+			 * @private
+			 */
+			updateDoc: function () {
+				_transport.request(_channel, {
+					method: "GET",
+					path: '/'+_syncInfo.database+'/' + _syncInfo.document
+				}, function (doc) {
+					this.reset(JSON.parse(doc));			
+				}, this);
+		    },
+		    
+		    /**
+		     * Delete all document's properties
+		     * @private
+		     */
+		    deleteDoc: function () {
+		    	this.reset({});			
+		    },
+		    
+		    /**
+		     * Update a document in CouchDB through a PUT request
+		     * @private
+		     */
+		    updateDatabase: function () {
+		    	_transport.request(_channel, {
+            		method: "PUT",
+            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
+            		headers: {
+            			"Content-Type": "application/json"
+            		},
+            		data: this.toJSON()
+            	});
+		    },
+		    
+		    /**
+		     * Remove a document from CouchDB through a DELETE request
+		     * @private
+		     */
+		    removeFromDatabase: function () {
+		    	_transport.request(_channel, {
+            		method: "DELETE",
+            		path: '/' + _syncInfo.database + '/' + _syncInfo.document + '?rev=' + this.get("_rev")
+            	});
+		    },
+		    
+		    /**
+		     * Resolve the promise
+		     * @private
+		     */
+		    resolve: function () {
+            	  _syncPromise.resolve(this);
+             },
+             
+             /**
+              * The function call to unsync the store
+              * @private
+              */
+             unsync: function () {
+            	 this.stopListening();
+            	 delete this.stopListening;
+             }
 		},
 		
 		/**
@@ -296,7 +321,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				["updateDoc", actions.updateDoc, this],
 			    ["deleteDoc", actions.deleteDoc, this],
 			    ["updateDatabase", actions.updateDatabase, this],
-			    ["removeFromDatabase", actions.removeFromDatabase, this]
+			    ["removeFromDatabase", actions.removeFromDatabase, this],
+			    ["unsync", actions.unsync, this, "Unsynched"]
 			   ]
 			
 		});
@@ -321,6 +347,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			return false;
 		};
 		
+		/**
+		 * Set the synchronization information
+		 * @private
+		 * @returns {Boolean}
+		 */
 		this.setSyncInfo = function setSyncInfo() {
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
 				_syncInfo["database"] = arguments[0];
@@ -335,13 +366,28 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			return false;
 		};
 		
+		/**
+		 * Get the synchronization information
+		 * @private
+		 * @returns
+		 */
 		this.getSyncInfo = function getSyncInfo() {
 			return _syncInfo;
 		};
 		
 		/**
+		 * Unsync a store. Unsync must be called prior to resynchronization.
+		 * That will prevent any unwanted resynchronization.
+		 * Notice that previous data will still be available.
+		 * @returns
+		 */
+		this.unsync = function unsync() {
+			return _stateMachine.event("unsync");
+		};
+		
+		/**
 		 * Upload the document to the database
-		 * @returns true if update called
+		 * @returns true if upload called
 		 */
 		this.upload = function upload() {
 			return _stateMachine.event("updateDatabase");
