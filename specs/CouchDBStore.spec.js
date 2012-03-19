@@ -608,12 +608,13 @@ describe("CouchDBStoreSyncDocument", function () {
 	describe("CouchDBStoreDocumentData", function () {
 		
 		var couchDBStore = null,
-			stateMachine = null;
+			stateMachine = null,
+			query = {};
 		
 		beforeEach(function () {
 			couchDBStore = new CouchDBStore;
 			couchDBStore.setTransport(transportMock);
-			couchDBStore.setSyncInfo("db", "document1");
+			couchDBStore.setSyncInfo("db", "document1", query);
 			stateMachine = couchDBStore.getStateMachine();
 		});
 		
@@ -627,23 +628,11 @@ describe("CouchDBStoreSyncDocument", function () {
 			expect(reqData).toBeInstanceOf(Object);
 			expect(reqData["method"]).toEqual("GET");
 			expect(reqData["path"]).toEqual("/db/document1");
+			expect(reqData["query"]).toBe(query);
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
-		
-		it("should add params to the url when requesting a document", function () {
-			var query;
-			couchDBStore.setSyncInfo("db", "document", {
-				param1: true,
-				param2: '["a","b"]'
-			});
-			
-			couchDBStore.actions.getDocument();
-			query = transportMock.request.mostRecentCall.args[1].query;
-			expect(query.param1).toEqual(true);
-			expect(query.param2).toEqual('["a","b"]');
-		});
-		
+
 		it("should reset the store on sync and ask for changes subscription", function () {
 			var res =  '{"_id":"document1","_rev":"1-7f5175756a7ab72660278c3c0aed2eee","date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}',
 				callback,
@@ -680,15 +669,16 @@ describe("CouchDBStoreSyncDocument", function () {
 		});
 		
 		it("should subscribe to document changes", function () {	
+			var reqData;
 			expect(couchDBStore.stopListening).toBeUndefined();
 			couchDBStore.actions.subscribeToDocumentChanges.call(couchDBStore);
 			expect(couchDBStore.stopListening).toBe(stopListening);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
 			expect(transportMock.listen.mostRecentCall.args[1].path).toEqual("/db/_changes");
-			query = transportMock.listen.mostRecentCall.args[1].query;
-			expect(query.feed).toEqual("continuous");
-			expect(query.heartbeat).toEqual(20000);
+			reqData = transportMock.listen.mostRecentCall.args[1].query;
+			expect(reqData.feed).toEqual("continuous");
+			expect(reqData.heartbeat).toEqual(20000);
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
