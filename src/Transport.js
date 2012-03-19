@@ -6,14 +6,14 @@
 
 define("Transport", 
 		
-["Store"],
+["Store", "Tools"],
 /**
  * @class
  * Transport creates the link between your requests and Emily's requests handlers.
  * A request handler can be defined to make requets of any kind as long as it's supported
  * by your node.js. (HTTP, FileSystem, SIP...)
  */
-function Transport(Store) {
+function Transport(Store, Tools) {
 	
 	/**
 	 * Create a Transport
@@ -73,22 +73,24 @@ function Transport(Store) {
 		/**
 		 * Listen to a path (Kept alive)
 		 * @param {String} channel is the name of the request handler to use
-		 * @param {String} url the url on which to listen
+		 * @param {Object} reqData the request data: path should indicate the url, query can add up query strings to the url
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
 		 * @returns
 		 */
-		this.listen = function listen(channel, url, callback, scope) {
-			if (_reqHandlers.has(channel) &&
-				typeof url == "string" && typeof callback == "function") {
+		this.listen = function listen(channel, reqData, callback, scope) {
+			if (_reqHandlers.has(channel) && typeof reqData == "object" && 
+				typeof reqData.path == "string" && typeof callback == "function") {
 				var func = function () {
 					callback.apply(scope, arguments);
 				},
-				reqData = {
-						keptAlive: true,
-						method: "get",
-						path: url
-				},
+				abort;
+				
+				Tools.mixin({
+					keptAlive: true,
+					method: "get"
+				}, reqData);
+				
 				abort = _reqHandlers.get(channel)(reqData, func, func);
 				return function () {
 					abort.func.call(abort.scope);

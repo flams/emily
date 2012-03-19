@@ -79,9 +79,14 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * @private
 			 */
 			getView: function () {
+
+				_syncInfo.query = _syncInfo.query || {};
+				_syncInfo.query.update_seq=true;
+				
 				_transport.request(_channel, {
 					method: "GET",
-					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + "_view/" + _syncInfo.view +"?update_seq=true"
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + "_view/" + _syncInfo.view,
+					query: _syncInfo.query
 				}, function (results) {
 					var json = JSON.parse(results);
 					this.reset(json.rows);
@@ -94,9 +99,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * @private
 			 */
 			getDocument: function () { 
+				
 				_transport.request(_channel, {
 					method: "GET",
-					path: "/" + _syncInfo.database + "/" + _syncInfo.document
+					path: "/" + _syncInfo.database + "/" + _syncInfo.document,
+					query: _syncInfo.query
 				}, function (results) {
 					var json = JSON.parse(results);
 					if (json._id) {
@@ -131,12 +138,17 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
              * @private
              */
             subscribeToViewChanges: function (update_seq) {
-            	/**
-            	 * stop listening func is 
-            	 * @private
-            	 */
-            	this.stopListening = _transport.listen(_channel,
-					"/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000&since="+update_seq,
+            	
+            	Tools.mixin({
+					feed: "continuous",
+					heartbeat: 20000,
+					since: update_seq
+				}, _syncInfo.query);
+            	
+            	this.stopListening = _transport.listen(_channel, {
+						path: "/" + _syncInfo.database + "/_changes",
+						query: _syncInfo.query
+					},
 					function (changes) {
 						// Should I test for this very special case (heartbeat?)
 						// Or do I have to try catch for any invalid json?
@@ -166,8 +178,13 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             	/**
             	 * @private
             	 */
-				this.stopListening = _transport.listen(_channel,
-				"/" + _syncInfo.database + "/_changes?feed=continuous&heartbeat=20000",
+				this.stopListening = _transport.listen(_channel, {
+					path: "/" + _syncInfo.database + "/_changes",
+					query: {
+						 feed: "continuous",
+						 heartbeat: 20000
+						}
+					},
 				function (changes) {
 					var json;
 					// Should I test for this very special case (heartbeat?)
@@ -203,7 +220,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			updateDocInStore: function (id) {
 				_transport.request(_channel,{
 					method: "GET",
-					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
+					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view,
+					query: _syncInfo.query
 				}, function (view) {
 					var json = JSON.parse(view);
 					
@@ -237,7 +255,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			addDocInStore: function (id) {
 				_transport.request(_channel,{
 					method: "GET",
-					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view
+					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view,
+					query: _syncInfo.query
 				}, function (view) {
 					var json = JSON.parse(view);
 					
@@ -294,7 +313,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		    removeFromDatabase: function () {
 		    	_transport.request(_channel, {
             		method: "DELETE",
-            		path: '/' + _syncInfo.database + '/' + _syncInfo.document + '?rev=' + this.get("_rev")
+            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
+            		query: {
+            			rev: this.get("_rev")
+            		}
             	});
 		    },
 		    
@@ -330,7 +352,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			"Synched": [
 			    ["updateDatabase", actions.createDocument, this],
 			    ["subscribeToViewChanges", actions.subscribeToViewChanges, this, "Listening"],
-				["subscribeToDocumentChanges", actions.subscribeToDocumentChanges, this, "Listening"]
+				["subscribeToDocumentChanges", actions.subscribeToDocumentChanges, this, "Listening"],
+				["unsync", function noop(){}, "Unsynched"]
 			 ],
 				
 			"Listening": [
@@ -356,11 +379,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 */
 		this.sync = function sync() {
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
-				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
+				this.setSyncInfo(arguments[0], arguments[1], arguments[2], arguments[3]);
 				_stateMachine.event("getView");
 				return _syncPromise;
-			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "undefined") {
-				this.setSyncInfo(arguments[0], arguments[1]);
+			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] != "string") {
+				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
 				_stateMachine.event("getDocument");
 				return _syncPromise;
 			}
@@ -377,10 +400,12 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				_syncInfo["database"] = arguments[0];
 				_syncInfo["design"] = arguments[1];
 				_syncInfo["view"] = arguments[2];
+				_syncInfo["query"] = arguments[3];
 				return true;
-			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "undefined") {
+			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] != "string") {
 				_syncInfo["database"] = arguments[0];
 				_syncInfo["document"] = arguments[1];
+				_syncInfo["query"] = arguments[2];
 				return true;
 			}
 			return false;
@@ -1550,14 +1575,14 @@ function Tools(){
 
 define("Transport", 
 		
-["Store"],
+["Store", "Tools"],
 /**
  * @class
  * Transport creates the link between your requests and Emily's requests handlers.
  * A request handler can be defined to make requets of any kind as long as it's supported
  * by your node.js. (HTTP, FileSystem, SIP...)
  */
-function Transport(Store) {
+function Transport(Store, Tools) {
 	
 	/**
 	 * Create a Transport
@@ -1617,22 +1642,24 @@ function Transport(Store) {
 		/**
 		 * Listen to a path (Kept alive)
 		 * @param {String} channel is the name of the request handler to use
-		 * @param {String} url the url on which to listen
+		 * @param {Object} reqData the request data: path should indicate the url, query can add up query strings to the url
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
 		 * @returns
 		 */
-		this.listen = function listen(channel, url, callback, scope) {
-			if (_reqHandlers.has(channel) &&
-				typeof url == "string" && typeof callback == "function") {
+		this.listen = function listen(channel, reqData, callback, scope) {
+			if (_reqHandlers.has(channel) && typeof reqData == "object" && 
+				typeof reqData.path == "string" && typeof callback == "function") {
 				var func = function () {
 					callback.apply(scope, arguments);
 				},
-				reqData = {
-						keptAlive: true,
-						method: "get",
-						path: url
-				},
+				abort;
+				
+				Tools.mixin({
+					keptAlive: true,
+					method: "get"
+				}, reqData);
+				
 				abort = _reqHandlers.get(channel)(reqData, func, func);
 				return function () {
 					abort.func.call(abort.scope);

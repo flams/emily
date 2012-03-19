@@ -103,10 +103,10 @@ require(["Transport", "Store"], function (Transport, Store) {
 	describe("TransportListenTest", function () {
 		
 		var transport = null,
-		reqHandlers = null,
-		url = "/",
-		func = jasmine.createSpy(),
-		obj = jasmine.createSpy();
+			reqHandlers = null,
+			url =  "/",
+			func = jasmine.createSpy(),
+			obj = jasmine.createSpy();
 	
 		beforeEach(function () {
 			reqHandlers =  new Store({
@@ -122,23 +122,25 @@ require(["Transport", "Store"], function (Transport, Store) {
 			var spy = jasmine.createSpy();
 			expect(transport.listen()).toEqual(false);
 			expect(transport.listen("channel")).toEqual(false);
-			expect(transport.listen("channel", url)).toEqual(false);
-			expect(transport.listen("fake", url, spy)).toEqual(false);
-			expect(transport.listen("channel", url, spy)).toBeTruthy();
+			expect(transport.listen("channel", {path: url})).toEqual(false);
+			expect(transport.listen("fake", {path: url}, spy)).toEqual(false);
+			expect(transport.listen("channel", {path: url}, spy)).toBeTruthy();
 		});
 		
 		it("should pass the data to the reqHandler", function () {
 			var spy = jasmine.createSpy(),
 				cb,
-				reqData,
+				params,
 				args = {};
-			transport.listen("channel", url, spy);
+			
+			transport.listen("channel", {path: url}, spy);
 			
 			expect(reqHandlers.get("channel").wasCalled).toEqual(true);
-			reqData = reqHandlers.get("channel").mostRecentCall.args[0];
-			expect(reqData.keptAlive).toEqual(true);
-			expect(reqData.method).toEqual("get");
-			expect(reqData.path).toEqual(url);
+			params = reqHandlers.get("channel").mostRecentCall.args[0];
+			expect(params.keptAlive).toEqual(true);
+			expect(params.method).toEqual("get");
+			expect(params.path).toEqual(url);
+			
 			cb = reqHandlers.get("channel").mostRecentCall.args[1];
 			expect(typeof cb).toEqual("function");
 			cb(args);
@@ -151,14 +153,14 @@ require(["Transport", "Store"], function (Transport, Store) {
 			var spy = jasmine.createSpy(),
 				thisObj = {};
 			
-			transport.listen("channel", url, spy, thisObj);
+			transport.listen("channel", {path: url}, spy, thisObj);
 			reqHandlers.get("channel").mostRecentCall.args[1]();
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 		
 		it("should return a stop function", function () {
 			var spy = jasmine.createSpy(),
-				stop = transport.listen("channel", url, spy);
+				stop = transport.listen("channel", {path: url}, spy);
 			
 			expect(stop).toBeInstanceOf(Function);
 			stop();

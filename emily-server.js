@@ -7,6 +7,8 @@
 // HTTP is going to be used for the built-in CouchDB requests handler
 var http = require("http"),
 
+qs = require("querystring"),
+
 requirejs = require("requirejs");
 
 // Load Emily
@@ -35,6 +37,7 @@ requirejs(["Store"], function (Store) {
 			
 			data.hostname = exports.config.get("CouchDB").hostname;
 			data.port = exports.config.get("CouchDB").port;
+			data.path += "?" + qs.stringify(data.query);
 
 			var req = http.request(data, function (res) {
 					
