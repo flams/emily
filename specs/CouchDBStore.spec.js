@@ -32,7 +32,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 	describe("CouchDBStoreTest", function () {
 
 		var couchDBStore = new CouchDBStore;
-		
+
 		it("should be a constructor function", function () {
 			expect(CouchDBStore).toBeInstanceOf(Function);
 		});
@@ -173,7 +173,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			
 			SynchedUnsync = Synched.get("unsync");
 			expect(SynchedUnsync[0]).toBeInstanceOf(Function);
-			expect(SynchedUnsync[0].name).toEqual("noop");
 			expect(SynchedUnsync[2]).toEqual("Unsynched");
 			
 			Listening = stateMachine.get("Listening");
@@ -530,7 +529,6 @@ describe("CouchDBStoreSyncDocument", function () {
 			
 			synchedUnsync = Synched.get("unsync");
 			expect(synchedUnsync[0]).toBeInstanceOf(Function);
-			expect(synchedUnsync[0].name).toEqual("noop");
 			expect(synchedUnsync[2]).toEqual("Unsynched");
 			
 			Listening = stateMachine.get("Listening");
