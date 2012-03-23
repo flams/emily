@@ -1,4 +1,4 @@
-Extensive documentation, along with unit tests and JsDoc can be found here: https://github.com/flams/emily
+Extensive documentation, along with unit tests and JsDoc can be found here: http://flams.github.com/emily/
 
 ###What is Emily?
 
