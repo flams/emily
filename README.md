@@ -1,3 +1,5 @@
+Extensive documentation, along with unit tests and JsDoc can be found here: https://github.com/flams/emily
+
 ###What is Emily?
 
  * Emily is a JS Framework for building MVC applications.
