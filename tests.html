@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jasmine Spec Runner</title>
+
+  <link rel="stylesheet" type="text/css" href="tools/Jasmine-runner/jasmine.css">
+  <script type="text/javascript" src="tools/Jasmine-runner/jasmine.js"></script>
+  <script type="text/javascript" src="tools/Jasmine-runner/jasmine-html.js"></script>
+  <script type="text/javascript" src="lib/require.js"></script>
+
+  <!-- include source files here... -->
+  <script type="text/javascript" src="build/Emily.js"></script>
+
+  <!-- include spec files here... -->
+  <script type="text/javascript" src="specs/specHelper.js"></script>
+  <script type="text/javascript" src="specs/CouchDBStore.spec.js"></script>
+  <script type="text/javascript" src="specs/Observable.spec.js"></script>
+  <script type="text/javascript" src="specs/Promise.spec.js"></script>
+  <script type="text/javascript" src="specs/StateMachine.spec.js"></script>
+  <script type="text/javascript" src="specs/Store.spec.js"></script>
+  <script type="text/javascript" src="specs/Tools.spec.js"></script>
+  <script type="text/javascript" src="specs/Transport.spec.js"></script>
+
+  <script type="text/javascript">
+  window.addEventListener("load", function onLoad() {
+  	var jasmineEnv = jasmine.getEnv(),
+		reporter = new jasmine.TrivialReporter();
+
+  	jasmineEnv.addReporter(reporter);
+	setTimeout(function () {
+		jasmineEnv.execute();
+	}, 500);
+    window.removeEventListener("load", onLoad, true);
+  
+  }, true);
+  </script>
+
+</head>
+
+<body>
+</body>
+</html>
