@@ -401,6 +401,10 @@ require(["Tools"], function (Tools) {
 		it("should work with numbers as property", function () {
 			expect(Tools.getNestedProperty(b, 0)).toEqual(b[0]);
 		});
+		
+		it("should return undefined if nested property doesn't exist", function () {
+			expect(Tools.getNestedProperty(a, "z.x.y")).toBeUndefined();
+		});
 
 	});
 	
@@ -436,6 +440,11 @@ require(["Tools"], function (Tools) {
 		it("should work with numbers as property", function () {
 			expect(Tools.setNestedProperty(b, 0, 20)).toEqual(20);
 			expect(b[0]).toEqual(20);
+		});
+		
+		it("should force set if nested property doesn't exist", function () {
+			expect(Tools.setNestedProperty(a, "z.x.y", 10)).toEqual(10);
+			expect(a.z.x.y).toEqual(10);
 		});
 	});
 

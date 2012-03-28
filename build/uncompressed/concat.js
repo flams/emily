@@ -1507,7 +1507,7 @@ function Tools(){
 				if (typeof property == "string" && property != "") {
 					var split = property.split(".");
 					return split.reduce(function (obj, prop) {
-						return obj[prop];
+						return obj && obj[prop];
 					}, object);
 				} else if (typeof property == "number") {
 					return object[property];
@@ -1520,7 +1520,8 @@ function Tools(){
 		},
 		
 		/**
-		 * Set the property of an object nested in oen or more objects
+		 * Set the property of an object nested in one or more objects
+		 * If the property doesn't exist, it gets created.
 		 * @param {Object} object
 		 * @param {String} property
 		 * @param value the value to set
@@ -1531,6 +1532,7 @@ function Tools(){
 				if (typeof property == "string" && property != "") {
 					var split = property.split(".");
 					return split.reduce(function (obj, prop, idx) {
+						obj[prop] = obj[prop] || {};
 						if (split.length == (idx + 1)) {
 							obj[prop] = value;
 						}
