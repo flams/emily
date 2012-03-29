@@ -75,8 +75,12 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					query: _syncInfo.query
 				}, function (results) {
 					var json = JSON.parse(results);
-					this.reset(json.rows);
-					_stateMachine.event("subscribeToViewChanges", json.update_seq);
+					if (!json.rows) {
+						throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);	
+					} else {
+						this.reset(json.rows);
+						_stateMachine.event("subscribeToViewChanges", json.update_seq);
+					}
 				}, this);
 			},
 			

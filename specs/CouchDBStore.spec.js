@@ -285,6 +285,16 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
 		
+		it("should throw an explicit error if resulting json has no 'row' property", function () {
+			var cb;
+			couchDBStore.actions.getView();
+			cb = transportMock.request.mostRecentCall.args[2];
+			
+			expect(function () {
+				cb.call(couchDBStore, '{"error":""}');
+			}).toThrow('CouchDBStore [db, design, view].sync() failed: {"error":""}');
+		});
+		
 		it("should subscribe to view changes", function () {
 			var reqData;
 			
