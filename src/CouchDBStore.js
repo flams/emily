@@ -107,7 +107,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				_transport.request(_channel, {
 					method: "POST",
 					path: "/" + _syncInfo.database + "/_all_docs",
-					query: _syncInfo.query
+					query: _syncInfo.query,
+					headers: {
+						"Content-Type": "application/json"
+					}
 				}, function () {}, this);
 				
 			},

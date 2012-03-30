@@ -1002,6 +1002,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(reqData).toBeInstanceOf(Object);
 				expect(reqData["method"]).toEqual("POST");
 				expect(reqData["path"]).toEqual("/db/_all_docs");
+				expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
 				expect(reqData["query"]).toBe(query);
 				expect(reqData["query"].include_docs).toEqual(true);
 				expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
