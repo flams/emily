@@ -99,6 +99,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				}, this);
 			},
 			
+			/**
+			 * Get a bulk of documents
+			 * @private
+			 */
 			getBulkDocuments: function () {
 				
 				_syncInfo.query = _syncInfo.query || {};
@@ -363,6 +367,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			    ["updateDatabase", actions.createDocument, this],
 			    ["subscribeToViewChanges", actions.subscribeToViewChanges, this, "Listening"],
 				["subscribeToDocumentChanges", actions.subscribeToDocumentChanges, this, "Listening"],
+				["subscribeToBulkChanges", actions.subscribeToBulkChanges, this, "Listening"],
 				["unsync", function noop(){}, "Unsynched"]
 			 ],
 				

@@ -959,7 +959,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				var Unsynched,
 					Synched,
 					Listening,
-					getBulkDocuments;
+					getBulkDocuments,
+					subscribeToBulkChanges;
 				
 				Unsynched = stateMachine.get("Unsynched");
 				expect(Unsynched).toBeTruthy();
@@ -967,6 +968,17 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(getBulkDocuments[0]).toBe(couchDBStore.actions.getBulkDocuments);
 				expect(getBulkDocuments[1]).toBe(couchDBStore);
 				expect(getBulkDocuments[2]).toEqual("Synched");
+				
+				Synched = stateMachine.get("Synched");
+				expect(Synched).toBeTruthy();
+				subscribeToBulkChanges = Synched.get("subscribeToBulkChanges");
+				expect(subscribeToBulkChanges[0]).toBe(couchDBStore.actions.subscribeToBulkChanges);
+				expect(subscribeToBulkChanges[1]).toBe(couchDBStore);
+				expect(subscribeToBulkChanges[2]).toEqual("Listening");
+				
+				Listening = stateMachine.get("Listening");
+				expect(Listening).toBeTruthy();
+				
 				
 			});
 			
