@@ -106,6 +106,36 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			},
 			
 			/**
+			 * Get a bulk of documents
+			 * @private
+			 */
+			getBulkDocuments: function () {
+				
+				_syncInfo.query = _syncInfo.query || {};
+				_syncInfo.query.include_docs = true;
+				_syncInfo.query.update_seq = true;
+				
+				_transport.request(_channel, {
+					method: "POST",
+					path: "/" + _syncInfo.database + "/_all_docs",
+					query: _syncInfo.query,
+					headers: {
+						"Content-Type": "application/json"
+					},
+					data: _syncInfo.bulkDoc
+				}, function (results) {
+					var json = JSON.parse(results);
+					if (!json.rows) {
+						throw new Error("CouchDBStore [" + _syncInfo.database + ", " + JSON.stringify(_syncInfo.bulkDoc) + "].sync() failed: " + results);	
+					} else {
+						this.reset(json.rows);
+						_stateMachine.event("subscribeToBulkChanges", json.update_seq);
+					}
+				}, this);
+				
+			},
+			
+			/**
 			 * Put a new document in CouchDB
 			 * @private
 			 */
@@ -139,25 +169,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						path: "/" + _syncInfo.database + "/_changes",
 						query: _syncInfo.query
 					},
-					function (changes) {
-						// Should I test for this very special case (heartbeat?)
-						// Or do I have to try catch for any invalid json?
-						if (changes == "\n") {
-							return false;
-						}
-						
-						var json = JSON.parse(changes),
-							action;
-
-						if (json.deleted) {
-							action = "delete";
-						} else if (json.changes[0].rev.search("1-") == 0) {
-							action = "add";
-						} else {
-							action = "change";
-						}
-						_stateMachine.event(action, json.id);
-					}, this);
+					this.actions.onChange,
+					this);
 			},
 			
 			/**
@@ -165,9 +178,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * @private
 			 */
 			subscribeToDocumentChanges: function () {
-            	/**
-            	 * @private
-            	 */
+
 				this.stopListening = _transport.listen(_channel, {
 					path: "/" + _syncInfo.database + "/_changes",
 					query: {
@@ -200,28 +211,66 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			},
 			
 			/**
+			 * Subscribe to changes when synchronized with a bulk of documents
+			 * @private
+			 */
+			subscribeToBulkChanges: function (update_seq) {
+				
+				Tools.mixin({
+					feed: "continuous",
+					heartbeat: 20000,
+					since: update_seq
+				}, _syncInfo.query);
+            	
+            	this.stopListening = _transport.listen(_channel, {
+						path: "/" + _syncInfo.database + "/_changes",
+						query: _syncInfo.query
+					},
+					actions.onChange,
+					this);
+			},
+			
+			/**
+			 * Function called on changes when synched with a list (view/bulk document)
+			 * @private
+			 */
+			onChange: function (changes) {
+				// Should I test for this very special case (heartbeat?)
+				// Or do I have to try catch for any invalid json?
+				if (changes == "\n") {
+					return false;
+				}
+				
+				var json = JSON.parse(changes),
+					action;
+
+				if (json.deleted) {
+					action = "delete";
+				} else if (json.changes[0].rev.search("1-") == 0) {
+					action = "add";
+				} else {
+					action = "change";
+				}
+				_stateMachine.event(action, json.id);
+			},
+			
+			/**
 			 * Update in the Store a document that was updated in CouchDB
-			 * Get the whole view :(, then get the modified document and update it.
-			 * I have no choice but to request the whole view and look for the document
-			 * so I can also retrieve its position in the store (idx) and update the item.
-			 * Maybe I've missed something
 			 * @private
 			 */
 			updateDocInStore: function (id) {
 				_transport.request(_channel,{
 					method: "GET",
-					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view,
-					query: _syncInfo.query
-				}, function (view) {
-					var json = JSON.parse(view);
+					path: '/'+_syncInfo.database+'/' + id
+				}, function (doc) {
+					var json = JSON.parse(doc);
 					
-					json.rows.some(function (value, idx) {
+					this.loop(function (value, idx) {
 						if (value.id == id) {
-							this.set(idx, value);
+							this.set(idx, json);
 						}
 					}, this);
 
-					
 				}, this);
 				
 			},
@@ -336,13 +385,15 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		_stateMachine = new StateMachine("Unsynched", {
 			"Unsynched": [
 			    ["getView", actions.getView, this, "Synched"],
-				["getDocument", actions.getDocument, this, "Synched"]
+				["getDocument", actions.getDocument, this, "Synched"],
+				["getBulkDocuments", actions.getBulkDocuments, this, "Synched"]
 			 ],
 						
 			"Synched": [
 			    ["updateDatabase", actions.createDocument, this],
 			    ["subscribeToViewChanges", actions.subscribeToViewChanges, this, "Listening"],
 				["subscribeToDocumentChanges", actions.subscribeToDocumentChanges, this, "Listening"],
+				["subscribeToBulkChanges", actions.subscribeToBulkChanges, this, "Listening"],
 				["unsync", function noop(){}, "Unsynched"]
 			 ],
 				
@@ -376,6 +427,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
 				_stateMachine.event("getDocument");
 				return _syncPromise;
+			} else if (typeof arguments[0] == "string" && arguments[1] instanceof Array) {
+				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
+				_stateMachine.event("getBulkDocuments");
+				return _syncPromise;
 			}
 			return false;
 		};
@@ -395,6 +450,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] != "string") {
 				_syncInfo["database"] = arguments[0];
 				_syncInfo["document"] = arguments[1];
+				_syncInfo["query"] = arguments[2];
+				return true;
+			} else if (typeof arguments[0] == "string" && arguments[1] instanceof Array) {
+				_syncInfo["database"] = arguments[0];
+				_syncInfo["bulkDoc"] = arguments[1];
 				_syncInfo["query"] = arguments[2];
 				return true;
 			}

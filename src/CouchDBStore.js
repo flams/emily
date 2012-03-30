@@ -107,6 +107,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				
 				_syncInfo.query = _syncInfo.query || {};
 				_syncInfo.query.include_docs = true;
+				_syncInfo.query.update_seq = true;
 				
 				_transport.request(_channel, {
 					method: "POST",
@@ -122,7 +123,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						throw new Error("CouchDBStore [" + _syncInfo.database + ", " + JSON.stringify(_syncInfo.bulkDoc) + "].sync() failed: " + results);	
 					} else {
 						this.reset(json.rows);
-						//_stateMachine.event("subscribeToViewChanges", json.update_seq);
+						_stateMachine.event("subscribeToBulkChanges", json.update_seq);
 					}
 				}, this);
 				
@@ -188,9 +189,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * @private
 			 */
 			subscribeToDocumentChanges: function () {
-            	/**
-            	 * @private
-            	 */
+
 				this.stopListening = _transport.listen(_channel, {
 					path: "/" + _syncInfo.database + "/_changes",
 					query: {
@@ -222,8 +221,24 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				}, this);
 			},
 			
-			subscribeToBulkChanges: function () {
-				
+			/**
+			 * Subscribe to changes when synchronized with a bulk of documents
+			 * @private
+			 */
+			subscribeToBulkChanges: function (update_seq) {
+				Tools.mixin({
+					feed: "continuous",
+					heartbeat: 20000,
+					since: update_seq
+				}, _syncInfo.query);
+            	
+            	this.stopListening = _transport.listen(_channel, {
+						path: "/" + _syncInfo.database + "/_changes",
+						query: _syncInfo.query
+					},
+					function (changes) {
+
+					}, this);
 			},
 			
 			/**
