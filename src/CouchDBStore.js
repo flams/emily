@@ -99,6 +99,19 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				}, this);
 			},
 			
+			getBulkDocuments: function () {
+				
+				_syncInfo.query = _syncInfo.query || {};
+				_syncInfo.query.include_docs = true;
+				
+				_transport.request(_channel, {
+					method: "POST",
+					path: "/" + _syncInfo.database + "/_all_docs",
+					query: _syncInfo.query
+				}, function () {}, this);
+				
+			},
+			
 			/**
 			 * Put a new document in CouchDB
 			 * @private
@@ -330,7 +343,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		_stateMachine = new StateMachine("Unsynched", {
 			"Unsynched": [
 			    ["getView", actions.getView, this, "Synched"],
-				["getDocument", actions.getDocument, this, "Synched"]
+				["getDocument", actions.getDocument, this, "Synched"],
+				["getBulkDocuments", actions.getBulkDocuments, this, "Synched"]
 			 ],
 						
 			"Synched": [
@@ -370,6 +384,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
 				_stateMachine.event("getDocument");
 				return _syncPromise;
+			} else if (typeof arguments[0] == "string" && arguments[1] instanceof Array) {
+				this.setSyncInfo(arguments[0], arguments[1], arguments[2]);
+				_stateMachine.event("getBulkDocuments");
+				return _syncPromise;
 			}
 			return false;
 		};
@@ -389,6 +407,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			} else if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] != "string") {
 				_syncInfo["database"] = arguments[0];
 				_syncInfo["document"] = arguments[1];
+				_syncInfo["query"] = arguments[2];
+				return true;
+			} else if (typeof arguments[0] == "string" && arguments[1] instanceof Array) {
+				_syncInfo["database"] = arguments[0];
+				_syncInfo["bulkDoc"] = arguments[1];
 				_syncInfo["query"] = arguments[2];
 				return true;
 			}

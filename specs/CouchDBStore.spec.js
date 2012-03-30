@@ -72,6 +72,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(couchDBStore.setSyncInfo("db")).toEqual(false);
 			expect(couchDBStore.setSyncInfo("db", "document")).toEqual(true);
 			expect(couchDBStore.setSyncInfo("db", "design", "view")).toEqual(true);
+			expect(couchDBStore.setSyncInfo("db", ["document1", "document2"])).toEqual(true);
 		});
 		
 		it("should have a function to get sync info for a document", function () {
@@ -100,7 +101,17 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(syncInfo["view"]).toEqual("view");
 		});
 		
-		it("should pass query params to the url when syncing to a view", function () {
+		it("should have a function to get sync info for a bulk of documents", function () {
+			var syncInfo,
+				bulkDoc = ["document1", "document2"];
+			
+			couchDBStore.setSyncInfo("db", ["document1", "document2"]);
+			syncInfo = couchDBStore.getSyncInfo();
+			expect(syncInfo["database"]).toEqual("db");
+			expect(syncInfo["bulkDoc"]).toEqual(bulkDoc);
+		});
+		
+		it("should pass query params to the url when syncing with a view", function () {
 			var syncInfo,
 				query = {
 					descending: true
@@ -112,13 +123,25 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(syncInfo["query"]).toBe(query);
 		});
 		
-		it("should pass query params to the url when synching to a document", function () {
+		it("should pass query params to the url when synching with a document", function () {
 			var syncInfo,
 				query = {
 					revs_info: true
 				};
 			
 			couchDBStore.setSyncInfo("db", "document", query);
+			
+			syncInfo = couchDBStore.getSyncInfo();
+			expect(syncInfo["query"]).toBe(query);
+		});
+		
+		it("should pass query params to the url when synching with a bulk of documents", function () {
+			var syncInfo,
+				query = {
+					include_docs: true
+				};
+			
+			couchDBStore.setSyncInfo("db", ["document"], query);
 			
 			syncInfo = couchDBStore.getSyncInfo();
 			expect(syncInfo["query"]).toBe(query);
@@ -489,7 +512,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 
 	});
 	
-describe("CouchDBStoreSyncDocument", function () {
+	describe("CouchDBStoreSyncDocument", function () {
 		
 		var couchDBStore = null,
 			stateMachine = null;
@@ -581,12 +604,12 @@ describe("CouchDBStoreSyncDocument", function () {
 		});
 		
 		it("should return a promise on sync", function () {
-			expect(couchDBStore.sync("database", "document", "view")).toBeInstanceOf(Promise);
+			expect(couchDBStore.sync("database", "document")).toBeInstanceOf(Promise);
 		});
 		
 		it("should call getDocument on sync", function () {
 			spyOn(stateMachine, "event");
-			couchDBStore.sync("db", "documentsss");
+			couchDBStore.sync("db", "documents");
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("getDocument");
 		});
@@ -626,7 +649,7 @@ describe("CouchDBStoreSyncDocument", function () {
 			stateMachine = couchDBStore.getStateMachine();
 		});
 		
-		it("get a document's data", function () {
+		it("should get a document's data", function () {
 			var reqData; 
 			
 			couchDBStore.actions.getDocument.call(couchDBStore);
@@ -879,7 +902,113 @@ describe("CouchDBStoreSyncDocument", function () {
 			expect(transportMock.request.mostRecentCall.args[1].query.rev).toEqual("10-hello");
 		});
 		
+		describe("CouchDBStoreSyncBulkOfDocuments", function () {
+			
+			var couchDBStore = null,
+				stateMachine = null;
+			
+			beforeEach(function () {
+				couchDBStore = new CouchDBStore;
+				couchDBStore.setTransport(transportMock);
+				stateMachine = couchDBStore.getStateMachine();
+			});
+			
+			it("should initialize in Unynched state", function () {
+				expect(couchDBStore.getStateMachine().getCurrent()).toEqual("Unsynched");
+			});
+			
+			it("should have the following states, transitions and actions", function () {
+				var Unsynched,
+					Synched,
+					Listening,
+					getBulkDocuments;
+				
+				Unsynched = stateMachine.get("Unsynched");
+				expect(Unsynched).toBeTruthy();
+				getBulkDocuments = Unsynched.get("getBulkDocuments");
+				expect(getBulkDocuments[0]).toBe(couchDBStore.actions.getBulkDocuments);
+				expect(getBulkDocuments[1]).toBe(couchDBStore);
+				expect(getBulkDocuments[2]).toEqual("Synched");
+				
+			});
+			
+			it("should call setSyncInfo on sync", function () {
+				var query = {},
+					docs = ["document"];
+				
+				spyOn(couchDBStore, "setSyncInfo");
+				couchDBStore.sync("database", docs, query);
+				expect(couchDBStore.setSyncInfo.wasCalled).toEqual(true);
+				expect(couchDBStore.setSyncInfo.mostRecentCall.args[0]).toEqual("database");
+				expect(couchDBStore.setSyncInfo.mostRecentCall.args[1]).toBe(docs);
+				expect(couchDBStore.setSyncInfo.mostRecentCall.args[2]).toBe(query);
+			});
+			
+			it("should return a promise on sync", function () {
+				expect(couchDBStore.sync("database", ["document"])).toBeInstanceOf(Promise);
+			});
+			
+			it("should call getBulkDocuments on sync", function () {
+				var docs = ["document"];
+				
+				spyOn(stateMachine, "event");
+				couchDBStore.sync("db", ["document"]);
+				expect(stateMachine.event.wasCalled).toEqual(true);
+				expect(stateMachine.event.mostRecentCall.args[0]).toBe("getBulkDocuments");
+			});
+			
+			it("should resolve the promise", function () {
+				var promise = couchDBStore.sync("db", ["document"]);
+				spyOn(promise, "resolve");
+				couchDBStore.actions.resolve.call(couchDBStore);
+				expect(promise.resolve.wasCalled).toEqual(true);
+				expect(promise.resolve.mostRecentCall.args[0]).toBe(couchDBStore);
+			});
+			
+			it("should have a function to unsynch a bulk of documents", function () {
+				expect(couchDBStore.unsync).toBeInstanceOf(Function);
+				spyOn(stateMachine, "event");
+				couchDBStore.unsync();
+				expect(stateMachine.event.wasCalled).toEqual(true);
+				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("unsync");
+			});
+			
+		});
 		
+		/**
+		 * A couchDBstore can synchronize with a bulk of documents
+		 * A bulk of documents is an arbitrary ordered array of documents
+		 */
+		describe("CouchDBStoreDocumentData", function () {
+			
+			var couchDBStore = null,
+				stateMachine = null,
+				query = {};
+			
+			beforeEach(function () {
+				couchDBStore = new CouchDBStore;
+				couchDBStore.setTransport(transportMock);
+				couchDBStore.setSyncInfo("db", ["document1", "document2"], query);
+				stateMachine = couchDBStore.getStateMachine();
+			});
+			
+			it("get a bulk of documents' data", function () {
+				var reqData; 
+				
+				couchDBStore.actions.getBulkDocuments.call(couchDBStore);
+				
+				expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+				reqData = transportMock.request.mostRecentCall.args[1];
+				expect(reqData).toBeInstanceOf(Object);
+				expect(reqData["method"]).toEqual("POST");
+				expect(reqData["path"]).toEqual("/db/_all_docs");
+				expect(reqData["query"]).toBe(query);
+				expect(reqData["query"].include_docs).toEqual(true);
+				expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
+				expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
+			});
+		
+		});
 	});
 	
 });
