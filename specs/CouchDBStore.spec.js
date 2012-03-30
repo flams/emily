@@ -13,6 +13,21 @@
  * 			}
  * 		}
  * 	}
+ * 
+ * 
+ * The file is pretty long but it's nicely compartimented:
+ * First comes the general functions of CouchDBStore: CouchDBStoreTest
+ * 
+ * Then comes the testing of the view synchronization state machine: CouchDBStoreSyncView
+ * Then the functions that manipulate the data are tested: CouchDBStoreViewData
+ * 
+ * Then we test the state machine of the document synchronization part: CouchDBStoreSyncDocument
+ * Then comes the data manipulation: CouchDBStoreDocumentData
+ * And the upload to the database part: CouchDBStoreDataBaseUpdate
+ * 
+ * Last, we test the state machine of the bulk of documents synchronization part: CouchDBStoreSyncBulkOfDocuments
+ * And the data manipulation: CouchDBStoreBulkDocumentsData
+ * 
  */
 
 require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBStore, Store, Promise, StateMachine) {
@@ -147,6 +162,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(syncInfo["query"]).toBe(query);
 		});
 	});
+	
+/**
+ * 
+ * 
+ * THE VIEW SYNCHRONIZATION PART
+ * 
+ * 
+ */
 	
 	/**
 	 * A couchDB Store can synchronize with a view
@@ -508,9 +531,16 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(spy.wasCalled).toEqual(true);
 			expect(couchDBStore.stopListening).toBeUndefined();
 		});
-		
 
 	});
+	
+/**
+ * 
+ * 
+ * SINGLE JSON DOCUMENT
+ * 
+ * 
+ */
 	
 	describe("CouchDBStoreSyncDocument", function () {
 		
@@ -902,6 +932,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(transportMock.request.mostRecentCall.args[1].query.rev).toEqual("10-hello");
 		});
 		
+/**
+ * 
+ * 
+ * BULK OF DOCUMENTS
+ * 
+ * 
+ */
+		
 		describe("CouchDBStoreSyncBulkOfDocuments", function () {
 			
 			var couchDBStore = null,
@@ -979,7 +1017,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		 * A couchDBstore can synchronize with a bulk of documents
 		 * A bulk of documents is an arbitrary ordered array of documents
 		 */
-		describe("CouchDBStoreDocumentData", function () {
+		describe("CouchDBStoreBulkDocumentsData", function () {
 			
 			var couchDBStore = null,
 				stateMachine = null,
@@ -1005,8 +1043,43 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
 				expect(reqData["query"]).toBe(query);
 				expect(reqData["query"].include_docs).toEqual(true);
+				expect(reqData["data"][0]).toEqual("document1");
+				expect(reqData["data"][1]).toEqual("document2");
 				expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 				expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
+			});
+			
+			it("should reset the store on sync and ask for changes subscription", function () {
+				
+				var res = '{"total_rows":9,"offset":0,"rows":[' +
+					'{"id":"1332210170353","key":"1332210170353","value":{"rev":"3-2bde96c5f0acfc337a0bd6ba9d5663db"},"doc":{"_id":"1332210170353","_rev":"3-2bde96c5f0acfc337a0bd6ba9d5663db","author":"podefr","desc":"new suggestion seems to work!","date":[2012,2,20,3,22,50]}},' +
+					'{"id":"1332210187987","key":"1332210187987","value":{"rev":"3-7d31a5e35515e15a7db7e67054ad010a"},"doc":{"_id":"1332210187987","_rev":"3-7d31a5e35515e15a7db7e67054ad010a","author":"podefr","desc":"I suggest that this should work:)","date":[2012,2,20,3,23,7]}}' +
+					']}',
+					callback;
+				
+				couchDBStore.actions.getBulkDocuments.call(couchDBStore);
+				
+				callback = transportMock.request.mostRecentCall.args[2];
+				spyOn(stateMachine, "event");
+				spyOn(couchDBStore, "reset");
+				
+				callback.call(couchDBStore, res);
+				
+				expect(couchDBStore.reset.wasCalled).toEqual(true);
+				expect(couchDBStore.reset.mostRecentCall.args[0]).toBeInstanceOf(Object);
+				expect(couchDBStore.reset.mostRecentCall.args[0][0].key).toEqual("1332210170353");
+				
+			});
+			
+			it("should throw an explicit error if resulting json has no 'row' property", function () {
+				var cb;
+				
+				couchDBStore.actions.getBulkDocuments();
+				cb = transportMock.request.mostRecentCall.args[2];
+				
+				expect(function () {
+					cb.call(couchDBStore, '{"error":""}');
+				}).toThrow('CouchDBStore [db, ["document1","document2"]].sync() failed: {"error":""}');
 			});
 		
 		});

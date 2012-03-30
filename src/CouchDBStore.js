@@ -110,8 +110,17 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					query: _syncInfo.query,
 					headers: {
 						"Content-Type": "application/json"
+					},
+					data: _syncInfo.bulkDoc
+				}, function (results) {
+					var json = JSON.parse(results);
+					if (!json.rows) {
+						throw new Error("CouchDBStore [" + _syncInfo.database + ", " + JSON.stringify(_syncInfo.bulkDoc) + "].sync() failed: " + results);	
+					} else {
+						this.reset(json.rows);
+						//_stateMachine.event("subscribeToViewChanges", json.update_seq);
 					}
-				}, function () {}, this);
+				}, this);
 				
 			},
 			
