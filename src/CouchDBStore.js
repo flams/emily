@@ -222,6 +222,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				}, this);
 			},
 			
+			subscribeToBulkChanges: function () {
+				
+			},
+			
 			/**
 			 * Update in the Store a document that was updated in CouchDB
 			 * Get the whole view :(, then get the modified document and update it.
