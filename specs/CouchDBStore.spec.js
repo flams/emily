@@ -531,6 +531,13 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(spy.wasCalled).toEqual(true);
 			expect(couchDBStore.stopListening).toBeUndefined();
 		});
+		
+		it("shouldn't allow for database modification (a view is readonly)", function () {
+			spyOn(stateMachine, "event");
+			expect(couchDBStore.remove()).toEqual(false);
+			expect(couchDBStore.update()).toEqual(false);
+			expect(stateMachine.event.wasCalled).toEqual(false);
+		});
 
 	});
 	
@@ -895,8 +902,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData["method"]).toEqual("PUT");
 			expect(reqData["path"]).toEqual("/db/document1");
 			expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
-			expect(typeof reqData.data).toEqual("string");
-			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
+			expect(reqData.data.fakeRev).toEqual("10-hello");
 		});
 		
 		it("should add document on update if it's missing", function () {
@@ -911,8 +917,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData["method"]).toEqual("PUT");
 			expect(reqData["path"]).toEqual("/db/document1");
 			expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
-			expect(typeof reqData.data).toEqual("string");
-			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
+			expect(reqData.data.fakeRev).toEqual("10-hello");
 			
 			spyOn(stateMachine, "event");
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
@@ -965,6 +970,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 					entry,
 					bulkChange,
 					bulkDel,
+					updateDatabaseWithBulkDoc,
 					listeningUnsync;
 				
 				Unsynched = stateMachine.get("Unsynched");
@@ -1000,6 +1006,10 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(listeningUnsync[0]).toBe(couchDBStore.actions.unsync);
 				expect(listeningUnsync[1]).toBe(couchDBStore);
 				expect(listeningUnsync[2]).toBe("Unsynched");
+				
+				updateDatabaseWithBulkDoc = Listening.get("updateDatabaseWithBulkDoc");
+				expect(updateDatabaseWithBulkDoc[0]).toBe(couchDBStore.actions.updateDatabaseWithBulkDoc);
+				expect(updateDatabaseWithBulkDoc[1]).toBe(couchDBStore);
 
 				
 			});
@@ -1220,6 +1230,57 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(couchDBStore.stopListening).toBeUndefined();
 			});
 		
+		});
+		
+		describe("CouchDBStoreDataBaseUpdateWithBulkDocuments", function () {
+			
+			var couchDBStore = null,
+				stateMachine = null;
+			
+			beforeEach(function () {
+				couchDBStore = new CouchDBStore;
+				couchDBStore.setTransport(transportMock);
+				couchDBStore.setSyncInfo("db", ["document1", "document2"]);
+				stateMachine = couchDBStore.getStateMachine();
+			});
+			
+			it("should have a function to upload a document", function () {
+				expect(couchDBStore.upload).toBeInstanceOf(Function);
+				spyOn(stateMachine, "event");
+				couchDBStore.upload();
+				expect(stateMachine.event.wasCalled).toEqual(true);
+				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabaseWithBulkDoc");
+			});
+			
+			it("shouldn't allow for removing a document (a doc to delete should have a _deleted property set to true)", function () {
+				expect(couchDBStore.remove()).toEqual(false);
+			});
+			
+			it("should update the database on update", function () {
+				var reqData,
+					data;
+				
+				couchDBStore.reset([
+					{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},
+					{"id":"document2","key":"document2","value":{"rev":"2-a071048ce217ff1341fb224b83417003"},"doc":{"_id":"document2","_rev":"2-a071048ce217ff1341fb224b83417003","desc":"my second document"}}                    
+				]);
+				couchDBStore.actions.updateDatabaseWithBulkDoc.call(couchDBStore);
+				
+				expect(transportMock.request.wasCalled).toEqual(true);
+				expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+				reqData = transportMock.request.mostRecentCall.args[1];
+				
+				expect(reqData).toBeInstanceOf(Object);
+				expect(reqData["method"]).toEqual("POST");
+				expect(reqData["path"]).toEqual("/db/_bulk_docs");
+				expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
+				data = reqData.data;
+				expect(data.docs).toBeInstanceOf(Array);
+				expect(data.docs[0]._id).toEqual("document1");
+				expect(data.docs[1]._id).toEqual("document2");
+				
+			});
+			
 		});
 	});
 	

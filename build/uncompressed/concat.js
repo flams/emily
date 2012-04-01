@@ -146,7 +146,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             		headers: {
             			"Content-Type": "application/json"
             		},
-            		data: this.toJSON()
+            		data: JSON.parse(this.toJSON())
             	}, function () {
             		_stateMachine.event("subscribeToDocumentChanges");
             	});
@@ -382,8 +382,29 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             		headers: {
             			"Content-Type": "application/json"
             		},
-            		data: this.toJSON()
+            		data: JSON.parse(this.toJSON())
             	});
+		    },
+		    
+		    /**
+		     * Update the database with bulk documents
+		     * @private
+		     */
+		    updateDatabaseWithBulkDoc: function () {
+		    	
+		    	var docs = [];
+		    	this.loop(function (value) {
+		    		docs.push(value.doc);
+		    	});
+		    	
+		    	_transport.request(_channel, {
+		    		method: "POST",
+		    		path: "/" + _syncInfo.database + "/_bulk_docs",
+		    		headers: {
+		    			"Content-Type": "application/json"
+		    		},
+		    		data: {"docs": docs}
+		    	});
 		    },
 		    
 		    /**
@@ -447,6 +468,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				["updateDoc", actions.updateDoc, this],
 			    ["deleteDoc", actions.deleteDoc, this],
 			    ["updateDatabase", actions.updateDatabase, this],
+			    ["updateDatabaseWithBulkDoc", actions.updateDatabaseWithBulkDoc, this],
 			    ["removeFromDatabase", actions.removeFromDatabase, this],
 			    ["unsync", actions.unsync, this, "Unsynched"]
 			   ]
@@ -524,10 +546,18 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		
 		/**
 		 * Upload the document to the database
+		 * Works for CouchDBStore that are synchronized with documents or bulk of documents.
+		 * If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
+		 * No modification can be done on views.
 		 * @returns true if upload called
 		 */
 		this.upload = function upload() {
-			return _stateMachine.event("updateDatabase");
+			if(_syncInfo.document) {
+				return _stateMachine.event("updateDatabase");
+			} else if (_syncInfo.bulkDoc) {
+				return _stateMachine.event("updateDatabaseWithBulkDoc");
+			} 
+			return false;
 		};
 		
 		/**
@@ -535,7 +565,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 * @returns true if remove called
 		 */
 		this.remove = function remove() {
-			return _stateMachine.event("removeFromDatabase");
+			if (_syncInfo.document) {
+				return _stateMachine.event("removeFromDatabase");
+			} 
+			return false;
 		};
 		
 		/**
