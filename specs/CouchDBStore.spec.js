@@ -902,7 +902,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData["method"]).toEqual("PUT");
 			expect(reqData["path"]).toEqual("/db/document1");
 			expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
-			expect(reqData.data.fakeRev).toEqual("10-hello");
+			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
 		});
 		
 		it("should add document on update if it's missing", function () {
@@ -917,7 +917,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData["method"]).toEqual("PUT");
 			expect(reqData["path"]).toEqual("/db/document1");
 			expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
-			expect(reqData.data.fakeRev).toEqual("10-hello");
+			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
 			
 			spyOn(stateMachine, "event");
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
@@ -1088,8 +1088,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(reqData["query"]).toBe(query);
 				expect(reqData["query"].include_docs).toEqual(true);
 				expect(reqData["query"].update_seq).toEqual(true);
-				expect(reqData["data"][0]).toEqual("document1");
-				expect(reqData["data"][1]).toEqual("document2");
+				expect(JSON.parse(reqData["data"])[0]).toEqual("document1");
+				expect(JSON.parse(reqData["data"])[1]).toEqual("document2");
 				expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 				expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 			});
@@ -1274,7 +1274,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(reqData["method"]).toEqual("POST");
 				expect(reqData["path"]).toEqual("/db/_bulk_docs");
 				expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
-				data = reqData.data;
+				data = JSON.parse(reqData.data);
 				expect(data.docs).toBeInstanceOf(Array);
 				expect(data.docs[0]._id).toEqual("document1");
 				expect(data.docs[1]._id).toEqual("document2");

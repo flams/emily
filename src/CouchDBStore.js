@@ -116,7 +116,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					headers: {
 						"Content-Type": "application/json"
 					},
-					data: _syncInfo.bulkDoc
+					data: JSON.stringify(_syncInfo.bulkDoc)
 				}, function (results) {
 					var json = JSON.parse(results);
 					if (!json.rows) {
@@ -140,7 +140,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             		headers: {
             			"Content-Type": "application/json"
             		},
-            		data: JSON.parse(this.toJSON())
+            		data: this.toJSON()
             	}, function () {
             		_stateMachine.event("subscribeToDocumentChanges");
             	});
@@ -376,7 +376,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             		headers: {
             			"Content-Type": "application/json"
             		},
-            		data: JSON.parse(this.toJSON())
+            		data: this.toJSON()
             	});
 		    },
 		    
@@ -397,7 +397,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		    		headers: {
 		    			"Content-Type": "application/json"
 		    		},
-		    		data: {"docs": docs}
+		    		data: JSON.stringify({"docs": docs})
 		    	});
 		    },
 		    

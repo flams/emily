@@ -52,7 +52,7 @@ requirejs(["Store"], function (Store) {
 					});
 			});
 			
-			req.end(JSON.parse(data.data), "utf8");
+			req.end(data.data, "utf8");
 			
 			return function () {
 				req.abort();
