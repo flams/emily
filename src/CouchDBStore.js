@@ -116,7 +116,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					headers: {
 						"Content-Type": "application/json"
 					},
-					data: JSON.stringify(_syncInfo.bulkDoc)
+					data: JSON.stringify({keys:_syncInfo.bulkDoc})
 				}, function (results) {
 					var json = JSON.parse(results);
 					if (!json.rows) {

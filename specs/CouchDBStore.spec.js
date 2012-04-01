@@ -1088,8 +1088,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(reqData["query"]).toBe(query);
 				expect(reqData["query"].include_docs).toEqual(true);
 				expect(reqData["query"].update_seq).toEqual(true);
-				expect(JSON.parse(reqData["data"])[0]).toEqual("document1");
-				expect(JSON.parse(reqData["data"])[1]).toEqual("document2");
+				expect(JSON.parse(reqData["data"]).keys[0]).toEqual("document1");
+				expect(JSON.parse(reqData["data"]).keys[1]).toEqual("document2");
 				expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
 				expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 			});
