@@ -237,7 +237,25 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						query: _syncInfo.query
 					},
 					function (changes) {
-
+						var json;
+						// Should I test for this very special case (heartbeat?)
+						// Or do I have to try catch for any invalid json?
+						if (changes == "\n") {
+							return false;
+						}
+						
+						var json = JSON.parse(changes),
+							action;
+						
+						if (json.deleted) {
+							action = "delete";
+						} else {
+							action = "bulkChange";
+						}
+						
+						_stateMachine.event(action, json.id);
+						
+						
 					}, this);
 			},
 			
@@ -266,6 +284,30 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					
 				}, this);
 				
+			},
+			
+			/**
+			 * Update in the Store a document that was updated in CouchDB
+			 * Get all documents like the first sync request, then get the modified document and update it.
+			 * I'm doing this because the document, the things I really care for (the rest is plumbing)
+			 * is sometimes stored into value (view) into doc (bulk docs) or as is.
+			 * @private
+			 */
+			updateBulkDocInStore: function (id) {
+				_transport.request(_channel, {
+					method: "POST",
+					path: "/"+_syncInfo.database+"/_all_docs",
+					query: _syncInfo.query
+				}, function (bulk) {
+					var json = JSON.parse(bulk);
+					
+					json.rows.some(function (value, idx) {
+						if (value.id == id) {
+							this.set(idx, value);
+						}
+					}, this);
+					
+				});
 			},
 			
 			/**
@@ -393,6 +435,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			"Listening": [
 			    ["entry", actions.resolve, this],
 			    ["change", actions.updateDocInStore, this],
+			    ["bulkChange", actions.updateBulkDocInStore, this],
 				["delete", actions.removeDocInStore, this],
 				["add", actions.addDocInStore, this],
 				["updateDoc", actions.updateDoc, this],

@@ -960,7 +960,12 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 					Synched,
 					Listening,
 					getBulkDocuments,
-					subscribeToBulkChanges;
+					subscribeToBulkChanges,
+					SynchedUnsync,
+					entry,
+					bulkChange,
+					bulkDel,
+					listeningUnsync;
 				
 				Unsynched = stateMachine.get("Unsynched");
 				expect(Unsynched).toBeTruthy();
@@ -976,9 +981,26 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(subscribeToBulkChanges[1]).toBe(couchDBStore);
 				expect(subscribeToBulkChanges[2]).toEqual("Listening");
 				
+				SynchedUnsync = Synched.get("unsync");
+				expect(SynchedUnsync[0]).toBeInstanceOf(Function);
+				expect(SynchedUnsync[2]).toEqual("Unsynched");
+				
 				Listening = stateMachine.get("Listening");
 				expect(Listening).toBeTruthy();
 				
+				entry = Listening.get("entry");
+				expect(entry[0]).toBe(couchDBStore.actions.resolve);
+				expect(entry[1]).toBe(couchDBStore);
+				
+				bulkChange = Listening.get("bulkChange");
+				expect(bulkChange[0]).toBe(couchDBStore.actions.updateBulkDocInStore);
+				expect(bulkChange[1]).toBe(couchDBStore);
+				
+				listeningUnsync = Listening.get("unsync");
+				expect(listeningUnsync[0]).toBe(couchDBStore.actions.unsync);
+				expect(listeningUnsync[1]).toBe(couchDBStore);
+				expect(listeningUnsync[2]).toBe("Unsynched");
+
 				
 			});
 			
@@ -1064,10 +1086,10 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			
 			it("should reset the store on sync and ask for changes subscription", function () {
 				
-				var res = '{"total_rows":9,"update_seq":155,"offset":0,"rows":[' +
-					'{"id":"1332210170353","key":"1332210170353","value":{"rev":"3-2bde96c5f0acfc337a0bd6ba9d5663db"},"doc":{"_id":"1332210170353","_rev":"3-2bde96c5f0acfc337a0bd6ba9d5663db","author":"podefr","desc":"new suggestion seems to work!","date":[2012,2,20,3,22,50]}},' +
-					'{"id":"1332210187987","key":"1332210187987","value":{"rev":"3-7d31a5e35515e15a7db7e67054ad010a"},"doc":{"_id":"1332210187987","_rev":"3-7d31a5e35515e15a7db7e67054ad010a","author":"podefr","desc":"I suggest that this should work:)","date":[2012,2,20,3,23,7]}}' +
-					']}',
+				var res = '{"total_rows":2,"update_seq":2,"offset":0,"rows":['+
+						'{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},'+
+						'{"id":"document2","key":"document2","value":{"rev":"1-498184b1f395834249a2ffbf3e73d372"},"doc":{"_id":"document2","_rev":"1-498184b1f395834249a2ffbf3e73d372","desc":"my second doc"}}'+
+						']}',
 					callback;
 				
 				couchDBStore.actions.getBulkDocuments.call(couchDBStore);
@@ -1080,11 +1102,11 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				
 				expect(couchDBStore.reset.wasCalled).toEqual(true);
 				expect(couchDBStore.reset.mostRecentCall.args[0]).toBeInstanceOf(Object);
-				expect(couchDBStore.reset.mostRecentCall.args[0][0].key).toEqual("1332210170353");
+				expect(couchDBStore.reset.mostRecentCall.args[0][0].key).toEqual("document1");
 				
 				expect(stateMachine.event.wasCalled).toEqual(true);
 				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToBulkChanges");
-				expect(stateMachine.event.mostRecentCall.args[1]).toEqual(155);
+				expect(stateMachine.event.mostRecentCall.args[1]).toEqual(2);
 				
 			});
 			
@@ -1103,7 +1125,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				var reqData;
 				
 				expect(couchDBStore.stopListening).toBeUndefined();
-				couchDBStore.actions.subscribeToBulkChanges.call(couchDBStore, 155);
+				couchDBStore.actions.subscribeToBulkChanges.call(couchDBStore, 2);
 				expect(couchDBStore.stopListening).toBe(stopListening);
 				
 				expect(transportMock.listen.wasCalled).toEqual(true);
@@ -1112,10 +1134,90 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				reqData = transportMock.listen.mostRecentCall.args[1].query;
 				expect(reqData.feed).toEqual("continuous");
 				expect(reqData.heartbeat).toEqual(20000);
-				expect(reqData.since).toEqual(155);
+				expect(reqData.since).toEqual(2);
 				expect(reqData).toBe(query);
 				expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 				expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
+			});
+			
+			it("should not fail with empty json from heartbeat", function () {
+				var callback;
+				
+				couchDBStore.actions.subscribeToBulkChanges.call(CouchDBStore, 2);
+				callback = transportMock.listen.mostRecentCall.args[2];
+				
+				expect(function() {
+					callback("\n");
+				}).not.toThrow();
+			});
+			
+			it("should call for document update if one of them has changed", function () {
+				var listenRes = '{"seq":3,"id":"document2","changes":[{"rev":"2-a071048ce217ff1341fb224b83417003"}]}',
+					callback;
+
+				spyOn(stateMachine, "event");
+				
+				couchDBStore.actions.subscribeToBulkChanges.call(couchDBStore, 2);
+				callback = transportMock.listen.mostRecentCall.args[2];
+				callback(listenRes);
+				
+				expect(stateMachine.event.wasCalled).toEqual(true);
+				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("bulkChange");
+				expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
+			});
+			
+			it("should call for document removal if one of them was removed", function () {
+				var listenRes = '{"seq":5,"id":"document2","changes":[{"rev":"3-e597919e6e32c045553beb8eb3688b21"}],"deleted":true}',
+					callback;
+		
+				spyOn(stateMachine, "event");
+				
+				couchDBStore.actions.subscribeToBulkChanges.call(couchDBStore, 2);
+				callback = transportMock.listen.mostRecentCall.args[2];
+				callback(listenRes);
+				
+				expect(stateMachine.event.wasCalled).toEqual(true);
+				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("delete");
+				expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
+			});
+			
+			it("should update the selected document", function () {
+				var reqData,
+					value,
+					listenRes = '{"total_rows":2,"offset":0,"rows":['+
+						'{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},'+
+						'{"id":"document2","key":"document2","value":{"rev":"2-a071048ce217ff1341fb224b83417003"},"doc":{"_id":"document2","_rev":"2-a071048ce217ff1341fb224b83417003","desc":"my second document"}}'+
+						']}';                                                                                   	            
+				
+				spyOn(couchDBStore, "set");
+				
+				couchDBStore.actions.updateBulkDocInStore.call(couchDBStore, "document2");
+				expect(transportMock.request.wasCalled).toEqual(true);
+				expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+
+				reqData = transportMock.request.mostRecentCall.args[1];
+				expect(reqData["method"]).toEqual("POST");
+				expect(reqData["path"]).toEqual("/db/_all_docs");
+				expect(reqData["query"]).toBe(query);
+				
+				callback = transportMock.request.mostRecentCall.args[2];
+				expect(callback).toBeInstanceOf(Function);
+				callback.call(couchDBStore, listenRes);
+				
+				expect(couchDBStore.set.wasCalled).toEqual(true);
+				expect(couchDBStore.set.mostRecentCall.args[0]).toEqual(1);
+				value = couchDBStore.set.mostRecentCall.args[1];
+				
+				expect(value.doc._rev).toEqual("2-a071048ce217ff1341fb224b83417003");
+				
+			});
+			
+			it("should unsync a view, ie. stop listening to changes and reset it", function () {
+				var spy = jasmine.createSpy();
+				couchDBStore.stopListening = spy;
+				couchDBStore.actions.unsync.call(couchDBStore);
+				expect(spy.wasCalled).toEqual(true);
+				expect(couchDBStore.stopListening).toBeUndefined();
 			});
 		
 		});

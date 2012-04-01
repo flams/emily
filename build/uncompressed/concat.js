@@ -169,8 +169,25 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						path: "/" + _syncInfo.database + "/_changes",
 						query: _syncInfo.query
 					},
-					this.actions.onChange,
-					this);
+					function (changes) {
+						// Should I test for this very special case (heartbeat?)
+						// Or do I have to try catch for any invalid json?
+						if (changes == "\n") {
+							return false;
+						}
+						
+						var json = JSON.parse(changes),
+							action;
+
+						if (json.deleted) {
+							action = "delete";
+						} else if (json.changes[0].rev.search("1-") == 0) {
+							action = "add";
+						} else {
+							action = "change";
+						}
+						_stateMachine.event(action, json.id);
+					}, this);
 			},
 			
 			/**
@@ -215,7 +232,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * @private
 			 */
 			subscribeToBulkChanges: function (update_seq) {
-				
 				Tools.mixin({
 					feed: "continuous",
 					heartbeat: 20000,
@@ -226,53 +242,78 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						path: "/" + _syncInfo.database + "/_changes",
 						query: _syncInfo.query
 					},
-					actions.onChange,
-					this);
-			},
-			
-			/**
-			 * Function called on changes when synched with a list (view/bulk document)
-			 * @private
-			 */
-			onChange: function (changes) {
-				// Should I test for this very special case (heartbeat?)
-				// Or do I have to try catch for any invalid json?
-				if (changes == "\n") {
-					return false;
-				}
-				
-				var json = JSON.parse(changes),
-					action;
-
-				if (json.deleted) {
-					action = "delete";
-				} else if (json.changes[0].rev.search("1-") == 0) {
-					action = "add";
-				} else {
-					action = "change";
-				}
-				_stateMachine.event(action, json.id);
+					function (changes) {
+						var json;
+						// Should I test for this very special case (heartbeat?)
+						// Or do I have to try catch for any invalid json?
+						if (changes == "\n") {
+							return false;
+						}
+						
+						var json = JSON.parse(changes),
+							action;
+						
+						if (json.deleted) {
+							action = "delete";
+						} else {
+							action = "bulkChange";
+						}
+						
+						_stateMachine.event(action, json.id);
+						
+						
+					}, this);
 			},
 			
 			/**
 			 * Update in the Store a document that was updated in CouchDB
+			 * Get the whole view :(, then get the modified document and update it.
+			 * I have no choice but to request the whole view and look for the document
+			 * so I can also retrieve its position in the store (idx) and update the item.
+			 * Maybe I've missed something
 			 * @private
 			 */
 			updateDocInStore: function (id) {
 				_transport.request(_channel,{
 					method: "GET",
-					path: '/'+_syncInfo.database+'/' + id
-				}, function (doc) {
-					var json = JSON.parse(doc);
+					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view,
+					query: _syncInfo.query
+				}, function (view) {
+					var json = JSON.parse(view);
 					
-					this.loop(function (value, idx) {
+					json.rows.some(function (value, idx) {
 						if (value.id == id) {
-							this.set(idx, json);
+							this.set(idx, value);
 						}
 					}, this);
 
+					
 				}, this);
 				
+			},
+			
+			/**
+			 * Update in the Store a document that was updated in CouchDB
+			 * Get all documents like the first sync request, then get the modified document and update it.
+			 * I'm doing this because the document, the things I really care for (the rest is plumbing)
+			 * is sometimes stored into value (view) into doc (bulk docs) or as is.
+			 * @private
+			 */
+			updateBulkDocInStore: function (id) {
+				_transport.request(_channel, {
+					method: "POST",
+					path: "/"+_syncInfo.database+"/_all_docs",
+					query: _syncInfo.query
+				}, function (bulk) {
+					var json = JSON.parse(bulk);
+					
+					json.rows.some(function (value, idx) {
+						if (value.id == id) {
+							this.set(idx, value);
+						}
+					}, this);
+					
+				});
 			},
 			
 			/**
@@ -400,6 +441,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			"Listening": [
 			    ["entry", actions.resolve, this],
 			    ["change", actions.updateDocInStore, this],
+			    ["bulkChange", actions.updateBulkDocInStore, this],
 				["delete", actions.removeDocInStore, this],
 				["add", actions.addDocInStore, this],
 				["updateDoc", actions.updateDoc, this],
