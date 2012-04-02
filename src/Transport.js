@@ -62,7 +62,7 @@ function Transport(Store, Tools) {
 		this.request = function request(channel, reqData, callback, scope) {
 			if (_reqHandlers.has(channel) && typeof reqData == "object") {
 				_reqHandlers.get(channel)(reqData, function () {
-					callback.apply(scope, arguments);
+					callback && callback.apply(scope, arguments);
 				});
 				return true;
 			} else {

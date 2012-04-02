@@ -369,7 +369,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		     * Update a document in CouchDB through a PUT request
 		     * @private
 		     */
-		    updateDatabase: function () {
+		    updateDatabase: function (callback) {
 		    	_transport.request(_channel, {
             		method: "PUT",
             		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
@@ -377,6 +377,13 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             			"Content-Type": "application/json"
             		},
             		data: this.toJSON()
+            	}, function (response) {
+            		var json = JSON.parse(response);
+            		if (json.ok) {
+            			callback.resolve(json);
+            		} else {
+            			callback.reject(json);
+            		}
             	});
 		    },
 		    
@@ -384,7 +391,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		     * Update the database with bulk documents
 		     * @private
 		     */
-		    updateDatabaseWithBulkDoc: function () {
+		    updateDatabaseWithBulkDoc: function (callback) {
 		    	
 		    	var docs = [];
 		    	this.loop(function (value) {
@@ -398,7 +405,9 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		    			"Content-Type": "application/json"
 		    		},
 		    		data: JSON.stringify({"docs": docs})
-		    	});
+		    	}, function (response) {
+            		callback.resolve(JSON.parse(response));
+            	});
 		    },
 		    
 		    /**
@@ -546,10 +555,13 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 * @returns true if upload called
 		 */
 		this.upload = function upload() {
+			var promise = new Promise;
 			if(_syncInfo.document) {
-				return _stateMachine.event("updateDatabase");
+				_stateMachine.event("updateDatabase", promise);
+				return promise;
 			} else if (_syncInfo.bulkDoc) {
-				return _stateMachine.event("updateDatabaseWithBulkDoc");
+				_stateMachine.event("updateDatabaseWithBulkDoc", promise);
+				return promise;
 			} 
 			return false;
 		};

@@ -882,6 +882,16 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabase");
 		});
 		
+		it("should return a promise", function () {
+			expect(couchDBStore.upload()).toBeInstanceOf(Promise);
+		});
+		
+		it("should resolve the promise on upload", function () {
+			spyOn(stateMachine, "event");
+			var promise = couchDBStore.upload();
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(promise);
+		});
+		
 		it("should have a function to remove a document", function () {
 			expect(couchDBStore.remove).toBeInstanceOf(Function);
 			spyOn(stateMachine, "event");
@@ -903,6 +913,26 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData["path"]).toEqual("/db/document1");
 			expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
 			expect(JSON.parse(reqData.data).fakeRev).toEqual("10-hello");
+		});
+		
+		it("should resolve the promise on update if update ok", function () {
+			var promise = new Promise,
+				response = '{"ok":true}';
+			spyOn(promise, "resolve");
+			couchDBStore.actions.updateDatabase.call(couchDBStore, promise);
+			transportMock.request.mostRecentCall.args[2](response);
+			expect(promise.resolve.wasCalled).toEqual(true);
+			expect(promise.resolve.mostRecentCall.args[0].ok).toEqual(true);
+		});
+		
+		it("should reject the promise on update if update failed", function () {
+			var promise = new Promise,
+				response = '{"ok":false}';
+			spyOn(promise, "reject");
+			couchDBStore.actions.updateDatabase.call(couchDBStore, promise);
+			transportMock.request.mostRecentCall.args[2](response);
+			expect(promise.reject.wasCalled).toEqual(true);
+			expect(promise.reject.mostRecentCall.args[0].ok).toEqual(false);
 		});
 		
 		it("should add document on update if it's missing", function () {
@@ -1250,6 +1280,20 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				couchDBStore.upload();
 				expect(stateMachine.event.wasCalled).toEqual(true);
 				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateDatabaseWithBulkDoc");
+			});
+			
+			it("should return a promise", function () {
+				expect(couchDBStore.upload()).toBeInstanceOf(Promise);
+			});
+					
+			it("should resolve the promise on update if update ok", function () {
+				var promise = new Promise,
+					response = '{}';
+				spyOn(promise, "resolve");
+				couchDBStore.actions.updateDatabaseWithBulkDoc.call(couchDBStore, promise);
+				transportMock.request.mostRecentCall.args[2](response);
+				expect(promise.resolve.wasCalled).toEqual(true);
+				expect(promise.resolve.mostRecentCall.args[0]).toBeInstanceOf(Object);
 			});
 			
 			it("shouldn't allow for removing a document (a doc to delete should have a _deleted property set to true)", function () {

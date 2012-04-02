@@ -12,7 +12,7 @@ qs = require("querystring"),
 requirejs = require("requirejs");
 
 // Load Emily
-requirejs(__dirname + "/build/Emily.js");
+requirejs(__dirname + "/build/uncompressed/concat.js");
 
 // We're going to need Stores to store the handlers.
 // The Store's observers can be useful. They'll actually be used by Olives
@@ -24,7 +24,8 @@ requirejs(["Store"], function (Store) {
 		// Copy this to CouchDB2, 3... if you have more than one of them
 		"CouchDB": {
 			hostname: "127.0.0.1",
-			port: 5984
+			port: 5984,
+			auth: "couchdb:couchdb"
 		}
 	
 	});
@@ -34,7 +35,6 @@ requirejs(["Store"], function (Store) {
 		
 		// CouchDB is built-in
 		"CouchDB" : function (data, onEnd, onData) {
-			
 			data.hostname = exports.config.get("CouchDB").hostname;
 			data.port = exports.config.get("CouchDB").port;
 			data.path += "?" + qs.stringify(data.query);
