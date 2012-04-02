@@ -97,6 +97,14 @@ require(["Transport", "Store"], function (Transport, Store) {
 			expect(spy.wasCalled).toEqual(true);
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
+		
+		it("shouldn't fail if no callback given", function () {
+			transport.request("channel", reqData);
+			var cb = reqHandlers.get("channel").mostRecentCall.args[1];
+			expect(function () {
+				cb();
+			}).not.toThrow();
+		});
 
 	});
 
