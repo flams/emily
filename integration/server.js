@@ -21,18 +21,22 @@ requirejs(["CouchDBStore", "Transport"], function (CouchDBStore, Transport) {
 		
 	console.log("uploading", document.toJSON());
 		
-	document.upload();
+	document.upload().then(function (res) {
+		console.log("document123 synchronized" /*, res*/);
 		
-	setTimeout(function () {
-		bulkDoc.sync("db", ["document1", "document123"]).then(function () {
-			this.update("1._deleted", true);
-			this.upload();
-		}, bulkDoc);
-	}, 200);
-	
+		bulkDoc.sync("db", ["document123"]).then(function (res2) {
+			
+			console.log("bulkDoc Synched" /*, res2*/);
+			
+			bulkDoc.loop(function (val) {
+				val.doc._deleted = true;
+			});
 
+			bulkDoc.upload().then(function (res3) {
+				console.log("doc suppressed" /*, res3*/);
+			});
+			
+		});
+	});
 
-	
-	
-	
 });

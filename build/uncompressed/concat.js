@@ -139,7 +139,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * Put a new document in CouchDB
 			 * @private
 			 */
-			createDocument: function () {
+			createDocument: function (promise) {
             	_transport.request(_channel, {
             		method: "PUT",
             		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
@@ -147,8 +147,14 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             			"Content-Type": "application/json"
             		},
             		data: this.toJSON()
-            	}, function () {
-            		_stateMachine.event("subscribeToDocumentChanges");
+            	}, function (result) {
+            		var json = JSON.parse(result);
+            		if (json.ok) {
+            			promise.resolve(json);
+                		_stateMachine.event("subscribeToDocumentChanges");	
+            		} else {
+            			promise.reject(json);
+            		}
             	});
             },
             
@@ -375,7 +381,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		     * Update a document in CouchDB through a PUT request
 		     * @private
 		     */
-		    updateDatabase: function (callback) {
+		    updateDatabase: function (promise) {
+
 		    	_transport.request(_channel, {
             		method: "PUT",
             		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
@@ -386,9 +393,9 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             	}, function (response) {
             		var json = JSON.parse(response);
             		if (json.ok) {
-            			callback.resolve(json);
+            			promise.resolve(json);
             		} else {
-            			callback.reject(json);
+            			promise.reject(json);
             		}
             	});
 		    },
@@ -397,7 +404,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		     * Update the database with bulk documents
 		     * @private
 		     */
-		    updateDatabaseWithBulkDoc: function (callback) {
+		    updateDatabaseWithBulkDoc: function (promise) {
 		    	
 		    	var docs = [];
 		    	this.loop(function (value) {
@@ -412,7 +419,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		    		},
 		    		data: JSON.stringify({"docs": docs})
 		    	}, function (response) {
-            		callback.resolve(JSON.parse(response));
+		    		promise.resolve(JSON.parse(response));
             	});
 		    },
 		    

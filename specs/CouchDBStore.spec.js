@@ -938,7 +938,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		it("should add document on update if it's missing", function () {
 			var reqData;
 			couchDBStore.set("fakeRev", "10-hello");
-			couchDBStore.actions.createDocument.call(couchDBStore);
+			couchDBStore.actions.createDocument.call(couchDBStore, new Promise);
 			expect(transportMock.request.wasCalled).toEqual(true);
 			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
 			
@@ -951,9 +951,29 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			
 			spyOn(stateMachine, "event");
 			expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
-			transportMock.request.mostRecentCall.args[2]();
+			transportMock.request.mostRecentCall.args[2]('{"ok":true}');
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToDocumentChanges");
+		});
+		
+		it("should resolve the promise on doc create if update ok", function () {
+			var promise = new Promise,
+				response = '{"ok":true}';
+			spyOn(promise, "resolve");
+			couchDBStore.actions.createDocument.call(couchDBStore, promise);
+			transportMock.request.mostRecentCall.args[2](response);
+			expect(promise.resolve.wasCalled).toEqual(true);
+			expect(promise.resolve.mostRecentCall.args[0].ok).toEqual(true);
+		});
+		
+		it("should reject the promise on doc create if update failed", function () {
+			var promise = new Promise,
+				response = '{"ok":false}';
+			spyOn(promise, "reject");
+			couchDBStore.actions.createDocument.call(couchDBStore, promise);
+			transportMock.request.mostRecentCall.args[2](response);
+			expect(promise.reject.wasCalled).toEqual(true);
+			expect(promise.reject.mostRecentCall.args[0].ok).toEqual(false);
 		});
 		
 		it("should remove a document from the database", function () {
