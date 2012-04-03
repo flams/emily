@@ -1,769 +1,152 @@
 <!doctype html>
 <html>
 <head>
-<title>Emily - realtime applications made easy</title>
+<title>Emily - a simple JS Framework for powerful realtime applications</title>
 <style type="text/css">
-html {
-	font-family: "verdana";
-}
-
-body {
-	width: 1000px;
-	margin: 0px;
-	padding-left: 200px;
-	background-color: #fafafa;
-	color: #666;
-	margin-bottom: 100px;
-}
-
-h1,h2,h3 {
-	margin: 0;
-	padding: 2px;
-	padding-left: 10px;
-	color: #4a7d94;
-	text-shadow: -1px -1px -1px #666;
-	box-shadow: 1px 1px 1px #666;
-}
-
-header h1 {
-	font-size: 48px;
-	margin-bottom: 5px;
-	text-shadow: 1px 1px 1px #666;
-	box-shadow: none;
-}
-
-header span {
-	font-weight: bold;
-}
-
-nav a,footer a {
-	color: #4a7d94;
-	text-decoration: none;
-}
-
-nav a:hover,footer a:hover {
-	text-decoration: underline;
-}
-
-header,nav,section section, footer {
-	padding: 10px 0px 10px 0px;
-	border-bottom: 1px solid white;
-	box-shadow: 0px 2px 5px #aaa;
-	margin: 5px 0 0 0;
-	padding: 10px;
-	border-radius: 3px;
-	background-color: white;
-	font-size: 12px;
-}
-nav {
-	font-size: 16px;
-	width:150px;
-	position:fixed;
-	left: 20px;
-}
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul > li a {
- color: white;
-}
-
-nav li {
- margin-top: 4px;
- margin-bottom: 4px;
-}
-
-nav ul ul {
- margin-left: 5px;
- font-size: 14px;
-}
-nav ul ul li a {
-	color: #4a7d94;
-}
+ * {
+ 	margin: 0;
+ 	padding: 0;
+ }
+ 
  a {
-	color: #666;
-	text-decoration: none;
-}
-
- a:hover {
-	text-decoration: underline;
-}
-
-.menu a strong {
-	color: #4a7d94;
-}
-
-header a {
-	background-color: #4a7d94;
-	color: white;
-	border-radius: 10px;
-	display: block;
-	padding: 10px;
-	float: right;
-	text-shadow: -1px -1px 1px black;
-	text-decoration: none;
-	box-shadow: 1px 1px 1px black;
-}
-
-header a:hover {
-	box-shadow: 0 0 0;
-}
-
-p {
-	margin-left: 20px;
-}
-
-h2 {
-	background-color: #4a7d94;
-	border-radius: 3px;
-	color: white;
-	font-size: 16px;
-}
-
-h3 {
-	background-color: #666;
-	border-radius: 2px;
-	color: white;
-	font-weight: normal;
-	font-size: 12px;
-	margin-left: 20px;
-}
-
-.example pre {
-	border: 0px;
-	margin-left: 20px;
-}
+ 	color: #333;
+ 	text-decoration: none;
+ }
+ 
+ body {
+ 	background-image: url(img/noise.jpg);
+ 	color: #666;
+ 	 font-family: 'Belleza';
+ }
+ 
+ #emily {
+  	background-image: url(img/bgcartouche.jpg);
+ 	background-repeat: repeat-x;
+ }
+ 
+ header {
+ 	height: 296px;
+ 	width: 900px;
+ 	color: white;
+ 	padding: 30px; 
+ 	margin-left: auto;
+ 	margin-right: auto;
+ 	margin-bottom: 50px;
+ }
+ 
+ ul {
+	list-style-type: none;
+	margin-left: auto;
+	margin-right: auto;
+ }
+ li {
+ 	float: left;
+ 	margin: 15px;
+ }
+ 
+ #gallery {
+ 	margin-left: auto;
+ 	margin-right: auto;
+ 	width: 900px;
+ 	height: 250px;
+ }
+ 
+ #gallery li {
+ 	text-align: center;
+ }
+ 
+ #gallery img {
+ 	box-shadow: 5px 5px 5px #ccc;
+ 	display: block;
+ 	border: 0;
+ 	margin-bottom: 20px;
+ }
+ 
+ #gallery a span {
+ 	clear: left;
+ }
+  
+ header h1 {
+ 	text-align: center;
+ 	font-family: 'Great Vibes', cursive;
+ 	font-size: 180px;
+ 	text-shadow: 2px 2px 2px #333;
+ 	margin-bottom: 20px;
+ }
+ header p {
+ 	text-align: center;
+ 	font-size: 24px;
+ 	text-shadow: 1px 1px 1px #333;
+ }
+ 
+ 
+ footer {
+ 	width: 900px;
+ 	margin-left: auto;
+ 	margin-right: auto;
+ 	display: block;
+ 	clear:left;
+ 	background-image: url(img/hr.jpg);
+ 	background-repeat: repeat-x;
+ 	padding-top: 30px;
+ 	padding-bottom: 50px;
+	text-shadow:  0 1px 0 white;
+	text-align: center;
+ }
 </style>
-<link href="tools/prettify/prettify.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="tools/prettify/prettify.js"></script>
-<script>
-	window.addEventListener("load", function(event, menu, nav) {
-		prettyPrint();
-
-		// Created an arg called menu to avoid polluting the global namespace
-		menu = document.querySelector(".menu");
-		nav = document.querySelector("nav ul ul");
-
-		// For each h2 in my examples
-		Array.prototype.slice.call(document.querySelectorAll(".example > h2"),0).forEach(function(node) {
-
-							// Create an li node
-							var liNav = document.createElement("li"),
-								liMenu = document.createElement("li"),
-								split = node.innerHTML.split(":");
-
-							// split[0] is the name of the Module
-							node.setAttribute("id", split[0]);
-
-							liNav.innerHTML = '<a href="#' + split[0] + '">' + split[0] + '</a>'
-							// That is appended to the menu. It's a link to the chapter now.
-							liMenu.innerHTML = '<a href="#'+ split[0] +'"><strong>'
-									+ split.shift()
-									+ '</strong>:'
-									+ split.join(":") + '</a>';
-							menu.appendChild(liMenu);
-							nav.appendChild(liNav);
-						});
-
-	}, true);
-</script>
+<link href='http://fonts.googleapis.com/css?family=Great+Vibes|Belleza' rel='stylesheet' type='text/css'>
 </head>
 <body>
-	<section>
-
-	<header>
-		<a href="Emily.tgz">Download Emily</a>
-		<h1>Emily</h1>
-		<span>Realtime web applications made easy</span>
-	</header>
 	
-		<nav>
-		<ul>
-			<li><h2><a href="#presentation">What is Emily?</a></h2></li>
-			<li><h2><a href="#install">Installation</a></h2></li>
-			<li><h2><a href="#examples">Documentation</a></h2>
-				<ul>
-				</ul>
+	<section id="emily">
+	
+		<header>
+			<h1>Emily</h1>
+			<p>
+			A simple, yet powerful, JS framework for creating realtime applications.
+			</p>
+		</header>
+
+		<ul id="gallery">
+			<li>
+				<a href="Emily.tgz">
+					<img src="img/download.jpg" alt="download Emily Picture" width="150" height="150" />
+					<span>Download</span>
+				</a>
 			</li>
-			<li><h2><a href="docs/index.html">JsDoc</a></h2></li>
-			<li><h2><a href="tests.html">Unit tests</a></h2></li>
-			<li><h2><a href="#philosophy">Philosophy</a></h2></li>
-		</ul> 
-	</nav>
-
-	<section id="presentation">
-		<h2>What is Emily?</h2>
-		<ul>
-			<li>Emily is a JS Framework for building MVC applications.</li>
-			<li>It's runtime agnostic as it doesn't rely on the DOM.</li>
-			<li>It's ready for realtime applications.</li>
-			<li>It's only a set of AMD/commonJS modules.</li>
-			<li>It's ready for being used with other frameworks.</li>
-			<li>It doesn't use any proprietary technology.</li>
+			<li>
+				<a href="https://github.com/flams/emily/wiki" target="_blank">
+					<img src="img/wiki.jpg" alt="Emily Wiki Picture" width="150" height="150" />
+					<span>Wiki</span>
+				</a>
+			</li>
+			<li>
+				<a href="docs/index.html" target="_blank">
+					<img src="img/jsdoc.jpg" alt="Emily JsDoc Picture" width="150" height="150" />
+					<span>JsDoc</span>
+				</a>
+			</li>
+			<li>
+				<a href="https://github.com/flams/emily" target="_blank">
+					<img src="img/source.jpg" alt="Emily Source Picture" width="150" height="150" />
+					<span>Source</span>
+				</a>
+			</li>
+						<li>
+				<a href="tests.html" target="_blank">
+					<img src="img/tests.jpg" alt="Emily tests Picture" width="150" height="150" />
+					<span>Run tests</span>
+				</a>
+			</li>
 		</ul>
-		<p>The tools are:</p>
-		<ul class="menu"></ul>
-	</section>
 
-	<section id="install">
-
-		<h2>Installing Emily</h2>
-		<p>Emily requires an AMD compatible loader like requirejs to work.
-		</p>
-		<h3>In a browser</h3>
-		<pre>
-	&lt;script src="./require.js"&gt;&lt;/script&gt;
-	&lt;script src="./Emily.js"&gt;&lt;/script&gt;
-			</pre>
-		<pre class="prettyprint linenums linenums">
-	require(["Module"], function (Module) {
-		// Do what you want with Module
-	});
-			</pre>
-
-		<h3>In node</h3>
-		<pre class="prettyprint linenums">
-	var requirejs = require("requirejs"),
-	// npm install emily
-	emily = require("emily");
-
-	requirejs(["Module"], function (Module) {
-		// Do what you want with Module
-	});
-			</pre>
-	</section>
-
-	<section id="examples">
-		<div class="example">
-			<h2>Observable: the all mighty observer design pattern.</h2>
-			<p>
-				The well known Observer design pattern.<br /> It's especially useful
-				in MV* applications to advertise views on data changes.
-			</p>
-			<h3>Watch a topic</h3>
-			<pre class="prettyprint linenums">
- var observable = new Observable;
- 
- observable.watch("greetings", function (greet) {
-  console.log(greet, "world!");
- });
- 
- // Execute callback in scope
- observable.watch("greetings", function (greet) {
-  console.log(greet, "world!");
- }, 
- // The scope. In Emily the scope can be given right after the callback. 
- // Works everytime in the whole API. It's a requirement.
- this);
-</pre>
-			<h3>Notify on a topic</h3>
-			<pre class="prettyprint linenums">
- observable.notify("greetings", "hello");
-				</pre>
-
-			<h3>Stop watching</h3>
-			<pre class="prettyprint linenums">
-var handler = observable.watch("topic", function(){});
- observable.unwatch(hander);
- 
- // Unwatch all from a topic
- observable.unwatchAll("topic");
- 
- // Unwatch all
- observable.unwatchAll();
-				</pre>
-		</div>
-	</section>
-
-	<section>
-		<div class="example">
-			<h2>Store: the spine of your MV* application.</h2>
-			<p>
-				Store is your applications' model. It's values can be observed.<br />
-				It can store data in an Array or in an Object.
-			</p>
-			<h3>Set, Get, del value</h3>
-			<pre class="prettyprint linenums">
-var store = new Store;
-
-store.set("greeting", "Hello World!");
-store.get("greeting"); // returns Hello world!
-store.del("greeting");
-store.has("greeting"); // false
-				</pre>
-
-			<h3>Watch a value's modification</h3>
-			<pre class="prettyprint linenums">
-store.watchValue("greeting", function (value) {
-	console.log("Hello", value);
-}, /* after the callback comes the scope */ this);
-
-// Will also call the callback.
-store.set("greeting", "world!"); 
-				</pre>
-
-			<h3>Array-based Store manipulation</h3>
-			<pre class="prettyprint linenums">
-var store = new Store(["Hello"]);
-store.alter("push", "world!");
-store.get(1); // world!
-store.alter("pop"); // world!
-store.get(1); // undefined;
-				</pre>
-
-			<h3>Observing an Array-based Store</h3>
-			<pre class="prettyprint linenums">
-var store = new Store(["Hello"]);
-
-// Watch for new values, works with deleted, updated as well
-store.watch("added", function (idx, value) {
- console.log(idx, value);
-}, /* after the callback comes the scope */ this);
-
-store.alter("push", "world!"); // Will console.log(1, "world!"),
-				</pre>
-
-			<h3>Looping through a Store</h3>
-			<pre class="prettyprint linenums">
-var store = new Store(["Hello", "world!"]);
-
-// will loop through all items. The params are in the same order as
-// a foreach
-store.loop(function (value, idx) {
-	console.log(value, idx); // 
-}, /* after the callback... */ this);
-				</pre>
-
-			<h3>Misc</h3>
-			<pre class="prettyprint linenums">
-var store = new Store(["Hello", "world!"]);
-
-store.getNbItems(); // 2
-store.toJSON(); // ["Hello","world!"]
-store.reset({}); // is now an empty object
-				</pre>
-
-		</div>
-	</section>
-
-	<section>
-		<div class="example">
-			<h2>Promise: a simple promises interpretation.</h2>
-			<p>
-				This is a simple interpretation of promises. <br /> This
-				implementation is a state machine with an observer. <br /> It helps
-				plumbing asynchronous code.
-			</p>
-			<h3>A resolved promise with an observer</h3>
-			<pre class="prettyprint linenums">
-var promise = new Promise;
-
-promise.then(function () {
-	console.log("Hello World!");
-});
-
-promise.resolve();
-				</pre>
-			<h3>A rejected promise with an observer</h3>
-			<pre class="prettyprint linenums">
-var promise = new Promise;
-
-promise.then(function resolved() {
-	// Code to execute if promise is resolved
-}, /* after the callback comes... */ this,
-function rejected() {
-	// Code to execute if promise is rejected
-	console.log("Hello World!");
-}, /* after the callback comes... */ this);
-
-promise.reject();
-		</pre>
-
-		</div>
-	</section>
-
-	<section>
-		<div class="example">
-			<h2>StateMachine: don't hide your states and transitions behind
-				if/else anymore.</h2>
-		<p>This allows to create a Finite State Machine to help sequence your program.<br />
-			More often than not, if/else are used to create transitions and states.<br />
-			This is just what is needed to create maintainable and readable code.<br />
-			The following example is the Figure 1 from <a href="http://www.objectmentor.com/resources/articles/umlfsm.pdf">this documentation</a>.
-		</p>
-				
-		<h3>The State Machine initialization</h3>
-			<pre class="prettyprint linenums">
-var stateMachine = new StateMachine(
-	// The init state		
-	"closed", 
-	// The description
-	{
-		// When in closed state, if the event is "open!" then execute the open action and transit to opened state.
-		"closed":[["open!", function open(){}, this, "opened"]],
-		// The opposite
-		"opened":[["close!", function close(){}, this, "closed"]]
-	});
 		
-		stateMachine.event("open!");
-				</pre>
-				
-			<h3>A state machine with entry/exit actions</h3>
-			<pre class="prettyprint linenums">
-var stateMachine = new StateMachine(
-	// The init state		
-	"closed", 
-	// The description
-	{
-		// It's possible to add an action on entry by adding a transition called "entry"
-		"closed":[["entry", function onEntry() {}, this],
-			["open!", function open(){}, this, "opened"],
-			// As well as an action on exit by adding a transition called "exit"
-			["exit", function onExit() {}, this]],
-
-		"opened":[["close!", function close(){}, this, "closed"]]
-	});
-		
-		// This will fire open! and then, exit
-		stateMachine.event("open!");
-				</pre>
-				
-					
-		</div>
-	</section>
-
-<section>
-		<div class="example">
-			<h2>Transport: make requests to anything node.js has access to.</h2>
-			<p>
-				Use Transport in combination with Emily's server to issue request on anything that node.js has access to.<br />
-				Emily's default handlers are CouchDB and the FileSystem.
-			</p>
-			<h3>Loading Emily in your node.js application</h3>
-			<pre class="prettyprint linenums">
-// first, make sure you have installed emily's npm.
- var emily = require("emily");
-			</pre>
-			<h3>Issuing a request</h3>
-			<pre class="prettyprint linenums">
-var transport = new Transport(emily.handlers);
-
-// CouchDB is a request handler, you can have as many handlers as you want
-transport.request("CouchDB", 
-
-// This object is directly passed to Node.js' HTTPClient
-{ method: "GET", path: "db/document"},
-
-// The callback
-function (result) {
-	// Do what you want to do with the result
-}, this);
-			</pre>
-			<h3>Create a kept-alive socket</h3>
-			<pre class="prettyprint linenums">
-// Notice the listen function
-transport.listen("CouchDB"
-
-// The url on which to create the kept-alive socket
-"/database/_changes?feed=continuous&heartbeat=20000",
-
-// How you want to handle the changes
-function (changes) {
-	// Do what you want to do with the new data
-}, this);
-			</pre>
-			
-			<h3>Create your own handler</h3>
-			<pre class="prettyprint linenums">
-// Defining a new handler
-// Handlers are stored in an Emily Store, so you know how it works!
-emily.handlers.set("myHandler", function (greeting, callback) {
-	callback("Hello " + greeting);
-});
-
-// Calling the handler somewhere in a module
-var transport = new Transport(emily.handlers);
-
-transport.request("myHandler", "world!", function (txt) {
-	console.log(txt); // Hello world!
-}, this);
-			</pre>
-			
-			<h3>I don't need to use Transport, I could directly manage my requests.</h3>
-			<p>
-				That's right. But centralizing the handlers is a good thing in general.<br />
-				Plus, if you're planning on using Olives on top of Emily, you can use them in your browser through socket.io the exact same way you do in your node.js application!<br />
-				Check out <a href="http://flams.github.com/olives/">https://flams.github.com/olives/</a> for an example of a CouchDBStore running on the browser, realtime!
-			</p>
-		</div>
-
-	</section>
-
-	<section>
-		<div class="example">
-			<h2>CouchDBStore: a Store that displays a CouchDB view or document and gets updated on changes.</h2>
-			<p>
-				CouchDBStore synchronizes a Store with a CouchDB Document or View.<br />
-				It listens to CouchDB _changes to be always up-to-date and uses the Store's observer to notify your application.<br />
-				Of course it works they other way round, you can update the database from a CouchDBStore.<br />
-				Simply focus on what you want to do with your data, not how you have to handle it.
-			</p>
-			<h3>Synchronize a CouchDBStore with a Document</h3>
-			<pre class="prettyprint linenums">
-// See transport for mon info on Transport
-var transport = new Transport(emily.handlers),
-	couchDBStore = new CouchDBStore(transport);
-	
-// this couchDBStore will always reflect document1 last value in the database
-couchDBStore.sync("database", "document1");
-				</pre>
-				
-			<h3>Synchronize a CouchDBStore with a View</h3>
-			<pre class="prettyprint linenums">
-var couchDBStore = new CouchDBStore(transport);
-	
-// this couchDBStore will always reflect views values
-couchDBStore.sync("database", "design/document", "view");
-				</pre>
-				
-			<h3>Create a document on CouchDB</h3>
-			<pre class="prettyprint linenums">
-var couchDBStore = new CouchDBStore(transport);
-	
-// If the document doesn't exist in the database, it's not created yet
-couchDBStore.sync("database", "newDocument");
-
-// So you can manipulate the data
-couchDBStore.set("greetings", "Hello World!");
-
-// And put the document on the CouchDBStore
-couchDBStore.update();
-				</pre>
-				
-			<h3>Delete document on CouchDB</h3>
-			<pre class="prettyprint linenums">
-var couchDBStore = new CouchDBStore(transport);
-	
-couchDBStore.sync("database", "newDocument");
-
-couchDBStore.remove();
-				</pre>
-	<h3>Using the CouchDBStore promise</h3>
-	<pre class="prettyprint linenums">
-var couchDBStore = new CouchDBStore(transport);
-	
-// The synchronization is asynchronous so it returns a promise.
-couchDBStore.sync("database", "document").then(function () {
-	this.get("greetings");
-}, couchDBStore);
-	</pre>
-
-		</div>
-	</section>
-	
-	<section>
-		<div class="example">
-			<h2>Tools: these functions you always need and rewrite.</h2>
-			<p>
-				These are a set of functions that are used in Emily.
-			</p>
-			<h3>Get the global object</h3>
-			<pre class="prettyprint linenums">
-tools.getGlobal();
-			</pre>
-			
-			<h3>Mix an object into an other one.</h3>
-			<pre class="prettyprint linenums">
-var source = {a:10},
-	destination = {b:20};
-	
-tools.mixin(source, destination); // {a:10, b:20}
-			</pre>
-			
-			<h3>Count the number of own properties in an object.</h3>
-			<pre class="prettyprint linenums">
-var object = {a:1, b:2, c:3};
-
-tools.count(object); // 3
-			</pre>
-			
-			<h3>Compare objects.</h3>
-			<pre class="prettyprint linenums">
-var object1 = {a:1, b:2},
-	object2 = {a:2, b:5};
-
-// Returns true if both objects have the exact same properties
-tools.compareObject(object1, object2); // true
-			</pre>
-			
-			<h3>Transforms an array-like object, like arguments, to an array.</h3>
-			<pre class="prettyprint linenums">
-tools.toArray(arguments);
-			</pre>
-			
-			<h3>Loop through an array/object. It doesn't work with NodeList!</h3>
-			<pre class="prettyprint linenums">
-tools.loop(function (value, index) {
-	// Value, index in this order like with forEach, filter...
-}, this);
-			</pre>
-			
-			<h3>Get a diff between two Objects</h3>
-			<pre class="prettyprint linenums">
-var before = {a:1, b:2, c:3, d:4, f:6},
- after = {a:1, b:20, d: 4, e: 5};
-
-/*
- * will return : 
- *  {
- *   unchanged: ["a", "d"],
- *   updated: ["b"], 
- *   deleted: ["f"],
- *  added: ["e"]
- * }
- */
-tools.objectsDiffs(before, after);
-
-			</pre>
-			
-			<h3>Get a diff between two Arrays</h3>
-			<pre class="prettyprint linenums">
- var before = [10, 20, 30],
-  after = [15, 20]
-
-/*
- * will return : 
- * {
- *  unchanged: [1],
- *  updated: [0],
- *  deleted: [2],
- *  added: []
- * }
- */
-tools.objectsDiffs(before, after);
-			</pre>
-		
-			<h3>Get the JSON version of an object</h3>
-			<pre class="prettyprint linenums">
-var object = {a: function(){}, b: 10, c: false, d: "Hello"};
- 
-tools.jsonify(object); // {b:10,c:false,d:"Hello"}
-			</pre>
-
-			<h3>Clone an object</h3>
-			<pre class="prettyprint linenums">
-var object = {a:10, b:30, c:40};
-
-// This will return a new object
-// if immutable, the properties get copied
-// if mutable (object) they're a reference to it
-tools.clone(object);
-			</pre>
-			
-			<h3>Clone an array</h3>
-			<pre class="prettyprint linenums">
-var array = [10, 20, 30];
-
-// This will return a new array
-// if immutable, the values get copied
-// if mutable (object) they're a reference to it
-tools.clone(array);
-			</pre>
-			
-			<h3>Get the nested property of an object</h3>
-			<pre class="prettyprint linenums">
-var object = {a: {b: c: 10};
-
-tools.getNestedProperty(object, "b.c"); // returns 10
-			</pre>
-			
-			<h3>Set the nested property of an object</h3>
-			<pre class="prettyprint linenums">
-var object = {a: {b: c: 10};
-
-tools.setNestedProperty(object, "b.c", 20); // a.b.c equals 20
-			</pre>
-			
-				</div>
-	</section>
-	
-	<section id="philosophy">
-		<h2>Philosophy: what's Emily's DNA?</h2>
-		<p>
-			Emily was born from considerations.<br />
-			Everytime I had to start a new project I had mixed feelings.<br />
-			Excitement of the new challenge but fear of failure. <br />
-			Determination to do my best but I sense my weaknesses.<br />
-			I want to create new stuff that adds up value to the project, but I have to start, again, by coding stuff I did one zillion time before.
-		</p>
-		
-		<h3>Emily the first</h3>
-		<p>
-			The first thing that came up to my mind is: build your own framework.<br />
-			I would write it once, and reuse it at will. It would save me sooo much time.<br />
-			I was excited by this new challenge, but I feared I could failed.<br />
-			I always failed at writing reusable code, why would I succeed now?<br />
-			I was determinated to do my best but I sensed something was wrong.<br />
-			Nevermind, I started creating Emily. I developped the module launcher.<br />
-			I created a new way to write modules and I felt it was nice. <br />
-			Then I started struggling with inheritance. Single, multiple? Traits! Yes traits!<br />
-			It started to get overwhelming and I discovered that I was creating something that already existed.<br />
-			Module launcher? AMD commonJS is the perfect fit.<br />
-			Inheritance? I won't do a better job than what JavaScript already does.<br />
-			I erased my Emily folder and started all over again. 
-		</p>
-		
-		<h3>Emily the second</h3>
-		<p>
-			This time I started to download require.js in my lib folder.<br />
-			It has even more features than I would have built in Emily the first.<br />
-			Then I wrote my first modules and the fear of not writing reusable code disappeared.<br />
-			Inheritance is left to the developer discretion.<br />
-			I learned not to redevelop a feature that already existed (in HTML, JS, whatever).<br />
-			Then I started writing the features that really mattered.
-		</p>
-		
-		<h3>Emily's modules</h3>
-		<p>
-			Each major feature in Emily is a module on its own. <br />
-			Emily is more a set of tools than a big one.<br />
-			Emily is not aware of what composes it. <br />
-			Any AMD/commonJS module works with Emily and any of Emily's module can work in an AMD/commonJS module loader.
-		</p>
-		
-		<h3>Emily's features. This is nice but what does it do?</h3>
-		<p>
-			Emily's goal is to abstract the logic behind most MV* applications.<br />
-			- How to store the data.<br />
-			- How to observe their changes.<br />
-			- How to manage the states of your UI.<br />
-			- How to issue requests to the plateform.<br />
-			- How to create parts of your application.<br />
-			- How to connect everything together.
-		</p>
-		
-		<h3>Emily's development's principles</h3>
-		<ul>
-			<li><a href="http://en.wikipedia.org/wiki/DRY">DRY</a></li>
-			<li><a href="http://en.wikipedia.org/wiki/Solid_(object-oriented_design)">SOLID</a></li>
-			<li>TDD/BDD with 100% coverage with <a href="http://pivotal.github.com/jasmine/">Jasmine BDD</a></li>
-			<li>JS runtime agnostic, also works in node.js</li>
-			<li>Avoid proprietary technologies</li>
-		</ul>
-	
-	</section>
-
-	<footer>
-		<a href="https://github.com/flams/emily">Emily</a> by <a
-			href="https://github.com/podefr">Olivier Scherrer</a>. Copyright 2012
-		- MIT licensed
-	</footer>
+		<footer>
+			Emily is released under <a href="https://github.com/flams/emily/blob/master/LICENSE">MIT license</a>. Copyright <a href="http://podefr.tumblr.com">Olivier Scherrer</a> 2012
+		</footer>
 	
 		
-	</section>
+	</header>
 	
 <a href="http://github.com/flams/emily"> <img
 alt="Fork me on GitHub"
@@ -784,5 +167,4 @@ style="position: fixed; top: 0; right: 0; border: 0;"> </a>
 
 </script>
 </body>
-
 </html>
