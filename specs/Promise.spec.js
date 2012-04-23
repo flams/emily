@@ -3,7 +3,6 @@
  * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
-
 require(["Promise", "Observable", "StateMachine"], function (Promise, Observable, StateMachine) {
 	
 	describe("PromiseInit", function () {
