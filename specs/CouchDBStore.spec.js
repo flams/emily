@@ -118,12 +118,23 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		
 		it("should have a function to get sync info for a bulk of documents", function () {
 			var syncInfo,
-				bulkDoc = ["document1", "document2"];
+				query = {};
 			
-			couchDBStore.setSyncInfo("db", ["document1", "document2"]);
+			couchDBStore.setSyncInfo("db", query);
 			syncInfo = couchDBStore.getSyncInfo();
 			expect(syncInfo["database"]).toEqual("db");
-			expect(syncInfo["bulkDoc"]).toEqual(bulkDoc);
+			expect(syncInfo["query"]).toBe(query);
+		});
+		
+		it("should save keys at a different place when syncing with a bulk of documents", function () {
+			var syncInfo,
+				keys = [];
+			
+			couchDBStore.setSyncInfo("db", {keys: keys});
+			syncInfo = couchDBStore.getSyncInfo();
+			expect(syncInfo["database"]).toEqual("db");
+			expect(syncInfo.query.keys).toBeUndefined();
+			expect(syncInfo.keys).toBe(keys);
 		});
 		
 		it("should pass query params to the url when syncing with a view", function () {
@@ -138,7 +149,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(syncInfo["query"]).toBe(query);
 		});
 		
-		it("should pass query params to the url when synching with a document", function () {
+		it("should pass query params to the url when syncing with a document", function () {
 			var syncInfo,
 				query = {
 					revs_info: true
@@ -150,13 +161,13 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(syncInfo["query"]).toBe(query);
 		});
 		
-		it("should pass query params to the url when synching with a bulk of documents", function () {
+		it("should pass query params to the url when syncing with a bulk of documents", function () {
 			var syncInfo,
 				query = {
 					include_docs: true
 				};
 			
-			couchDBStore.setSyncInfo("db", ["document"], query);
+			couchDBStore.setSyncInfo("db", query);
 			
 			syncInfo = couchDBStore.getSyncInfo();
 			expect(syncInfo["query"]).toBe(query);
@@ -1018,8 +1029,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 					subscribeToBulkChanges,
 					SynchedUnsync,
 					entry,
+					bulkAdd,
 					bulkChange,
-					bulkDel,
 					updateDatabaseWithBulkDoc,
 					listeningUnsync;
 				
@@ -1048,6 +1059,10 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(entry[0]).toBe(couchDBStore.actions.resolve);
 				expect(entry[1]).toBe(couchDBStore);
 				
+				bulkAdd = Listening.get("bulkAdd");
+				expect(bulkAdd[0]).toBe(couchDBStore.actions.addBulkDocInStore);
+				expect(bulkAdd[1]).toBe(couchDBStore);
+				
 				bulkChange = Listening.get("bulkChange");
 				expect(bulkChange[0]).toBe(couchDBStore.actions.updateBulkDocInStore);
 				expect(bulkChange[1]).toBe(couchDBStore);
@@ -1065,32 +1080,28 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			});
 			
 			it("should call setSyncInfo on sync", function () {
-				var query = {},
-					docs = ["document"];
+				var query = {keys:[]};
 				
-				spyOn(couchDBStore, "setSyncInfo");
-				couchDBStore.sync("database", docs, query);
+				spyOn(couchDBStore, "setSyncInfo").andCallThrough();
+				couchDBStore.sync("database", query);
 				expect(couchDBStore.setSyncInfo.wasCalled).toEqual(true);
 				expect(couchDBStore.setSyncInfo.mostRecentCall.args[0]).toEqual("database");
-				expect(couchDBStore.setSyncInfo.mostRecentCall.args[1]).toBe(docs);
-				expect(couchDBStore.setSyncInfo.mostRecentCall.args[2]).toBe(query);
+				expect(couchDBStore.setSyncInfo.mostRecentCall.args[1]).toBe(query);
 			});
 			
 			it("should return a promise on sync", function () {
-				expect(couchDBStore.sync("database", ["document"])).toBeInstanceOf(Promise);
+				expect(couchDBStore.sync("database", {})).toBeInstanceOf(Promise);
 			});
 			
 			it("should call getBulkDocuments on sync", function () {
-				var docs = ["document"];
-				
 				spyOn(stateMachine, "event");
-				couchDBStore.sync("db", ["document"]);
+				couchDBStore.sync("db", {});
 				expect(stateMachine.event.wasCalled).toEqual(true);
 				expect(stateMachine.event.mostRecentCall.args[0]).toBe("getBulkDocuments");
 			});
 			
 			it("should resolve the promise", function () {
-				var promise = couchDBStore.sync("db", ["document"]);
+				var promise = couchDBStore.sync("db", {});
 				spyOn(promise, "resolve");
 				couchDBStore.actions.resolve.call(couchDBStore);
 				expect(promise.resolve.wasCalled).toEqual(true);
@@ -1115,12 +1126,14 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			
 			var couchDBStore = null,
 				stateMachine = null,
-				query = {};
+				query = {},
+				keys = ["document1", "document2"];
 			
 			beforeEach(function () {
 				couchDBStore = new CouchDBStore;
 				couchDBStore.setTransport(transportMock);
-				couchDBStore.setSyncInfo("db", ["document1", "document2"], query);
+				query.keys = keys;
+				couchDBStore.setSyncInfo("db", query);
 				stateMachine = couchDBStore.getStateMachine();
 			});
 			
@@ -1173,12 +1186,12 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			it("should throw an explicit error if resulting json has no 'row' property", function () {
 				var cb;
 				
-				couchDBStore.actions.getBulkDocuments();
+				couchDBStore.actions.getBulkDocuments("yes");
 				cb = transportMock.request.mostRecentCall.args[2];
-				
+
 				expect(function () {
 					cb.call(couchDBStore, '{"error":""}');
-				}).toThrow('CouchDBStore [db, ["document1","document2"]].sync() failed: {"error":""}');
+				}).toThrow('CouchDBStore.sync("db", {"keys":["document1","document2"]}) failed: {"error":""}');
 			});
 			
 			it("should subscribe to bulk changes", function () {
@@ -1195,6 +1208,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(reqData.feed).toEqual("continuous");
 				expect(reqData.heartbeat).toEqual(20000);
 				expect(reqData.since).toEqual(2);
+				expect(reqData.include_docs).toEqual(true);
 				expect(reqData).toBe(query);
 				expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 				expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
@@ -1211,8 +1225,21 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				}).not.toThrow();
 			});
 			
+			it("should call for document addition if a document has been added to the database", function () {
+				var listenRes = '{"seq":3,"id":"document2","changes":[{"rev":"1-a071048ce217ff1341fb224b83417003"}],"doc":{"_id":"document2","_rev":"1-a071048ce217ff1341fb224b83417003","desc":"my second document"}}';
+
+				spyOn(stateMachine, "event");
+				
+				couchDBStore.actions.subscribeToBulkChanges.call(couchDBStore, 2);
+				callback = transportMock.listen.mostRecentCall.args[2](listenRes);
+
+				expect(stateMachine.event.wasCalled).toEqual(true);
+				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("bulkAdd");
+				expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");		
+			});
+			
 			it("should call for document update if one of them has changed", function () {
-				var listenRes = '{"seq":3,"id":"document2","changes":[{"rev":"2-a071048ce217ff1341fb224b83417003"}]}',
+				var listenRes = '{"seq":3,"id":"document2","changes":[{"rev":"2-a071048ce217ff1341fb224b83417003"}],"doc":{"_id":"document2","_rev":"2-a071048ce217ff1341fb224b83417003","desc":"my second document"}}',
 					callback;
 
 				spyOn(stateMachine, "event");
@@ -1224,6 +1251,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(stateMachine.event.wasCalled).toEqual(true);
 				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("bulkChange");
 				expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
+				expect(stateMachine.event.mostRecentCall.args[2]._rev).toEqual("2-a071048ce217ff1341fb224b83417003");
 			});
 			
 			it("should call for document removal if one of them was removed", function () {
@@ -1241,34 +1269,70 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document2");
 			});
 			
-			it("should update the selected document", function () {
-				var reqData,
-					value,
-					listenRes = '{"total_rows":2,"offset":0,"rows":['+
-						'{"id":"document1","key":"document1","value":{"rev":"1-793111e6af0ccddb08147c0be1f49843"},"doc":{"_id":"document1","_rev":"1-793111e6af0ccddb08147c0be1f49843","desc":"my first doc"}},'+
-						'{"id":"document2","key":"document2","value":{"rev":"2-a071048ce217ff1341fb224b83417003"},"doc":{"_id":"document2","_rev":"2-a071048ce217ff1341fb224b83417003","desc":"my second document"}}'+
-						']}';                                                                                   	            
+			it("should add the new document (only works with range)", function () {
 				
-				spyOn(couchDBStore, "set");
+				var query = {starkey: "document1", endkey: "document5"},
+					result = '{"total_rows":2,"offset":0,"rows":[' +
+						'{"id":"document2","key":"document2","value":{"rev":"5-aa1e4ec04d056f1cba18895a33be7f4d"},"doc":{"_id":"document2","_rev":"5-aa1e4ec04d056f1cba18895a33be7f4d","name":"Emily","type":"JS real-time Framework"}},' +
+						'{"id":"document4","key":"document4","value":{"rev":"1-5b629f97e2298a911cce75d01bd6c65e"},"doc":{"_id":"document4","_rev":"1-5b629f97e2298a911cce75d01bd6c65e","name":"CouchDB","type":"NoSQL Database"}}' +
+					']}';
 				
-				couchDBStore.actions.updateBulkDocInStore.call(couchDBStore, "document2");
+				spyOn(couchDBStore, "alter");
+				
+				expect(couchDBStore.actions.addBulkDocInStore()).toEqual(false);
+				
+				couchDBStore.setSyncInfo("db", query);
+				
+				couchDBStore.actions.addBulkDocInStore.call(couchDBStore, "document4");
 				expect(transportMock.request.wasCalled).toEqual(true);
 				expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
-
+				
 				reqData = transportMock.request.mostRecentCall.args[1];
-				expect(reqData["method"]).toEqual("POST");
+				reqData = transportMock.request.mostRecentCall.args[1];
+				expect(reqData).toBeInstanceOf(Object);
+				expect(reqData["method"]).toEqual("GET");
 				expect(reqData["path"]).toEqual("/db/_all_docs");
 				expect(reqData["query"]).toBe(query);
+				expect(reqData["query"].include_docs).toEqual(true);
+				expect(reqData["query"].update_seq).toEqual(true);
+				expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
+				expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 				
-				callback = transportMock.request.mostRecentCall.args[2];
-				expect(callback).toBeInstanceOf(Function);
-				callback.call(couchDBStore, listenRes);
+				transportMock.request.mostRecentCall.args[2].call(couchDBStore, result);
 				
+				expect(couchDBStore.alter.wasCalled).toEqual(true);
+				expect(couchDBStore.alter.mostRecentCall.args[0]).toEqual("splice");
+				expect(couchDBStore.alter.mostRecentCall.args[1]).toEqual(1);
+				expect(couchDBStore.alter.mostRecentCall.args[2]).toEqual(0);
+				expect(couchDBStore.alter.mostRecentCall.args[3]._rev).toEqual("1-5b629f97e2298a911cce75d01bd6c65e");
+			});
+			
+			it("should update the selected document", function () {
+				var doc = {
+							"_id":"document2",
+							"_rev":"2-a071048ce217ff1341fb224b83417003",
+							"desc":"my second document"
+					},
+					cb;
+				
+				spyOn(couchDBStore, "loop");
+				spyOn(couchDBStore, "set");
+				
+				couchDBStore.actions.updateBulkDocInStore.call(couchDBStore, "document2", doc);
+				
+				expect(couchDBStore.loop.wasCalled).toEqual(true);
+				cb = couchDBStore.loop.mostRecentCall.args[0];
+				
+				expect(cb).toBeInstanceOf(Function);
+				expect(couchDBStore.loop.mostRecentCall.args[1]).toBe(couchDBStore);
+				
+				cb.call(couchDBStore, {id:"documentFake"}, 1);
+				expect(couchDBStore.set.wasCalled).toEqual(false);
+				
+				cb.call(couchDBStore, {id:"document2"}, 1);
 				expect(couchDBStore.set.wasCalled).toEqual(true);
 				expect(couchDBStore.set.mostRecentCall.args[0]).toEqual(1);
-				value = couchDBStore.set.mostRecentCall.args[1];
-				
-				expect(value.doc._rev).toEqual("2-a071048ce217ff1341fb224b83417003");
+				expect(couchDBStore.set.mostRecentCall.args[1]._rev).toEqual("2-a071048ce217ff1341fb224b83417003");
 				
 			});
 			
@@ -1290,7 +1354,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			beforeEach(function () {
 				couchDBStore = new CouchDBStore;
 				couchDBStore.setTransport(transportMock);
-				couchDBStore.setSyncInfo("db", ["document1", "document2"]);
+				couchDBStore.setSyncInfo("db", {keys: ["document1", "document2"]});
 				stateMachine = couchDBStore.getStateMachine();
 			});
 			
