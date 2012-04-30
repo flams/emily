@@ -79,6 +79,22 @@
  	text-shadow: 1px 1px 1px #333;
  }
  
+  
+ header p a {
+ 	background-color: grey;
+ 	padding: 10px;
+ 	border-radius: 5px;
+ 	color: white;
+	background: rgb(167,207,223); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(167,207,223,1) 0%, rgba(35,83,138,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(167,207,223,1)), color-stop(100%,rgba(35,83,138,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* IE10+ */
+	background: linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a7cfdf', endColorstr='#23538a',GradientType=0 ); /* IE6-9 */
+	box-shadow: 2px 2px 2px black;
+}
  
  footer {
  	width: 900px;
@@ -94,7 +110,7 @@
 	text-align: center;
  }
 </style>
-<link href='http://fonts.googleapis.com/css?family=Great+Vibes|Belleza' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Great+Vibes|Belleza' rel='stylesheet' type='text/css'> 
 </head>
 <body>
 	
@@ -103,15 +119,18 @@
 		<header>
 			<h1>Emily</h1>
 			<p>
-			simple tools for powerful JavaScript applications, in node.js or the browser.
+				simple tools for powerful JS applications, in node.js or the browser.
+				<a href="Emily.tgz">
+					Download <span id="version">1.1.2</span>
+				</a>
 			</p>
 		</header>
 
 		<ul id="gallery">
 			<li>
-				<a href="Emily.tgz">
-					<img src="img/download.jpg" alt="download Emily Picture" width="150" height="150" />
-					<span>Download</span>
+				<a href="http://groups.google.com/group/emily--olives">
+					<img src="img/groups.jpg" alt="Google Groups" width="150" height="150" />
+					<span>Google Groups</span>
 				</a>
 			</li>
 			<li>
@@ -140,7 +159,7 @@
 			</li>
 									<li>
 				<a href="http://flams.github.com/olives" target="_blank">
-					<img src="img/olives.jpg" alt="Emily Olives Picture" width="150" height="150" />
+					<img src="img/olives.jpg" alt="Olives Picture" width="150" height="150" />
 					<span>For real-time UIs</span>
 				</a>
 			</li>
@@ -149,6 +168,8 @@
 		
 		<footer>
 			Emily is released under the <a href="https://github.com/flams/emily/blob/master/LICENSE">MIT license</a>. Copyright <a href="http://podefr.tumblr.com">Olivier Scherrer</a> 2012
+			<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://flams.github.com/emily/" data-text="Check out Emily: JS framework for real-time applications! by @podefr" data-hashtags="EmilyJS">Tweet</a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 		</footer>
 	
 		
