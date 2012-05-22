@@ -87,7 +87,7 @@ function Transport(Store, Tools) {
 				abort;
 				
 				Tools.mixin({
-					keptAlive: true,
+					__keepalive__: true,
 					method: "get"
 				}, reqData);
 				

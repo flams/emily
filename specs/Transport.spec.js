@@ -145,7 +145,7 @@ require(["Transport", "Store"], function (Transport, Store) {
 			
 			expect(reqHandlers.get("channel").wasCalled).toEqual(true);
 			params = reqHandlers.get("channel").mostRecentCall.args[0];
-			expect(params.keptAlive).toEqual(true);
+			expect(params.__keepalive__).toEqual(true);
 			expect(params.method).toEqual("get");
 			expect(params.path).toEqual(url);
 			
