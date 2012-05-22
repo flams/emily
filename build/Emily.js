@@ -1,5 +1,5 @@
 /*
- Emily
+ Emily http://flams.github.com/emily
 
  The MIT License (MIT)
 
@@ -33,5 +33,5 @@ define("Tools",function(){return{getGlobal:function(){return function(){return t
 e,h){var f,c;if(b instanceof Object&&typeof e=="function"){if(c=b.length)for(f=0;f<c;f++)e.call(h,b[f],f,b);else for(f in b)b.hasOwnProperty(f)&&e.call(h,b[f],f,b);return true}else return false},objectsDiffs:function(b,e){if(b instanceof Object&&e instanceof Object){var h=[],f=[],c=[],g=[];this.loop(e,function(a,c){typeof b[c]=="undefined"?g.push(c):a!==b[c]?f.push(c):a===b[c]&&h.push(c)});this.loop(b,function(a,b){typeof e[b]=="undefined"&&c.push(b)});return{updated:f,unchanged:h,added:g,deleted:c}}else return false},
 jsonify:function(b){return b instanceof Object?JSON.parse(JSON.stringify(b)):false},clone:function(b){return b instanceof Array?b.slice(0):typeof b=="object"&&b!==null&&!(b instanceof RegExp)?this.mixin(b,{}):false},getNestedProperty:function(b,e){return b&&b instanceof Object?typeof e=="string"&&e!=""?e.split(".").reduce(function(b,f){return b&&b[f]},b):typeof e=="number"?b[e]:b:b},setNestedProperty:function(b,e,h){if(b&&b instanceof Object)if(typeof e=="string"&&e!=""){var f=e.split(".");return f.reduce(function(b,
 e,a){b[e]=b[e]||{};f.length==a+1&&(b[e]=h);return b[e]},b)}else return typeof e=="number"?(b[e]=h,b[e]):b;else return b}}});
-define("Transport",["Store","Tools"],function(b,e){return function(h){var f=null;this.setReqHandlers=function(c){return c instanceof b?(f=c,true):false};this.getReqHandlers=function(){return f};this.request=function(b,e,a,d){return f.has(b)&&typeof e=="object"?(f.get(b)(e,function(){a&&a.apply(d,arguments)}),true):false};this.listen=function(b,g,a,d){if(f.has(b)&&typeof g=="object"&&typeof g.path=="string"&&typeof a=="function"){var h=function(){a.apply(d,arguments)},i;e.mixin({keptAlive:true,method:"get"},
-g);i=f.get(b)(g,h,h);return function(){i.func.call(i.scope)}}else return false};this.setReqHandlers(h)}});
+define("Transport",["Store","Tools"],function(b,e){return function(h){var f=null;this.setReqHandlers=function(c){return c instanceof b?(f=c,true):false};this.getReqHandlers=function(){return f};this.request=function(b,e,a,d){return f.has(b)&&typeof e=="object"?(f.get(b)(e,function(){a&&a.apply(d,arguments)}),true):false};this.listen=function(b,g,a,d){if(f.has(b)&&typeof g=="object"&&typeof g.path=="string"&&typeof a=="function"){var h=function(){a.apply(d,arguments)},i;e.mixin({__keepalive__:true,
+method:"get"},g);i=f.get(b)(g,h,h);return function(){i.func.call(i.scope)}}else return false};this.setReqHandlers(h)}});

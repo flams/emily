@@ -1,5 +1,5 @@
 /**
- * @license Emily
+ * @license Emily http://flams.github.com/emily
  *
  * The MIT License (MIT)
  * 
@@ -1842,7 +1842,7 @@ function Transport(Store, Tools) {
 				abort;
 				
 				Tools.mixin({
-					keptAlive: true,
+					__keepalive__: true,
 					method: "get"
 				}, reqData);
 				
