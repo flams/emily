@@ -39,6 +39,9 @@ requirejs(["Store"], function (Store) {
 			var cfg = exports.config.get("CouchDB");
 			
 			data.hostname = cfg.hostname;
+			if (data.auth) {
+				data.hostname = data.auth + "@" + data.hostname;
+			}
 			data.port = cfg.port;
 			data.path += "?" + qs.stringify(data.query);
 
