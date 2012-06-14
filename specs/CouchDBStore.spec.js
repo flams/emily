@@ -430,6 +430,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		it("should update the selected document", function () {
 			var reqData,
 				value,
+				callback,
 				listenRes = '{"total_rows":3,"offset":0,"rows":[' +
 					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
@@ -458,9 +459,25 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			
 		});
 		
+		it("should update the first item if the map is reduced", function () {
+			var callback,
+				listenRes = '{"update_seq":19,"rows":[{"key":null,"value":[80,100,120,80]}]}';
+			
+			spyOn(couchDBStore, "set");
+			couchDBStore.actions.updateDocInStore.call(couchDBStore, "18");
+			callback = transportMock.request.mostRecentCall.args[2];
+			callback.call(couchDBStore, listenRes);
+			
+			expect(couchDBStore.set.wasCalled).toEqual(true);
+			expect(couchDBStore.set.mostRecentCall.args[0]).toEqual(0);
+			expect(couchDBStore.set.mostRecentCall.args[1].value[1]).toEqual(100);
+			
+		});
+		
 		it("should add the new document", function () {
 			var reqData,
 				value,
+				callback,
 				listenRes = '{"total_rows":4,"offset":0,"rows":[' +
 					'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
 					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +

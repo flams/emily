@@ -309,6 +309,8 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					json.rows.some(function (value, idx) {
 						if (value.id == id) {
 							this.set(idx, value);
+						} else if (!value.id) {
+							this.set(idx, value);
 						}
 					}, this);
 
