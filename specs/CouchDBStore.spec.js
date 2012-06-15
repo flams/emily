@@ -172,6 +172,16 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			syncInfo = couchDBStore.getSyncInfo();
 			expect(syncInfo["query"]).toBe(query);
 		});
+		
+		it("should have a function to set the 'reduced view' flag", function () {
+			expect(couchDBStore.setReducedViewInfo).toBeInstanceOf(Function);
+			expect(couchDBStore.setReducedViewInfo()).toEqual(false);
+			expect(couchDBStore.setReducedViewInfo("")).toEqual(false);
+			expect(couchDBStore.setReducedViewInfo(true)).toEqual(true);
+			expect(couchDBStore.getSyncInfo().reducedView).toEqual(true);
+			expect(couchDBStore.setReducedViewInfo(false)).toEqual(true);
+			expect(couchDBStore.getSyncInfo().reducedView).toEqual(false);
+		});
 	});
 	
 /**
@@ -212,6 +222,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				change,
 				del,
 				add,
+				updateReduced,
 				listeningUnsync;
 			
 			Unsynched = stateMachine.get("Unsynched");
@@ -251,6 +262,10 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(add[0]).toBe(couchDBStore.actions.addDocInStore);
 			expect(add[1]).toBe(couchDBStore);
 			
+			updateReduced = Listening.get("updateReduced");
+			expect(updateReduced[0]).toBe(couchDBStore.actions.updateReduced);
+			expect(updateReduced[1]).toBe(couchDBStore);
+			
 			listeningUnsync = Listening.get("unsync");
 			expect(listeningUnsync[0]).toBe(couchDBStore.actions.unsync);
 			expect(listeningUnsync[1]).toBe(couchDBStore);
@@ -259,6 +274,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		
 		it("should call setSyncInfo on sync", function () {
 			var query = {};
+			spyOn(couchDBStore, "clearSyncInfo").andCallThrough();
 			spyOn(couchDBStore, "setSyncInfo").andCallThrough();
 			couchDBStore.sync("db", "document", "view", query);
 			expect(couchDBStore.setSyncInfo.wasCalled).toEqual(true);
@@ -266,6 +282,24 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(couchDBStore.setSyncInfo.mostRecentCall.args[1]).toEqual("document");
 			expect(couchDBStore.setSyncInfo.mostRecentCall.args[2]).toEqual("view");
 			expect(couchDBStore.setSyncInfo.mostRecentCall.args[3]).toBe(query);
+			
+			expect(couchDBStore.clearSyncInfo.wasCalled).toEqual(true);
+		});
+		
+		it("should have a function to clear syncInfo", function () {
+			var syncInfo1,
+				syncInfo2;
+			
+			expect(couchDBStore.clearSyncInfo).toBeInstanceOf(Function);
+			couchDBStore.sync("db", "document", "view");
+			
+			syncInfo1 = couchDBStore.getSyncInfo();
+			expect(couchDBStore.clearSyncInfo()).toEqual(true);
+			
+			syncInfo2 = couchDBStore.getSyncInfo();
+			expect(syncInfo2).not.toBe(syncInfo1);
+			
+			expect(syncInfo2.design).toBeUndefined();
 		});
 		
 		it("should return a promise on sync", function () {
@@ -340,6 +374,21 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(stateMachine.event.mostRecentCall.args[1]).toEqual(8);
 			
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
+		});
+		
+		it("should set the reduced flag if the view is reduced", function () {
+			var res = '{"rows":[{"key":null,"value":[150]}]}',
+				callback;
+			
+			spyOn(couchDBStore, "setReducedViewInfo");
+			
+			couchDBStore.actions.getView.call(couchDBStore);
+			callback = transportMock.request.mostRecentCall.args[2];
+			callback.call(couchDBStore, res);
+			
+			expect(couchDBStore.setReducedViewInfo.wasCalled).toEqual(true);
+			expect(couchDBStore.setReducedViewInfo.mostRecentCall.args[0]).toEqual(true);
+			
 		});
 		
 		it("should throw an explicit error if resulting json has no 'row' property", function () {
@@ -427,6 +476,21 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(stateMachine.event.mostRecentCall.args[1]).toEqual("document4");
 		});
 		
+		it("should call for update on reduced view modification", function () {
+			var listenRes = '{"rows":[{"key":null,"value":["50","60","80","30"]}]}',
+				callback;
+			
+			spyOn(stateMachine, "event");
+			couchDBStore.setReducedViewInfo(true);
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			callback = transportMock.listen.mostRecentCall.args[2];
+			callback(listenRes);
+			
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("updateReduced");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBeUndefined();
+		});
+		
 		it("should update the selected document", function () {
 			var reqData,
 				value,
@@ -456,21 +520,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			value = couchDBStore.set.mostRecentCall.args[1];
 			
 			expect(value.value.body).toEqual("a change for the example");
-			
-		});
-		
-		it("should update the first item if the map is reduced", function () {
-			var callback,
-				listenRes = '{"update_seq":19,"rows":[{"key":null,"value":[80,100,120,80]}]}';
-			
-			spyOn(couchDBStore, "set");
-			couchDBStore.actions.updateDocInStore.call(couchDBStore, "18");
-			callback = transportMock.request.mostRecentCall.args[2];
-			callback.call(couchDBStore, listenRes);
-			
-			expect(couchDBStore.set.wasCalled).toEqual(true);
-			expect(couchDBStore.set.mostRecentCall.args[0]).toEqual(0);
-			expect(couchDBStore.set.mostRecentCall.args[1].value[1]).toEqual(100);
 			
 		});
 		
@@ -550,6 +599,37 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			couchDBStore.actions.removeDocInStore.call(couchDBStore, "document4");
 			expect(couchDBStore.del.wasCalled).toEqual(true);
 			expect(couchDBStore.del.mostRecentCall.args[0]).toEqual(3);
+		});
+		
+		it("should update the reduced view", function () {
+			var reqData,
+				json,
+				callback,
+				listenRes = '{"rows":[{"key":null,"value":["50","60","80","30"]}]}',
+				parsed = JSON.parse(listenRes);
+			
+			spyOn(couchDBStore, "set");
+			spyOn(JSON, "parse").andReturn(parsed);
+			
+			couchDBStore.actions.updateReduced.call(couchDBStore);
+			expect(transportMock.request.wasCalled).toEqual(true);
+			expect(transportMock.request.mostRecentCall.args[0]).toEqual("CouchDB");
+	
+			reqData = transportMock.request.mostRecentCall.args[1];
+			expect(reqData["method"]).toEqual("GET");
+			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
+			expect(reqData["query"]).toBe(query);
+			
+			callback = transportMock.request.mostRecentCall.args[2];
+			expect(callback).toBeInstanceOf(Function);
+			callback.call(couchDBStore, listenRes);
+			
+			expect(JSON.parse.wasCalled).toEqual(true);
+			expect(JSON.parse.mostRecentCall.args[0]).toEqual(listenRes);
+			
+			expect(couchDBStore.set.wasCalled).toEqual(true);
+			expect(couchDBStore.set.mostRecentCall.args[0]).toEqual(0);
+			expect(couchDBStore.set.mostRecentCall.args[1]).toBe(parsed.rows[0]);
 		});
 		
 		it("should unsync a view, ie. stop listening to changes and reset it", function () {
