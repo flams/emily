@@ -332,7 +332,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 		beforeEach(function () {
 			couchDBStore = new CouchDBStore;
 			couchDBStore.setTransport(transportMock);
-			couchDBStore.setSyncInfo("db", "design", "view", query);
+			couchDBStore.setSyncInfo("db", "design", "_view/view", query);
 			stateMachine = couchDBStore.getStateMachine();
 		});
 		
@@ -398,7 +398,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			
 			expect(function () {
 				cb.call(couchDBStore, '{"error":""}');
-			}).toThrow('CouchDBStore [db, design, view].sync() failed: {"error":""}');
+			}).toThrow('CouchDBStore [db, design, _view/view].sync() failed: {"error":""}');
 		});
 		
 		it("should subscribe to view changes", function () {

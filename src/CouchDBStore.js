@@ -65,7 +65,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				
 				_transport.request(_channel, {
 					method: "GET",
-					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + "_view/" + _syncInfo.view,
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
 					query: _syncInfo.query
 				}, function (results) {
 					var json = JSON.parse(results);
@@ -157,7 +157,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			createDocument: function (promise) {
             	_transport.request(_channel, {
             		method: "PUT",
-            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
+            		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
             		headers: {
             			"Content-Type": "application/json"
             		},
@@ -306,7 +306,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			updateDocInStore: function (id) {
 				_transport.request(_channel,{
 					method: "GET",
-					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view,
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
 					query: _syncInfo.query
 				}, function (view) {
 					var json = JSON.parse(view);
@@ -383,7 +383,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			addDocInStore: function (id) {
 				_transport.request(_channel,{
 					method: "GET",
-					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view,
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
 					query: _syncInfo.query
 				}, function (view) {
 					var json = JSON.parse(view);
@@ -404,7 +404,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			updateReduced: function () {
 				_transport.request(_channel,{
 					method: "GET",
-					path: '/'+_syncInfo.database+'/_design/'+_syncInfo.design+'/_view/'+_syncInfo.view,
+					path: "/" + _syncInfo.database + "/_design/" + _syncInfo.design + "/" + _syncInfo.view,
 					query: _syncInfo.query
 				}, function (view) {
 					var json = JSON.parse(view);
@@ -422,7 +422,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			updateDoc: function () {
 				_transport.request(_channel, {
 					method: "GET",
-					path: '/'+_syncInfo.database+'/' + _syncInfo.document
+					path: "/"+_syncInfo.database+"/" + _syncInfo.document
 				}, function (doc) {
 					this.reset(JSON.parse(doc));			
 				}, this);
@@ -444,7 +444,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 
 		    	_transport.request(_channel, {
             		method: "PUT",
-            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
+            		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
             		headers: {
             			"Content-Type": "application/json"
             		},
@@ -489,7 +489,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		    removeFromDatabase: function () {
 		    	_transport.request(_channel, {
             		method: "DELETE",
-            		path: '/' + _syncInfo.database + '/' + _syncInfo.document,
+            		path: "/" + _syncInfo.database + "/" + _syncInfo.document,
             		query: {
             			rev: this.get("_rev")
             		}
