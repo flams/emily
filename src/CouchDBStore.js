@@ -452,11 +452,12 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             	}, function (response) {
             		var json = JSON.parse(response);
             		if (json.ok) {
+            			this.set("_rev", json.rev);
             			promise.resolve(json);
             		} else {
             			promise.reject(json);
             		}
-            	});
+            	}, this);
 		    },
 		    
 		    /**
