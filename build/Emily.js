@@ -1,5 +1,5 @@
 /*
- Emily http://flams.github.com/emily
+ Emily ${VERSION} http://flams.github.com/emily
 
  The MIT License (MIT)
 
