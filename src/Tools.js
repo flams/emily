@@ -96,6 +96,7 @@ function Tools(){
 		/**
 		 * Small adapter for looping over objects and arrays
 		 * Warning: it's not meant to be used with nodeList
+		 * To use with nodeList, convert to array first
 		 * @param {Array/Object} iterated the array or object to loop through
 		 * @param {Function} callback the function to execute for each iteration
 		 * @param {Object} scope the scope in which to execute the callback
@@ -105,10 +106,9 @@ function Tools(){
 			var i, 
 				length;
 			
-			if (iterated instanceof Object && typeof callback == "function") {
-				length = iterated.length;
-				if (length) {
-					for (i=0; i<length; i++) {
+			if (iterated instanceof Object && callback instanceof Function) {
+				if (iterated instanceof Array) {
+					for (i=0; i<iterated.length; i++) {
 						callback.call(scope, iterated[i], i, iterated);
 					}
 				} else {

@@ -212,14 +212,13 @@ require(["Tools"], function (Tools) {
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 		
-		it("should iterate through nodelist", function () {
-			if (typeof document != "undefined") {
-				var dom = document.createElement("div"),
-					spy = jasmine.createSpy();
-				dom.innerHTML = "<p></p><p></p><p></p><p></p>";
-				Tools.loop(dom.querySelectorAll("p"), spy);
-				expect(spy.callCount).toEqual(4);
-			}
+		it("shouldn't loop on values that are deleted on the fly", function () {
+			Tools.loop(array, function (val, key) {
+				if (key == 0) {
+					array.splice(key, 1);
+				}
+				expect(typeof val != "undefined" && key != 3).toEqual(true);
+			});
 		});
 	});
 	
