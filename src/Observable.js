@@ -38,9 +38,9 @@ function Observable(Tools) {
 		 */
 		this.watch = function watch(topic, callback, scope) {
 			if (typeof callback == "function") {
-				var observers = _topics[topic] = _topics[topic] || [];
-			
+				var observers = _topics[topic] = _topics[topic] || [],
 				observer = [callback, scope];
+				
 				observers.push(observer);
 				return [topic,observers.indexOf(observer)];
 				
