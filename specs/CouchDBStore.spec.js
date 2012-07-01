@@ -1028,9 +1028,21 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				response = '{"ok":true}';
 			spyOn(promise, "resolve");
 			couchDBStore.actions.updateDatabase.call(couchDBStore, promise);
-			transportMock.request.mostRecentCall.args[2](response);
+			transportMock.request.mostRecentCall.args[2].call(couchDBStore, response);
 			expect(promise.resolve.wasCalled).toEqual(true);
 			expect(promise.resolve.mostRecentCall.args[0].ok).toEqual(true);
+		});
+		
+		it("should update rev of update ok", function () {
+			var response = '{"ok":true,"rev":7}',
+				promise = new Promise;
+			
+			spyOn(couchDBStore, "set");
+			couchDBStore.actions.updateDatabase.call(couchDBStore, promise);
+			transportMock.request.mostRecentCall.args[2].call(couchDBStore, response);
+			expect(couchDBStore.set.wasCalled).toEqual(true);
+			expect(couchDBStore.set.mostRecentCall.args[0]).toEqual("_rev");
+			expect(couchDBStore.set.mostRecentCall.args[1]).toEqual(7);
 		});
 		
 		it("should reject the promise on update if update failed", function () {
