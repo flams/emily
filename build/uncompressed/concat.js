@@ -1842,7 +1842,7 @@ function Transport(Store, Tools) {
 		 * @returns
 		 */
 		this.setReqHandlers = function setReqHandlers(reqHandlers) {
-			if (reqHandlers instanceof Store) {
+			if (reqHandlers instanceof Object) {
 				_reqHandlers = reqHandlers;
 				return true;
 			} else {
