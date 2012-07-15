@@ -36,7 +36,7 @@ require(["Transport", "Store"], function (Transport, Store) {
 			
 			expect(transport.getReqHandlers()).toBeNull();
 			expect(transport.setReqHandlers()).toEqual(false);
-			expect(transport.setReqHandlers({})).toEqual(false);
+			expect(transport.setReqHandlers({})).toEqual(true);
 			expect(transport.setReqHandlers(reqHandlers)).toEqual(true);
 			expect(transport.getReqHandlers()).toBe(reqHandlers);
 		});
