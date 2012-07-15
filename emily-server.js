@@ -79,3 +79,5 @@ requirejs(["Store"], function (Store) {
 	});
 	
 });
+
+module.exports.requirejs = requirejs;
