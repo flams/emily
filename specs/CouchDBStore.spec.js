@@ -500,6 +500,9 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 					'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
 					'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}';                                                                                   	            
 			
+			// There must be some data at init for the updateDocInStore function to work
+			couchDBStore.reset(JSON.parse(listenRes).rows);
+			
 			spyOn(couchDBStore, "set");
 			
 			couchDBStore.actions.updateDocInStore.call(couchDBStore, "document3");
@@ -520,6 +523,73 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			value = couchDBStore.set.mostRecentCall.args[1];
 			
 			expect(value.value.body).toEqual("a change for the example");
+			
+		});
+		
+		it("should have a function to even the number of items between the view and the store", function () {
+			expect(couchDBStore.actions.evenDocsInStore).toBeInstanceOf(Function);
+		});
+		
+		it("should add a document that is present in the view but missing in the store -it's not a new doc, rev!=1-", function () {
+			var view = 	'{"total_rows":3,"offset":0,"rows":[' +
+				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
+				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
+				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}',
+				oldView = JSON.parse(view).rows,
+				newView = JSON.parse(view).rows;
+			
+			oldView.splice(1, 1);
+			
+			couchDBStore.reset(oldView);
+			
+			spyOn(couchDBStore, "alter");
+			couchDBStore.actions.evenDocsInStore.call(couchDBStore, newView, "document2");
+			
+			expect(couchDBStore.alter.wasCalled).toEqual(true);
+			expect(couchDBStore.alter.mostRecentCall.args[0]).toEqual("splice");
+			expect(couchDBStore.alter.mostRecentCall.args[1]).toEqual(1);
+			expect(couchDBStore.alter.mostRecentCall.args[2]).toEqual(0);
+			expect(couchDBStore.alter.mostRecentCall.args[3].id).toEqual("document2");
+		});
+		
+		it("should remove a document that is not present in the view anymore -it's not a removed doc!-", function () {
+			var view = 	'{"total_rows":3,"offset":0,"rows":[' +
+				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
+				'{"id":"document2","key":"2012/01/13 13:45:21","value":{"date":"2012/01/13 13:45:21","title":"this is a new document","body":"in the database"}},' +
+				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}',
+				oldView = JSON.parse(view).rows,
+				newView = JSON.parse(view).rows;
+			
+			newView.splice(1, 1);
+			
+			
+			couchDBStore.reset(oldView);
+			
+			spyOn(couchDBStore, "loop").andCallThrough();
+			spyOn(couchDBStore, "del");
+			couchDBStore.actions.evenDocsInStore.call(couchDBStore, newView, "document2");
+			
+			expect(couchDBStore.loop.wasCalled).toEqual(true);
+			expect(couchDBStore.del.wasCalled).toEqual(true);
+			expect(couchDBStore.del.mostRecentCall.args[0]).toEqual(1);
+		
+		});
+
+		it("should call the even function if there's a difference between the number of items in the store and the view", function () {
+			var callback,
+				listenRes = '{"total_rows":2,"offset":0,"rows":[' +
+				'{"id":"document1","key":"2012/01/13 12:45:56","value":{"date":"2012/01/13 12:45:56","title":"my first document","body":"in this database"}},' +
+				'{"id":"document3","key":"2012/01/13 21:45:12","value":{"date":"2012/01/13 21:45:12","title":"the 3rd document","body":"a change for the example"}}]}';                                                                                   	            
+
+			couchDBStore.actions.updateDocInStore.call(couchDBStore, "document2");
+			callback = transportMock.request.mostRecentCall.args[2];
+			
+			spyOn(couchDBStore.actions, "evenDocsInStore");
+			callback.call(couchDBStore, listenRes);
+			
+			expect(couchDBStore.actions.evenDocsInStore.wasCalled).toEqual(true);
+			expect(couchDBStore.actions.evenDocsInStore.mostRecentCall.args[0][1].id).toEqual("document3");
+			expect(couchDBStore.actions.evenDocsInStore.mostRecentCall.args[1]).toEqual("document2");
 			
 		});
 		
