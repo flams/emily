@@ -14,7 +14,8 @@
  ],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
  "dependencies": {
-  "requirejs": ">=1.0.7"
+  "requirejs": ">=1.0.7",
+  "cookie": ">=0.0.4"
   },
  "keywords": ["framework", "web", "realtime", "CouchDB", "AMD/commonJS", "requirejs"],
  "repository": {
