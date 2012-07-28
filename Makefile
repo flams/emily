@@ -5,7 +5,7 @@
 #
 # Targets:
 #
-# make tests-jstd: runs the JsTestDriver tsts
+# make tests-jstd: runs the JsTestDriver tests
 # make tests-node: runs the tests under node.js
 # make tests: runs both tests
 #
