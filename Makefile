@@ -52,6 +52,10 @@ endif
 	
 	cp -rf docs/latest/ docs/$(VERSION)/
 	
+	git commit -am "released version $(VERSION)"
+	
+	git push
+	
 Emily.js: $(SRC)
 	mkdir -p build
 	cat LICENSE-MINI $(SRC) > build/$@
@@ -72,13 +76,8 @@ endif
 
 	git checkout gh-pages
 	
-	git checkout master Makefile
-	git checkout master docs; git add docs
-	git checkout master src; git add src
-	git checkout master specs; git add specs
-	git checkout master tools; git add lib
-	git checkout master lib; git add lib
-	git checkout master release; git add release
+	git checkout master Makefile docs src specs tools lib release
+	git add docs src specs tools lib release
 	
 	sed -i .bak 's#version">.*<#version">'${VERSION}'<#g' index.html
 	sed -i .bak 's#<a href="release/Emily.*\.tgz">#<a href="release/Emily-'${VERSION}'.tgz">#' index.html
@@ -89,8 +88,6 @@ endif
 	git push
 	
 	git checkout master
-	
-	git push
 	
 	
 .PHONY: docs clean-docs clean-build build tests release clean gh-pages	
