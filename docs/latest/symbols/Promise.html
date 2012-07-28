@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - StateMachine</title>
+		<title>JsDoc Reference - Promise</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class StateMachine
+				Class Promise
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,16 +224,16 @@ ul.inheritsList
 				
 				
 			
-				Create a stateMachine
+				Create a Promise
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_StateMachine.js.html">StateMachine.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Promise.js.html">Promise.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class StateMachine.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Promise.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -246,7 +246,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/StateMachine.html#constructor">StateMachine</a></b>(Tools)
+								<b><a href="../symbols/Promise.html#constructor">Promise</a></b>(Observable, StateMachine)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -262,7 +262,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class StateMachine.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Promise.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -275,36 +275,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#event">event</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#reject">reject</a></b>(the)
 								</div>
-								<div class="description">Pass an event to the state machine</div>
+								<div class="description">Reject the promise.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#getCurrent">getCurrent</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#resolve">resolve</a></b>(the)
 								</div>
-								<div class="description">Get the current state</div>
+								<div class="description">Resolve the promise.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#init">init</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#then">then</a></b>(the, the)
 								</div>
-								<div class="description">Set the initialization state</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/StateMachine.html#-StateMachineConstructor">StateMachineConstructor</a></b>(initState, diagram)
-								</div>
-								<div class="description"></div>
+								<div class="description">The callbacks and errbacks to call after resolution or rejection</div>
 							</td>
 						</tr>
 					
@@ -325,7 +316,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>StateMachine</b>(Tools)
+						<b>Promise</b>(Observable, StateMachine)
 				</div>
 				
 				<div class="description">
@@ -341,7 +332,13 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>Tools</b>
+								 <b>Observable</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>StateMachine</b>
 								
 							</dt>
 								<dd></dd>
@@ -367,15 +364,16 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="event"> </a>
+					<a name="reject"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>event</b>(name)
+					
+					<b>reject</b>(the)
 					
 					</div>
 					<div class="description">
-						Pass an event to the state machine
+						Reject the promise.
+A promise can be rejected only once.
 						
 						
 					</div>
@@ -387,10 +385,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>the</b>
 									
 								</dt>
-								<dd>the name of the event</dd>
+								<dd>rejection value</dd>
 							
 							</dl>
 						
@@ -401,7 +399,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if the event exists in the current state</dd>
+								<dd>true if the rejection function was called</dd>
 							
 							</dl>
 						
@@ -410,47 +408,16 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="getCurrent"> </a>
+					<a name="resolve"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{String}</span>
-					<b>getCurrent</b>()
+					
+					<b>resolve</b>(the)
 					
 					</div>
 					<div class="description">
-						Get the current state
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="init"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>init</b>(name)
-					
-					</div>
-					<div class="description">
-						Set the initialization state
+						Resolve the promise.
+A promise can be resolved only once.
 						
 						
 					</div>
@@ -462,10 +429,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>the</b>
 									
 								</dt>
-								<dd>the name of the init state</dd>
+								<dd>resolution value</dd>
 							
 							</dl>
 						
@@ -476,7 +443,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+								<dd>true if the resolution function was called</dd>
 							
 							</dl>
 						
@@ -485,33 +452,18 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="-StateMachineConstructor"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
+					<a name="then"> </a>
+					<div class="fixedFont">
 					
 					
-					<b>StateMachineConstructor</b>(initState, diagram)
+					<b>then</b>(the, the)
 					
 					</div>
 					<div class="description">
-						
+						The callbacks and errbacks to call after resolution or rejection
 						
 						
 					</div>
-					
-					
-					
-					<pre class="code">
-     diagram = {
-             "State1" : [
-                     [ message1, action, nextState], // Same as the state's add function
-                     [ message2, action2, nextState]
-             ],
-
-             "State2" :
-                      [ message3, action3, scope3, nextState]
-                     ... and so on ....
-
-  }</pre>
 					
 					
 					
@@ -520,29 +472,22 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>initState</b>
+									<span class="light fixedFont">{Function}</span> <b>the</b>
 									
 								</dt>
-								<dd>{String} the initial state</dd>
+								<dd>first parameter is a success function, it can be followed by a scope in which to run it</dd>
 							
 								<dt>
-									<b>diagram</b>
+									<span class="light fixedFont">{Function}</span> <b>the</b>
 									
 								</dt>
-								<dd>{Object} the diagram that describes the state machine</dd>
+								<dd>second, or third parameter is an errback, it can also be followed by a scope</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>the stateMachine object</dd>
-							
-							</dl>
 						
 						
 						
@@ -561,7 +506,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jul 18 2012 10:33:39 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jul 28 2012 11:12:51 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Observable</title>
+		<title>JsDoc Reference - CouchDBStore</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Observable
+				Class CouchDBStore
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,16 +224,17 @@ ul.inheritsList
 				
 				
 			
-				Observable is an implementation of the Observer design pattern, which is also known as publish/subscribe.This service creates an Observable on which you can add subscribers.
+				CouchDBStore synchronises a Store with a CouchDB view or document
+It subscribes to _changes to keep its data up to date.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Observable.js.html">Observable.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBStore.js.html">CouchDBStore.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Observable.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBStore.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -246,7 +247,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Observable.html#constructor">Observable</a></b>(Tools)
+								<b><a href="../symbols/CouchDBStore.html#constructor">CouchDBStore</a></b>(Store, StateMachine, Tools, Promise)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -262,7 +263,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Observable.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBStore.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -273,56 +274,57 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#hasObserver">hasObserver</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#-CouchDBStoreConstructor">CouchDBStoreConstructor</a></b>()
 								</div>
-								<div class="description">Check if topic has the described observer</div>
+								<div class="description">Defines the CouchDBStore</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#hasTopic">hasTopic</a></b>(topic)
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#remove">remove</a></b>()
 								</div>
-								<div class="description">Check if a topic has observers</div>
+								<div class="description">Remove the document from the database</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#notify">notify</a></b>(topic, subject)
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#setTransport">setTransport</a></b>(transport)
 								</div>
-								<div class="description">Notifies observers that a topic has a new message</div>
+								<div class="description">The transport object to use</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#unwatch">unwatch</a></b>(handler)
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#sync">sync</a></b>(database, view)
 								</div>
-								<div class="description">Remove an observer</div>
+								<div class="description">Synchronize the store with a view</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#unwatchAll">unwatchAll</a></b>(topic)
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#unsync">unsync</a></b>()
 								</div>
-								<div class="description">Unwatch all or unwatch all from topic</div>
+								<div class="description">Unsync a store.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#watch">watch</a></b>(topic, callback, scope)
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#upload">upload</a></b>()
 								</div>
-								<div class="description">Add an observer</div>
+								<div class="description">Upload the document to the database
+Works for CouchDBStore that are synchronized with documents or bulk of documents.</div>
 							</td>
 						</tr>
 					
@@ -343,7 +345,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Observable</b>(Tools)
+						<b>CouchDBStore</b>(Store, StateMachine, Tools, Promise)
 				</div>
 				
 				<div class="description">
@@ -359,7 +361,25 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
+								 <b>Store</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>StateMachine</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
 								 <b>Tools</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>Promise</b>
 								
 							</dt>
 								<dd></dd>
@@ -385,15 +405,79 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="hasObserver"> </a>
-					<div class="fixedFont">
+					<a name="-CouchDBStoreConstructor"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
-					<span class="light">{Boolean}</span>
-					<b>hasObserver</b>()
+					<span class="light">{CouchDBStoreConstructor}</span>
+					<b>CouchDBStoreConstructor</b>()
 					
 					</div>
 					<div class="description">
-						Check if topic has the described observer
+						Defines the CouchDBStore
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{CouchDBStoreConstructor}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>()
+					
+					</div>
+					<div class="description">
+						Remove the document from the database
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if remove called</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setTransport"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setTransport</b>(transport)
+					
+					</div>
+					<div class="description">
+						The transport object to use
 						
 						
 					</div>
@@ -405,55 +489,136 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Handler}</span> <b></b>
+									<span class="light fixedFont">{Object}</span> <b>transport</b>
 									
 								</dt>
+								<dd>the transport object</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="sync"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>sync</b>(database, view)
+					
+					</div>
+					<div class="description">
+						Synchronize the store with a view
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>database</b>
+									
+								</dt>
+								<dd>the name of the database where to get...</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>...design</b>
+									
+								</dt>
+								<dd>the design document, in which...</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>view</b>
+									
+								</dt>
+								<dd>...the view is.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="unsync"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unsync</b>()
+					
+					</div>
+					<div class="description">
+						Unsync a store. Unsync must be called prior to resynchronization.
+That will prevent any unwanted resynchronization.
+Notice that previous data will still be available.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
 								<dd></dd>
 							
 							</dl>
 						
 						
 						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if exists</dd>
-							
-							</dl>
-						
-						
-						
 
 					<hr />
 				
-					<a name="hasTopic"> </a>
+					<a name="upload"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>hasTopic</b>(topic)
+					
+					<b>upload</b>()
 					
 					</div>
 					<div class="description">
-						Check if a topic has observers
+						Upload the document to the database
+Works for CouchDBStore that are synchronized with documents or bulk of documents.
+If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
+No modification can be done on views.
 						
 						
 					</div>
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
-									
-								</dt>
-								<dd>the name of the topic</dd>
-							
-							</dl>
 						
 						
 						
@@ -462,197 +627,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if topic is listened</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="notify"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>notify</b>(topic, subject)
-					
-					</div>
-					<div class="description">
-						Notifies observers that a topic has a new message
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
-									
-								</dt>
-								<dd>the name of the topic to publish to</dd>
-							
-								<dt>
-									<b>subject</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if there was subscribers</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="unwatch"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>unwatch</b>(handler)
-					
-					</div>
-					<div class="description">
-						Remove an observer
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Handler}</span> <b>handler</b>
-									
-								</dt>
-								<dd>returned by the watch method</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if there were subscribers</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="unwatchAll"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>unwatchAll</b>(topic)
-					
-					</div>
-					<div class="description">
-						Unwatch all or unwatch all from topic
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
-									
-								</dt>
-								<dd>optional unwatch all from topic</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if ok</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="watch"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>watch</b>(topic, callback, scope)
-					
-					</div>
-					<div class="description">
-						Add an observer
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
-									
-								</dt>
-								<dd>the topic to observe</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>callback</b>
-									
-								</dt>
-								<dd>the callback to execute</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>scope</b>
-									
-								</dt>
-								<dd>the scope in which to execute the callback</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>handler</dd>
+								<dd>true if upload called</dd>
 							
 							</dl>
 						
@@ -673,7 +648,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jul 18 2012 10:33:38 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jul 28 2012 11:12:51 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

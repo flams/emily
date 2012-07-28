@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Transport</title>
+		<title>JsDoc Reference - CouchDBStore</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Transport
+				Class CouchDBStore
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,18 +224,17 @@ ul.inheritsList
 				
 				
 			
-				Transport creates the link between your requests and Emily's requests handlers.
-A request handler can be defined to make requets of any kind as long as it's supported
-by your node.js. (HTTP, FileSystem, SIP...)
+				CouchDBStore synchronises a Store with a CouchDB view or document
+It subscribes to _changes to keep its data up to date.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Transport.js.html">Transport.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBStore.js.html">CouchDBStore.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Transport.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBStore.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -248,7 +247,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Transport.html#constructor">Transport</a></b>(Store, Tools)
+								<b><a href="../symbols/CouchDBStore.html#constructor">CouchDBStore</a></b>(Store, StateMachine, Tools, Promise)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -264,7 +263,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Transport.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBStore.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -275,38 +274,57 @@ by your node.js. (HTTP, FileSystem, SIP...)
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Transport.html#listen">listen</a></b>(channel, reqData, callback, scope)
-								</div>
-								<div class="description">Listen to a path (Kept alive)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Transport.html#request">request</a></b>(channel, reqData, callback, scope)
-								</div>
-								<div class="description">Make a request</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Transport.html#setReqHandlers">setReqHandlers</a></b>(reqHandlers)
-								</div>
-								<div class="description">Set the requests handlers</div>
-							</td>
-						</tr>
-					
-						<tr>
 							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Transport.html#-TransportConstructor">TransportConstructor</a></b>($reqHandlers)
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#-CouchDBStoreConstructor">CouchDBStoreConstructor</a></b>()
 								</div>
-								<div class="description">Create a Transport</div>
+								<div class="description">Defines the CouchDBStore</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#remove">remove</a></b>()
+								</div>
+								<div class="description">Remove the document from the database</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#setTransport">setTransport</a></b>(transport)
+								</div>
+								<div class="description">The transport object to use</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#sync">sync</a></b>(database, view)
+								</div>
+								<div class="description">Synchronize the store with a view</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#unsync">unsync</a></b>()
+								</div>
+								<div class="description">Unsync a store.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#upload">upload</a></b>()
+								</div>
+								<div class="description">Upload the document to the database
+Works for CouchDBStore that are synchronized with documents or bulk of documents.</div>
 							</td>
 						</tr>
 					
@@ -327,7 +345,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 				</div>
 				
 				<div class="fixedFont">
-						<b>Transport</b>(Store, Tools)
+						<b>CouchDBStore</b>(Store, StateMachine, Tools, Promise)
 				</div>
 				
 				<div class="description">
@@ -349,7 +367,19 @@ by your node.js. (HTTP, FileSystem, SIP...)
 								<dd></dd>
 						
 							<dt>
+								 <b>StateMachine</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
 								 <b>Tools</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>Promise</b>
 								
 							</dt>
 								<dd></dd>
@@ -375,180 +405,79 @@ by your node.js. (HTTP, FileSystem, SIP...)
 					Method Detail
 				</div>
 				
-					<a name="listen"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>listen</b>(channel, reqData, callback, scope)
-					
-					</div>
-					<div class="description">
-						Listen to a path (Kept alive)
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>channel</b>
-									
-								</dt>
-								<dd>is the name of the request handler to use</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>reqData</b>
-									
-								</dt>
-								<dd>the request data: path should indicate the url, query can add up query strings to the url</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>callback</b>
-									
-								</dt>
-								<dd>the function to execute with the result</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>scope</b>
-									
-								</dt>
-								<dd>the scope in which to execute the callback</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="request"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>request</b>(channel, reqData, callback, scope)
-					
-					</div>
-					<div class="description">
-						Make a request
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>channel</b>
-									
-								</dt>
-								<dd>is the name of the request handler to use</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>reqData</b>
-									
-								</dt>
-								<dd>the request data</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>callback</b>
-									
-								</dt>
-								<dd>the function to execute with the result</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>scope</b>
-									
-								</dt>
-								<dd>the scope in which to execute the callback</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setReqHandlers"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setReqHandlers</b>(reqHandlers)
-					
-					</div>
-					<div class="description">
-						Set the requests handlers
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>reqHandlers</b>
-									
-								</dt>
-								<dd>the list of requests handlers</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="-TransportConstructor"> </a>
+					<a name="-CouchDBStoreConstructor"> </a>
 					<div class="fixedFont">&lt;inner&gt; 
 					
-					
-					<b>TransportConstructor</b>($reqHandlers)
+					<span class="light">{CouchDBStoreConstructor}</span>
+					<b>CouchDBStoreConstructor</b>()
 					
 					</div>
 					<div class="description">
-						Create a Transport
+						Defines the CouchDBStore
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{CouchDBStoreConstructor}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>()
+					
+					</div>
+					<div class="description">
+						Remove the document from the database
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if remove called</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setTransport"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setTransport</b>(transport)
+					
+					</div>
+					<div class="description">
+						The transport object to use
 						
 						
 					</div>
@@ -560,10 +489,10 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>$reqHandlers</b>
+									<span class="light fixedFont">{Object}</span> <b>transport</b>
 									
 								</dt>
-								<dd>the requestHandler defined in your node.js app</dd>
+								<dd>the transport object</dd>
 							
 							</dl>
 						
@@ -574,7 +503,131 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
+								<dd><span class="light fixedFont">{Boolean}</span> true if</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="sync"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>sync</b>(database, view)
+					
+					</div>
+					<div class="description">
+						Synchronize the store with a view
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>database</b>
+									
+								</dt>
+								<dd>the name of the database where to get...</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>...design</b>
+									
+								</dt>
+								<dd>the design document, in which...</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>view</b>
+									
+								</dt>
+								<dd>...the view is.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="unsync"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unsync</b>()
+					
+					</div>
+					<div class="description">
+						Unsync a store. Unsync must be called prior to resynchronization.
+That will prevent any unwanted resynchronization.
+Notice that previous data will still be available.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
 								<dd></dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="upload"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>upload</b>()
+					
+					</div>
+					<div class="description">
+						Upload the document to the database
+Works for CouchDBStore that are synchronized with documents or bulk of documents.
+If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
+No modification can be done on views.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if upload called</dd>
 							
 							</dl>
 						
@@ -595,7 +648,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jul 18 2012 10:33:39 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jul 28 2012 11:12:51 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

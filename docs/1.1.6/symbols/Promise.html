@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - CouchDBStore</title>
+		<title>JsDoc Reference - Promise</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class CouchDBStore
+				Class Promise
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,17 +224,16 @@ ul.inheritsList
 				
 				
 			
-				CouchDBStore synchronises a Store with a CouchDB view or document
-It subscribes to _changes to keep its data up to date.
+				Create a Promise
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_CouchDBStore.js.html">CouchDBStore.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Promise.js.html">Promise.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class CouchDBStore.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Promise.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -247,7 +246,7 @@ It subscribes to _changes to keep its data up to date.
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/CouchDBStore.html#constructor">CouchDBStore</a></b>(Store, StateMachine, Tools, Promise)
+								<b><a href="../symbols/Promise.html#constructor">Promise</a></b>(Observable, StateMachine)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -263,7 +262,7 @@ It subscribes to _changes to keep its data up to date.
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class CouchDBStore.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Promise.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -274,57 +273,29 @@ It subscribes to _changes to keep its data up to date.
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#-CouchDBStoreConstructor">CouchDBStoreConstructor</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#reject">reject</a></b>(the)
 								</div>
-								<div class="description">Defines the CouchDBStore</div>
+								<div class="description">Reject the promise.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#remove">remove</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#resolve">resolve</a></b>(the)
 								</div>
-								<div class="description">Remove the document from the database</div>
+								<div class="description">Resolve the promise.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#setTransport">setTransport</a></b>(transport)
+								<div class="fixedFont"><b><a href="../symbols/Promise.html#then">then</a></b>(the, the)
 								</div>
-								<div class="description">The transport object to use</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#sync">sync</a></b>(database, view)
-								</div>
-								<div class="description">Synchronize the store with a view</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#unsync">unsync</a></b>()
-								</div>
-								<div class="description">Unsync a store.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/CouchDBStore.html#upload">upload</a></b>()
-								</div>
-								<div class="description">Upload the document to the database
-Works for CouchDBStore that are synchronized with documents or bulk of documents.</div>
+								<div class="description">The callbacks and errbacks to call after resolution or rejection</div>
 							</td>
 						</tr>
 					
@@ -345,7 +316,7 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 				</div>
 				
 				<div class="fixedFont">
-						<b>CouchDBStore</b>(Store, StateMachine, Tools, Promise)
+						<b>Promise</b>(Observable, StateMachine)
 				</div>
 				
 				<div class="description">
@@ -361,25 +332,13 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>Store</b>
+								 <b>Observable</b>
 								
 							</dt>
 								<dd></dd>
 						
 							<dt>
 								 <b>StateMachine</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>Tools</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>Promise</b>
 								
 							</dt>
 								<dd></dd>
@@ -405,79 +364,16 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 					Method Detail
 				</div>
 				
-					<a name="-CouchDBStoreConstructor"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					<span class="light">{CouchDBStoreConstructor}</span>
-					<b>CouchDBStoreConstructor</b>()
-					
-					</div>
-					<div class="description">
-						Defines the CouchDBStore
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{CouchDBStoreConstructor}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="remove"> </a>
+					<a name="reject"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>remove</b>()
+					<b>reject</b>(the)
 					
 					</div>
 					<div class="description">
-						Remove the document from the database
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>true if remove called</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setTransport"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>setTransport</b>(transport)
-					
-					</div>
-					<div class="description">
-						The transport object to use
+						Reject the promise.
+A promise can be rejected only once.
 						
 						
 					</div>
@@ -489,10 +385,10 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>transport</b>
+									<b>the</b>
 									
 								</dt>
-								<dd>the transport object</dd>
+								<dd>rejection value</dd>
 							
 							</dl>
 						
@@ -503,7 +399,7 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if</dd>
+								<dd>true if the rejection function was called</dd>
 							
 							</dl>
 						
@@ -512,15 +408,16 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 
 					<hr />
 				
-					<a name="sync"> </a>
+					<a name="resolve"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>sync</b>(database, view)
+					
+					<b>resolve</b>(the)
 					
 					</div>
 					<div class="description">
-						Synchronize the store with a view
+						Resolve the promise.
+A promise can be resolved only once.
 						
 						
 					</div>
@@ -532,22 +429,10 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>database</b>
+									<b>the</b>
 									
 								</dt>
-								<dd>the name of the database where to get...</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>...design</b>
-									
-								</dt>
-								<dd>the design document, in which...</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>view</b>
-									
-								</dt>
-								<dd>...the view is.</dd>
+								<dd>resolution value</dd>
 							
 							</dl>
 						
@@ -558,7 +443,7 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+								<dd>true if the resolution function was called</dd>
 							
 							</dl>
 						
@@ -567,17 +452,15 @@ Works for CouchDBStore that are synchronized with documents or bulk of documents
 
 					<hr />
 				
-					<a name="unsync"> </a>
+					<a name="then"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>unsync</b>()
+					<b>then</b>(the, the)
 					
 					</div>
 					<div class="description">
-						Unsync a store. Unsync must be called prior to resynchronization.
-That will prevent any unwanted resynchronization.
-Notice that previous data will still be available.
+						The callbacks and errbacks to call after resolution or rejection
 						
 						
 					</div>
@@ -585,51 +468,26 @@ Notice that previous data will still be available.
 					
 					
 						
-						
-						
-						
-						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading">Parameters:</dt>
 							
-								<dd></dd>
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>the</b>
+									
+								</dt>
+								<dd>first parameter is a success function, it can be followed by a scope in which to run it</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>the</b>
+									
+								</dt>
+								<dd>second, or third parameter is an errback, it can also be followed by a scope</dd>
 							
 							</dl>
 						
 						
 						
-
-					<hr />
-				
-					<a name="upload"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>upload</b>()
-					
-					</div>
-					<div class="description">
-						Upload the document to the database
-Works for CouchDBStore that are synchronized with documents or bulk of documents.
-If synchronized with a bulk of documents, you can set the documents to delete _deleted property to true.
-No modification can be done on views.
 						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>true if upload called</dd>
-							
-							</dl>
 						
 						
 						
@@ -648,7 +506,7 @@ No modification can be done on views.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jul 18 2012 10:33:38 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jul 28 2012 11:12:51 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

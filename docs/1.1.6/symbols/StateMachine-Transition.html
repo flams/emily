@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Promise</title>
+		<title>JsDoc Reference - StateMachine-Transition</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Promise
+				Class StateMachine-Transition
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,16 +224,16 @@ ul.inheritsList
 				
 				
 			
-				Create a Promise
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Promise.js.html">Promise.js</a>.
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_StateMachine.js.html">StateMachine.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Promise.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class StateMachine-Transition.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -243,12 +243,12 @@ ul.inheritsList
 				</thead>
 				<tbody>
 					<tr>
-						<td class="attributes">&nbsp;</td>
+						<td class="attributes">&lt;inner&gt; &nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Promise.html#constructor">Promise</a></b>(Observable, StateMachine)
+								<b><a href="../symbols/StateMachine-Transition.html#constructor">StateMachine-Transition</a></b>()
 							</div>
-							<div class="description"></div>
+							<div class="description">Each state has associated transitions</div>
 						</td>
 					</tr>
 				</tbody>
@@ -260,51 +260,6 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Promise.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#reject">reject</a></b>(the)
-								</div>
-								<div class="description">Reject the promise.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#resolve">resolve</a></b>(the)
-								</div>
-								<div class="description">Resolve the promise.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Promise.html#then">then</a></b>(the, the)
-								</div>
-								<div class="description">The callbacks and errbacks to call after resolution or rejection</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -315,35 +270,18 @@ ul.inheritsList
 					Class Detail
 				</div>
 				
-				<div class="fixedFont">
-						<b>Promise</b>(Observable, StateMachine)
+				<div class="fixedFont">&lt;inner&gt; 
+						<b>StateMachine-Transition</b>()
 				</div>
 				
 				<div class="description">
-					
+					Each state has associated transitions
 					
 				</div>
 				
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								 <b>Observable</b>
-								
-							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>StateMachine</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
 					
 					
@@ -360,141 +298,6 @@ ul.inheritsList
 
 <!-- ============================== method details ========================= -->		
 			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="reject"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>reject</b>(the)
-					
-					</div>
-					<div class="description">
-						Reject the promise.
-A promise can be rejected only once.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>the</b>
-									
-								</dt>
-								<dd>rejection value</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>true if the rejection function was called</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="resolve"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>resolve</b>(the)
-					
-					</div>
-					<div class="description">
-						Resolve the promise.
-A promise can be resolved only once.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>the</b>
-									
-								</dt>
-								<dd>resolution value</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>true if the resolution function was called</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="then"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>then</b>(the, the)
-					
-					</div>
-					<div class="description">
-						The callbacks and errbacks to call after resolution or rejection
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>the</b>
-									
-								</dt>
-								<dd>first parameter is a success function, it can be followed by a scope in which to run it</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>the</b>
-									
-								</dt>
-								<dd>second, or third parameter is an errback, it can also be followed by a scope</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
-			
 			
 <!-- ============================== event details ========================= -->		
 			
@@ -506,7 +309,7 @@ A promise can be resolved only once.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jul 18 2012 10:33:38 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jul 28 2012 11:12:51 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

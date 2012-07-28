@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Tools</title>
+		<title>JsDoc Reference - Store</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Tools
+				Class Store
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,16 +224,16 @@ ul.inheritsList
 				
 				
 			
-				Tools is a collection of tools
+				Store creates a small NoSQL database with observablesIt can publish events on store/data changes
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Tools.js.html">Tools.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Store.js.html">Store.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Tools.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Store.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -246,7 +246,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Tools.html#constructor">Tools</a></b>()
+								<b><a href="../symbols/Store.html#constructor">Store</a></b>(Observable, Tools)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -262,7 +262,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Tools.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Store.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -273,116 +273,137 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.clone">clone</a></b>(object)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#alter">alter</a></b>(func)
 								</div>
-								<div class="description">Clone an Array or an Object</div>
+								<div class="description">Alter the data be calling one of it's methodWhen the modifications are done, it notifies on changes.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.compareNumbers">compareNumbers</a></b>(number1, number2)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#del">del</a></b>(name)
 								</div>
-								<div class="description">Compares two numbers and tells if the first one is bigger (1), smaller (-1) or equal (0)</div>
+								<div class="description">Delete value from its index</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.compareObjects">compareObjects</a></b>(first, second)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#delAll">delAll</a></b>()
 								</div>
-								<div class="description">Compares the properties of two objects and returns true if they're the same
-It's doesn't do it recursively</div>
+								<div class="description">Delete multiple indexes.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.count">count</a></b>(object)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#get">get</a></b>(name)
 								</div>
-								<div class="description">Count the number of properties in an object
-It doesn't look up in the prototype chain</div>
+								<div class="description">Get a value from its index</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.getGlobal">getGlobal</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Store.html#getNbItems">getNbItems</a></b>()
 								</div>
-								<div class="description">For applications that don't run in a browser, window is not the global object.</div>
+								<div class="description">Get the number of items in the store</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.getNestedProperty">getNestedProperty</a></b>(object, property)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#getStoreObservable">getStoreObservable</a></b>()
 								</div>
-								<div class="description">Get the property of an object nested in one or more objects
-given an object such as a.b.c.d = 5, getNestedProperty(a, "b.c.d") will return 5.</div>
+								<div class="description">Get the observable used for watching store's modificationsShould be used only for debugging</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.jsonify">jsonify</a></b>(object)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#has">has</a></b>(name)
 								</div>
-								<div class="description">Transforms Arrays and Objects into valid JSON</div>
+								<div class="description">Checks if the store has a given value</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.loop">loop</a></b>(iterated, callback, scope)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#loop">loop</a></b>(func, scope)
 								</div>
-								<div class="description">Small adapter for looping over objects and arrays
-Warning: it's not meant to be used with nodeList
-To use with nodeList, convert to array first</div>
+								<div class="description">Loop through the data</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.mixin">mixin</a></b>(destination, source, optional,)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#reset">reset</a></b>(data)
 								</div>
-								<div class="description">Mixes an object into another</div>
+								<div class="description">Reset all data and get notifications on changes</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.objectsDiffs">objectsDiffs</a></b>(before, after)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#set">set</a></b>(name, value)
 								</div>
-								<div class="description">Make a diff between two objects</div>
+								<div class="description">Set a new value and overrides an existing one</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.setNestedProperty">setNestedProperty</a></b>(object, property, value)
+								<div class="fixedFont"><b><a href="../symbols/Store.html#toJSON">toJSON</a></b>()
 								</div>
-								<div class="description">Set the property of an object nested in one or more objects
-If the property doesn't exist, it gets created.</div>
+								<div class="description">Dumps a JSON version of all the data</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Tools.<b><a href="../symbols/Tools.html#.toArray">toArray</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Store.html#unwatch">unwatch</a></b>(handler)
 								</div>
-								<div class="description">Transform array-like objects to array, such as nodeLists or arguments</div>
+								<div class="description">Unwatch the store modifications</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Store.html#update">update</a></b>(name, property, value)
+								</div>
+								<div class="description">Update the property of an item.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Store.html#watch">watch</a></b>(added/updated/deleted, func, scope)
+								</div>
+								<div class="description">Watch the store's modifications</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Store.html#watchValue">watchValue</a></b>(name, func, scope)
+								</div>
+								<div class="description">Watch a value's modifications</div>
 							</td>
 						</tr>
 					
@@ -403,7 +424,7 @@ If the property doesn't exist, it gets created.</div>
 				</div>
 				
 				<div class="fixedFont">
-						<b>Tools</b>()
+						<b>Store</b>(Observable, Tools)
 				</div>
 				
 				<div class="description">
@@ -414,6 +435,23 @@ If the property doesn't exist, it gets created.</div>
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>Observable</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>Tools</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
 					
 					
 					
@@ -434,15 +472,15 @@ If the property doesn't exist, it gets created.</div>
 					Method Detail
 				</div>
 				
-					<a name=".clone"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="alter"> </a>
+					<div class="fixedFont">
 					
-					<span class="light">{Array/Object}</span>
-					<span class="light">Tools.</span><b>clone</b>(object)
+					
+					<b>alter</b>(func)
 					
 					</div>
 					<div class="description">
-						Clone an Array or an Object
+						Alter the data be calling one of it's methodWhen the modifications are done, it notifies on changes.
 						
 						
 					</div>
@@ -454,10 +492,10 @@ If the property doesn't exist, it gets created.</div>
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Array/Object}</span> <b>object</b>
+									<span class="light fixedFont">{String}</span> <b>func</b>
 									
 								</dt>
-								<dd>the object to clone</dd>
+								<dd>the name of the method</dd>
 							
 							</dl>
 						
@@ -468,7 +506,7 @@ If the property doesn't exist, it gets created.</div>
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Array/Object}</span> the cloned object</dd>
+								<dd>the result of the method call</dd>
 							
 							</dl>
 						
@@ -477,15 +515,15 @@ If the property doesn't exist, it gets created.</div>
 
 					<hr />
 				
-					<a name=".compareNumbers"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="del"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">Tools.</span><b>compareNumbers</b>(number1, number2)
+					<b>del</b>(name)
 					
 					</div>
 					<div class="description">
-						Compares two numbers and tells if the first one is bigger (1), smaller (-1) or equal (0)
+						Delete value from its index
 						
 						
 					</div>
@@ -497,16 +535,10 @@ If the property doesn't exist, it gets created.</div>
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Number}</span> <b>number1</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>the first number</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Number}</span> <b>number2</b>
-									
-								</dt>
-								<dd>the second number</dd>
+								<dd>the name of the index from which to delete the value</dd>
 							
 							</dl>
 						
@@ -517,7 +549,7 @@ If the property doesn't exist, it gets created.</div>
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>1 if number1>number2, -1 if number2>number1, 0 if equal</dd>
+								<dd>true if successfully deleted.</dd>
 							
 							</dl>
 						
@@ -526,16 +558,15 @@ If the property doesn't exist, it gets created.</div>
 
 					<hr />
 				
-					<a name=".compareObjects"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="delAll"> </a>
+					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<span class="light">Tools.</span><b>compareObjects</b>(first, second)
+					
+					<b>delAll</b>()
 					
 					</div>
 					<div class="description">
-						Compares the properties of two objects and returns true if they're the same
-It's doesn't do it recursively
+						Delete multiple indexes. Prefer this one over multiple del calls.
 						
 						
 					</div>
@@ -547,16 +578,10 @@ It's doesn't do it recursively
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>first</b>
+									<span class="light fixedFont">{Array}</span> <b></b>
 									
 								</dt>
-								<dd>object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>second</b>
-									
-								</dt>
-								<dd>object</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -567,7 +592,7 @@ It's doesn't do it recursively
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if the two objets have the same properties</dd>
+								<dd>false if param is not an array.</dd>
 							
 							</dl>
 						
@@ -576,60 +601,58 @@ It's doesn't do it recursively
 
 					<hr />
 				
-					<a name=".count"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="get"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>get</b>(name)
+					
+					</div>
+					<div class="description">
+						Get a value from its index
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>the name of the index</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>the value</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getNbItems"> </a>
+					<div class="fixedFont">
 					
 					<span class="light">{Number}</span>
-					<span class="light">Tools.</span><b>count</b>(object)
+					<b>getNbItems</b>()
 					
 					</div>
 					<div class="description">
-						Count the number of properties in an object
-It doesn't look up in the prototype chain
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>object</b>
-									
-								</dt>
-								<dd>the object to count</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Number}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getGlobal"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Object}</span>
-					<span class="light">Tools.</span><b>getGlobal</b>()
-					
-					</div>
-					<div class="description">
-						For applications that don't run in a browser, window is not the global object.
-This function returns the global object wherever the application runs.
+						Get the number of items in the store
 						
 						
 					</div>
@@ -644,7 +667,7 @@ This function returns the global object wherever the application runs.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> the global object</dd>
+								<dd><span class="light fixedFont">{Number}</span> the number of items in the store</dd>
 							
 							</dl>
 						
@@ -653,39 +676,21 @@ This function returns the global object wherever the application runs.
 
 					<hr />
 				
-					<a name=".getNestedProperty"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="getStoreObservable"> </a>
+					<div class="fixedFont">
 					
-					
-					<span class="light">Tools.</span><b>getNestedProperty</b>(object, property)
+					<span class="light">{<a href="../symbols/Observable.html">Observable</a>}</span>
+					<b>getStoreObservable</b>()
 					
 					</div>
 					<div class="description">
-						Get the property of an object nested in one or more objects
-given an object such as a.b.c.d = 5, getNestedProperty(a, "b.c.d") will return 5.
+						Get the observable used for watching store's modificationsShould be used only for debugging
 						
 						
 					</div>
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>object</b>
-									
-								</dt>
-								<dd>the object to get the property from</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>property</b>
-									
-								</dt>
-								<dd>the path to the property as a string</dd>
-							
-							</dl>
 						
 						
 						
@@ -694,7 +699,7 @@ given an object such as a.b.c.d = 5, getNestedProperty(a, "b.c.d") will return 5
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>the object or the the property value if found</dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/Observable.html">Observable</a>}</span> the Observable</dd>
 							
 							</dl>
 						
@@ -703,60 +708,15 @@ given an object such as a.b.c.d = 5, getNestedProperty(a, "b.c.d") will return 5
 
 					<hr />
 				
-					<a name=".jsonify"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">Tools.</span><b>jsonify</b>(object)
-					
-					</div>
-					<div class="description">
-						Transforms Arrays and Objects into valid JSON
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object/Array}</span> <b>object</b>
-									
-								</dt>
-								<dd>the object to JSONify</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>the JSONified object or false if failed</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".loop"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="has"> </a>
+					<div class="fixedFont">
 					
 					<span class="light">{Boolean}</span>
-					<span class="light">Tools.</span><b>loop</b>(iterated, callback, scope)
+					<b>has</b>(name)
 					
 					</div>
 					<div class="description">
-						Small adapter for looping over objects and arrays
-Warning: it's not meant to be used with nodeList
-To use with nodeList, convert to array first
+						Checks if the store has a given value
 						
 						
 					</div>
@@ -768,22 +728,95 @@ To use with nodeList, convert to array first
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Array/Object}</span> <b>iterated</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>the array or object to loop through</dd>
+								<dd>the name of the index</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if the value exists</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="loop"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>loop</b>(func, scope)
+					
+					</div>
+					<div class="description">
+						Loop through the data
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Function}</span> <b>callback</b>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
 									
 								</dt>
-								<dd>the function to execute for each iteration</dd>
+								<dd>the function to execute on each data</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>scope</b>
 									
 								</dt>
-								<dd>the scope in which to execute the callback</dd>
+								<dd>the scope in wich to run the callback</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="reset"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>reset</b>(data)
+					
+					</div>
+					<div class="description">
+						Reset all data and get notifications on changes
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Arra/Object}</span> <b>data</b>
+									
+								</dt>
+								<dd>the new data</dd>
 							
 							</dl>
 						
@@ -794,7 +827,7 @@ To use with nodeList, convert to array first
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if executed</dd>
+								<dd><span class="light fixedFont">{Boolean}</span> </dd>
 							
 							</dl>
 						
@@ -803,15 +836,15 @@ To use with nodeList, convert to array first
 
 					<hr />
 				
-					<a name=".mixin"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="set"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">Tools.</span><b>mixin</b>(destination, source, optional,)
+					<b>set</b>(name, value)
 					
 					</div>
 					<div class="description">
-						Mixes an object into another
+						Set a new value and overrides an existing one
 						
 						
 					</div>
@@ -823,120 +856,16 @@ To use with nodeList, convert to array first
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>destination</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>object to mix values into</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>source</b>
-									
-								</dt>
-								<dd>object to get values from</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Boolean}</span> <b>optional,</b>
-									
-								</dt>
-								<dd>set to true to prevent overriding</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".objectsDiffs"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">Tools.</span><b>objectsDiffs</b>(before, after)
-					
-					</div>
-					<div class="description">
-						Make a diff between two objects
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Array/Object}</span> <b>before</b>
-									
-								</dt>
-								<dd>is the object as it was before</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array/Object}</span> <b>after</b>
-									
-								</dt>
-								<dd>is what it is now</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>object</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".setNestedProperty"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">Tools.</span><b>setNestedProperty</b>(object, property, value)
-					
-					</div>
-					<div class="description">
-						Set the property of an object nested in one or more objects
-If the property doesn't exist, it gets created.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>object</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>property</b>
-									
-								</dt>
-								<dd></dd>
+								<dd>the name of the index</dd>
 							
 								<dt>
 									<b>value</b>
 									
 								</dt>
-								<dd>the value to set</dd>
+								<dd>the value to assign</dd>
 							
 							</dl>
 						
@@ -947,7 +876,7 @@ If the property doesn't exist, it gets created.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>object if no assignment was made or the value if the assignment was made</dd>
+								<dd>true if value is set</dd>
 							
 							</dl>
 						
@@ -956,15 +885,47 @@ If the property doesn't exist, it gets created.
 
 					<hr />
 				
-					<a name=".toArray"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="toJSON"> </a>
+					<div class="fixedFont">
 					
-					<span class="light">{Array}</span>
-					<span class="light">Tools.</span><b>toArray</b>()
+					<span class="light">{JSON}</span>
+					<b>toJSON</b>()
 					
 					</div>
 					<div class="description">
-						Transform array-like objects to array, such as nodeLists or arguments
+						Dumps a JSON version of all the data
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{JSON}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="unwatch"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unwatch</b>(handler)
+					
+					</div>
+					<div class="description">
+						Unwatch the store modifications
 						
 						
 					</div>
@@ -976,10 +937,10 @@ If the property doesn't exist, it gets created.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Array-like object}</span> <b></b>
+									<span class="light fixedFont">{Handler}</span> <b>handler</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>the handler returned by the watch function</dd>
 							
 							</dl>
 						
@@ -990,7 +951,172 @@ If the property doesn't exist, it gets created.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Array}</span> </dd>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="update"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>update</b>(name, property, value)
+					
+					</div>
+					<div class="description">
+						Update the property of an item.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>the name of the index</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>property</b>
+									
+								</dt>
+								<dd>the property to modify.</dd>
+							
+								<dt>
+									<b>value</b>
+									
+								</dt>
+								<dd>the value to assign</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>false if the Store has no name index</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="watch"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Handler}</span>
+					<b>watch</b>(added/updated/deleted, func, scope)
+					
+					</div>
+					<div class="description">
+						Watch the store's modifications
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>added/updated/deleted</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>the function to execute</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>scope</b>
+									
+								</dt>
+								<dd>the scope in which to execute the function</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Handler}</span> the subscribe's handler to use to stop watching</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="watchValue"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>watchValue</b>(name, func, scope)
+					
+					</div>
+					<div class="description">
+						Watch a value's modifications
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>the name of the value to watch for</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>the function to execute</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>scope</b>
+									
+								</dt>
+								<dd>the scope in which to execute the function</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if unwatched</dd>
 							
 							</dl>
 						
@@ -1011,7 +1137,7 @@ If the property doesn't exist, it gets created.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jul 18 2012 10:33:39 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jul 28 2012 11:12:51 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>
