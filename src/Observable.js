@@ -85,10 +85,7 @@ function Observable(Tools) {
 				Tools.loop(observers, function (value, i) {
 					try {
 						value && value[0].apply(value[1] || null, args); 
-					} catch (err) {
-						throw new Error("Calling Observable.notify on topic '" + topic + "' for " + value[0] + " failed");
-						continue;
-					}
+					} catch (err) { }
 				});
 				return true;
 			} else {

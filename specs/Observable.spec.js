@@ -280,14 +280,30 @@ require(["Observable", "Tools"], function (Observable, Tools) {
 				order.push("observer5");
 			});
 
-			//expect(function () {
-				observable.notify("topic");
-			//}).toThrow("Calling Observable.notify on topic 'topic' for " + errFunc + " failed");
+			observable.notify("topic");
 
 			expect(order[3]).toEqual("observer5");
 		});
 
 		it("should accept that observers are removed on the fly", function () {
+
+			var obs = observable.watch("topic", function () {
+				order.push("observer4");
+				observable.unwatch(obs);
+			});
+
+			observable.watch("topic", function () {
+				order.push("observer5");
+			});
+
+			observable.notify("topic");
+
+			expect(order[3]).toEqual("observer4");
+			expect(order[4]).toEqual("observer5");
+
+			observable.notify("topic");
+
+			expect(order[8]).toEqual("observer5");
 
 		});
 
