@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-require(["Observable"], function (Observable) {
+require(["Observable", "Tools"], function (Observable, Tools) {
 	
 	describe("ObservableTest", function () {
 		
@@ -231,6 +231,82 @@ require(["Observable"], function (Observable) {
 			expect(observable.notify("fake")).toEqual(false);
 		});
 		
+	});
+
+	describe("ObservableMiscBehavior", function () {
+
+		var observable = null,
+			order = null;
+
+		beforeEach(function () {
+			observable = new Observable;
+			order = [];
+
+			observable.watch("topic", function () {
+				order.push("observer1");
+			});
+			observable.watch("topic", function () {
+				order.push("observer2");
+			});
+			observable.watch("topic", function () {
+				order.push("observer3");
+			});
+
+		});
+
+		it("should call observers in the order they are added", function () {
+			observable.notify("topic");
+			expect(order[0]).toEqual("observer1");
+			expect(order[1]).toEqual("observer2");
+			expect(order[2]).toEqual("observer3");
+
+		});
+
+		it("should use Tools.loop to loop over observers", function () {
+			spyOn(Tools, "loop");
+			observable.notify("topic");
+			expect(Tools.loop.wasCalled).toEqual(true);
+			expect(Tools.loop.callCount).toEqual(1);
+		});
+
+		it("should continue notifying observers even if one of them fails to execute", function () {
+			var errFunc = function () {
+				error++;
+			};
+
+			observable.watch("topic", errFunc);
+
+			observable.watch("topic", function () {
+				order.push("observer5");
+			});
+
+			observable.notify("topic");
+
+			expect(order[3]).toEqual("observer5");
+		});
+
+		it("should accept that observers are removed on the fly", function () {
+
+			var obs = observable.watch("topic", function () {
+				order.push("observer4");
+				observable.unwatch(obs);
+			});
+
+			observable.watch("topic", function () {
+				order.push("observer5");
+			});
+
+			observable.notify("topic");
+
+			expect(order[3]).toEqual("observer4");
+			expect(order[4]).toEqual("observer5");
+
+			observable.notify("topic");
+
+			expect(order[8]).toEqual("observer5");
+
+		});
+
 	});
 	
 	describe("ObservablesIsolated", function () {

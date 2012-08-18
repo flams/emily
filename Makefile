@@ -1,3 +1,25 @@
+###############################################################################################
+# Emily http://flams.github.com/emily
+# The MIT License (MIT)
+# Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+#
+# Targets:
+#
+# make tests-jstd: runs the JsTestDriver tests
+# make tests-node: runs the tests under node.js
+# make tests: runs both tests
+#
+# make docs: generates the documentation into docs/latest
+# make build: generates Emily.js and Emily.min.js as they appear in the release
+#
+# make all: tests + docs + build
+#
+# make release VERSION=x.x.x: make all, then creates the package and pushes to github
+#
+# make gh-pages VERSION=x.x.x: generates the web site with latest version and pushes to github
+#
+################################################################################################
+
 SRC := $(wildcard src/*.js)
 SPECS := $(wildcard specs/*.js)
 JsTestDriver = $(shell find tools -name "JsTestDriver-*.jar" -type f)
@@ -51,6 +73,10 @@ endif
 	rm -rf release/tmp/
 	
 	cp -rf docs/latest/ docs/$(VERSION)/
+	
+	$(MAKE) clean-build
+
+	git add docs release
 	
 	git commit -am "released version $(VERSION)"
 	
