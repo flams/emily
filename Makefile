@@ -75,6 +75,8 @@ endif
 	cp -rf docs/latest/ docs/$(VERSION)/
 	
 	$(MAKE) clean-build
+
+	git add docs release
 	
 	git commit -am "released version $(VERSION)"
 	
