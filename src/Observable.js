@@ -78,15 +78,17 @@ function Observable(Tools) {
 		 * @returns {Boolean} true if there was subscribers
 		 */
 		this.notify = function notify(topic) {
-			
 			var observers = _topics[topic],
-				l;
+				args = Tools.toArray(arguments).slice(1);
 
 			if (observers) {
-				l = observers.length;
-				while (l--) {
-					observers[l] && observers[l][0].apply(observers[l][1] || null, Tools.toArray(arguments).slice(1)); 
-				}
+				Tools.loop(observers, function (value, i) {
+					try {
+						value && value[0].apply(value[1] || null, args); 
+					} catch (err) {
+						//throw new Error("Calling Observable.notify on topic '" + topic + "' for " + value[0] + " failed");
+					}
+				});
 				return true;
 			} else {
 				return false;
