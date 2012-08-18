@@ -82,7 +82,7 @@ function Observable(Tools) {
 				args = Tools.toArray(arguments).slice(1);
 
 			if (observers) {
-				Tools.loop(observers, function (value, i) {
+				Tools.loop(observers, function (value) {
 					try {
 						value && value[0].apply(value[1] || null, args); 
 					} catch (err) { }
