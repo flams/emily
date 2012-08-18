@@ -81,6 +81,10 @@ endif
 	git commit -am "released version $(VERSION)"
 	
 	git push
+
+	git tag $(VERSION)
+
+	git push --tags
 	
 Emily.js: $(SRC)
 	mkdir -p build
