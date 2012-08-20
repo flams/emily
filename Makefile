@@ -73,8 +73,6 @@ endif
 	rm -rf release/tmp/
 	
 	cp -rf docs/latest/ docs/$(VERSION)/
-	
-	$(MAKE) clean-build
 
 	git add docs release
 	
