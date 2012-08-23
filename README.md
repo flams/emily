@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/flams/emily.png)](http://travis-ci.org/flams/emily)
 Extensive documentation, along with unit tests and JsDoc can be found here: http://flams.github.com/emily/
 
 ###What is Emily?
