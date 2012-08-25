@@ -26,11 +26,7 @@
   "url": "https://github.com/flams/emily/issues"
  },
  "main":"emily-server.js",
- "engines": { 
+ "engines": {
  	"node":">= 0.6.0"
- }, 
- "scripts": {
- 	"test": "jake tests:node"
  }
-
 }
