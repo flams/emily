@@ -4,30 +4,30 @@
  * MIT Licensed
  */
 
-define("Transport", 
-		
-["Store", "Tools"],
+define("Transport",
+
+["Store"],
 /**
  * @class
  * Transport creates the link between your requests and Emily's requests handlers.
  * A request handler can be defined to make requets of any kind as long as it's supported
  * by your node.js. (HTTP, FileSystem, SIP...)
  */
-function Transport(Store, Tools) {
-	
+function Transport(Store) {
+
 	/**
 	 * Create a Transport
 	 * @param {Object} $reqHandlers the requestHandler defined in your node.js app
 	 * @returns
 	 */
 	return function TransportConstructor($reqHandlers) {
-		
+
 		/**
 		 * The request handlers
 		 * @private
 		 */
 		var _reqHandlers = null;
-		
+
 		/**
 		 * Set the requests handlers
 		 * @param {Object} reqHandlers the list of requests handlers
@@ -41,7 +41,7 @@ function Transport(Store, Tools) {
 				return false;
 			}
 		};
-		
+
 		/**
 		 * Get the requests handlers
 		 * @private
@@ -50,18 +50,20 @@ function Transport(Store, Tools) {
 		this.getReqHandlers = function getReqHandlers() {
 			return _reqHandlers;
 		};
-		
+
 		/**
 		 * Make a request
 		 * @param {String} channel is the name of the request handler to use
-		 * @param {Object} reqData the request data
+		 * @param data the request data
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
 		 * @returns
 		 */
-		this.request = function request(channel, reqData, callback, scope) {
-			if (_reqHandlers.has(channel) && typeof reqData == "object") {
-				_reqHandlers.get(channel)(reqData, function () {
+		this.request = function request(channel, data, callback, scope) {
+			if (_reqHandlers.has(channel)
+					&& typeof data != "undefined") {
+
+				_reqHandlers.get(channel)(data, function () {
 					callback && callback.apply(scope, arguments);
 				});
 				return true;
@@ -69,29 +71,26 @@ function Transport(Store, Tools) {
 				return false;
 			}
 		};
-		
+
 		/**
 		 * Listen to a path (Kept alive)
 		 * @param {String} channel is the name of the request handler to use
-		 * @param {Object} reqData the request data: path should indicate the url, query can add up query strings to the url
+		 * @param data the request data: path should indicate the url, query can add up query strings to the url
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
 		 * @returns
 		 */
-		this.listen = function listen(channel, reqData, callback, scope) {
-			if (_reqHandlers.has(channel) && typeof reqData == "object" && 
-				typeof reqData.path == "string" && typeof callback == "function") {
+		this.listen = function listen(channel, data, callback, scope) {
+			if (_reqHandlers.has(channel)
+					&& typeof data != "undefined"
+					&& typeof callback == "function") {
+
 				var func = function () {
 					callback.apply(scope, arguments);
 				},
 				abort;
-				
-				Tools.mixin({
-					__keepalive__: true,
-					method: "get"
-				}, reqData);
-				
-				abort = _reqHandlers.get(channel)(reqData, func, func);
+
+				abort = _reqHandlers.get(channel)(data, func, func);
 				return function () {
 					abort.func.call(abort.scope);
 				};
@@ -99,9 +98,9 @@ function Transport(Store, Tools) {
 				return false;
 			}
 		};
-		
+
 		this.setReqHandlers($reqHandlers);
-		
+
 	};
-	
+
 });
