@@ -43,9 +43,11 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 * The promise that is returned by sync
 		 * It's resolved when entering listening state
 		 * It's rejected when no such document to sync to
+		 * The promise is initialized here for testing purpose
+		 * but it's initialized again in sync
 		 * @private
 		 */
-		_syncPromise = new Promise(),
+		_syncPromise = new Promise,
 
 		/**
 		 * All the actions performed by the couchDBStore
@@ -73,7 +75,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						throw new Error("CouchDBStore [" + _syncInfo.database + ", " + _syncInfo.design + ", " + _syncInfo.view + "].sync() failed: " + results);
 					} else {
 						this.reset(json.rows);
-
+						_syncPromise.resolve(this);
 						if (typeof json.total_rows == "undefined") {
 							this.setReducedViewInfo(true);
 						}
@@ -97,9 +99,10 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					var json = JSON.parse(results);
 					if (json._id) {
 						this.reset(json);
+						_syncPromise.resolve(this);
 						_stateMachine.event("subscribeToDocumentChanges");
 					} else {
-						_syncPromise.reject(this);
+						_syncPromise.reject(results);
 					}
 				}, this);
 			},
@@ -144,6 +147,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 						throw new Error("CouchDBStore.sync(\"" + _syncInfo.database + "\", " + errorString + ") failed: " + results);
 					} else {
 						this.reset(json.rows);
+						_syncPromise.resolve(this);
 						_stateMachine.event("subscribeToBulkChanges", json.update_seq);
 					}
 				}, this);
@@ -533,14 +537,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
             	});
 		    },
 
-		    /**
-		     * Resolve the promise
-		     * @private
-		     */
-		    resolve: function () {
-            	  _syncPromise.resolve(this);
-             },
-
              /**
               * The function call to unsync the store
               * @private
@@ -572,7 +568,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 ],
 
 			"Listening": [
-			    ["entry", actions.resolve, this],
 			    ["change", actions.updateDocInStore, this],
 			    ["bulkAdd", actions.addBulkDocInStore, this],
 			    ["bulkChange", actions.updateBulkDocInStore, this],
@@ -597,6 +592,9 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 		 * @returns {Boolean}
 		 */
 		this.sync = function sync() {
+
+			_syncPromise = new Promise;
+
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "string" && typeof arguments[2] == "string") {
 				this.setSyncInfo(arguments[0], arguments[1], arguments[2], arguments[3]);
 				_stateMachine.event("getView");
