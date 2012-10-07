@@ -1,4 +1,4 @@
-Changes are listed in the sibling CHANGELOG.md
+Changes are listed in the sibling https://github.com/flams/emily/blob/master/CHANGELOG.md
 
 Extensive documentation, along with unit tests and JsDoc can be found here: http://flams.github.com/emily/
 
