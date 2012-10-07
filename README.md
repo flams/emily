@@ -1,3 +1,5 @@
+Changes are listed in the sibling CHANGELOG.md
+
 Extensive documentation, along with unit tests and JsDoc can be found here: http://flams.github.com/emily/
 
 ###What is Emily?
@@ -16,10 +18,9 @@ Extensive documentation, along with unit tests and JsDoc can be found here: http
  * Promise: a simple promises interpretation.
  * StateMachine: don't hide your states and transitions behind if/else anymore.
  * Transport: make requests to anything node.js has access to.
- * CouchDBStore: a Store that displays a CouchDB view or document and gets updated on changes.
  * Tools: these functions you always need and rewrite.
- 
- The documentation for each module can be found here: http://flams.github.com/emily/ 
+
+ The documentation for each module can be found here: http://flams.github.com/emily/
 
 ###How do I install it?
 
@@ -36,23 +37,23 @@ Olives requires an AMD/commonJS compatible loader. I use requirejs: http://requi
 	require(["Module"], function (Module) {
 		// Do what you want with Module
 	});
-```		
-		
+```
+
 In node:
 
 ```
 npm install requirejs
 npm install emily
-``` 
+```
 
 ```js
 	var requirejs = require("requirejs");
 		emily = require("emily");
- 
+
 	requirejs(["Module"], function (Module) {
 		// Do what you want with Module
 	});
-```		
+```
 
 ###There are already so many frameworks out there, why would I choose Emily?
 
@@ -80,5 +81,5 @@ Contributors are more than welcome. To be part of Emily, a new module should fol
  * It should be 100% TDD, with 100% code coverage.
  * It should be in AMD format.
  * It should run in any JavaScript runtime.
- 
+
 ###Emily is just a tool. I share mine, do you share yours?
