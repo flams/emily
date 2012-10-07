@@ -348,7 +348,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			expect(reqData).toBeInstanceOf(Object);
 			expect(reqData["method"]).toEqual("GET");
 			expect(reqData["path"]).toEqual("/db/_design/design/_view/view");
-			expect(reqData["query"].update_seq).toEqual(true);
 			expect(reqData["query"]).toBe(query);
 		});
 
@@ -372,7 +371,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 
 			expect(stateMachine.event.wasCalled).toEqual(true);
 			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToViewChanges");
-			expect(stateMachine.event.mostRecentCall.args[1]).toEqual(8);
 
 			expect(transportMock.request.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
@@ -423,7 +421,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			var reqData;
 
 			expect(couchDBStore.stopListening).toBeUndefined();
-			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore, 8);
+			couchDBStore.actions.subscribeToViewChanges.call(couchDBStore);
 			expect(couchDBStore.stopListening).toBe(stopListening);
 			expect(transportMock.listen.wasCalled).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[0]).toEqual("CouchDB");
@@ -431,7 +429,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			reqData = transportMock.listen.mostRecentCall.args[1].query;
 			expect(reqData.feed).toEqual("continuous");
 			expect(reqData.heartbeat).toEqual(20000);
-			expect(reqData.since).toEqual(8);
+			expect(reqData.descending).toEqual(true);
+			expect(reqData.limit).toEqual(0);
 			expect(reqData).toBe(query);
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
@@ -944,6 +943,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 			reqData = transportMock.listen.mostRecentCall.args[1].query;
 			expect(reqData.feed).toEqual("continuous");
 			expect(reqData.heartbeat).toEqual(20000);
+			expect(reqData.limit).toEqual(0);
+			expect(reqData.descending).toEqual(true);
 			expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);
 			expect(transportMock.listen.mostRecentCall.args[3]).toBe(couchDBStore);
 		});
@@ -1335,7 +1336,6 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				expect(reqData["headers"]["Content-Type"]).toEqual("application/json");
 				expect(reqData["query"]).toBe(query);
 				expect(reqData["query"].include_docs).toEqual(true);
-				expect(reqData["query"].update_seq).toEqual(true);
 				expect(JSON.parse(reqData["data"]).keys[0]).toEqual("document1");
 				expect(JSON.parse(reqData["data"]).keys[1]).toEqual("document2");
 				expect(transportMock.request.mostRecentCall.args[2]).toBeInstanceOf(Function);
@@ -1364,7 +1364,7 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 
 				expect(stateMachine.event.wasCalled).toEqual(true);
 				expect(stateMachine.event.mostRecentCall.args[0]).toEqual("subscribeToBulkChanges");
-				expect(stateMachine.event.mostRecentCall.args[1]).toEqual(2);
+
 
 			});
 
@@ -1409,7 +1409,8 @@ require(["CouchDBStore", "Store", "Promise", "StateMachine"], function (CouchDBS
 				reqData = transportMock.listen.mostRecentCall.args[1].query;
 				expect(reqData.feed).toEqual("continuous");
 				expect(reqData.heartbeat).toEqual(20000);
-				expect(reqData.since).toEqual(2);
+				expect(reqData.limit).toEqual(0);
+				expect(reqData.descending).toEqual(true);
 				expect(reqData.include_docs).toEqual(true);
 				expect(reqData).toBe(query);
 				expect(transportMock.listen.mostRecentCall.args[2]).toBeInstanceOf(Function);

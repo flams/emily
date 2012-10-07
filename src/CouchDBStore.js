@@ -63,7 +63,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			getView: function () {
 
 				_syncInfo.query = _syncInfo.query || {};
-				_syncInfo.query.update_seq=true;
 
 				_transport.request(_channel, {
 					method: "GET",
@@ -80,7 +79,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 							this.setReducedViewInfo(true);
 						}
 
-						_stateMachine.event("subscribeToViewChanges", json.update_seq);
+						_stateMachine.event("subscribeToViewChanges");
 					}
 				}, this);
 			},
@@ -111,7 +110,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * Get a bulk of documents
 			 * @private
 			 */
-			getBulkDocuments: function (lol) {
+			getBulkDocuments: function () {
 
 				var reqData = {
 							path: "/" + _syncInfo.database + "/_all_docs",
@@ -135,7 +134,6 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 				}
 
 				_syncInfo.query.include_docs = true;
-				_syncInfo.query.update_seq = true;
 
 				_transport.request(_channel,
 					reqData,
@@ -148,7 +146,7 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					} else {
 						this.reset(json.rows);
 						_syncPromise.resolve(this);
-						_stateMachine.event("subscribeToBulkChanges", json.update_seq);
+						_stateMachine.event("subscribeToBulkChanges");
 					}
 				}, this);
 
@@ -179,15 +177,15 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 
             /**
              * Subscribe to changes when synchronized with a view
-             * @param {Number} the update_seq given by getView, it'll be passed to since in the GET request
              * @private
              */
-            subscribeToViewChanges: function (update_seq) {
+            subscribeToViewChanges: function () {
 
             	Tools.mixin({
 					feed: "continuous",
 					heartbeat: 20000,
-					since: update_seq
+					limit: 0,
+					descending: true
 				}, _syncInfo.query);
 
             	this.stopListening = _transport.listen(_channel, {
@@ -231,7 +229,9 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 					path: "/" + _syncInfo.database + "/_changes",
 					query: {
 						 feed: "continuous",
-						 heartbeat: 20000
+						 heartbeat: 20000,
+						 limit: 0,
+						 descending: true
 						}
 					},
 				function (changes) {
@@ -262,11 +262,12 @@ function CouchDBStore(Store, StateMachine, Tools, Promise) {
 			 * Subscribe to changes when synchronized with a bulk of documents
 			 * @private
 			 */
-			subscribeToBulkChanges: function (update_seq) {
+			subscribeToBulkChanges: function () {
 				Tools.mixin({
 					feed: "continuous",
 					heartbeat: 20000,
-					since: update_seq,
+					limit: 0,
+					descending: true,
 					include_docs: true
 				}, _syncInfo.query);
 
