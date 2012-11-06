@@ -48,6 +48,9 @@ tests-node:
 		specs/specHelper.js \
 		$(SPECS)
 
+tests-promise:
+	node tools/promise-test/runTest.js
+
 clean-build:
 	-rm -rf build/
 
