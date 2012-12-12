@@ -12,58 +12,59 @@ define("Promise",
  * Create a Promise
  */
 function Promise(Observable, StateMachine) {
-	
-	return function PromiseConstructor() {
+
+	function PromiseConstructor() {
+
 		/**
 		 * The value once resolved
 		 * @private
 		 */
-		var _resolved,
-		
+		var _resolvedValue,
+
 		/**
 		 * The value once rejected
 		 * @private
 		 */
-		_rejected,
-		
+		_rejectedValue,
+
+		_observable = new Observable,
+
 		/**
 		 * The stateMachine
 		 * @private
 		 */
 		_stateMachine = new StateMachine("Unresolved", {
 			"Unresolved": [["resolve", function (val) {
-								_resolved = val;
+								_resolvedValue = val;
 								_observable.notify("success", val);
 							}, "Resolved"],
-							
+
 							["reject", function (err) {
-								_rejected = err;
+								_rejectedValue = err;
 								_observable.notify("fail", err);
 							}, "Rejected"],
-							
-							["addSuccess", function (func, scope) {
-								_observable.watch("success", func, scope);
+
+							["addSuccess", function (promise, func, scope) {
+								_observable.watch("success", function (val) {
+									promise.resolve(func.call(scope, val));
+								});
 							}],
-							
-							["addFail", function (func, scope) {
-								_observable.watch("fail", func, scope);
+
+							["addFail", function (promise, func, scope) {
+								_observable.watch("fail", function (val) {
+									promise.resolve(func.call(scope, val));
+								}, scope);
 							}]],
-							
-			"Resolved": [["addSuccess", function (func, scope) {
-								func.call(scope, _resolved);
+
+			"Resolved": [["addSuccess", function (promise, func, scope) {
+								promise.resolve(func.call(scope, _resolvedValue));
 							}]],
-							
-			"Rejected": [["addFail", function (func, scope) {
-								func.call(scope, _rejected);
+
+			"Rejected": [["addFail", function (promise, func, scope) {
+								promise.reject(func.call(scope, _rejectedValue));
 							}]]
-		}),
-		
-		/**
-		 * The observable
-		 * @private
-		 */
-		_observable = new Observable();
-		
+		});
+
 		/**
 		 * Resolve the promise.
 		 * A promise can be resolved only once.
@@ -71,9 +72,10 @@ function Promise(Observable, StateMachine) {
 		 * @returns true if the resolution function was called
 		 */
 		this.resolve = function resolve(val) {
-			return _stateMachine.event("resolve", val);
+			_stateMachine.event("resolve", val);
+			return this;
 		};
-		
+
 		/**
 		 * Reject the promise.
 		 * A promise can be rejected only once.
@@ -81,40 +83,42 @@ function Promise(Observable, StateMachine) {
 		 * @returns true if the rejection function was called
 		 */
 		this.reject = function reject(err) {
-			return _stateMachine.event("reject", err);
+			_stateMachine.event("reject", err);
+			return this;
 		};
-		
-        /**
-         * The callbacks and errbacks to call after resolution or rejection
+
+		/**
+         * T he callbacks and errbacks to call after resolution or rejection
          * @param {Function} the first parameter is a success function, it can be followed by a scope in which to run it
          * @param {Function} the second, or third parameter is an errback, it can also be followed by a scope
          * @examples:
-         * 
+         *
          * then(callback)
          * then(callback, scope, errback, scope)
          * then(callback, errback)
          * then(callback, errback, scope)
-         * 
-         */     
-		this.then = function then() {
-	       if (arguments[0] instanceof Function) {
-               if (arguments[1] instanceof Function) {
-            	   _stateMachine.event("addSuccess", arguments[0]);
-               } else {
-            	   _stateMachine.event("addSuccess", arguments[0], arguments[1]);
-               }
-           }
-           
-           if (arguments[1] instanceof Function) {
-        	   _stateMachine.event("addFail", arguments[1], arguments[2]);
-           } 
-           
-           if (arguments[2] instanceof Function) {
-        	   _stateMachine.event("addFail", arguments[2], arguments[3]);
-           }
-           return this;
-		};
-		
+         *
+         */
+        this.then = function then() {
+        	var promise = new PromiseConstructor;
+             if (arguments[0] instanceof Function) {
+              if (arguments[1] instanceof Function) {
+                 _stateMachine.event("addSuccess", promise, arguments[0]);
+              } else {
+                 _stateMachine.event("addSuccess", promise, arguments[0], arguments[1]);
+              }
+          }
+
+          if (arguments[1] instanceof Function) {
+                 _stateMachine.event("addFail", promise, arguments[1], arguments[2]);
+          }
+
+          if (arguments[2] instanceof Function) {
+                 _stateMachine.event("addFail", promise, arguments[2], arguments[3]);
+          }
+          return promise;
+        };
+
 		/**
 		 * Get the promise's observable
 		 * for debugging only
@@ -124,7 +128,7 @@ function Promise(Observable, StateMachine) {
 		this.getObservable = function getObservable() {
 			return _observable;
 		};
-		
+
 		/**
 		 * Get the promise's stateMachine
 		 * for debugging only
@@ -134,7 +138,31 @@ function Promise(Observable, StateMachine) {
 		this.getStateMachine = function getStateMachine() {
 			return _stateMachine;
 		};
-		
+
+	}
+
+	return function () {
+
+		var promise = new PromiseConstructor;
+
+		this.resolve = function () {
+			promise.resolve.apply(promise, arguments);
+			return promise;
+		};
+
+		this.reject = function () {
+			promise.reject.apply(promise, arguments);
+			return promise;
+		};
+
+		this.then = function () {
+			return promise.then.apply(promise, arguments);
+		}
+
+
+
 	};
-	
+
+
+
 });

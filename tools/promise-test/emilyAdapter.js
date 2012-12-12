@@ -11,23 +11,31 @@ exports.getAdapter = function (callback) {
 
 	requirejs(['Promise'], function (Promise) {
 
-		var missaPromise = {},
-			promise = new Promise;
+		var exports = {};
 
-		missaPromise.fulfilled = promise.resolve;
-		missaPromise.rejected = promise.reject;
+		exports.fulfilled = function (value) {
+		    var promise = new Promise;
+		    promise.resolve(value);
+		    return promise;
+		};
 
-		missaPromise.pending = function () {
+		exports.rejected = function (reason) {
+		    var promise = new Promise;
+		    promise.reject(reason);
+		    return promise;
+		};
+
+		exports.pending = function () {
 		    var promise = new Promise;
 
 		    return {
 		        promise: promise,
-		        fulfill: promise.resolve,
-		        reject: promise.reject
+		        fulfill: promise.resolve.bind(promise),
+		        reject: promise.reject.bind(promise)
 		    };
 		};
 
-		callback(missaPromise);
+		callback(exports);
 
 	});
 
