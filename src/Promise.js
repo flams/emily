@@ -62,7 +62,7 @@ function Promise(Observable, StateMachine) {
 									var value;
 
 									try {
-										promise.resolve(func.call(scope, val));
+										promise.reject(func.call(scope, val));
 									} catch (err) {
 										promise.reject(err);
 									}
