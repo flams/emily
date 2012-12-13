@@ -21,15 +21,16 @@ function Promise(Observable, StateMachine) {
 		 */
 		var _resolvedValue,
 
-		resolveCB,
-		rejectCB,
-
 		/**
 		 * The value once rejected
 		 * @private
 		 */
 		_rejectedValue,
 
+		/**
+		 * The funky observable
+		 * @private
+		 */
 		_observable = new Observable,
 
 		/**
@@ -37,56 +38,61 @@ function Promise(Observable, StateMachine) {
 		 * @private
 		 */
 		_stateMachine = new StateMachine("Unresolved", {
-			"Unresolved": [["resolve", function (val) {
-								_resolvedValue = val;
-								//_observable.notify("success", val);
-								resolveCB && resolveCB[0].call(resolveCB[1], val);
-							}, "Resolved"],
 
-							["reject", function (err) {
-								_rejectedValue = err;
-								rejectCB && rejectCB[0].call(rejectCB[1], err);
-							}, "Rejected"],
+			/**
+			 *
+			 */
+			"Unresolved": [
 
-							["addSuccess", function (promise, func, scope) {
-								resolveCB = [function (val) {
-									try {
-										promise.resolve(func.call(scope, val));
-									} catch (err) {
-										promise.reject(err);
-									}
-								}, scope];
-							}],
+				["resolve", function (val) {
+					_resolvedValue = val;
+					_observable.notify("success", val);
+				}, "Resolved"],
 
-							["addFail", function (promise, func, scope) {
-								rejectCB = [function (val) {
-									try {
-										promise.resolve(func.call(scope, val));
-									} catch (err) {
-										promise.reject(err);
-									}
-								}, scope];
-							}]],
+				["reject", function (err) {
+					_rejectedValue = err;
+					_observable.notify("fail", err);
+				}, "Rejected"],
 
-			"Resolved": [["addSuccess", function (promise, func, scope) {
-								try {
-										promise.resolve(func.call(scope, _resolvedValue));
-									} catch (err) {
-										promise.reject(err);
-									}
-							}]],
+				["addSuccess", function (promise, func, scope) {
+					_observable.watch("success", function (val) {
+						try {
+							promise.resolve(func.call(scope, val));
+						} catch (err) {
+							promise.reject(err);
+						}
+					});
+				}],
 
-			"Rejected": [["addFail", function (promise, func, scope) {
-								var value;
-								try {
-									value = func.call(scope, _rejectedValue);
-								} catch (err) {
-									promise.reject(err);
-								} finally {
-									promise.resolve(value);
-								}
+				["addFail", function (promise, func, scope) {
+					_observable.watch("fail", function (val) {
+						try {
+							promise.resolve(func.call(scope, val));
+						} catch (err) {
+							promise.reject(err);
+						}
+					});
+				}]],
 
-							}]]
+			"Resolved": [
+
+				["addSuccess", function (promise, func, scope) {
+					try {
+							promise.resolve(func.call(scope, _resolvedValue));
+						} catch (err) {
+							promise.reject(err);
+						}
+				}]],
+
+			"Rejected": [
+
+				["addFail", function (promise, func, scope) {
+					try {
+						promise.resolve(func.call(scope, _rejectedValue));
+					} catch (err) {
+						promise.reject(err);
+					}
+				}]]
 		});
 
 		/**
@@ -124,7 +130,8 @@ function Promise(Observable, StateMachine) {
          *
          */
         this.then = function then() {
-        	var promise = new PromiseConstructor;
+        	var promise = new PromiseConstructor,
+        		hasFailed;
           	if (arguments[0] instanceof Function) {
             	if (arguments[1] instanceof Function) {
                 	_stateMachine.event("addSuccess", promise, arguments[0]);
@@ -137,11 +144,18 @@ function Promise(Observable, StateMachine) {
 
           	if (arguments[1] instanceof Function) {
             	_stateMachine.event("addFail", promise, arguments[1], arguments[2]);
+            	hasFailed = true;
           	}
 
           	if (arguments[2] instanceof Function) {
                 _stateMachine.event("addFail", promise, arguments[2], arguments[3]);
+                hasFailed = true;
           	}
+
+          	if (!hasFailed) {
+          		_stateMachine.event("addFail", promise, function (val) {return val;});
+          	}
+
           	return promise;
         };
 
