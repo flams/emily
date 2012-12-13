@@ -21,6 +21,9 @@ function Promise(Observable, StateMachine) {
 		 */
 		var _resolvedValue,
 
+		resolveCB,
+		rejectCB,
+
 		/**
 		 * The value once rejected
 		 * @private
@@ -36,38 +39,33 @@ function Promise(Observable, StateMachine) {
 		_stateMachine = new StateMachine("Unresolved", {
 			"Unresolved": [["resolve", function (val) {
 								_resolvedValue = val;
-								_observable.notify("success", val);
+								//_observable.notify("success", val);
+								resolveCB && resolveCB[0].call(resolveCB[1], val);
 							}, "Resolved"],
 
 							["reject", function (err) {
 								_rejectedValue = err;
-								_observable.notify("fail", err);
+								rejectCB && rejectCB[0].call(rejectCB[1], err);
 							}, "Rejected"],
 
 							["addSuccess", function (promise, func, scope) {
-								_observable.watch("success", function (val) {
-									var value;
+								resolveCB = [function (val) {
 									try {
 										promise.resolve(func.call(scope, val));
 									} catch (err) {
 										promise.reject(err);
 									}
-
-
-								});
+								}, scope];
 							}],
 
 							["addFail", function (promise, func, scope) {
-								_observable.watch("fail", function (val) {
-									var value;
-
+								rejectCB = [function (val) {
 									try {
-										promise.reject(func.call(scope, val));
+										promise.resolve(func.call(scope, val));
 									} catch (err) {
 										promise.reject(err);
 									}
-
-								}, scope);
+								}, scope];
 							}]],
 
 			"Resolved": [["addSuccess", function (promise, func, scope) {
@@ -119,22 +117,24 @@ function Promise(Observable, StateMachine) {
          */
         this.then = function then() {
         	var promise = new PromiseConstructor;
-             if (arguments[0] instanceof Function) {
-              if (arguments[1] instanceof Function) {
-                 _stateMachine.event("addSuccess", promise, arguments[0]);
-              } else {
-                 _stateMachine.event("addSuccess", promise, arguments[0], arguments[1]);
-              }
-          }
+          	if (arguments[0] instanceof Function) {
+            	if (arguments[1] instanceof Function) {
+                	_stateMachine.event("addSuccess", promise, arguments[0]);
+              	} else {
+                	_stateMachine.event("addSuccess", promise, arguments[0], arguments[1]);
+              	}
+         	} else {
+         		_stateMachine.event("addSuccess", promise, function (val) { return val;});
+         	}
 
-          if (arguments[1] instanceof Function) {
-                 _stateMachine.event("addFail", promise, arguments[1], arguments[2]);
-          }
+          	if (arguments[1] instanceof Function) {
+            	_stateMachine.event("addFail", promise, arguments[1], arguments[2]);
+          	}
 
-          if (arguments[2] instanceof Function) {
-                 _stateMachine.event("addFail", promise, arguments[2], arguments[3]);
-          }
-          return promise;
+          	if (arguments[2] instanceof Function) {
+                _stateMachine.event("addFail", promise, arguments[2], arguments[3]);
+          	}
+          	return promise;
         };
 
 		/**
