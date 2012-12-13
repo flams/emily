@@ -16,10 +16,10 @@ function Promise(Observable, StateMachine) {
 	return function PromiseConstructor() {
 
 		/**
-		 * The value once resolved
+		 * The value once fulfilled
 		 * @private
 		 */
-		var _resolvedValue,
+		var _fulfilledValue,
 
 		/**
 		 * The value once rejected
@@ -37,17 +37,17 @@ function Promise(Observable, StateMachine) {
 		 * The stateMachine
 		 * @private
 		 */
-		_stateMachine = new StateMachine("Unresolved", {
+		_stateMachine = new StateMachine("Unfulfilled", {
 
 			/**
 			 *
 			 */
-			"Unresolved": [
+			"Unfulfilled": [
 
-				["resolve", function (val) {
-					_resolvedValue = val;
+				["fulfill", function (val) {
+					_fulfilledValue = val;
 					_observable.notify("success", val);
-				}, "Resolved"],
+				}, "Fulfilled"],
 
 				["reject", function (err) {
 					_rejectedValue = err;
@@ -57,7 +57,7 @@ function Promise(Observable, StateMachine) {
 				["addSuccess", function (promise, func, scope) {
 					_observable.watch("success", function (val) {
 						try {
-							promise.resolve(func.call(scope, val));
+							promise.fulfill(func.call(scope, val));
 						} catch (err) {
 							promise.reject(err);
 						}
@@ -67,18 +67,18 @@ function Promise(Observable, StateMachine) {
 				["addFail", function (promise, func, scope) {
 					_observable.watch("fail", function (val) {
 						try {
-							promise.resolve(func.call(scope, val));
+							promise.fulfill(func.call(scope, val));
 						} catch (err) {
 							promise.reject(err);
 						}
 					});
 				}]],
 
-			"Resolved": [
+			"Fulfilled": [
 
 				["addSuccess", function (promise, func, scope) {
 					try {
-							promise.resolve(func.call(scope, _resolvedValue));
+							promise.fulfill(func.call(scope, _fulfilledValue));
 						} catch (err) {
 							promise.reject(err);
 						}
@@ -88,7 +88,7 @@ function Promise(Observable, StateMachine) {
 
 				["addFail", function (promise, func, scope) {
 					try {
-						promise.resolve(func.call(scope, _rejectedValue));
+						promise.fulfill(func.call(scope, _rejectedValue));
 					} catch (err) {
 						promise.reject(err);
 					}
@@ -96,13 +96,13 @@ function Promise(Observable, StateMachine) {
 		});
 
 		/**
-		 * Resolve the promise.
-		 * A promise can be resolved only once.
-		 * @param the resolution value
-		 * @returns true if the resolution function was called
+		 * Fulfilled the promise.
+		 * A promise can be fulfilld only once.
+		 * @param the fulfillment value
+		 * @returns the promise
 		 */
-		this.resolve = function resolve(val) {
-			_stateMachine.event("resolve", val);
+		this.fulfill = function fulfill(val) {
+			_stateMachine.event("fulfill", val);
 			return this;
 		};
 
@@ -118,7 +118,7 @@ function Promise(Observable, StateMachine) {
 		};
 
 		/**
-         * T he callbacks and errbacks to call after resolution or rejection
+         * T he callbacks and errbacks to call after fulfillment or rejection
          * @param {Function} the first parameter is a success function, it can be followed by a scope in which to run it
          * @param {Function} the second, or third parameter is an errback, it can also be followed by a scope
          * @examples:

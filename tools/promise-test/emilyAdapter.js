@@ -15,7 +15,7 @@ exports.getAdapter = function (callback) {
 
 		exports.fulfilled = function (value) {
 		    var promise = new Promise;
-		    promise.resolve(value);
+		    promise.fulfill(value);
 		    return promise;
 		};
 
@@ -30,7 +30,7 @@ exports.getAdapter = function (callback) {
 
 		    return {
 		        promise: promise,
-		        fulfill: promise.resolve.bind(promise),
+		        fulfill: promise.fulfill.bind(promise),
 		        reject: promise.reject.bind(promise)
 		    };
 		};
