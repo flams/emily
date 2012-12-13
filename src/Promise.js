@@ -46,18 +46,36 @@ function Promise(Observable, StateMachine) {
 
 							["addSuccess", function (promise, func, scope) {
 								_observable.watch("success", function (val) {
-									promise.resolve(func.call(scope, val));
+									var value;
+									try {
+										promise.resolve(func.call(scope, val));
+									} catch (err) {
+										promise.reject(err);
+									}
+
+
 								});
 							}],
 
 							["addFail", function (promise, func, scope) {
 								_observable.watch("fail", function (val) {
-									promise.resolve(func.call(scope, val));
+									var value;
+
+									try {
+										promise.resolve(func.call(scope, val));
+									} catch (err) {
+										promise.reject(err);
+									}
+
 								}, scope);
 							}]],
 
 			"Resolved": [["addSuccess", function (promise, func, scope) {
-								promise.resolve(func.call(scope, _resolvedValue));
+								try {
+										promise.resolve(func.call(scope, _resolvedValue));
+									} catch (err) {
+										promise.reject(err);
+									}
 							}]],
 
 			"Rejected": [["addFail", function (promise, func, scope) {
