@@ -13,7 +13,7 @@ define("Promise",
  */
 function Promise(Observable, StateMachine) {
 
-	function PromiseConstructor() {
+	return function PromiseConstructor() {
 
 		/**
 		 * The value once resolved
@@ -77,7 +77,15 @@ function Promise(Observable, StateMachine) {
 							}]],
 
 			"Rejected": [["addFail", function (promise, func, scope) {
-								promise.reject(func.call(scope, _rejectedValue));
+								var value;
+								try {
+									value = func.call(scope, _rejectedValue);
+								} catch (err) {
+									promise.reject(err);
+								} finally {
+									promise.resolve(value);
+								}
+
 							}]]
 		});
 
@@ -159,27 +167,6 @@ function Promise(Observable, StateMachine) {
 
 	}
 
-	return function () {
-
-		var promise = new PromiseConstructor;
-
-		this.resolve = function () {
-			promise.resolve.apply(promise, arguments);
-			return promise;
-		};
-
-		this.reject = function () {
-			promise.reject.apply(promise, arguments);
-			return promise;
-		};
-
-		this.then = function () {
-			return promise.then.apply(promise, arguments);
-		}
-
-
-
-	};
 
 
 
