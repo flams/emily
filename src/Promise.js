@@ -16,13 +16,13 @@ function Promise(Observable, StateMachine) {
 	return function PromiseConstructor() {
 
 		/**
-		 * The value once fulfilled
+		 * The fulfilled value
 		 * @private
 		 */
 		var _value,
 
 		/**
-		 * The value once rejected
+		 * The rejection reason
 		 * @private
 		 */
 		_reason,
@@ -33,16 +33,9 @@ function Promise(Observable, StateMachine) {
 		 */
 		_observable = new Observable,
 
-		/**
-		 * The stateMachine
-		 * @private
-		 */
-		_stateMachine = new StateMachine("Unfulfilled", {
+		_states = {
 
-			/**
-			 *
-			 */
-			"Unfulfilled": [
+			"Unresolved": [
 
 				["fulfill", function (val) {
 					_value = val;
@@ -54,47 +47,32 @@ function Promise(Observable, StateMachine) {
 					_observable.notify("reject", err);
 				}, "Rejected"],
 
-				["addSuccess", function (promise, func, scope) {
-					_observable.watch("fulfill", function (val) {
-						try {
-							promise.fulfill(func.call(scope, val));
-						} catch (err) {
-							promise.reject(err);
-						}
-					});
+				["addSuccess", function (resolver) {
+					_observable.watch("fulfill", resolver);
 				}],
 
-				["addFail", function (promise, func, scope) {
-					_observable.watch("reject", function (val) {
-						try {
-							promise.fulfill(func.call(scope, val));
-						} catch (err) {
-							promise.reject(err);
-						}
-
-					});
+				["addFail", function (resolver) {
+					_observable.watch("reject", resolver);
 				}]],
 
 			"Fulfilled": [
 
-				["addSuccess", function (promise, func, scope) {
-					try {
-						promise.fulfill(func.call(scope, _value));
-					} catch (err) {
-						promise.reject(err);
-					}
+				["addSuccess", function (resolver) {
+					resolver(_value);
 				}]],
 
 			"Rejected": [
 
-				["addFail", function (promise, func, scope) {
-					try {
-						promise.fulfill(func.call(scope, _reason));
-					} catch (err) {
-						promise.reject(err);
-					}
+				["addFail", function (resolver) {
+					resolver(_reason);
 				}]]
-		});
+		},
+
+		/**
+		 * The stateMachine
+		 * @private
+		 */
+		_stateMachine = new StateMachine("Unresolved", _states);
 
 		/**
 		 * Fulfilled the promise.
@@ -136,33 +114,43 @@ function Promise(Observable, StateMachine) {
 
           	if (arguments[0] instanceof Function) {
             	if (arguments[1] instanceof Function) {
-                	_stateMachine.event("addSuccess", promise, arguments[0]);
+                	_stateMachine.event("addSuccess", this.makeResolver(promise, arguments[0]));
               	} else {
-                	_stateMachine.event("addSuccess", promise, arguments[0], arguments[1]);
+                	_stateMachine.event("addSuccess", this.makeResolver(promise, arguments[0], arguments[1]));
               	}
          	} else {
-         		_stateMachine.event("addSuccess", promise, function () {
+         		_stateMachine.event("addSuccess", this.makeResolver(promise, function () {
          			promise.fulfill(_value);
-         		});
+         		}));
          	}
 
           	if (arguments[1] instanceof Function) {
-            	_stateMachine.event("addFail", promise, arguments[1], arguments[2]);
+            	_stateMachine.event("addFail", this.makeResolver(promise, arguments[1], arguments[2]));
             	hasFailed = true;
           	}
 
           	if (arguments[2] instanceof Function) {
-                _stateMachine.event("addFail", promise, arguments[2], arguments[3]);
+                _stateMachine.event("addFail", this.makeResolver(promise, arguments[2], arguments[3]));
                 hasFailed = true;
           	}
 
           	if (!hasFailed) {
-          		_stateMachine.event("addFail", promise, function () {
+          		_stateMachine.event("addFail", this.makeResolver(promise, function () {
           			promise.reject(_reason);
-          		});
+          		}));
           	}
 
           	return promise;
+        };
+
+        this.makeResolver = function (promise, func, scope) {
+			return function (value) {
+				try {
+					promise.fulfill(func.call(scope, value));
+				} catch (err) {
+					promise.reject(err);
+				}
+			}
         };
 
 		/**
@@ -183,6 +171,16 @@ function Promise(Observable, StateMachine) {
 		 */
 		this.getStateMachine = function getStateMachine() {
 			return _stateMachine;
+		};
+
+		/**
+		 * Get the statesMachine's states
+		 * for debugging only
+		 * @private
+		 * @returns {Object}
+		 */
+		this.getStates = function getStates() {
+			return _states;
 		};
 
 	}
