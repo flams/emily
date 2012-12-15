@@ -2,15 +2,13 @@ exports.availableDocumentFeatures = [
   'FetchExternalResources',
   'ProcessExternalResources',
   'MutationEvents',
-  'QuerySelector',
   'SkipExternalResources'
 ];
 
 exports.defaultDocumentFeatures = {
-  "FetchExternalResources": ['script'/*, 'img', 'css', 'frame', 'link'*/],
+  "FetchExternalResources": ['script', 'link'/*, 'img', 'css', 'frame'*/],
   "ProcessExternalResources": ['script'/*, 'frame', 'iframe'*/],
   "MutationEvents": '2.0',
-  "QuerySelector": false,
   "SkipExternalResources": false
 };
 

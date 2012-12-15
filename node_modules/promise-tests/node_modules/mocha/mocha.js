@@ -1408,7 +1408,7 @@ exports.colors = {
  */
  
 exports.symbols = {
-  ok: '✔',
+  ok: '✓',
   err: '✖',
   dot: '․'
 };
@@ -1651,7 +1651,7 @@ Base.prototype.epilogue = function(){
   }
 
   // pass
-  fmt = color('bright pass', '  ' + exports.symbols.ok)
+  fmt = color('bright pass', ' ')
     + color('green', ' %d %s complete')
     + color('light', ' (%s)');
 
@@ -1662,7 +1662,7 @@ Base.prototype.epilogue = function(){
 
   // pending
   if (stats.pending) {
-    fmt = color('pending', '  •')
+    fmt = color('pending', ' ')
       + color('pending', ' %d %s pending');
 
     console.log(fmt, stats.pending, pluralize(stats.pending));
@@ -2024,7 +2024,7 @@ function HTML(runner, root) {
   });
 
   runner.on('fail', function(test, err){
-    if ('hook' == test.type || err.uncaught) runner.emit('test end', test);
+    if ('hook' == test.type) runner.emit('test end', test);
   });
 
   runner.on('test end', function(test){
@@ -3269,7 +3269,9 @@ function TAP(runner) {
 
   var self = this
     , stats = this.stats
-    , n = 1;
+    , n = 1
+    , passes = 0
+    , failures = 1;
 
   runner.on('start', function(){
     var total = runner.grepTotal(runner.suite);
@@ -3285,12 +3287,20 @@ function TAP(runner) {
   });
 
   runner.on('pass', function(test){
+    passes++;
     console.log('ok %d %s', n, title(test));
   });
 
   runner.on('fail', function(test, err){
+    failures++;
     console.log('not ok %d %s', n, title(test));
     console.log(err.stack.replace(/^/gm, '  '));
+  });
+
+  runner.on('end', function(){
+    console.log('# tests ' + (passes + failures));
+    console.log('# pass ' + passes);
+    console.log('# fail ' + failures);
   });
 }
 
@@ -3519,6 +3529,12 @@ var Date = global.Date
   , clearInterval = global.clearInterval;
 
 /**
+ * Object#toString().
+ */
+
+var toString = Object.prototype.toString;
+
+/**
  * Expose `Runnable`.
  */
 
@@ -3691,7 +3707,7 @@ Runnable.prototype.run = function(fn){
   if (this.async) {
     try {
       this.fn.call(ctx, function(err){
-        if (err instanceof Error) return done(err);
+        if (toString.call(err) === "[object Error]") return done(err);
         if (null != err) return done(new Error('done() invoked with non-Error: ' + err));
         done();
       });
@@ -3841,7 +3857,7 @@ Runner.prototype.globalProps = function() {
 
   // non-enumerables
   for (var i = 0; i < globals.length; ++i) {
-    if (~props.indexOf(globals[i])) continue;
+    if (~utils.indexOf(props, globals[i])) continue;
     props.push(globals[i]);
   }
 
@@ -3903,9 +3919,11 @@ Runner.prototype.checkGlobals = function(test){
 Runner.prototype.fail = function(test, err){
   ++this.failures;
   test.state = 'failed';
+
   if ('string' == typeof err) {
     err = new Error('the string "' + err + '" was thrown, throw an Error :)');
   }
+  
   this.emit('fail', test, err);
 };
 
@@ -4207,15 +4225,12 @@ Runner.prototype.run = function(fn){
 
   debug('start');
 
-  // uncaught callback
-  function uncaught(err) {
-    self.uncaught(err);
-  }
-
   // callback
   this.on('end', function(){
     debug('end');
-    process.removeListener('uncaughtException', uncaught);
+    process.removeListener('uncaughtException', function(err){
+      self.uncaught(err);
+    });
     fn(self.failures);
   });
 
@@ -4227,7 +4242,9 @@ Runner.prototype.run = function(fn){
   });
 
   // uncaught exception
-  process.on('uncaughtException', uncaught);
+  process.on('uncaughtException', function(err){
+    self.uncaught(err);
+  });
 
   return this;
 };
@@ -4938,7 +4955,9 @@ process.removeListener = function(e){
 
 process.on = function(e, fn){
   if ('uncaughtException' == e) {
-    window.onerror = fn;
+    window.onerror = function(err, url, line){
+      fn(new Error(err + ' (' + url + ':' + line + ')'));
+    };
   }
 };
 

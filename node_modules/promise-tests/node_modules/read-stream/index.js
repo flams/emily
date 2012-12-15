@@ -6,6 +6,8 @@ ReadStream.read = defaultRead
 
 module.exports = ReadStream
 
+ReadStream.from = require("./from")
+ReadStream.callback = require("./callback")
 ReadStream.fromArray = require("./array")
 
 function ReadStream(read, state) {

@@ -132,7 +132,8 @@ function Promise(Observable, StateMachine) {
          */
         this.then = function then() {
         	var promise = new PromiseConstructor,
-        		hasFailed, hasSuccess;
+        		hasFailed;
+
           	if (arguments[0] instanceof Function) {
             	if (arguments[1] instanceof Function) {
                 	_stateMachine.event("addSuccess", promise, arguments[0]);
@@ -140,7 +141,9 @@ function Promise(Observable, StateMachine) {
                 	_stateMachine.event("addSuccess", promise, arguments[0], arguments[1]);
               	}
          	} else {
-         		_stateMachine.event("addSuccess", promise, function () { return _value;});
+         		_stateMachine.event("addSuccess", promise, function () {
+         			promise.fulfill(_value);
+         		});
          	}
 
           	if (arguments[1] instanceof Function) {
@@ -154,7 +157,9 @@ function Promise(Observable, StateMachine) {
           	}
 
           	if (!hasFailed) {
-          		_stateMachine.event("addFail", promise, function () {promise.reject(_reason); return reason;});
+          		_stateMachine.event("addFail", promise, function () {
+          			promise.reject(_reason);
+          		});
           	}
 
           	return promise;

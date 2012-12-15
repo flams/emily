@@ -7,6 +7,7 @@
 #
 # make tests-jstd: runs the JsTestDriver tests
 # make tests-node: runs the tests under node.js
+# make tests-promiseA: runs the tests against promise/A specs
 # make tests: runs both tests
 #
 # make docs: generates the documentation into docs/latest
@@ -48,7 +49,7 @@ tests-node:
 		specs/specHelper.js \
 		$(SPECS)
 
-tests-promise:
+tests-promiseA:
 	node tools/promise-test/runTest.js
 
 clean-build:
