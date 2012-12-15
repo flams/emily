@@ -35,35 +35,44 @@ function Promise(Observable, StateMachine) {
 
 		_states = {
 
+			// The promise is unresolved
 			"Unresolved": [
 
+				// It can only be fulfilled when unresolved
 				["fulfill", function (val) {
 					_value = val;
 					_observable.notify("fulfill", val);
+				// Then it transits to the fulfilled state
 				}, "Fulfilled"],
 
+				// it can only be rejected when unresolved
 				["reject", function (err) {
 					_reason = err;
 					_observable.notify("reject", err);
+				// Then it transits to the rejected state
 				}, "Rejected"],
 
-				["addSuccess", function (resolver) {
+				// When pending, add the resolver to an observable
+				["addFulfillResolver", function (resolver) {
 					_observable.watch("fulfill", resolver);
 				}],
 
-				["addFail", function (resolver) {
+				// When pending, add the resolver to an observable
+				["addRejectResolver", function (resolver) {
 					_observable.watch("reject", resolver);
 				}]],
 
+			// When fulfilled,
 			"Fulfilled": [
-
-				["addSuccess", function (resolver) {
+				// We directly call the resolver with the value
+				["addFulfillResolver", function (resolver) {
 					resolver(_value);
 				}]],
 
+			// When rejected
 			"Rejected": [
-
-				["addFail", function (resolver) {
+				// We directly call the resolver with the reason
+				["addRejectResolver", function (resolver) {
 					resolver(_reason);
 				}]]
 		},
@@ -114,28 +123,28 @@ function Promise(Observable, StateMachine) {
 
           	if (arguments[0] instanceof Function) {
             	if (arguments[1] instanceof Function) {
-                	_stateMachine.event("addSuccess", this.makeResolver(promise, arguments[0]));
+                	_stateMachine.event("addFulfillResolver", this.makeResolver(promise, arguments[0]));
               	} else {
-                	_stateMachine.event("addSuccess", this.makeResolver(promise, arguments[0], arguments[1]));
+                	_stateMachine.event("addFulfillResolver", this.makeResolver(promise, arguments[0], arguments[1]));
               	}
          	} else {
-         		_stateMachine.event("addSuccess", this.makeResolver(promise, function () {
+         		_stateMachine.event("addFulfillResolver", this.makeResolver(promise, function () {
          			promise.fulfill(_value);
          		}));
          	}
 
           	if (arguments[1] instanceof Function) {
-            	_stateMachine.event("addFail", this.makeResolver(promise, arguments[1], arguments[2]));
+            	_stateMachine.event("addRejectResolver", this.makeResolver(promise, arguments[1], arguments[2]));
             	hasFailed = true;
           	}
 
           	if (arguments[2] instanceof Function) {
-                _stateMachine.event("addFail", this.makeResolver(promise, arguments[2], arguments[3]));
+                _stateMachine.event("addRejectResolver", this.makeResolver(promise, arguments[2], arguments[3]));
                 hasFailed = true;
           	}
 
           	if (!hasFailed) {
-          		_stateMachine.event("addFail", this.makeResolver(promise, function () {
+          		_stateMachine.event("addRejectResolver", this.makeResolver(promise, function () {
           			promise.reject(_reason);
           		}));
           	}
