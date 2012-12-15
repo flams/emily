@@ -53,26 +53,26 @@ function Promise(Observable, StateMachine) {
 				}, "Rejected"],
 
 				// When pending, add the resolver to an observable
-				["addFulfillResolver", function (resolver) {
+				["toFulfill", function (resolver) {
 					_observable.watch("fulfill", resolver);
 				}],
 
 				// When pending, add the resolver to an observable
-				["addRejectResolver", function (resolver) {
+				["toReject", function (resolver) {
 					_observable.watch("reject", resolver);
 				}]],
 
 			// When fulfilled,
 			"Fulfilled": [
 				// We directly call the resolver with the value
-				["addFulfillResolver", function (resolver) {
+				["toFulfill", function (resolver) {
 					resolver(_value);
 				}]],
 
 			// When rejected
 			"Rejected": [
 				// We directly call the resolver with the reason
-				["addRejectResolver", function (resolver) {
+				["toReject", function (resolver) {
 					resolver(_reason);
 				}]]
 		},
@@ -125,32 +125,32 @@ function Promise(Observable, StateMachine) {
           	if (arguments[0] instanceof Function) {
           		// If the second argument is also a function, then no scope is given
             	if (arguments[1] instanceof Function) {
-                	_stateMachine.event("addFulfillResolver", this.makeResolver(promise, arguments[0]));
+                	_stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0]));
               	} else {
               		// If the second argument is not a function, it's the scope
-                	_stateMachine.event("addFulfillResolver", this.makeResolver(promise, arguments[0], arguments[1]));
+                	_stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0], arguments[1]));
               	}
          	} else {
          		// If no fulfillment callback given, give a default one
-         		_stateMachine.event("addFulfillResolver", this.makeResolver(promise, function () {
+         		_stateMachine.event("toFulfill", this.makeResolver(promise, function () {
          			promise.fulfill(_value);
          		}));
          	}
 
          	// if the second arguments is a callback, it's the rejection one, and the next argument is the scope
           	if (arguments[1] instanceof Function) {
-            	_stateMachine.event("addRejectResolver", this.makeResolver(promise, arguments[1], arguments[2]));
+            	_stateMachine.event("toReject", this.makeResolver(promise, arguments[1], arguments[2]));
           	}
 
           	// if the third arguments is a callback, it's the rejection one, and the next arguments is the sopce
           	if (arguments[2] instanceof Function) {
-                _stateMachine.event("addRejectResolver", this.makeResolver(promise, arguments[2], arguments[3]));
+                _stateMachine.event("toReject", this.makeResolver(promise, arguments[2], arguments[3]));
           	}
 
           	// If no rejection callback is given, give a default one
           	if (!(arguments[1] instanceof Function) &&
           		!(arguments[2] instanceof Function)) {
-          		_stateMachine.event("addRejectResolver", this.makeResolver(promise, function () {
+          		_stateMachine.event("toReject", this.makeResolver(promise, function () {
           			promise.reject(_reason);
           		}));
           	}
