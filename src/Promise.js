@@ -204,6 +204,14 @@ function Promise(Observable, StateMachine) {
 			return _states;
 		};
 
+		this.getValue = function getValue() {
+			return _value;
+		};
+
+		this.getReason = function getReason() {
+			return _reason;
+		};
+
 	}
 
 
