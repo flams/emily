@@ -232,5 +232,82 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 	});
 
+	describe("PromiseThen", function () {
+
+		var promise = null,
+			stateMachine = null,
+			fulfillmentCB = null,
+			fulfillmentScope = null,
+			rejectCB = null,
+			rejectScope = null,
+			resolver = null;
+
+		beforeEach(function () {
+			resolver = jasmine.createSpy();
+			promise = new Promise();
+			stateMachine = promise.getStateMachine();
+			spyOn(stateMachine, "event");
+			spyOn(promise, "makeResolver").andReturn(resolver);
+			fulfillmentCB = jasmine.createSpy();
+			fulfillmentScope = {};
+			rejectCB = jasmine.createSpy();
+			fulfillmentScope = {};
+		});
+
+		it("should return a new promise", function () {
+			expect(promise.then()).toBeInstanceOf(Promise);
+			expect(promise.then()).not.toBe(promise);
+		});
+
+		it("should add a fulfillement callback", function () {
+			var newPromise = promise.then(fulfillmentCB);
+
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.calls[0].args[0]).toEqual("toFulfill");
+			expect(stateMachine.event.calls[0].args[1]).toBe(resolver);
+
+			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.calls[0].args[0]).toBe(newPromise);
+			expect(promise.makeResolver.calls[0].args[1]).toBe(fulfillmentCB);
+		});
+
+
+		it("should add a fulfillement callback with a scope", function () {
+			var newPromise = promise.then(fulfillmentCB, fulfillmentScope);
+
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.calls[0].args[0]).toEqual("toFulfill");
+			expect(stateMachine.event.calls[0].args[1]).toBe(resolver);
+
+			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.calls[0].args[0]).toBe(newPromise);
+			expect(promise.makeResolver.calls[0].args[1]).toBe(fulfillmentCB);
+			expect(promise.makeResolver.calls[0].args[2]).toBe(fulfillmentScope);
+		});
+
+		it("should add a default fulfillement callback if none is specified", function () {
+			var defaultCB,
+				newPromise = promise.then();
+
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.calls[0].args[0]).toEqual("toFulfill");
+			expect(stateMachine.event.calls[0].args[1]).toBe(resolver);
+
+			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.calls[0].args[0]).toEqual(newPromise);
+			expect(promise.makeResolver.calls[0].args[1]).toBeInstanceOf(Function);
+
+			defaultCB = promise.makeResolver.calls[0].args[1]
+
+			spyOn(newPromise, "fulfill");
+
+			defaultCB();
+			expect(newPromise.fulfill.wasCalled).toEqual(true);
+			expect(newPromise.fulfill.mostRecentCall.args[0]).toBe(newPromise.getValue());
+		});
+
+
+	});
+
 
 });
