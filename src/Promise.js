@@ -39,16 +39,16 @@ function Promise(Observable, StateMachine) {
 			"Unresolved": [
 
 				// It can only be fulfilled when unresolved
-				["fulfill", function (val) {
-					_value = val;
-					_observable.notify("fulfill", val);
+				["fulfill", function (value) {
+					_value = value;
+					_observable.notify("fulfill", value);
 				// Then it transits to the fulfilled state
 				}, "Fulfilled"],
 
 				// it can only be rejected when unresolved
-				["reject", function (err) {
-					_reason = err;
-					_observable.notify("reject", err);
+				["reject", function (reason) {
+					_reason = reason;
+					_observable.notify("reject", reason);
 				// Then it transits to the rejected state
 				}, "Rejected"],
 
@@ -89,8 +89,8 @@ function Promise(Observable, StateMachine) {
 		 * @param the fulfillment value
 		 * @returns the promise
 		 */
-		this.fulfill = function fulfill(val) {
-			_stateMachine.event("fulfill", val);
+		this.fulfill = function fulfill(value) {
+			_stateMachine.event("fulfill", value);
 			return this;
 		};
 
@@ -100,50 +100,56 @@ function Promise(Observable, StateMachine) {
 		 * @param the rejection value
 		 * @returns true if the rejection function was called
 		 */
-		this.reject = function reject(err) {
-			_stateMachine.event("reject", err);
+		this.reject = function reject(reason) {
+			_stateMachine.event("reject", reason);
 			return this;
 		};
 
 		/**
-         * The callbacks and errbacks to call after fulfillment or rejection
-         * @param {Function} the first parameter is a success function, it can be followed by a scope in which to run it
-         * @param {Function} the second, or third parameter is an errback, it can also be followed by a scope
+         * The callbacks to call after fulfillment or rejection
+         * @param {Function} fulfillmentCallback the first parameter is a success function, it can be followed by a scope
+         * @param {Function} the second, or third parameter is the rejection callback, it can also be followed by a scope
          * @examples:
          *
-         * then(callback)
-         * then(callback, scope, errback, scope)
-         * then(callback, errback)
-         * then(callback, errback, scope)
+         * then(fulfillment)
+         * then(fulfillment, scope, rejection, scope)
+         * then(fulfillment, rejection)
+         * then(fulfillment, rejection, scope)
+         * then(null, rejection, scope)
          * @returns {Promise} the new promise
          */
         this.then = function then() {
-        	var promise = new PromiseConstructor,
-        		hasFailed;
+        	var promise = new PromiseConstructor;
 
+        	// If a fulfillment callback is given
           	if (arguments[0] instanceof Function) {
+          		// If the second argument is also a function, then no scope is given
             	if (arguments[1] instanceof Function) {
                 	_stateMachine.event("addFulfillResolver", this.makeResolver(promise, arguments[0]));
               	} else {
+              		// If the second argument is not a function, it's the scope
                 	_stateMachine.event("addFulfillResolver", this.makeResolver(promise, arguments[0], arguments[1]));
               	}
          	} else {
+         		// If no fulfillment callback given, give a default one
          		_stateMachine.event("addFulfillResolver", this.makeResolver(promise, function () {
          			promise.fulfill(_value);
          		}));
          	}
 
+         	// if the second arguments is a callback, it's the rejection one, and the next argument is the scope
           	if (arguments[1] instanceof Function) {
             	_stateMachine.event("addRejectResolver", this.makeResolver(promise, arguments[1], arguments[2]));
-            	hasFailed = true;
           	}
 
+          	// if the third arguments is a callback, it's the rejection one, and the next arguments is the sopce
           	if (arguments[2] instanceof Function) {
                 _stateMachine.event("addRejectResolver", this.makeResolver(promise, arguments[2], arguments[3]));
-                hasFailed = true;
           	}
 
-          	if (!hasFailed) {
+          	// If no rejection callback is given, give a default one
+          	if (!(arguments[1] instanceof Function) &&
+          		!(arguments[2] instanceof Function)) {
           		_stateMachine.event("addRejectResolver", this.makeResolver(promise, function () {
           			promise.reject(_reason);
           		}));
