@@ -19,13 +19,13 @@ function Promise(Observable, StateMachine) {
 		 * The value once fulfilled
 		 * @private
 		 */
-		var _fulfilledValue,
+		var _value,
 
 		/**
 		 * The value once rejected
 		 * @private
 		 */
-		_rejectedValue,
+		_reason,
 
 		/**
 		 * The funky observable
@@ -45,17 +45,17 @@ function Promise(Observable, StateMachine) {
 			"Unfulfilled": [
 
 				["fulfill", function (val) {
-					_fulfilledValue = val;
-					_observable.notify("success", val);
+					_value = val;
+					_observable.notify("fulfill", val);
 				}, "Fulfilled"],
 
 				["reject", function (err) {
-					_rejectedValue = err;
-					_observable.notify("fail", err);
+					_reason = err;
+					_observable.notify("reject", err);
 				}, "Rejected"],
 
 				["addSuccess", function (promise, func, scope) {
-					_observable.watch("success", function (val) {
+					_observable.watch("fulfill", function (val) {
 						try {
 							promise.fulfill(func.call(scope, val));
 						} catch (err) {
@@ -65,12 +65,13 @@ function Promise(Observable, StateMachine) {
 				}],
 
 				["addFail", function (promise, func, scope) {
-					_observable.watch("fail", function (val) {
+					_observable.watch("reject", function (val) {
 						try {
 							promise.fulfill(func.call(scope, val));
 						} catch (err) {
 							promise.reject(err);
 						}
+
 					});
 				}]],
 
@@ -78,17 +79,17 @@ function Promise(Observable, StateMachine) {
 
 				["addSuccess", function (promise, func, scope) {
 					try {
-							promise.fulfill(func.call(scope, _fulfilledValue));
-						} catch (err) {
-							promise.reject(err);
-						}
+						promise.fulfill(func.call(scope, _value));
+					} catch (err) {
+						promise.reject(err);
+					}
 				}]],
 
 			"Rejected": [
 
 				["addFail", function (promise, func, scope) {
 					try {
-						promise.fulfill(func.call(scope, _rejectedValue));
+						promise.fulfill(func.call(scope, _reason));
 					} catch (err) {
 						promise.reject(err);
 					}
@@ -131,7 +132,7 @@ function Promise(Observable, StateMachine) {
          */
         this.then = function then() {
         	var promise = new PromiseConstructor,
-        		hasFailed;
+        		hasFailed, hasSuccess;
           	if (arguments[0] instanceof Function) {
             	if (arguments[1] instanceof Function) {
                 	_stateMachine.event("addSuccess", promise, arguments[0]);
@@ -139,7 +140,7 @@ function Promise(Observable, StateMachine) {
                 	_stateMachine.event("addSuccess", promise, arguments[0], arguments[1]);
               	}
          	} else {
-         		_stateMachine.event("addSuccess", promise, function (val) { return val;});
+         		_stateMachine.event("addSuccess", promise, function () { return _value;});
          	}
 
           	if (arguments[1] instanceof Function) {
@@ -153,7 +154,7 @@ function Promise(Observable, StateMachine) {
           	}
 
           	if (!hasFailed) {
-          		_stateMachine.event("addFail", promise, function (val) {return val;});
+          		_stateMachine.event("addFail", promise, function () {promise.reject(_reason); return reason;});
           	}
 
           	return promise;
