@@ -306,6 +306,53 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			expect(newPromise.fulfill.mostRecentCall.args[0]).toBe(newPromise.getValue());
 		});
 
+		it("should add a rejection callback", function () {
+			var newPromise = promise.then(null, rejectCB);
+
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("toReject");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(resolver);
+
+			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.mostRecentCall.args[0]).toBe(newPromise);
+			expect(promise.makeResolver.mostRecentCall.args[1]).toBe(rejectCB);
+		});
+
+
+		it("should add a rejection callback with a scope", function () {
+			var newPromise = promise.then(null, rejectCB, rejectScope);
+
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("toReject");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(resolver);
+
+			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.mostRecentCall.args[0]).toBe(newPromise);
+			expect(promise.makeResolver.mostRecentCall.args[1]).toBe(rejectCB);
+			expect(promise.makeResolver.mostRecentCall.args[2]).toBe(rejectScope);
+		});
+
+		it("should add a default rejection callback if none is specified", function () {
+			var defaultCB,
+				newPromise = promise.then();
+
+			expect(stateMachine.event.wasCalled).toEqual(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("toReject");
+			expect(stateMachine.event.mostRecentCall.args[1]).toBe(resolver);
+
+			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.mostRecentCall.args[0]).toEqual(newPromise);
+			expect(promise.makeResolver.mostRecentCall.args[1]).toBeInstanceOf(Function);
+
+			defaultCB = promise.makeResolver.mostRecentCall.args[1]
+
+			spyOn(newPromise, "reject");
+
+			defaultCB();
+			expect(newPromise.reject.wasCalled).toEqual(true);
+			expect(newPromise.reject.mostRecentCall.args[0]).toBe(newPromise.getReason());
+		});
+
 
 	});
 
