@@ -19,13 +19,13 @@ function Promise(Observable, StateMachine) {
 		 * The fulfilled value
 		 * @private
 		 */
-		var _value,
+		var _value = null,
 
 		/**
 		 * The rejection reason
 		 * @private
 		 */
-		_reason,
+		_reason = null,
 
 		/**
 		 * The funky observable

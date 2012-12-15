@@ -85,6 +85,10 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			observable = promise.getObservable();
 		});
 
+		it("should be init in Unresolved state", function () {
+			expect(promise.getStateMachine().getCurrent()).toEqual("Unresolved");
+		});
+
 		describe("PromiseStateMachine Unresolved state", function () {
 
 			it("should have an Unresolved state", function () {
@@ -135,6 +139,92 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 				expect(observable.notify.wasCalled).toEqual(true);
 				expect(observable.notify.mostRecentCall.args[0]).toEqual("reject");
 				expect(observable.notify.mostRecentCall.args[1]).toBe(reason);
+
+			});
+
+			it("should have a toFulfill action", function () {
+				var toFulfill = states.Unresolved[2],
+					resolver = {},
+					callback;
+
+				spyOn(observable, "watch");
+
+				expect(toFulfill).toBeInstanceOf(Array);
+				expect(toFulfill[0]).toEqual("toFulfill");
+
+				callback = toFulfill[1];
+
+				callback(resolver);
+
+				expect(observable.watch.wasCalled).toEqual(true);
+				expect(observable.watch.mostRecentCall.args[0]).toEqual("fulfill");
+				expect(observable.watch.mostRecentCall.args[1]).toBe(resolver);
+			});
+
+			it("should have a toReject action", function () {
+				var toReject = states.Unresolved[3],
+					resolver = {},
+					callback;
+
+				spyOn(observable, "watch");
+
+				expect(toReject).toBeInstanceOf(Array);
+				expect(toReject[0]).toEqual("toReject");
+
+				callback = toReject[1];
+
+				callback(resolver);
+
+				expect(observable.watch.wasCalled).toEqual(true);
+				expect(observable.watch.mostRecentCall.args[0]).toEqual("reject");
+				expect(observable.watch.mostRecentCall.args[1]).toBe(resolver);
+			});
+
+		});
+
+		describe("PromiseStateMachine Fulfilled state", function () {
+
+			it("should have an Fulfilled state", function () {
+				expect(states.Fulfilled).toBeInstanceOf(Array);
+			});
+
+			it("should have a toFulfill action", function () {
+				var toFulfill = states.Fulfilled[0],
+					resolver = jasmine.createSpy();
+
+				expect(toFulfill).toBeInstanceOf(Array);
+				expect(toFulfill[0]).toEqual("toFulfill");
+
+				callback = toFulfill[1];
+
+				callback(resolver);
+
+				expect(resolver.wasCalled).toEqual(true);
+				expect(resolver.mostRecentCall.args[0]).toBe(promise.getValue());
+
+			});
+
+		});
+
+		describe("PromiseStateMachine Rejected state", function () {
+
+			it("should have an Rejected state", function () {
+				expect(states.Rejected).toBeInstanceOf(Array);
+			});
+
+			it("should have a toReject action", function () {
+				var toReject = states.Rejected[0],
+					resolver = jasmine.createSpy();
+
+				expect(toReject).toBeInstanceOf(Array);
+				expect(toReject[0]).toEqual("toReject");
+
+				callback = toReject[1];
+
+				callback(resolver);
+
+				expect(resolver.wasCalled).toEqual(true);
+				expect(resolver.mostRecentCall.args[0]).toBe(promise.getReason());
 
 			});
 
