@@ -106,7 +106,7 @@ function Promise(Observable, StateMachine) {
 		};
 
 		/**
-         * T he callbacks and errbacks to call after fulfillment or rejection
+         * The callbacks and errbacks to call after fulfillment or rejection
          * @param {Function} the first parameter is a success function, it can be followed by a scope in which to run it
          * @param {Function} the second, or third parameter is an errback, it can also be followed by a scope
          * @examples:
@@ -115,7 +115,7 @@ function Promise(Observable, StateMachine) {
          * then(callback, scope, errback, scope)
          * then(callback, errback)
          * then(callback, errback, scope)
-         *
+         * @returns {Promise} the new promise
          */
         this.then = function then() {
         	var promise = new PromiseConstructor,
@@ -152,8 +152,14 @@ function Promise(Observable, StateMachine) {
           	return promise;
         };
 
+        /**
+         * Make a resolver
+         * for debugging only
+         * @private
+         * @returns {Function} a closure
+		 */
         this.makeResolver = function (promise, func, scope) {
-			return function (value) {
+			return function resolver(value) {
 				try {
 					promise.fulfill(func.call(scope, value));
 				} catch (err) {
