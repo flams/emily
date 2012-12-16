@@ -7,6 +7,7 @@
 #
 # make tests-jstd: runs the JsTestDriver tests
 # make tests-node: runs the tests under node.js
+# make tests-promiseA: runs the tests against promise/A specs
 # make tests: runs both tests
 #
 # make docs: generates the documentation into docs/latest
@@ -29,6 +30,12 @@ all: tests docs build
 clean-docs:
 	-rm -rf docs/latest/
 
+clean-build:
+	-rm -rf build/
+
+clean-temp:
+	rm -f temp.js
+
 docs: clean-docs
 	java -jar tools/JsDoc/jsrun.jar \
 		tools/JsDoc/app/run.js src \
@@ -38,21 +45,22 @@ docs: clean-docs
 
 tests: tests-node tests-jstd
 
-tests-jstd:
+tests-jstd: clean-temp temp.js
 	java -jar $(JsTestDriver) \
 		--tests all
 
-tests-node:
+tests-node: clean-temp temp.js
 	node tools/jasmine-node.js lib/require.js \
-		$(SRC) \
+		temp.js \
 		specs/specHelper.js \
 		$(SPECS)
 
-clean-build:
-	-rm -rf build/
+tests-promiseA:
+	node tools/promise-test/runTest.js
 
-build: clean-build Emily.js Emily.min.js
+build: clean-build Emily.js
 	cp LICENSE build/
+	cp -rf src/ build/src/
 
 release: all
 ifndef VERSION
@@ -61,7 +69,7 @@ ifndef VERSION
 endif
 
 	mkdir -p release/tmp/Emily-$(VERSION)
-	cp build/* release/tmp/Emily-$(VERSION)
+	cp -rf build/* release/tmp/Emily-$(VERSION)
 
 	cd release/tmp/Emily-$(VERSION); \
 	sed -i .bak 's#<VERSION>#'$(VERSION)'#' Emily.js Emily.min.js; \
@@ -84,17 +92,19 @@ endif
 
 	git push --tags
 
-Emily.js: $(SRC)
-	mkdir -p build
-	cat LICENSE-MINI $(SRC) > build/$@
+temp.js:
+	r.js -o tools/build.js
 
-Emily.min.js: Emily.js
+Emily.js: temp.js
+	mkdir -p build
+	cat LICENSE-MINI temp.js > build/$@
+
 	java -jar tools/GoogleCompiler/compiler.jar \
 		--js build/Emily.js \
 		--js_output_file build/Emily.min.js \
 		--create_source_map build/Emily-map
 
-clean: clean-build
+clean: clean-build clean-docs
 
 gh-pages: clean
 ifndef VERSION

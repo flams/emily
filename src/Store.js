@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-define("Store", ["Observable", "Tools"],
+define(["Observable", "Tools"],
 /**
  * @class
  * Store creates a small NoSQL database with observables

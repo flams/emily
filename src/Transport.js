@@ -4,9 +4,7 @@
  * MIT Licensed
  */
 
-define("Transport",
-
-["Store"],
+define(["Store"],
 /**
  * @class
  * Transport creates the link between your requests and Emily's requests handlers.

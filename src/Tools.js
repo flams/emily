@@ -4,10 +4,10 @@
  * MIT Licensed
  */
 
-define("Tools",
+define(
 /**
  * @class
- * Tools is a collection of tools 
+ * Tools is a collection of tools
  */
 function Tools(){
 
@@ -23,7 +23,7 @@ function Tools(){
 	    	};
 	    	return func.call(null);
 	    },
-		
+
 		/**
 		 * Mixes an object into another
 		 * @param {Object} destination object to mix values into
@@ -33,12 +33,12 @@ function Tools(){
 	    mixin: function mixin(source, destination, dontOverride) {
 			this.loop(source, function (value, idx) {
 				if (!destination[idx] || !dontOverride) {
-					destination[idx] = source[idx];	
+					destination[idx] = source[idx];
 				}
 			});
 			return destination;
 		},
-		
+
 		/**
 		 * Count the number of properties in an object
 		 * It doesn't look up in the prototype chain
@@ -50,10 +50,10 @@ function Tools(){
 			this.loop(object, function () {
 				nbItems++;
 			});
-			
+
 			return nbItems;
 		},
-		
+
 		/**
 		 * Compares the properties of two objects and returns true if they're the same
 		 * It's doesn't do it recursively
@@ -67,7 +67,7 @@ function Tools(){
 			};
 			return getOwnProperties(object1) == getOwnProperties(object2);
 		},
-		
+
 		/**
 		 * Compares two numbers and tells if the first one is bigger (1), smaller (-1) or equal (0)
 		 * @param {Number} number1 the first number
@@ -76,14 +76,14 @@ function Tools(){
 		 */
 		compareNumbers: function compareNumbers(number1, number2) {
 			  if (number1>number2) {
-			    return 1;  
+			    return 1;
 			  } else if (number1<number2) {
-			    return -1;				  
+			    return -1;
 			  } else {
 				 return 0;
 			  }
 		},
-		
+
 		/**
 		 * Transform array-like objects to array, such as nodeLists or arguments
 		 * @param {Array-like object}
@@ -92,7 +92,7 @@ function Tools(){
 		toArray: function toArray(array) {
 			return Array.prototype.slice.call(array);
 		},
-		
+
 		/**
 		 * Small adapter for looping over objects and arrays
 		 * Warning: it's not meant to be used with nodeList
@@ -103,9 +103,9 @@ function Tools(){
 		 * @returns {Boolean} true if executed
 		 */
 		loop: function loop(iterated, callback, scope) {
-			var i, 
+			var i,
 				length;
-			
+
 			if (iterated instanceof Object && callback instanceof Function) {
 				if (iterated instanceof Array) {
 					for (i=0; i<iterated.length; i++) {
@@ -123,36 +123,36 @@ function Tools(){
 				return false;
 			}
 		},
-		
+
 		/**
 		 * Make a diff between two objects
 		 * @param {Array/Object} before is the object as it was before
 		 * @param {Array/Object} after is what it is now
-		 * @example: 
+		 * @example:
 		 * 	With objects:
-		 * 
+		 *
 		 * 	before = {a:1, b:2, c:3, d:4, f:6}
 		 * 	after = {a:1, b:20, d: 4, e: 5}
-		 * 	will return : 
+		 * 	will return :
 		 * 	{
 		 *  	unchanged: ["a", "d"],
 		 *  	updated: ["b"],
 		 *  	deleted: ["f"],
 		 *  	added: ["e"]
 		 * 	}
-		 * 
+		 *
 		 * It also works with Arrays:
-		 * 
+		 *
 		 * 	before = [10, 20, 30]
 		 * 	after = [15, 20]
-		 * 	will return : 
+		 * 	will return :
 		 * 	{
 		 *  	unchanged: [1],
 		 *  	updated: [0],
 		 *  	deleted: [2],
 		 *  	added: []
 		 * 	}
-		 * 
+		 *
 		 * @returns object
 		 */
 		objectsDiffs : function objectsDiffs(before, after) {
@@ -183,10 +183,10 @@ function Tools(){
 				 // Loop through the before object
 				 this.loop(before, function (value, idx) {
 
-					// To get the deleted 
+					// To get the deleted
 					if (typeof after[idx] == "undefined") {
 						deleted.push(idx);
-					} 
+					}
 				 });
 
 				return {
@@ -200,20 +200,20 @@ function Tools(){
 				return false;
 			}
 		},
-		
+
 		/**
 		 * Transforms Arrays and Objects into valid JSON
-		 * @param {Object/Array} object the object to JSONify 
+		 * @param {Object/Array} object the object to JSONify
 		 * @returns the JSONified object or false if failed
 		 */
 		jsonify: function jsonify(object) {
 			if (object instanceof Object) {
-				return JSON.parse(JSON.stringify(object));	
+				return JSON.parse(JSON.stringify(object));
 			} else {
 				return false;
 			}
 		},
-		
+
 		/**
 		 * Clone an Array or an Object
 		 * @param {Array/Object} object the object to clone
@@ -228,21 +228,21 @@ function Tools(){
 				return false;
 			}
 		},
-		
-		
+
+
 		/**
-		 * 
-		 * 
-		 * 
-		 * 
-		 * Refactoring needed for the following 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
+		 *
+		 *
+		 *
+		 *
+		 * Refactoring needed for the following
+		 *
+		 *
+		 *
+		 *
+		 *
 		 */
-		
+
 		/**
 		 * Get the property of an object nested in one or more objects
 		 * given an object such as a.b.c.d = 5, getNestedProperty(a, "b.c.d") will return 5.
@@ -266,7 +266,7 @@ function Tools(){
 				return object;
 			}
 		},
-		
+
 		/**
 		 * Set the property of an object nested in one or more objects
 		 * If the property doesn't exist, it gets created.
@@ -296,11 +296,11 @@ function Tools(){
 				return object;
 			}
 		}
-		
-		
-		
+
+
+
 	};
-	
-	
+
+
 });
-		
+
