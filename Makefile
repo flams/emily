@@ -69,7 +69,7 @@ ifndef VERSION
 endif
 
 	mkdir -p release/tmp/Emily-$(VERSION)
-	cp build/* release/tmp/Emily-$(VERSION)
+	cp -rf build/* release/tmp/Emily-$(VERSION)
 
 	cd release/tmp/Emily-$(VERSION); \
 	sed -i .bak 's#<VERSION>#'$(VERSION)'#' Emily.js Emily.min.js; \
