@@ -4,18 +4,16 @@
  * MIT Licensed
  */
 
-define("Observable",
-
-["Tools"],
-/** 
-* @class 
-* Observable is an implementation of the Observer design pattern, 
+define(["Tools"],
+/**
+* @class
+* Observable is an implementation of the Observer design pattern,
 * which is also known as publish/subscribe.
-* 
+*
 * This service creates an Observable on which you can add subscribers.
 */
 function Observable(Tools) {
-	
+
 	/**
 	 * Defines the Observable
 	 * @private
@@ -28,7 +26,7 @@ function Observable(Tools) {
 		 * @private
 		 */
 		var _topics = {};
-		
+
 		/**
 		 * Add an observer
 		 * @param {String} topic the topic to observe
@@ -40,15 +38,15 @@ function Observable(Tools) {
 			if (typeof callback == "function") {
 				var observers = _topics[topic] = _topics[topic] || [],
 				observer = [callback, scope];
-				
+
 				observers.push(observer);
 				return [topic,observers.indexOf(observer)];
-				
+
 			} else {
 				return false;
 			}
 		};
-		
+
 		/**
 		 * Remove an observer
 		 * @param {Handler} handler returned by the watch method
@@ -70,7 +68,7 @@ function Observable(Tools) {
 				return false;
 			}
 		};
-		
+
 		/**
 		 * Notifies observers that a topic has a new message
 		 * @param {String} topic the name of the topic to publish to
@@ -84,7 +82,7 @@ function Observable(Tools) {
 			if (observers) {
 				Tools.loop(observers, function (value) {
 					try {
-						value && value[0].apply(value[1] || null, args); 
+						value && value[0].apply(value[1] || null, args);
 					} catch (err) { }
 				});
 				return true;
@@ -92,7 +90,7 @@ function Observable(Tools) {
 				return false;
 			}
 		},
-		
+
 		/**
 		 * Check if topic has the described observer
 		 * @param {Handler}
@@ -101,7 +99,7 @@ function Observable(Tools) {
 		this.hasObserver = function hasObserver(handler) {
 			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
 		};
-		
+
 		/**
 		 * Check if a topic has observers
 		 * @param {String} topic the name of the topic
@@ -110,7 +108,7 @@ function Observable(Tools) {
 		this.hasTopic = function hasTopic(topic) {
 			return !!_topics[topic];
 		};
-		
+
 		/**
 		 * Unwatch all or unwatch all from topic
 		 * @param {String} topic optional unwatch all from topic
@@ -124,7 +122,7 @@ function Observable(Tools) {
 			}
 			return true;
 		};
-		
+
 	};
-	
+
 });

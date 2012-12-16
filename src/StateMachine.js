@@ -4,15 +4,13 @@
  * MIT Licensed
  */
 
-define("StateMachine", 
-		
-["Tools"],
+define(["Tools"],
 /**
  * @class
  * Create a stateMachine
  */
 function StateMachine(Tools) {
-	
+
 	 /**
      * @param initState {String} the initial state
      * @param diagram {Object} the diagram that describes the state machine
@@ -39,13 +37,13 @@ function StateMachine(Tools) {
 		 * @private
 		 */
 		var _states = {},
-		
+
 		/**
 		 * The current state
 		 * @private
 		 */
 		_currentState = "";
-		
+
 		/**
 		 * Set the initialization state
 		 * @param {String} name the name of the init state
@@ -59,7 +57,7 @@ function StateMachine(Tools) {
 					return false;
 				}
 		};
-		
+
 		/**
 		 * Add a new state
 		 * @private
@@ -74,7 +72,7 @@ function StateMachine(Tools) {
 			}
 
 		};
-		
+
 		/**
 		 * Get an existing state
 		 * @private
@@ -84,7 +82,7 @@ function StateMachine(Tools) {
 		this.get = function get(name) {
 			return _states[name];
 		};
-		
+
 		/**
 		 * Get the current state
 		 * @returns {String}
@@ -92,7 +90,7 @@ function StateMachine(Tools) {
 		this.getCurrent = function getCurrent() {
 			return _currentState;
 		};
-		
+
 		/**
 		 * Pass an event to the state machine
 		 * @param {String} name the name of the event
@@ -100,7 +98,7 @@ function StateMachine(Tools) {
 		 */
 		this.event = function event(name) {
 			var nextState;
-			
+
 			nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
 			// False means that there's no such event
 			// But undefined means that the state doesn't change
@@ -114,11 +112,11 @@ function StateMachine(Tools) {
 					_currentState = nextState;
 					// Call the new state's entry action if any
 					_states[_currentState].event("entry");
-				} 
+				}
 				return true;
 			}
 		};
-		
+
 		/**
 		 * Initializes the StateMachine with the given diagram
 		 */
@@ -128,7 +126,7 @@ function StateMachine(Tools) {
 				myState.add.apply(null, params);
 			});
 		}, this);
-		
+
 		/**
 		 * Sets its initial state
 		 */
@@ -146,7 +144,7 @@ function StateMachine(Tools) {
 		 * @private
 		 */
 		var _transitions = {};
-		
+
 		/**
 		 * Add a new transition
 		 * @private
@@ -157,37 +155,37 @@ function StateMachine(Tools) {
 		 * @returns {Boolean} true if success, false if the transition already exists
 		 */
 		this.add = function add(event, action, scope, next) {
-			
+
 			var arr = [];
-		
+
 			if (_transitions[event]) {
 				return false;
 			}
-			
+
 			if (typeof event == "string"
-				&& typeof action == "function") {	
-					
+				&& typeof action == "function") {
+
 					arr[0] = action;
-				
+
 					if (typeof scope == "object") {
 						arr[1] = scope;
-					} 
-					
+					}
+
 					if (typeof scope == "string") {
 						arr[2] = scope;
-					} 
-					
+					}
+
 					if (typeof next == "string") {
 						arr[2] = next;
 					}
-				
+
 					_transitions[event] = arr;
 					return true;
-			} 
-				
-			return false;	
+			}
+
+			return false;
 		};
-		
+
 		/**
 		 * Check if a transition can be triggered with given event
 		 * @private
@@ -197,7 +195,7 @@ function StateMachine(Tools) {
 		this.has = function has(event) {
 			return !!_transitions[event];
 		};
-		
+
 		/**
 		 * Get a transition from it's event
 		 * @private
@@ -207,7 +205,7 @@ function StateMachine(Tools) {
 		this.get = function get(event) {
 			return _transitions[event] || false;
 		};
-		
+
 		/**
 		 * Execute the action associated to the given event
 		 * @param {String} event the name of the event
@@ -225,7 +223,7 @@ function StateMachine(Tools) {
 			}
 		};
 	};
-	
+
 	return StateMachineConstructor;
-	
+
 });
