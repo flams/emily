@@ -1,6 +1,6 @@
 /**
  * Emily
- * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright(c) 2012 Olivier Scherrer, Olivier Wietrich <pode.fr@gmail.com - olivier.wietrich@gmail.com>
  * MIT Licensed
  */
 
@@ -95,6 +95,29 @@ define(["Observable", "Tools"],
 				_storeObservable.notify(action, name, _data[name]);
 				_valueObservable.notify(name, _data[name], action);
 				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/*
+		 * Compute store properties. 
+		 * @param {String} name of the computed property.
+		 * @param {Function} the computed callback.
+		 * @param {Array} array of properties dependencies
+		 */
+		this.compute = function(name, callback, dependencies){
+			if(typeof callback == "function"){
+				if(dependencies instanceof Array){
+					//the dependencies order is not important
+					for(var l = dependencies.length; l--;){
+						//return watch handler
+						this.watchValue(dependencies[l], function(){
+							this.set(name, callback.call(this));
+						},this);
+					}
+				}
+				return this.set(name, callback.call(this));
 			} else {
 				return false;
 			}

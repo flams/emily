@@ -593,4 +593,89 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 		});
 
 	});
+
+	describe("Computed properties", function(){
+		var store = null;
+		beforeEach(function(){
+			store = new Store({
+				firstname : "olivier",
+				lastname : "wietrich"
+			});
+		});
+
+		it("should have a compute method", function(){
+			expect(store.compute).toBeInstanceOf(Function);
+		});
+
+		it("should set a property with a function", function(){
+			expect(store.compute()).toEqual(false);
+			expect(store.compute("name")).toEqual(false);
+			expect(store.compute("name", function(){})).toEqual(true);
+		});
+
+		it("should set a property as the result of the compute function", function(){
+			store.compute("name", function(){
+				return "olivier";
+			});
+
+			expect(store.get("name")).toEqual("olivier");
+
+			store.compute("age", function(){
+				//return nothing
+			});
+
+			expect(store.get("age")).toBeUndefined();
+		});
+
+		it("should execute by default the compute function with the store context", function(){
+			var spy = {
+				callback : function(){
+					return this.get("firstname") + " " + this.get("lastname");
+				}
+			};
+			spyOn(spy, "callback").andCallThrough();
+
+			store.compute("name", spy.callback);
+			expect(spy.callback.wasCalled).toEqual(true);
+			expect(store.get("name")).toEqual(store.get("firstname") + " " + store.get("lastname"));
+		});
+
+		//don't forget to test dependecies as array
+		it("should update property whenever any of these dependencies change", function(){
+			var name = store.get("firstname") + " " + store.get("lastname"),
+				spy = jasmine.createSpy("observer");
+
+			store.watchValue("name", spy);
+
+			/* set compute property without dependencies */
+			store.compute("name", function(){
+				return this.get("firstname") + " " + this.get("lastname");
+			});
+			expect(spy.wasCalled).toEqual(true);
+
+			//the compute property is called  when declared
+			expect(spy).toHaveBeenCalled();
+			spy.reset();
+			store.set("firstname", "amy");
+			expect(store.get("name")).toEqual(name);
+			expect(spy).not.toHaveBeenCalled();
+
+			/* set compute property with dependencies */
+			store.compute("name", function(){
+				return this.get("firstname") + " " + this.get("lastname");
+			}, ["firstname", "lastname"]);
+
+			//the compute property is set every time one of its dependencies change.
+			store.set("firstname", "john");
+			expect(store.get("name")).toEqual("john" + " " + store.get("lastname"));
+			expect(spy).toHaveBeenCalled();
+			spy.reset();
+
+			store.set("lastname", "doe");
+			expect(store.get("name")).toEqual("john doe");
+			expect(spy).toHaveBeenCalled();
+
+		});
+
+	});
 });
