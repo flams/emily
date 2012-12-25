@@ -56,7 +56,10 @@ tests-node: clean-temp temp.js
 		$(SPECS)
 
 tests-promiseA:
-	node tools/promise-test/runTest.js
+	node tools/promise-test/runTestA.js
+
+tests-promiseAplus:
+	node tools/promise-test/runTestAplus.js
 
 build: clean-build Emily.js
 	cp LICENSE build/
