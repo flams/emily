@@ -208,43 +208,59 @@ function Promise(Observable, StateMachine) {
 			return _states;
 		};
 
+		/**
+		 * Get the Promise's state
+		 * Can be Pending, Fulfilled, Rejected
+		 * @returns {String}
+		 */
 		this.getState = function getState() {
 			return _stateMachine.getCurrent();
 		};
 
+		/**
+		 * Get the Promise's fulfillment value
+		 * @returns {*}
+		 */
 		this.getValue = function getValue() {
 			return _value;
 		};
 
+		/**
+		 * Get the Promise's rejection reason
+		 * @returns {*}
+		 */
 		this.getReason = function getReason() {
 			return _reason;
 		};
 
+		/**
+		 * Watch the promise's state change
+		 */
+		this.watch = _observable.watch;
+
+		/**
+		 * Unatch the promise's state change
+		 */
+		this.unwatch = _observable.unwatch;
+
+		/**
+		 * Synchronize a promise with another
+		 * @returns {Boolean} true if promises are synched
+		 * To synchronize a promise with another it must have the
+		 * following API
+		 * watch/getState
+		 */
 		this.syncPromise = function syncPromise(syncWith) {
-			if (syncWith instanceof PromiseConstructor) {
+			var onFulfilled = function (value) {
+					this.fulfill(value);
+				},
+				onRejected = function (reason) {
+					this.reject(reason);
+				};
 
-				var stateMachine = syncWith.getStateMachine(),
-					current = syncWith.getState();
-
-				if (current == "Fulfilled") {
-					this.fulfill(syncWith.getValue());
-				}
-
-				if (current == "Rejected") {
-					this.reject(syncWith.getReason());
-				}
-
-				if (current == "Pending") {
-					_observable.on("fulfill", function (value) {
-						this.fulfill(value);
-					}, this);
-
-					var rejected = stateMachine.add("Rejected");
-					rejected.add("entry", function () {
-						this.reject(syncWith.getReason());
-					}, this);
-				}
-
+			if (syncWith instanceof Object && syncWith.then) {
+				syncWith.then(onFulfilled.bind(this),
+						onRejected.bind(this));
 				return true;
 			} else {
 				return false;
