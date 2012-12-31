@@ -235,9 +235,8 @@ function Promise(Observable, StateMachine) {
 				}
 
 				if (current == "Pending") {
-					var fulfilled = stateMachine.add("Fulfilled");
-					fulfilled.add("entry", function () {
-						this.fulfill(syncWith.getValue());
+					_observable.on("fulfill", function (value) {
+						this.fulfill(value);
 					}, this);
 
 					var rejected = stateMachine.add("Rejected");
