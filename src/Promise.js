@@ -64,14 +64,18 @@ function Promise(Observable, StateMachine) {
 			"Fulfilled": [
 				// We directly call the resolver with the value
 				["toFulfill", function (resolver) {
-					resolver(_value);
+					setTimeout(function () {
+						resolver(_value);
+					}, 0);
 				}]],
 
 			// When rejected
 			"Rejected": [
 				// We directly call the resolver with the reason
 				["toReject", function (resolver) {
-					resolver(_reason);
+					setTimeout(function () {
+						resolver(_reason);
+					}, 0);
 				}]]
 		},
 
@@ -168,7 +172,7 @@ function Promise(Observable, StateMachine) {
 
 				try {
 					returnedPromise = func.call(scope, value);
-					if (!promise.syncPromise(returnedPromise)) {
+					if (!promise.sync(returnedPromise)) {
 						promise.fulfill(returnedPromise);
 					}
 				} catch (err) {
@@ -177,6 +181,29 @@ function Promise(Observable, StateMachine) {
 
 			}
         };
+
+        /**
+		 * Synchronize a promise with another
+		 * @returns {Boolean} true if promises are synched
+		 */
+		this.sync = function sync(syncWith) {
+			if (syncWith instanceof Object && syncWith.then) {
+
+				var onFulfilled = function onFulfilled(value) {
+					this.fulfill(value);
+				},
+				onRejected = function onRejected(reason) {
+					this.reject(reason);
+				};
+
+				syncWith.then(onFulfilled.bind(this),
+						onRejected.bind(this));
+
+				return true;
+			} else {
+				return false;
+			}
+		};
 
 		/**
 		 * Get the promise's observable
@@ -206,27 +233,6 @@ function Promise(Observable, StateMachine) {
 		 */
 		this.getStates = function getStates() {
 			return _states;
-		};
-
-		/**
-		 * Synchronize a promise with another
-		 * @returns {Boolean} true if promises are synched
-		 */
-		this.syncPromise = function syncPromise(syncWith) {
-			var onFulfilled = function (value) {
-					this.fulfill(value);
-				},
-				onRejected = function (reason) {
-					this.reject(reason);
-				};
-
-			if (syncWith instanceof Object && syncWith.then) {
-				syncWith.then(onFulfilled.bind(this),
-						onRejected.bind(this));
-				return true;
-			} else {
-				return false;
-			}
 		};
 
 	}
