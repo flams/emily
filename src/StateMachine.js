@@ -68,7 +68,7 @@ function StateMachine(Tools) {
 			if (!_states[name]) {
 				return _states[name] = new Transition();
 			} else {
-				return false;
+				return _states[name];
 			}
 
 		};

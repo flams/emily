@@ -33,17 +33,17 @@ function Promise(Observable, StateMachine) {
 
 		_states = {
 
-			// The promise is unresolved
-			"Unresolved": [
+			// The promise is pending
+			"Pending": [
 
-				// It can only be fulfilled when unresolved
+				// It can only be fulfilled when pending
 				["fulfill", function (value) {
 					_value = value;
 					_observable.notify("fulfill", value);
 				// Then it transits to the fulfilled state
 				}, "Fulfilled"],
 
-				// it can only be rejected when unresolved
+				// it can only be rejected when pending
 				["reject", function (reason) {
 					_reason = reason;
 					_observable.notify("reject", reason);
@@ -79,7 +79,7 @@ function Promise(Observable, StateMachine) {
 		 * The stateMachine
 		 * @private
 		 */
-		_stateMachine = new StateMachine("Unresolved", _states);
+		_stateMachine = new StateMachine("Pending", _states);
 
 		/**
 		 * Fulfilled the promise.
@@ -162,13 +162,19 @@ function Promise(Observable, StateMachine) {
          * @private
          * @returns {Function} a closure
 		 */
-        this.makeResolver = function (promise, func, scope) {
+        this.makeResolver = function makeResolver(promise, func, scope) {
 			return function resolver(value) {
+				var returnedPromise;
+
 				try {
-					promise.fulfill(func.call(scope, value));
+					returnedPromise = func.call(scope, value);
+					if (!promise.syncPromise(returnedPromise)) {
+						promise.fulfill(returnedPromise);
+					}
 				} catch (err) {
 					promise.reject(err);
 				}
+
 			}
         };
 
@@ -202,12 +208,48 @@ function Promise(Observable, StateMachine) {
 			return _states;
 		};
 
+		this.getState = function getState() {
+			return _stateMachine.getCurrent();
+		};
+
 		this.getValue = function getValue() {
 			return _value;
 		};
 
 		this.getReason = function getReason() {
 			return _reason;
+		};
+
+		this.syncPromise = function syncPromise(syncWith) {
+			if (syncWith instanceof PromiseConstructor) {
+
+				var stateMachine = syncWith.getStateMachine(),
+					current = syncWith.getState();
+
+				if (current == "Fulfilled") {
+					this.fulfill(syncWith.getValue());
+				}
+
+				if (current == "Rejected") {
+					this.reject(syncWith.getReason());
+				}
+
+				if (current == "Pending") {
+					var fulfilled = stateMachine.add("Fulfilled");
+					fulfilled.add("entry", function () {
+						this.fulfill(syncWith.getValue());
+					}, this);
+
+					var rejected = stateMachine.add("Rejected");
+					rejected.add("entry", function () {
+						this.reject(syncWith.getReason());
+					}, this);
+				}
+
+				return true;
+			} else {
+				return false;
+			}
 		};
 
 	}

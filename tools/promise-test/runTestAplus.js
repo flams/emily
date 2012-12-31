@@ -4,8 +4,7 @@ var promiseTests = require("promises-aplus-tests"),
 
 emilyAdapter.getAdapter(function (adapter) {
 
-
-	 promiseTests(adapter, ["promises-a"], function () {
+	 promiseTests(adapter, function () {
 		// All done, output in the CLI.
 	 });
 
