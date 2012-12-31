@@ -209,46 +209,8 @@ function Promise(Observable, StateMachine) {
 		};
 
 		/**
-		 * Get the Promise's state
-		 * Can be Pending, Fulfilled, Rejected
-		 * @returns {String}
-		 */
-		this.getState = function getState() {
-			return _stateMachine.getCurrent();
-		};
-
-		/**
-		 * Get the Promise's fulfillment value
-		 * @returns {*}
-		 */
-		this.getValue = function getValue() {
-			return _value;
-		};
-
-		/**
-		 * Get the Promise's rejection reason
-		 * @returns {*}
-		 */
-		this.getReason = function getReason() {
-			return _reason;
-		};
-
-		/**
-		 * Watch the promise's state change
-		 */
-		this.watch = _observable.watch;
-
-		/**
-		 * Unatch the promise's state change
-		 */
-		this.unwatch = _observable.unwatch;
-
-		/**
 		 * Synchronize a promise with another
 		 * @returns {Boolean} true if promises are synched
-		 * To synchronize a promise with another it must have the
-		 * following API
-		 * watch/getState
 		 */
 		this.syncPromise = function syncPromise(syncWith) {
 			var onFulfilled = function (value) {
