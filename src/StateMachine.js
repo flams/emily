@@ -1,6 +1,6 @@
 /**
  * Emily
- * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
 
@@ -68,7 +68,7 @@ function StateMachine(Tools) {
 			if (!_states[name]) {
 				return _states[name] = new Transition();
 			} else {
-				return false;
+				return _states[name];
 			}
 
 		};
