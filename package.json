@@ -14,8 +14,7 @@
  ],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
  "dependencies": {
-  "requirejs": ">=1.0.7",
-  "cookie": ">=0.0.4"
+  "requirejs": ">=1.0.7"
   },
  "keywords": ["library", "AMD/commonJS", "Promise", "Observable", "StateMachine", "Store", "scalable webapp"],
  "repository": {
