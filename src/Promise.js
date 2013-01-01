@@ -31,39 +31,43 @@ function Promise(Observable, StateMachine) {
 		 */
 		_observable = new Observable,
 
+		/**
+		 * The state machine States & transitions
+		 * @private
+		 */
 		_states = {
 
 			// The promise is pending
 			"Pending": [
 
 				// It can only be fulfilled when pending
-				["fulfill", function (value) {
+				["fulfill", function onFulfill(value) {
 					_value = value;
 					_observable.notify("fulfill", value);
 				// Then it transits to the fulfilled state
 				}, "Fulfilled"],
 
 				// it can only be rejected when pending
-				["reject", function (reason) {
+				["reject", function onReject(reason) {
 					_reason = reason;
 					_observable.notify("reject", reason);
 				// Then it transits to the rejected state
 				}, "Rejected"],
 
 				// When pending, add the resolver to an observable
-				["toFulfill", function (resolver) {
+				["toFulfill", function toFulfill(resolver) {
 					_observable.watch("fulfill", resolver);
 				}],
 
 				// When pending, add the resolver to an observable
-				["toReject", function (resolver) {
+				["toReject", function toReject(resolver) {
 					_observable.watch("reject", resolver);
 				}]],
 
 			// When fulfilled,
 			"Fulfilled": [
 				// We directly call the resolver with the value
-				["toFulfill", function (resolver) {
+				["toFulfill", function toFulfill(resolver) {
 					setTimeout(function () {
 						resolver(_value);
 					}, 0);
@@ -72,7 +76,7 @@ function Promise(Observable, StateMachine) {
 			// When rejected
 			"Rejected": [
 				// We directly call the resolver with the reason
-				["toReject", function (resolver) {
+				["toReject", function toReject(resolver) {
 					setTimeout(function () {
 						resolver(_reason);
 					}, 0);
@@ -161,6 +165,29 @@ function Promise(Observable, StateMachine) {
         };
 
         /**
+		 * Synchronize this promise with a thenable
+		 * @returns {Boolean} false if the given sync is not a thenable
+		 */
+		this.sync = function sync(syncWith) {
+			if (syncWith instanceof Object && syncWith.then) {
+
+				var onFulfilled = function onFulfilled(value) {
+					this.fulfill(value);
+				},
+				onRejected = function onRejected(reason) {
+					this.reject(reason);
+				};
+
+				syncWith.then(onFulfilled.bind(this),
+						onRejected.bind(this));
+
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+        /**
          * Make a resolver
          * for debugging only
          * @private
@@ -183,27 +210,22 @@ function Promise(Observable, StateMachine) {
         };
 
         /**
-		 * Synchronize a promise with another
-		 * @returns {Boolean} true if promises are synched
-		 */
-		this.sync = function sync(syncWith) {
-			if (syncWith instanceof Object && syncWith.then) {
+         * Returns the reason
+         * for debugging only
+         * @private
+         */
+        this.getReason = function getReason() {
+        	return _reason;
+        };
 
-				var onFulfilled = function onFulfilled(value) {
-					this.fulfill(value);
-				},
-				onRejected = function onRejected(reason) {
-					this.reject(reason);
-				};
-
-				syncWith.then(onFulfilled.bind(this),
-						onRejected.bind(this));
-
-				return true;
-			} else {
-				return false;
-			}
-		};
+        /**
+         * Returns the reason
+         * for debugging only
+         * @private
+         */
+        this.getValue = function getValue() {
+        	return _value;
+        };
 
 		/**
 		 * Get the promise's observable

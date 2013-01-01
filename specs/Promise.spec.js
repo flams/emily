@@ -25,7 +25,8 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 		var promise = null,
 			newPromise = {
 				fulfill: jasmine.createSpy(),
-				reject: jasmine.createSpy()
+				reject: jasmine.createSpy(),
+				sync: jasmine.createSpy().andReturn(false)
 			},
 			returnFunc = jasmine.createSpy().andReturn("return"),
 			throwFunc = jasmine.createSpy().andThrow("error"),
@@ -85,18 +86,18 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			observable = promise.getObservable();
 		});
 
-		it("should be init in Unresolved state", function () {
-			expect(promise.getStateMachine().getCurrent()).toEqual("Unresolved");
+		it("should be init in Pending state", function () {
+			expect(promise.getStateMachine().getCurrent()).toEqual("Pending");
 		});
 
-		describe("PromiseStateMachine Unresolved state", function () {
+		describe("PromiseStateMachine Pending state", function () {
 
-			it("should have an Unresolved state", function () {
-				expect(states.Unresolved).toBeInstanceOf(Array);
+			it("should have a Pending state", function () {
+				expect(states.Pending).toBeInstanceOf(Array);
 			});
 
 			it("should have a fulfill transition", function () {
-				var fulfill = states.Unresolved[0],
+				var fulfill = states.Pending[0],
 					value = {},
 					callback;
 
@@ -120,7 +121,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 
 			it("should have a reject transition", function () {
-				var reject = states.Unresolved[1],
+				var reject = states.Pending[1],
 					reason = {},
 					callback;
 
@@ -143,7 +144,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			});
 
 			it("should have a toFulfill action", function () {
-				var toFulfill = states.Unresolved[2],
+				var toFulfill = states.Pending[2],
 					resolver = {},
 					callback;
 
@@ -162,7 +163,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			});
 
 			it("should have a toReject action", function () {
-				var toReject = states.Unresolved[3],
+				var toReject = states.Pending[3],
 					resolver = {},
 					callback;
 
@@ -184,13 +185,15 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 		describe("PromiseStateMachine Fulfilled state", function () {
 
-			it("should have an Fulfilled state", function () {
+			it("should have a Fulfilled state", function () {
 				expect(states.Fulfilled).toBeInstanceOf(Array);
 			});
 
-			it("should have a toFulfill action", function () {
+			it("should have a toFulfill action", function (done) {
 				var toFulfill = states.Fulfilled[0],
-					resolver = jasmine.createSpy();
+					resolver = jasmine.createSpy().andCallFake(function () {
+						done();
+					});
 
 				expect(toFulfill).toBeInstanceOf(Array);
 				expect(toFulfill[0]).toEqual("toFulfill");
@@ -199,22 +202,21 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 				callback(resolver);
 
-				expect(resolver.wasCalled).toEqual(true);
-				expect(resolver.mostRecentCall.args[0]).toBe(promise.getValue());
-
 			});
 
 		});
 
 		describe("PromiseStateMachine Rejected state", function () {
 
-			it("should have an Rejected state", function () {
+			it("should have a Rejected state", function () {
 				expect(states.Rejected).toBeInstanceOf(Array);
 			});
 
-			it("should have a toReject action", function () {
+			it("should have a toReject action", function (done) {
 				var toReject = states.Rejected[0],
-					resolver = jasmine.createSpy();
+					resolver = jasmine.createSpy().andCallFake(function () {
+						done();
+					});
 
 				expect(toReject).toBeInstanceOf(Array);
 				expect(toReject[0]).toEqual("toReject");
@@ -222,9 +224,6 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 				callback = toReject[1];
 
 				callback(resolver);
-
-				expect(resolver.wasCalled).toEqual(true);
-				expect(resolver.mostRecentCall.args[0]).toBe(promise.getReason());
 
 			});
 
@@ -353,6 +352,10 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			expect(newPromise.reject.mostRecentCall.args[0]).toBe(newPromise.getReason());
 		});
 
+
+	});
+
+	describe("PromiseSync", function () {
 
 	});
 
