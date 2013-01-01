@@ -357,6 +357,41 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 	describe("PromiseSync", function () {
 
+		var thenable = null,
+			promise = null;
+
+		beforeEach(function () {
+			thenable = {
+				then: jasmine.createSpy()
+			};
+			promise = new Promise();
+		});
+
+		it("should only synchronise with thenables", function () {
+			expect(promise.sync("fake")).toEqual(false);
+		});
+
+		it("should synchronize the promise with a thenable", function () {
+			var onFulfilled,
+				onRejected;
+
+			spyOn(promise, "fulfill");
+			spyOn(promise, "reject");
+
+			expect(promise.sync(thenable)).toEqual(true);
+
+			expect(thenable.then.wasCalled).toEqual(true);
+			onFulfilled = thenable.then.mostRecentCall.args[0];
+			onRejected = thenable.then.mostRecentCall.args[1];
+
+			onFulfilled("value");
+			expect(promise.fulfill.mostRecentCall.args[0]).toEqual("value");
+
+			onRejected("reason");
+			expect(promise.reject.mostRecentCall.args[0]).toEqual("reason");
+
+		});
+
 	});
 
 
