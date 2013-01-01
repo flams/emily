@@ -2,7 +2,6 @@
 .settings/
 .project
 */.DS_Store
-build
 material/
 .DS_Store
 emily.sublime-project
