@@ -4,11 +4,7 @@
  * MIT Licensed
  */
 
-// HTTP is going to be used for the built-in CouchDB requests handler
-var http = require("http"),
-	qs = require("querystring"),
-	requirejs = require("requirejs"),
-	cookie = require("cookie");
+var equirejs = require("requirejs");
 
 // Load Emily
 requirejs(__dirname + "/build/Emily.js");
