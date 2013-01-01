@@ -85,7 +85,7 @@ endif
 
 	cp -rf docs/latest/ docs/$(VERSION)/
 
-	git add docs release
+	git add build docs release
 
 	git commit -am "released version $(VERSION)"
 
@@ -109,7 +109,7 @@ Emily.js: temp.js
 
 clean: clean-build clean-docs
 
-gh-pages: clean
+gh-pages:
 ifndef VERSION
 	@echo "You must give a VERSION number to make gh-pages"
 	@exit 2
@@ -117,8 +117,8 @@ endif
 
 	git checkout gh-pages
 
-	git checkout master Makefile docs src specs tools lib release
-	git add docs src specs tools lib release
+	git checkout master build Makefile docs src specs tools lib release
+	git add build docs src specs tools lib release
 
 	sed -i .bak 's#version">.*<#version">'${VERSION}'<#g' index.html
 	sed -i .bak 's#<a href="release/Emily.*\.tgz">#<a href="release/Emily-'${VERSION}'.tgz">#' index.html
