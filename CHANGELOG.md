@@ -1,4 +1,4 @@
-1.3.1 - 31 DEC 2012
+1.3.1 - 1 JAN 2013
 -------------------
 
 * Promise has been updated to pass the promise/A+ specs according to
