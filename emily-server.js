@@ -28,59 +28,7 @@ requirejs(["Store"], function (Store) {
 	});
 
 	// There's a store to save each handler
-	exports.handlers = new Store({
-
-		// CouchDB is built-in
-		"CouchDB" : function (data, onEnd, onData) {
-
-			var cfg = exports.config.get("CouchDB"),
-				req;
-
-			data.hostname = cfg.hostname;
-			data.port = cfg.port;
-			data.path += "?" + qs.stringify(data.query);
-
-			var exec = function () {
-				req = http.request(data, function (res) {
-
-					var body = "";
-
-					res.on("data", function (chunk) {
-						onData && onData(chunk);
-						body += chunk;
-					});
-
-					res.on("end", function () {
-						onEnd(body);
-					});
-				});
-
-				req.end(data.data, "utf8");
-			};
-
-			if (data.handshake) {
-
-				var cookieJSON = cookie.parse(data.handshake.headers.cookie);
-
-				// I don't like the split but is there a better solution?
-				cfg.sessionStore.get(cookieJSON["suggestions.sid"].split("s:")[1].split(".")[0], function (err, session) {
-					if (err) {
-						throw new Error(err);
-					} else {
-						data.auth = session.auth;
-						exec();
-					}
-				});
-			} else {
-				exec();
-			}
-
-			return function () {
-				req.abort && req.abort();
-			};
-		}
-
-	});
+	exports.handlers = new Store({});
 
 });
 
