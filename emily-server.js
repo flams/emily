@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-var equirejs = require("requirejs");
+var requirejs = require("requirejs");
 
 // Load Emily
 requirejs(__dirname + "/build/Emily.js");
