@@ -13,12 +13,9 @@ requirejs(__dirname + "/build/Emily.js");
 // The Store's observers can be useful. They'll actually be used by Olives
 requirejs(["Store"], function (Store) {
 
-	// There's a store to save the configuration
-	exports.config = new Store({});
-
 	// There's a store to save each handler
 	exports.handlers = new Store({});
 
 });
 
-module.exports.requirejs = requirejs;
+exports.requirejs = requirejs;
