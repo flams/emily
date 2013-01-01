@@ -18,14 +18,7 @@ requirejs(__dirname + "/build/Emily.js");
 requirejs(["Store"], function (Store) {
 
 	// There's a store to save the configuration
-	exports.config = new Store({
-		// CouchDB is built-in
-		// Copy this to CouchDB2, 3... if you have more than one of them
-		"CouchDB": {
-			hostname: "127.0.0.1",
-			port: 5984
-		}
-	});
+	exports.config = new Store({});
 
 	// There's a store to save each handler
 	exports.handlers = new Store({});
