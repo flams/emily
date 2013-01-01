@@ -2,6 +2,10 @@
 .settings/
 .project
 */.DS_Store
-build
 material/
 .DS_Store
+emily.sublime-project
+emily.sublime-workspace
+couchdb.stderr
+couchdb.stdout
+temp.js

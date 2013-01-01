@@ -1,38 +1,1317 @@
-/*
- Emily 1.1.6 http://flams.github.com/emily
+/**
+ * @license Emily <VERSION> http://flams.github.com/emily
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ */
 
- The MIT License (MIT)
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
 
- Copyright (c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+define('Tools',[],
+/**
+ * @class
+ * Tools is a collection of tools
+ */
+function Tools(){
+
+	return {
+	    /**
+	     * For applications that don't run in a browser, window is not the global object.
+	     * This function returns the global object wherever the application runs.
+	     * @returns {Object} the global object
+	     */
+		getGlobal: function getGlobal() {
+	    	var func = function() {
+	    		return this;
+	    	};
+	    	return func.call(null);
+	    },
+
+		/**
+		 * Mixes an object into another
+		 * @param {Object} destination object to mix values into
+		 * @param {Object} source object to get values from
+		 * @param {Boolean} optional, set to true to prevent overriding
+		 */
+	    mixin: function mixin(source, destination, dontOverride) {
+			this.loop(source, function (value, idx) {
+				if (!destination[idx] || !dontOverride) {
+					destination[idx] = source[idx];
+				}
+			});
+			return destination;
+		},
+
+		/**
+		 * Count the number of properties in an object
+		 * It doesn't look up in the prototype chain
+		 * @param {Object} object the object to count
+		 * @returns {Number}
+		 */
+		count: function count(object) {
+			var nbItems = 0;
+			this.loop(object, function () {
+				nbItems++;
+			});
+
+			return nbItems;
+		},
+
+		/**
+		 * Compares the properties of two objects and returns true if they're the same
+		 * It's doesn't do it recursively
+		 * @param {Object} first object
+		 * @param {Object} second object
+		 * @returns {Boolean} true if the two objets have the same properties
+		 */
+		compareObjects: function compareObjects(object1, object2) {
+			var getOwnProperties = function (object) {
+				return Object.getOwnPropertyNames(object).sort().join("");
+			};
+			return getOwnProperties(object1) == getOwnProperties(object2);
+		},
+
+		/**
+		 * Compares two numbers and tells if the first one is bigger (1), smaller (-1) or equal (0)
+		 * @param {Number} number1 the first number
+		 * @param {Number} number2 the second number
+		 * @returns 1 if number1>number2, -1 if number2>number1, 0 if equal
+		 */
+		compareNumbers: function compareNumbers(number1, number2) {
+			  if (number1>number2) {
+			    return 1;
+			  } else if (number1<number2) {
+			    return -1;
+			  } else {
+				 return 0;
+			  }
+		},
+
+		/**
+		 * Transform array-like objects to array, such as nodeLists or arguments
+		 * @param {Array-like object}
+		 * @returns {Array}
+		 */
+		toArray: function toArray(array) {
+			return Array.prototype.slice.call(array);
+		},
+
+		/**
+		 * Small adapter for looping over objects and arrays
+		 * Warning: it's not meant to be used with nodeList
+		 * To use with nodeList, convert to array first
+		 * @param {Array/Object} iterated the array or object to loop through
+		 * @param {Function} callback the function to execute for each iteration
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns {Boolean} true if executed
+		 */
+		loop: function loop(iterated, callback, scope) {
+			var i,
+				length;
+
+			if (iterated instanceof Object && callback instanceof Function) {
+				if (iterated instanceof Array) {
+					for (i=0; i<iterated.length; i++) {
+						callback.call(scope, iterated[i], i, iterated);
+					}
+				} else {
+					for (i in iterated) {
+						if (iterated.hasOwnProperty(i)) {
+							callback.call(scope, iterated[i], i, iterated);
+						}
+					}
+				}
+				return true;
+			} else {
+				return false;
+			}
+		},
+
+		/**
+		 * Make a diff between two objects
+		 * @param {Array/Object} before is the object as it was before
+		 * @param {Array/Object} after is what it is now
+		 * @example:
+		 * 	With objects:
+		 *
+		 * 	before = {a:1, b:2, c:3, d:4, f:6}
+		 * 	after = {a:1, b:20, d: 4, e: 5}
+		 * 	will return :
+		 * 	{
+		 *  	unchanged: ["a", "d"],
+		 *  	updated: ["b"],
+		 *  	deleted: ["f"],
+		 *  	added: ["e"]
+		 * 	}
+		 *
+		 * It also works with Arrays:
+		 *
+		 * 	before = [10, 20, 30]
+		 * 	after = [15, 20]
+		 * 	will return :
+		 * 	{
+		 *  	unchanged: [1],
+		 *  	updated: [0],
+		 *  	deleted: [2],
+		 *  	added: []
+		 * 	}
+		 *
+		 * @returns object
+		 */
+		objectsDiffs : function objectsDiffs(before, after) {
+			if (before instanceof Object && after instanceof Object) {
+				var unchanged = [],
+					updated = [],
+					deleted = [],
+					added = [];
+
+				 // Look through the after object
+				 this.loop(after, function (value, idx) {
+
+					 // To get the added
+					 if (typeof before[idx] == "undefined") {
+						 added.push(idx);
+
+					 // The updated
+					 } else if (value !== before[idx]) {
+						 updated.push(idx);
+
+					 // And the unchanged
+					 } else if (value === before[idx]) {
+						 unchanged.push(idx);
+					 }
+
+				 });
+
+				 // Loop through the before object
+				 this.loop(before, function (value, idx) {
+
+					// To get the deleted
+					if (typeof after[idx] == "undefined") {
+						deleted.push(idx);
+					}
+				 });
+
+				return {
+					updated: updated,
+					unchanged: unchanged,
+					added: added,
+					deleted: deleted
+				};
+
+			} else {
+				return false;
+			}
+		},
+
+		/**
+		 * Transforms Arrays and Objects into valid JSON
+		 * @param {Object/Array} object the object to JSONify
+		 * @returns the JSONified object or false if failed
+		 */
+		jsonify: function jsonify(object) {
+			if (object instanceof Object) {
+				return JSON.parse(JSON.stringify(object));
+			} else {
+				return false;
+			}
+		},
+
+		/**
+		 * Clone an Array or an Object
+		 * @param {Array/Object} object the object to clone
+		 * @returns {Array/Object} the cloned object
+		 */
+		clone: function clone(object) {
+			if (object instanceof Array) {
+				return object.slice(0);
+			} else if (typeof object == "object" && object !== null && !(object instanceof RegExp)) {
+				return this.mixin(object, {});
+			} else {
+				return false;
+			}
+		},
+
+
+		/**
+		 *
+		 *
+		 *
+		 *
+		 * Refactoring needed for the following
+		 *
+		 *
+		 *
+		 *
+		 *
+		 */
+
+		/**
+		 * Get the property of an object nested in one or more objects
+		 * given an object such as a.b.c.d = 5, getNestedProperty(a, "b.c.d") will return 5.
+		 * @param {Object} object the object to get the property from
+		 * @param {String} property the path to the property as a string
+		 * @returns the object or the the property value if found
+		 */
+		getNestedProperty: function getNestedProperty(object, property) {
+			if (object && object instanceof Object) {
+				if (typeof property == "string" && property != "") {
+					var split = property.split(".");
+					return split.reduce(function (obj, prop) {
+						return obj && obj[prop];
+					}, object);
+				} else if (typeof property == "number") {
+					return object[property];
+				} else {
+					return object;
+				}
+			} else {
+				return object;
+			}
+		},
+
+		/**
+		 * Set the property of an object nested in one or more objects
+		 * If the property doesn't exist, it gets created.
+		 * @param {Object} object
+		 * @param {String} property
+		 * @param value the value to set
+		 * @returns object if no assignment was made or the value if the assignment was made
+		 */
+		setNestedProperty: function setNestedProperty(object, property, value) {
+			if (object && object instanceof Object) {
+				if (typeof property == "string" && property != "") {
+					var split = property.split(".");
+					return split.reduce(function (obj, prop, idx) {
+						obj[prop] = obj[prop] || {};
+						if (split.length == (idx + 1)) {
+							obj[prop] = value;
+						}
+						return obj[prop];
+					}, object);
+				} else if (typeof property == "number") {
+					object[property] = value;
+					return object[property];
+				} else {
+					return object;
+				}
+			} else {
+				return object;
+			}
+		}
+
+
+
+	};
+
+
+});
+
+
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+define('Observable',["Tools"],
+/**
+* @class
+* Observable is an implementation of the Observer design pattern,
+* which is also known as publish/subscribe.
+*
+* This service creates an Observable on which you can add subscribers.
 */
-define("CouchDBStore",["Store","StateMachine","Tools","Promise"],function(a,d,h,c){function e(){var f=null,b={},g=new c,a={getView:function(){b.query=b.query||{};b.query.update_seq=true;f.request("CouchDB",{method:"GET",path:"/"+b.database+"/_design/"+b.design+"/"+b.view,query:b.query},function(g){var a=JSON.parse(g);if(a.rows)this.reset(a.rows),typeof a.total_rows=="undefined"&&this.setReducedViewInfo(true),e.event("subscribeToViewChanges",a.update_seq);else throw Error("CouchDBStore ["+b.database+
-", "+b.design+", "+b.view+"].sync() failed: "+g);},this)},getDocument:function(){f.request("CouchDB",{method:"GET",path:"/"+b.database+"/"+b.document,query:b.query},function(b){b=JSON.parse(b);b._id?(this.reset(b),e.event("subscribeToDocumentChanges")):g.reject(this)},this)},getBulkDocuments:function(){var a={path:"/"+b.database+"/_all_docs",query:b.query},g;b.keys instanceof Array?(a.method="POST",a.data=JSON.stringify({keys:b.keys}),a.headers={"Content-Type":"application/json"},g=a.data):(a.method=
-"GET",g=JSON.stringify(b.query));b.query.include_docs=true;b.query.update_seq=true;f.request("CouchDB",a,function(a){var c=JSON.parse(a);if(c.rows)this.reset(c.rows),e.event("subscribeToBulkChanges",c.update_seq);else throw Error('CouchDBStore.sync("'+b.database+'", '+g+") failed: "+a);},this)},createDocument:function(a){f.request("CouchDB",{method:"PUT",path:"/"+b.database+"/"+b.document,headers:{"Content-Type":"application/json"},data:this.toJSON()},function(b){b=JSON.parse(b);b.ok?(a.resolve(b),
-e.event("subscribeToDocumentChanges")):a.reject(b)})},subscribeToViewChanges:function(a){h.mixin({feed:"continuous",heartbeat:2E4,since:a},b.query);this.stopListening=f.listen("CouchDB",{path:"/"+b.database+"/_changes",query:b.query},function(a){if(a=="\n")return false;var a=JSON.parse(a),g;g=b.reducedView?"updateReduced":a.deleted?"delete":a.changes[0].rev.search("1-")==0?"add":"change";e.event(g,a.id)},this)},subscribeToDocumentChanges:function(){this.stopListening=f.listen("CouchDB",{path:"/"+
-b.database+"/_changes",query:{feed:"continuous",heartbeat:2E4}},function(a){if(a=="\n")return false;a=JSON.parse(a);a.id==b.document&&a.changes.pop().rev!=this.get("_rev")&&(a.deleted?e.event("deleteDoc"):e.event("updateDoc"))},this)},subscribeToBulkChanges:function(a){h.mixin({feed:"continuous",heartbeat:2E4,since:a,include_docs:true},b.query);this.stopListening=f.listen("CouchDB",{path:"/"+b.database+"/_changes",query:b.query},function(b){if(b=="\n")return false;var b=JSON.parse(b),a;a=b.changes[0].rev.search("1-")==
-0?"bulkAdd":b.deleted?"delete":"bulkChange";e.event(a,b.id,b.doc)},this)},updateDocInStore:function(a){f.request("CouchDB",{method:"GET",path:"/"+b.database+"/_design/"+b.design+"/"+b.view,query:b.query},function(b){b=JSON.parse(b);b.rows.length==this.getNbItems()?b.rows.some(function(b,g){b.id==a&&this.set(g,b)},this):this.actions.evenDocsInStore.call(this,b.rows,a)},this)},evenDocsInStore:function(b,a){var g=this.getNbItems();b.length<g?this.loop(function(b,g){b.id==a&&this.del(g)},this):b.length>
-g&&b.some(function(b,g){if(b.id==a)return this.alter("splice",g,0,b)},this)},addBulkDocInStore:function(a){if(b.query.startkey||b.query.endkey)b.query.include_docs=true,b.query.update_seq=true,f.request("CouchDB",{method:"GET",path:"/"+b.database+"/_all_docs",query:b.query},function(b){JSON.parse(b).rows.forEach(function(b,g){b.id==a&&this.alter("splice",g,0,b.doc)},this)},this);else return false},updateBulkDocInStore:function(b,a){this.loop(function(g,c){g.id==b&&this.set(c,a)},this)},removeDocInStore:function(b){this.loop(function(a,
-g){a.id==b&&this.del(g)},this)},addDocInStore:function(a){f.request("CouchDB",{method:"GET",path:"/"+b.database+"/_design/"+b.design+"/"+b.view,query:b.query},function(b){JSON.parse(b).rows.some(function(b,g){b.id==a&&this.alter("splice",g,0,b)},this)},this)},updateReduced:function(){f.request("CouchDB",{method:"GET",path:"/"+b.database+"/_design/"+b.design+"/"+b.view,query:b.query},function(b){this.set(0,JSON.parse(b).rows[0])},this)},updateDoc:function(){f.request("CouchDB",{method:"GET",path:"/"+
-b.database+"/"+b.document},function(b){this.reset(JSON.parse(b))},this)},deleteDoc:function(){this.reset({})},updateDatabase:function(a){f.request("CouchDB",{method:"PUT",path:"/"+b.database+"/"+b.document,headers:{"Content-Type":"application/json"},data:this.toJSON()},function(b){b=JSON.parse(b);b.ok?(this.set("_rev",b.rev),a.resolve(b)):a.reject(b)},this)},updateDatabaseWithBulkDoc:function(a){var g=[];this.loop(function(b){g.push(b.doc)});f.request("CouchDB",{method:"POST",path:"/"+b.database+
-"/_bulk_docs",headers:{"Content-Type":"application/json"},data:JSON.stringify({docs:g})},function(b){a.resolve(JSON.parse(b))})},removeFromDatabase:function(){f.request("CouchDB",{method:"DELETE",path:"/"+b.database+"/"+b.document,query:{rev:this.get("_rev")}})},resolve:function(){g.resolve(this)},unsync:function(){this.stopListening();delete this.stopListening}},e=new d("Unsynched",{Unsynched:[["getView",a.getView,this,"Synched"],["getDocument",a.getDocument,this,"Synched"],["getBulkDocuments",a.getBulkDocuments,
-this,"Synched"]],Synched:[["updateDatabase",a.createDocument,this],["subscribeToViewChanges",a.subscribeToViewChanges,this,"Listening"],["subscribeToDocumentChanges",a.subscribeToDocumentChanges,this,"Listening"],["subscribeToBulkChanges",a.subscribeToBulkChanges,this,"Listening"],["unsync",function(){},"Unsynched"]],Listening:[["entry",a.resolve,this],["change",a.updateDocInStore,this],["bulkAdd",a.addBulkDocInStore,this],["bulkChange",a.updateBulkDocInStore,this],["delete",a.removeDocInStore,this],
-["add",a.addDocInStore,this],["updateReduced",a.updateReduced,this],["updateDoc",a.updateDoc,this],["deleteDoc",a.deleteDoc,this],["updateDatabase",a.updateDatabase,this],["updateDatabaseWithBulkDoc",a.updateDatabaseWithBulkDoc,this],["removeFromDatabase",a.removeFromDatabase,this],["unsync",a.unsync,this,"Unsynched"]]});this.sync=function(b,a,c,f){if(typeof b=="string"&&typeof a=="string"&&typeof c=="string")return this.setSyncInfo(b,a,c,f),e.event("getView"),g;else if(typeof b=="string"&&typeof a==
-"string"&&typeof c!="string")return this.setSyncInfo(b,a,c),e.event("getDocument"),g;else if(typeof b=="string"&&a instanceof Object)return this.setSyncInfo(b,a),e.event("getBulkDocuments"),g;return false};this.setSyncInfo=function(a,g,c,e){this.clearSyncInfo();if(typeof a=="string"&&typeof g=="string"&&typeof c=="string")return b.database=a,b.design=g,b.view=c,b.query=e,true;else if(typeof a=="string"&&typeof g=="string"&&typeof c!="string")return b.database=a,b.document=g,b.query=c,true;else if(typeof a==
-"string"&&g instanceof Object){b.database=a;b.query=g;if(b.query.keys instanceof Array)b.keys=b.query.keys,delete b.query.keys;return true}return false};this.clearSyncInfo=function(){b={};return true};this.setReducedViewInfo=function(a){return typeof a=="boolean"?(b.reducedView=a,true):false};this.getSyncInfo=function(){return b};this.unsync=function(){return e.event("unsync")};this.upload=function(){var a=new c;if(b.document)return e.event("updateDatabase",a),a;else if(!b.view)return e.event("updateDatabaseWithBulkDoc",
-a),a;return false};this.remove=function(){return b.document?e.event("removeFromDatabase"):false};this.setTransport=function(b){return b&&typeof b.listen=="function"&&typeof b.request=="function"?(f=b,true):false};this.getStateMachine=function(){return e};this.getTransport=function(){return f};this.actions=a}return function(){e.prototype=new a;return new e}});
-define("Observable",["Tools"],function(a){return function(){var d={};this.watch=function(a,c,e){if(typeof c=="function"){var f=d[a]=d[a]||[],c=[c,e];f.push(c);return[a,f.indexOf(c)]}else return false};this.unwatch=function(a){var c=a[0],a=a[1];return d[c]&&d[c][a]?(delete d[c][a],d[c].some(function(a){return!!a})||delete d[c],true):false};this.notify=function(h){var c=d[h],e;if(c){for(e=c.length;e--;)c[e]&&c[e][0].apply(c[e][1]||null,a.toArray(arguments).slice(1));return true}else return false};this.hasObserver=
-function(a){return!(!a||!d[a[0]]||!d[a[0]][a[1]])};this.hasTopic=function(a){return!!d[a]};this.unwatchAll=function(a){d[a]?delete d[a]:d={};return true}}});
-define("Promise",["Observable","StateMachine"],function(a,d){return function(){var h,c,e=new d("Unresolved",{Unresolved:[["resolve",function(b){h=b;f.notify("success",b)},"Resolved"],["reject",function(b){c=b;f.notify("fail",b)},"Rejected"],["addSuccess",function(b,a){f.watch("success",b,a)}],["addFail",function(b,a){f.watch("fail",b,a)}]],Resolved:[["addSuccess",function(b,a){b.call(a,h)}]],Rejected:[["addFail",function(b,a){b.call(a,c)}]]}),f=new a;this.resolve=function(b){return e.event("resolve",
-b)};this.reject=function(b){return e.event("reject",b)};this.then=function(b,a,c,f){b instanceof Function&&(a instanceof Function?e.event("addSuccess",b):e.event("addSuccess",b,a));a instanceof Function&&e.event("addFail",a,c);c instanceof Function&&e.event("addFail",c,f);return this};this.getObservable=function(){return f};this.getStateMachine=function(){return e}}});
-define("StateMachine",["Tools"],function(a){function d(){var d={};this.add=function(a,e,f,b){var g=[];if(d[a])return false;return typeof a=="string"&&typeof e=="function"?(g[0]=e,typeof f=="object"&&(g[1]=f),typeof f=="string"&&(g[2]=f),typeof b=="string"&&(g[2]=b),d[a]=g,true):false};this.has=function(a){return!!d[a]};this.get=function(a){return d[a]||false};this.event=function e(e){var f=d[e];return f?(f[0].apply(f[1],a.toArray(arguments).slice(1)),f[2]):false}}return function(h,c){var e={},f="";
-this.init=function(a){return e[a]?(f=a,true):false};this.add=function(a){return e[a]?false:e[a]=new d};this.get=function(a){return e[a]};this.getCurrent=function(){return f};this.event=function(b){var g;g=e[f].event.apply(e[f].event,a.toArray(arguments));return g===false?false:(g&&(e[f].event("exit"),f=g,e[f].event("entry")),true)};a.loop(c,function(a,g){var c=this.add(g);a.forEach(function(a){c.add.apply(null,a)})},this);this.init(h)}});
-define("Store",["Observable","Tools"],function(a,d){return function(h){var c=d.clone(h)||{},e=new a,f=new a,b=function(a){var b=d.objectsDiffs(a,c);["updated","deleted","added"].forEach(function(a){b[a].forEach(function(b){e.notify(a,b,c[b]);f.notify(b,c[b],a)})})};this.getNbItems=function(){return c instanceof Array?c.length:d.count(c)};this.get=function(a){return c[a]};this.has=function(a){return c.hasOwnProperty(a)};this.set=function(a,b){var d;return typeof a!="undefined"?(d=this.has(a),c[a]=
-b,d=d?"updated":"added",e.notify(d,a,c[a]),f.notify(a,c[a],d),true):false};this.update=function(a,b,c){var h;return this.has(a)?(h=this.get(a),d.setNestedProperty(h,b,c),e.notify("updated",b,c),f.notify(a,h,"updated"),true):false};this.del=function(a){return this.has(a)?(this.alter("splice",a,1)||(delete c[a],e.notify("deleted",a),f.notify(a,c[a],"deleted")),true):false};this.delAll=function(a){return a instanceof Array?(a.sort(d.compareNumbers).reverse().forEach(this.del,this),true):false};this.alter=
-function(a){var e,f;return c[a]?(f=d.clone(c),e=c[a].apply(c,Array.prototype.slice.call(arguments,1)),b(f),e):false};this.watch=function(a,b,c){return e.watch(a,b,c)};this.unwatch=function(a){return e.unwatch(a)};this.getStoreObservable=function(){return e};this.watchValue=function(a,b,c){return f.watch(a,b,c)};this.unwatchValue=function(a){return f.unwatch(a)};this.getValueObservable=function(){return f};this.loop=function(a,b){d.loop(c,a,b)};this.reset=function(a){if(a instanceof Object){var e=
-d.clone(c);c=d.clone(a)||{};b(e);return true}else return false};this.toJSON=function(){return JSON.stringify(c)}}});
-define("Tools",function(){return{getGlobal:function(){return function(){return this}.call(null)},mixin:function(a,d,h){this.loop(a,function(c,e){if(!d[e]||!h)d[e]=a[e]});return d},count:function(a){var d=0;this.loop(a,function(){d++});return d},compareObjects:function(a,d){return Object.getOwnPropertyNames(a).sort().join("")==Object.getOwnPropertyNames(d).sort().join("")},compareNumbers:function(a,d){return a>d?1:a<d?-1:0},toArray:function(a){return Array.prototype.slice.call(a)},loop:function(a,
-d,h){var c;if(a instanceof Object&&d instanceof Function){if(a instanceof Array)for(c=0;c<a.length;c++)d.call(h,a[c],c,a);else for(c in a)a.hasOwnProperty(c)&&d.call(h,a[c],c,a);return true}else return false},objectsDiffs:function(a,d){if(a instanceof Object&&d instanceof Object){var h=[],c=[],e=[],f=[];this.loop(d,function(b,e){typeof a[e]=="undefined"?f.push(e):b!==a[e]?c.push(e):b===a[e]&&h.push(e)});this.loop(a,function(a,c){typeof d[c]=="undefined"&&e.push(c)});return{updated:c,unchanged:h,added:f,
-deleted:e}}else return false},jsonify:function(a){return a instanceof Object?JSON.parse(JSON.stringify(a)):false},clone:function(a){return a instanceof Array?a.slice(0):typeof a=="object"&&a!==null&&!(a instanceof RegExp)?this.mixin(a,{}):false},getNestedProperty:function(a,d){return a&&a instanceof Object?typeof d=="string"&&d!=""?d.split(".").reduce(function(a,c){return a&&a[c]},a):typeof d=="number"?a[d]:a:a},setNestedProperty:function(a,d,h){if(a&&a instanceof Object)if(typeof d=="string"&&d!=
-""){var c=d.split(".");return c.reduce(function(a,d,b){a[d]=a[d]||{};c.length==b+1&&(a[d]=h);return a[d]},a)}else return typeof d=="number"?(a[d]=h,a[d]):a;else return a}}});
-define("Transport",["Store","Tools"],function(a,d){return function(a){var c=null;this.setReqHandlers=function(a){return a instanceof Object?(c=a,true):false};this.getReqHandlers=function(){return c};this.request=function(a,d,b,g){return c.has(a)&&typeof d=="object"?(c.get(a)(d,function(){b&&b.apply(g,arguments)}),true):false};this.listen=function(a,f,b,g){if(c.has(a)&&typeof f=="object"&&typeof f.path=="string"&&typeof b=="function"){var h=function(){b.apply(g,arguments)},i;d.mixin({__keepalive__:true,
-method:"get"},f);i=c.get(a)(f,h,h);return function(){i.func.call(i.scope)}}else return false};this.setReqHandlers(a)}});
+function Observable(Tools) {
+
+	/**
+	 * Defines the Observable
+	 * @private
+	 * @returns {_Observable}
+	 */
+	return function ObservableConstructor() {
+
+		/**
+		 * The list of topics
+		 * @private
+		 */
+		var _topics = {};
+
+		/**
+		 * Add an observer
+		 * @param {String} topic the topic to observe
+		 * @param {Function} callback the callback to execute
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns handler
+		 */
+		this.watch = function watch(topic, callback, scope) {
+			if (typeof callback == "function") {
+				var observers = _topics[topic] = _topics[topic] || [],
+				observer = [callback, scope];
+
+				observers.push(observer);
+				return [topic,observers.indexOf(observer)];
+
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Remove an observer
+		 * @param {Handler} handler returned by the watch method
+		 * @returns {Boolean} true if there were subscribers
+		 */
+		this.unwatch = function unwatch(handler) {
+			var topic = handler[0], idx = handler[1];
+			if (_topics[topic] && _topics[topic][idx]) {
+				// delete value so the indexes don't move
+				delete _topics[topic][idx];
+				// If the topic is only set with falsy values, delete it;
+				if (!_topics[topic].some(function (value) {
+					return !!value;
+				})) {
+					delete _topics[topic];
+				}
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Notifies observers that a topic has a new message
+		 * @param {String} topic the name of the topic to publish to
+		 * @param subject
+		 * @returns {Boolean} true if there was subscribers
+		 */
+		this.notify = function notify(topic) {
+			var observers = _topics[topic],
+				args = Tools.toArray(arguments).slice(1);
+
+			if (observers) {
+				Tools.loop(observers, function (value) {
+					try {
+						value && value[0].apply(value[1] || null, args);
+					} catch (err) { }
+				});
+				return true;
+			} else {
+				return false;
+			}
+		},
+
+		/**
+		 * Check if topic has the described observer
+		 * @param {Handler}
+		 * @returns {Boolean} true if exists
+		 */
+		this.hasObserver = function hasObserver(handler) {
+			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
+		};
+
+		/**
+		 * Check if a topic has observers
+		 * @param {String} topic the name of the topic
+		 * @returns {Boolean} true if topic is listened
+		 */
+		this.hasTopic = function hasTopic(topic) {
+			return !!_topics[topic];
+		};
+
+		/**
+		 * Unwatch all or unwatch all from topic
+		 * @param {String} topic optional unwatch all from topic
+		 * @returns {Boolean} true if ok
+		 */
+		this.unwatchAll = function unwatchAll(topic) {
+			if (_topics[topic]) {
+				delete _topics[topic];
+			} else {
+				_topics = {};
+			}
+			return true;
+		};
+
+	};
+
+});
+
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+define('StateMachine',["Tools"],
+/**
+ * @class
+ * Create a stateMachine
+ */
+function StateMachine(Tools) {
+
+	 /**
+     * @param initState {String} the initial state
+     * @param diagram {Object} the diagram that describes the state machine
+     * @example
+     *
+     *      diagram = {
+     *              "State1" : [
+     *                      [ message1, action, nextState], // Same as the state's add function
+     *                      [ message2, action2, nextState]
+     *              ],
+     *
+     *              "State2" :
+     *                       [ message3, action3, scope3, nextState]
+     *                      ... and so on ....
+     *
+     *   }
+     *
+     * @return the stateMachine object
+     */
+	function StateMachineConstructor($initState, $diagram) {
+
+		/**
+		 * The list of states
+		 * @private
+		 */
+		var _states = {},
+
+		/**
+		 * The current state
+		 * @private
+		 */
+		_currentState = "";
+
+		/**
+		 * Set the initialization state
+		 * @param {String} name the name of the init state
+		 * @returns {Boolean}
+		 */
+		this.init = function init(name) {
+				if (_states[name]) {
+					_currentState = name;
+					return true;
+				} else {
+					return false;
+				}
+		};
+
+		/**
+		 * Add a new state
+		 * @private
+		 * @param {String} name the name of the state
+		 * @returns {State} a new state
+		 */
+		this.add = function add(name) {
+			if (!_states[name]) {
+				return _states[name] = new Transition();
+			} else {
+				return _states[name];
+			}
+
+		};
+
+		/**
+		 * Get an existing state
+		 * @private
+		 * @param {String} name the name of the state
+		 * @returns {State} the state
+		 */
+		this.get = function get(name) {
+			return _states[name];
+		};
+
+		/**
+		 * Get the current state
+		 * @returns {String}
+		 */
+		this.getCurrent = function getCurrent() {
+			return _currentState;
+		};
+
+		/**
+		 * Pass an event to the state machine
+		 * @param {String} name the name of the event
+		 * @returns {Boolean} true if the event exists in the current state
+		 */
+		this.event = function event(name) {
+			var nextState;
+
+			nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
+			// False means that there's no such event
+			// But undefined means that the state doesn't change
+			if (nextState === false) {
+				return false;
+			} else {
+				// There could be no next state, so the current one remains
+				if (nextState) {
+					// Call the exit action if any
+					_states[_currentState].event("exit");
+					_currentState = nextState;
+					// Call the new state's entry action if any
+					_states[_currentState].event("entry");
+				}
+				return true;
+			}
+		};
+
+		/**
+		 * Initializes the StateMachine with the given diagram
+		 */
+		Tools.loop($diagram, function (transition, state) {
+			var myState = this.add(state);
+			transition.forEach(function (params){
+				myState.add.apply(null, params);
+			});
+		}, this);
+
+		/**
+		 * Sets its initial state
+		 */
+		this.init($initState);
+	}
+
+	/**
+	 * Each state has associated transitions
+     * @constructor
+	 */
+	function Transition() {
+
+		/**
+		 * The list of transitions associated to a state
+		 * @private
+		 */
+		var _transitions = {};
+
+		/**
+		 * Add a new transition
+		 * @private
+		 * @param {String} event the event that will trigger the transition
+		 * @param {Function} action the function that is executed
+		 * @param {Object} scope [optional] the scope in which to execute the action
+		 * @param {String} next [optional] the name of the state to transit to.
+		 * @returns {Boolean} true if success, false if the transition already exists
+		 */
+		this.add = function add(event, action, scope, next) {
+
+			var arr = [];
+
+			if (_transitions[event]) {
+				return false;
+			}
+
+			if (typeof event == "string"
+				&& typeof action == "function") {
+
+					arr[0] = action;
+
+					if (typeof scope == "object") {
+						arr[1] = scope;
+					}
+
+					if (typeof scope == "string") {
+						arr[2] = scope;
+					}
+
+					if (typeof next == "string") {
+						arr[2] = next;
+					}
+
+					_transitions[event] = arr;
+					return true;
+			}
+
+			return false;
+		};
+
+		/**
+		 * Check if a transition can be triggered with given event
+		 * @private
+		 * @param {String} event the name of the event
+		 * @returns {Boolean} true if exists
+		 */
+		this.has = function has(event) {
+			return !!_transitions[event];
+		};
+
+		/**
+		 * Get a transition from it's event
+		 * @private
+		 * @param {String} event the name of the event
+		 * @return the transition
+		 */
+		this.get = function get(event) {
+			return _transitions[event] || false;
+		};
+
+		/**
+		 * Execute the action associated to the given event
+		 * @param {String} event the name of the event
+		 * @param {params} params to pass to the action
+		 * @private
+		 * @returns false if error, the next state or undefined if success (that sounds weird)
+		 */
+		this.event = function event(event) {
+			var _transition = _transitions[event];
+			if (_transition) {
+				_transition[0].apply(_transition[1], Tools.toArray(arguments).slice(1));
+				return _transition[2];
+			} else {
+				return false;
+			}
+		};
+	};
+
+	return StateMachineConstructor;
+
+});
+
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+define('Promise',["Observable", "StateMachine"],
+
+/**
+ * @class
+ * Create a Promise
+ */
+function Promise(Observable, StateMachine) {
+
+	return function PromiseConstructor() {
+
+		/**
+		 * The fulfilled value
+		 * @private
+		 */
+		var _value = null,
+
+		/**
+		 * The rejection reason
+		 * @private
+		 */
+		_reason = null,
+
+		/**
+		 * The funky observable
+		 * @private
+		 */
+		_observable = new Observable,
+
+		/**
+		 * The state machine States & transitions
+		 * @private
+		 */
+		_states = {
+
+			// The promise is pending
+			"Pending": [
+
+				// It can only be fulfilled when pending
+				["fulfill", function onFulfill(value) {
+					_value = value;
+					_observable.notify("fulfill", value);
+				// Then it transits to the fulfilled state
+				}, "Fulfilled"],
+
+				// it can only be rejected when pending
+				["reject", function onReject(reason) {
+					_reason = reason;
+					_observable.notify("reject", reason);
+				// Then it transits to the rejected state
+				}, "Rejected"],
+
+				// When pending, add the resolver to an observable
+				["toFulfill", function toFulfill(resolver) {
+					_observable.watch("fulfill", resolver);
+				}],
+
+				// When pending, add the resolver to an observable
+				["toReject", function toReject(resolver) {
+					_observable.watch("reject", resolver);
+				}]],
+
+			// When fulfilled,
+			"Fulfilled": [
+				// We directly call the resolver with the value
+				["toFulfill", function toFulfill(resolver) {
+					setTimeout(function () {
+						resolver(_value);
+					}, 0);
+				}]],
+
+			// When rejected
+			"Rejected": [
+				// We directly call the resolver with the reason
+				["toReject", function toReject(resolver) {
+					setTimeout(function () {
+						resolver(_reason);
+					}, 0);
+				}]]
+		},
+
+		/**
+		 * The stateMachine
+		 * @private
+		 */
+		_stateMachine = new StateMachine("Pending", _states);
+
+		/**
+		 * Fulfilled the promise.
+		 * A promise can be fulfilld only once.
+		 * @param the fulfillment value
+		 * @returns the promise
+		 */
+		this.fulfill = function fulfill(value) {
+			_stateMachine.event("fulfill", value);
+			return this;
+		};
+
+		/**
+		 * Reject the promise.
+		 * A promise can be rejected only once.
+		 * @param the rejection value
+		 * @returns true if the rejection function was called
+		 */
+		this.reject = function reject(reason) {
+			_stateMachine.event("reject", reason);
+			return this;
+		};
+
+		/**
+         * The callbacks to call after fulfillment or rejection
+         * @param {Function} fulfillmentCallback the first parameter is a success function, it can be followed by a scope
+         * @param {Function} the second, or third parameter is the rejection callback, it can also be followed by a scope
+         * @examples:
+         *
+         * then(fulfillment)
+         * then(fulfillment, scope, rejection, scope)
+         * then(fulfillment, rejection)
+         * then(fulfillment, rejection, scope)
+         * then(null, rejection, scope)
+         * @returns {Promise} the new promise
+         */
+        this.then = function then() {
+        	var promise = new PromiseConstructor;
+
+        	// If a fulfillment callback is given
+          	if (arguments[0] instanceof Function) {
+          		// If the second argument is also a function, then no scope is given
+            	if (arguments[1] instanceof Function) {
+                	_stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0]));
+              	} else {
+              		// If the second argument is not a function, it's the scope
+                	_stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0], arguments[1]));
+              	}
+         	} else {
+         		// If no fulfillment callback given, give a default one
+         		_stateMachine.event("toFulfill", this.makeResolver(promise, function () {
+         			promise.fulfill(_value);
+         		}));
+         	}
+
+         	// if the second arguments is a callback, it's the rejection one, and the next argument is the scope
+          	if (arguments[1] instanceof Function) {
+            	_stateMachine.event("toReject", this.makeResolver(promise, arguments[1], arguments[2]));
+          	}
+
+          	// if the third arguments is a callback, it's the rejection one, and the next arguments is the sopce
+          	if (arguments[2] instanceof Function) {
+                _stateMachine.event("toReject", this.makeResolver(promise, arguments[2], arguments[3]));
+          	}
+
+          	// If no rejection callback is given, give a default one
+          	if (!(arguments[1] instanceof Function) &&
+          		!(arguments[2] instanceof Function)) {
+          		_stateMachine.event("toReject", this.makeResolver(promise, function () {
+          			promise.reject(_reason);
+          		}));
+          	}
+
+          	return promise;
+        };
+
+        /**
+		 * Synchronize this promise with a thenable
+		 * @returns {Boolean} false if the given sync is not a thenable
+		 */
+		this.sync = function sync(syncWith) {
+			if (syncWith instanceof Object && syncWith.then) {
+
+				var onFulfilled = function onFulfilled(value) {
+					this.fulfill(value);
+				},
+				onRejected = function onRejected(reason) {
+					this.reject(reason);
+				};
+
+				syncWith.then(onFulfilled.bind(this),
+						onRejected.bind(this));
+
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+        /**
+         * Make a resolver
+         * for debugging only
+         * @private
+         * @returns {Function} a closure
+		 */
+        this.makeResolver = function makeResolver(promise, func, scope) {
+			return function resolver(value) {
+				var returnedPromise;
+
+				try {
+					returnedPromise = func.call(scope, value);
+					if (!promise.sync(returnedPromise)) {
+						promise.fulfill(returnedPromise);
+					}
+				} catch (err) {
+					promise.reject(err);
+				}
+
+			}
+        };
+
+        /**
+         * Returns the reason
+         * for debugging only
+         * @private
+         */
+        this.getReason = function getReason() {
+        	return _reason;
+        };
+
+        /**
+         * Returns the reason
+         * for debugging only
+         * @private
+         */
+        this.getValue = function getValue() {
+        	return _value;
+        };
+
+		/**
+		 * Get the promise's observable
+		 * for debugging only
+		 * @private
+		 * @returns {Observable}
+		 */
+		this.getObservable = function getObservable() {
+			return _observable;
+		};
+
+		/**
+		 * Get the promise's stateMachine
+		 * for debugging only
+		 * @private
+		 * @returns {StateMachine}
+		 */
+		this.getStateMachine = function getStateMachine() {
+			return _stateMachine;
+		};
+
+		/**
+		 * Get the statesMachine's states
+		 * for debugging only
+		 * @private
+		 * @returns {Object}
+		 */
+		this.getStates = function getStates() {
+			return _states;
+		};
+
+	}
+
+
+
+
+});
+
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+define('Store',["Observable", "Tools"],
+/**
+ * @class
+ * Store creates a small NoSQL database with observables
+ * It can publish events on store/data changes
+ */
+ function Store(Observable, Tools) {
+
+	/**
+	 * Defines the Store
+	 * @private
+	 * @param values
+	 * @returns
+	 */
+	return function StoreConstructor($data) {
+
+		/**
+		 * Where the data is stored
+		 * @private
+		 */
+		var _data = Tools.clone($data) || {},
+
+		/**
+		 * The observable
+		 * @private
+		 */
+		_storeObservable = new Observable(),
+
+		_valueObservable = new Observable(),
+
+		/**
+		 * Gets the difference between two objects and notifies them
+		 * @private
+		 * @param previousData
+		 * @returns
+		 */
+		_notifyDiffs = function _notifyDiffs(previousData) {
+			var diffs = Tools.objectsDiffs(previousData, _data);
+			["updated",
+			 "deleted",
+			 "added"].forEach(function (value) {
+				 diffs[value].forEach(function (dataIndex) {
+						_storeObservable.notify(value, dataIndex, _data[dataIndex]);
+						_valueObservable.notify(dataIndex, _data[dataIndex], value);
+				 });
+			});
+		};
+
+		/**
+		 * Get the number of items in the store
+		 * @returns {Number} the number of items in the store
+		 */
+		this.getNbItems = function() {
+			return _data instanceof Array ? _data.length : Tools.count(_data);
+		};
+
+		/**
+		 * Get a value from its index
+		 * @param {String} name the name of the index
+		 * @returns the value
+		 */
+		this.get = function get(name) {
+			return _data[name];
+		};
+
+		/**
+		 * Checks if the store has a given value
+		 * @param {String} name the name of the index
+		 * @returns {Boolean} true if the value exists
+		 */
+		this.has = function has(name) {
+			return _data.hasOwnProperty(name);
+		};
+
+		/**
+		 * Set a new value and overrides an existing one
+		 * @param {String} name the name of the index
+		 * @param value the value to assign
+		 * @returns true if value is set
+		 */
+		this.set = function set(name, value) {
+			var ante,
+				action;
+
+			if (typeof name != "undefined") {
+				ante = this.has(name);
+				_data[name] = value;
+				action = ante ? "updated" : "added";
+				_storeObservable.notify(action, name, _data[name]);
+				_valueObservable.notify(name, _data[name], action);
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Update the property of an item.
+		 * @param {String} name the name of the index
+		 * @param {String} property the property to modify.
+		 * @param value the value to assign
+		 * @returns false if the Store has no name index
+		 */
+		this.update = function update(name, property, value) {
+			var item;
+			if (this.has(name)) {
+				item = this.get(name);
+				Tools.setNestedProperty(item, property, value);
+				_storeObservable.notify("updated", property, value);
+				_valueObservable.notify(name, item, "updated");
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Delete value from its index
+		 * @param {String} name the name of the index from which to delete the value
+		 * @returns true if successfully deleted.
+		 */
+		this.del = function del(name) {
+			if (this.has(name)) {
+				if (!this.alter("splice", name, 1)) {
+					delete _data[name];
+					_storeObservable.notify("deleted", name);
+					_valueObservable.notify(name, _data[name], "deleted");
+				}
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Delete multiple indexes. Prefer this one over multiple del calls.
+		 * @param {Array}
+		 * @returns false if param is not an array.
+		 */
+		this.delAll = function delAll(indexes) {
+			if (indexes instanceof Array) {
+				// Indexes must be removed from the greatest to the lowest
+				// To avoid trying to remove indexes that don't exist.
+				// i.e: given [0, 1, 2], remove 1, then 2, 2 doesn't exist anymore
+				indexes.sort(Tools.compareNumbers).reverse().forEach(this.del, this);
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Alter the data be calling one of it's method
+		 * When the modifications are done, it notifies on changes.
+		 * @param {String} func the name of the method
+		 * @returns the result of the method call
+		 */
+		this.alter = function alter(func) {
+			var apply,
+				previousData;
+
+			if (_data[func]) {
+				previousData = Tools.clone(_data);
+				apply = _data[func].apply(_data, Array.prototype.slice.call(arguments, 1));
+				_notifyDiffs(previousData);
+				return apply;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Watch the store's modifications
+		 * @param {String} added/updated/deleted
+		 * @param {Function} func the function to execute
+		 * @param {Object} scope the scope in which to execute the function
+		 * @returns {Handler} the subscribe's handler to use to stop watching
+		 */
+		this.watch = function watch(name, func, scope) {
+			return _storeObservable.watch(name, func, scope);
+		};
+
+		/**
+		 * Unwatch the store modifications
+		 * @param {Handler} handler the handler returned by the watch function
+		 * @returns
+		 */
+		this.unwatch = function unwatch(handler) {
+			return _storeObservable.unwatch(handler);
+		};
+
+		/**
+		 * Get the observable used for watching store's modifications
+		 * Should be used only for debugging
+		 * @returns {Observable} the Observable
+		 */
+		this.getStoreObservable = function getStoreObservable() {
+			return _storeObservable;
+		};
+
+		/**
+		 * Watch a value's modifications
+		 * @param {String} name the name of the value to watch for
+		 * @param {Function} func the function to execute
+		 * @param {Object} scope the scope in which to execute the function
+		 * @returns handler to pass to unwatchValue
+		 */
+		this.watchValue = function watchValue(name, func, scope) {
+			return _valueObservable.watch(name, func, scope);
+		};
+
+		/**
+		 * Unwatch the value's modifications
+		 * @param {Handler} handler the handler returned by the watchValue function
+		 * @private
+		 * @returns true if unwatched
+		 */
+		this.unwatchValue = function unwatchValue(handler) {
+			return _valueObservable.unwatch(handler);
+		};
+
+		/**
+		 * Get the observable used for watching value's modifications
+		 * Should be used only for debugging
+		 * @private
+		 * @returns {Observable} the Observable
+		 */
+		this.getValueObservable = function getValueObservable() {
+			return _valueObservable;
+		};
+
+		/**
+		 * Loop through the data
+		 * @param {Function} func the function to execute on each data
+		 * @param {Object} scope the scope in wich to run the callback
+		 */
+		this.loop = function loop(func, scope) {
+			Tools.loop(_data, func, scope);
+		};
+
+		/**
+		 * Reset all data and get notifications on changes
+		 * @param {Arra/Object} data the new data
+		 * @returns {Boolean}
+		 */
+		this.reset = function reset(data) {
+			if (data instanceof Object) {
+				var previousData = Tools.clone(_data);
+				_data = Tools.clone(data) || {};
+				_notifyDiffs(previousData);
+				return true;
+			} else {
+				return false;
+			}
+
+		};
+
+		/**
+		 * Dumps a JSON version of all the data
+		 * @returns {JSON}
+		 */
+		this.toJSON = function toJSON() {
+			return JSON.stringify(_data);
+		};
+	};
+});
+
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+define('Transport',["Store"],
+/**
+ * @class
+ * Transport creates the link between your requests and Emily's requests handlers.
+ * A request handler can be defined to make requets of any kind as long as it's supported
+ * by your node.js. (HTTP, FileSystem, SIP...)
+ */
+function Transport(Store) {
+
+	/**
+	 * Create a Transport
+	 * @param {Object} $reqHandlers the requestHandler defined in your node.js app
+	 * @returns
+	 */
+	return function TransportConstructor($reqHandlers) {
+
+		/**
+		 * The request handlers
+		 * @private
+		 */
+		var _reqHandlers = null;
+
+		/**
+		 * Set the requests handlers
+		 * @param {Object} reqHandlers the list of requests handlers
+		 * @returns
+		 */
+		this.setReqHandlers = function setReqHandlers(reqHandlers) {
+			if (reqHandlers instanceof Object) {
+				_reqHandlers = reqHandlers;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the requests handlers
+		 * @private
+		 * @returns
+		 */
+		this.getReqHandlers = function getReqHandlers() {
+			return _reqHandlers;
+		};
+
+		/**
+		 * Make a request
+		 * @param {String} channel is the name of the request handler to use
+		 * @param data the request data
+		 * @param {Function} callback the function to execute with the result
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns
+		 */
+		this.request = function request(channel, data, callback, scope) {
+			if (_reqHandlers.has(channel)
+					&& typeof data != "undefined") {
+
+				_reqHandlers.get(channel)(data, function () {
+					callback && callback.apply(scope, arguments);
+				});
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Listen to a path (Kept alive)
+		 * @param {String} channel is the name of the request handler to use
+		 * @param data the request data: path should indicate the url, query can add up query strings to the url
+		 * @param {Function} callback the function to execute with the result
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns
+		 */
+		this.listen = function listen(channel, data, callback, scope) {
+			if (_reqHandlers.has(channel)
+					&& typeof data != "undefined"
+					&& typeof callback == "function") {
+
+				var func = function () {
+					callback.apply(scope, arguments);
+				},
+				abort;
+
+				abort = _reqHandlers.get(channel)(data, func, func);
+				return function () {
+					abort.func.call(abort.scope);
+				};
+			} else {
+				return false;
+			}
+		};
+
+		this.setReqHandlers($reqHandlers);
+
+	};
+
+});
