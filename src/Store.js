@@ -264,11 +264,20 @@ define(["Observable", "Tools"],
 		};
 
 		/**
-		 * Dumps a JSON version of all the data
-		 * @returns {JSON}
+		 * Returns a JSON version of the data
+		 * Use dump if you want all the data as a plain js object
+		 * @returns {String} the JSON
 		 */
 		this.toJSON = function toJSON() {
 			return JSON.stringify(_data);
+		};
+
+		/**
+		 * Returns the store's data
+		 * @returns {Object} the data
+		 */
+		this.dump = function dump() {
+			return _data;
 		};
 	};
 });

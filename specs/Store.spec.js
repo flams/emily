@@ -22,6 +22,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(store.del).toBeInstanceOf(Function);
 			expect(store.delAll).toBeInstanceOf(Function);
 			expect(store.toJSON).toBeInstanceOf(Function);
+			expect(store.dump).toBeInstanceOf(Function);
 			expect(store.alter).toBeInstanceOf(Function);
 			expect(store.watch).toBeInstanceOf(Function);
 			expect(store.unwatch).toBeInstanceOf(Function);
@@ -132,6 +133,11 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(store.get(1)).toEqual(7);
 			expect(store.get(2)).toEqual(10);
 
+		});
+
+		it("should dump its data", function () {
+			store.reset({a:10});
+			expect(store.dump().a).toEqual(10);
 		});
 
 	});
