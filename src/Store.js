@@ -85,15 +85,17 @@ define(["Observable", "Tools"],
 		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
-			var ante,
+			var hasPrevious,
+				previousValue,
 				action;
 
 			if (typeof name != "undefined") {
-				ante = this.has(name);
+				hasPrevious = this.has(name);
+				previousValue = this.get(name);
 				_data[name] = value;
-				action = ante ? "updated" : "added";
-				_storeObservable.notify(action, name, _data[name]);
-				_valueObservable.notify(name, _data[name], action);
+				action = hasPrevious ? "updated" : "added";
+				_storeObservable.notify(action, name, _data[name], previousValue);
+				_valueObservable.notify(name, _data[name], action, previousValue);
 				return true;
 			} else {
 				return false;
