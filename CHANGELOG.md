@@ -1,3 +1,9 @@
+1.3.2 - 22 JAN 2013
+-------------------
+
+* Fixed emily-server breaking olives
+* Updated requirejs
+
 1.3.1 - 1 JAN 2013
 -------------------
 

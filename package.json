@@ -1,7 +1,7 @@
 {
  "name": "emily",
  "description": "runtime agnostic JS library for scalable web applications",
- "version": "1.3.1",
+ "version": "1.3.2",
  "homepage": "http://flams.github.com/emily/",
  "licenses": [{
   "type":"MIT",
@@ -14,7 +14,7 @@
  ],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
  "dependencies": {
-  "requirejs": ">=1.0.7"
+  "requirejs": ">=2.0.4"
   },
  "keywords": ["library", "AMD/commonJS", "Promise", "Observable", "StateMachine", "Store", "scalable webapp"],
  "repository": {
