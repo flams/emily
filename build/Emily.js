@@ -1025,15 +1025,17 @@ define('Store',["Observable", "Tools"],
 		 * @returns true if value is set
 		 */
 		this.set = function set(name, value) {
-			var ante,
+			var hasPrevious,
+				previousValue,
 				action;
 
 			if (typeof name != "undefined") {
-				ante = this.has(name);
+				hasPrevious = this.has(name);
+				previousValue = this.get(name);
 				_data[name] = value;
-				action = ante ? "updated" : "added";
-				_storeObservable.notify(action, name, _data[name]);
-				_valueObservable.notify(name, _data[name], action);
+				action = hasPrevious ? "updated" : "added";
+				_storeObservable.notify(action, name, _data[name], previousValue);
+				_valueObservable.notify(name, _data[name], action, previousValue);
 				return true;
 			} else {
 				return false;
@@ -1202,11 +1204,20 @@ define('Store',["Observable", "Tools"],
 		};
 
 		/**
-		 * Dumps a JSON version of all the data
-		 * @returns {JSON}
+		 * Returns a JSON version of the data
+		 * Use dump if you want all the data as a plain js object
+		 * @returns {String} the JSON
 		 */
 		this.toJSON = function toJSON() {
 			return JSON.stringify(_data);
+		};
+
+		/**
+		 * Returns the store's data
+		 * @returns {Object} the data
+		 */
+		this.dump = function dump() {
+			return _data;
 		};
 	};
 });
