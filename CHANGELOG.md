@@ -1,3 +1,9 @@
+1.3.3 - 28 JAN 2013
+-------------------
+
+* Added Store.dump
+* When store publishes a change event, it publishes both the new and the previous value
+
 1.3.2 - 22 JAN 2013
 -------------------
 
