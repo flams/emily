@@ -6,7 +6,7 @@
  * It's only a set of AMD/commonJS modules, your module loader is the framework
  * It's ready for being used with other frameworks.
  * It only relies on standard features
- * It eases the development of MV* applications my providing the M
+ * It eases the development of MV* applications by providing the M
 
 ###What modules does it provide?
 
