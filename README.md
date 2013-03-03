@@ -53,18 +53,9 @@ npm install emily
 
 ### Integration tests: (Emily 1.3.4)
 
+##Observable
+
 ```js
-/**
- * Emily.js - http://flams.github.com/emily/
- * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
- * MIT Licensed
- */
-
-define(["Observable", "Tools", "Transport", "Store", "StateMachine", "Promise"],
-
-function(Observable, Tools, Transport, Store, StateMachine, Promise) {
-
-
 	describe("Observable implements the Observer design pattern, also called publish subscribe", function () {
 
 		it("has a watch function for adding a listener", function () {
@@ -156,10 +147,6 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 		});
 
 	});
-
-
-
-});
 ```
 
 
