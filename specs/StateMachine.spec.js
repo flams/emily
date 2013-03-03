@@ -61,6 +61,13 @@ require(["StateMachine"], function (StateMachine) {
 			expect(stateMachine.add("state")).toBe(state);
 		});
 
+		it("should tell if it has a given state", function () {
+			stateMachine.add("state");
+			expect(stateMachine.has).toBeInstanceOf(Function);
+			expect(stateMachine.has("")).toBe(false);
+			expect(stateMachine.has("state")).toBe(true);
+		});
+
 	});
 
 	describe("StateMachineTransition", function () {
@@ -392,4 +399,22 @@ require(["StateMachine"], function (StateMachine) {
 		});
 
 	});
+
+	describe("StateMachineAdvance", function () {
+
+		var stateMachine = new StateMachine("state1", {
+			"state1": [],
+			"state2": []
+		});
+
+		it("should have a function for advancing the state machine to a given state", function () {
+			expect(stateMachine.advance).toBeInstanceOf(Function);
+
+			expect(stateMachine.advance("")).toBe(false);
+			expect(stateMachine.advance("state1")).toBe(true);
+
+		});
+
+	});
+
 });
