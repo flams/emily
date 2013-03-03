@@ -228,6 +228,21 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 		});
 
+		describe("Tools.toArray transforms an array like object, like arguments or a nodeList to an actual array", function () {
+
+			it("transforms a list of arguments to an array", function () {
+				(function () {
+					var args = Tools.toArray(arguments);
+
+					args.forEach(function (value, idx) {
+						expect(value).toBe(arguments[idx]);
+					});
+
+				})(0,1,2,3);
+			});
+
+		});
+
 	});
 
 
