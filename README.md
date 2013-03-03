@@ -38,8 +38,7 @@ Download the latest version of Emily here: http://flams.github.com/emily/
 ####In node:
 
 ```
-npm install requirejs
-npm install emily
+npm install requirejs emily
 ```
 
 ```js
