@@ -347,7 +347,7 @@ function Observable(Tools) {
 		 * @param {String} topic the topic to observe
 		 * @param {Function} callback the callback to execute
 		 * @param {Object} scope the scope in which to execute the callback
-		 * @returns handler
+		 * @returns handle
 		 */
 		this.watch = function watch(topic, callback, scope) {
 			if (typeof callback == "function") {
@@ -364,7 +364,7 @@ function Observable(Tools) {
 
 		/**
 		 * Remove an observer
-		 * @param {Handler} handler returned by the watch method
+		 * @param {Handler} handle returned by the watch method
 		 * @returns {Boolean} true if there were subscribers
 		 */
 		this.unwatch = function unwatch(handler) {
@@ -514,7 +514,6 @@ function StateMachine(Tools) {
 			} else {
 				return _states[name];
 			}
-
 		};
 
 		/**
@@ -533,6 +532,29 @@ function StateMachine(Tools) {
 		 */
 		this.getCurrent = function getCurrent() {
 			return _currentState;
+		};
+
+		/**
+		 * Tell if the state machine has the given state
+		 * @param {String} state the name of the state
+		 * @returns {Boolean} true if it has the given state
+		 */
+		this.has = function has(state) {
+			return _states.hasOwnProperty(state);
+		};
+
+		/**
+		 * Advances the state machine to a given state
+		 * @param {String} state the name of the state to advance the state machine to
+		 * @returns {Boolean} true if it has the given state
+		 */
+		this.advance = function advance(state) {
+			if (this.has(state)) {
+				_currentState = state;
+				return true;
+			} else {
+				return false;
+			}
 		};
 
 		/**

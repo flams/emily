@@ -48,18 +48,18 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 				func = function () {};
 
 			store.set("test");
-			expect(store.has("test")).toEqual(true);
+			expect(store.has("test")).toBe(true);
 			expect(store.get("test")).toBeUndefined();
 			store.set("test", null);
-			expect(store.get("test")).toEqual(null);
+			expect(store.get("test")).toBe(null);
 			store.set("test", obj);
 			expect(store.get("test")).toBe(obj)
 			store.set("test", arr);
-			expect(store.get("test")).toEqual(arr);
+			expect(store.get("test")).toBe(arr);
 			store.set("test", func);
-			expect(store.get("test")).toEqual(func);
+			expect(store.get("test")).toBe(func);
 			store.set("test", "yes");
-			expect(store.get("test")).toEqual("yes");
+			expect(store.get("test")).toBe("yes");
 		});
 
 
@@ -69,33 +69,33 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 		it("should update value if it already exists", function () {
 			store.set("test", true);
-			expect(store.set("test", false)).toEqual(true);
-			expect(store.get("test")).toEqual(false);
+			expect(store.set("test", false)).toBe(true);
+			expect(store.get("test")).toBe(false);
 		});
 
 		it("should return false if name is not set", function () {
-			expect(store.set()).toEqual(false);
+			expect(store.set()).toBe(false);
 		});
 
 		it("should del value", function () {
 			store.set("test", true);
-			expect(store.del("test")).toEqual(true);
-			expect(store.has("test")).toEqual(false);
-			expect(store.del("fake")).toEqual(false);
+			expect(store.del("test")).toBe(true);
+			expect(store.has("test")).toBe(false);
+			expect(store.del("fake")).toBe(false);
 		});
 
 		it("should update a value", function () {
-			expect(store.update()).toEqual(false);
-			expect(store.update("name", true)).toEqual(false);
+			expect(store.update()).toBe(false);
+			expect(store.update("name", true)).toBe(false);
 			store.set("name");
-			expect(store.update("name")).toEqual(true);
+			expect(store.update("name")).toBe(true);
 			expect(store.get("name")).toBeUndefined();
 			store.set("name", {
 				prop1: "val1",
 				prop2: "val2"
 			});
-			expect(store.update("name", "prop1", "value1")).toEqual(true);
-			expect(store.get("name").prop1).toEqual("value1");
+			expect(store.update("name", "prop1", "value1")).toBe(true);
+			expect(store.get("name").prop1).toBe("value1");
 
 		});
 
@@ -107,9 +107,9 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 				json;
 			store.reset(values);
 			json = JSON.parse(store.toJSON());
-			expect(json.key1).toEqual("value1");
-			expect(json.key2).toEqual("value2");
-			expect(Object.getOwnPropertyNames(json).length).toEqual(2);
+			expect(json.key1).toBe("value1");
+			expect(json.key2).toBe("value2");
+			expect(Object.getOwnPropertyNames(json).length).toBe(2);
 		});
 
 		it("should allow for deleting multiple indexes at once", function () {
@@ -120,24 +120,24 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(indexes, "reverse").andCallThrough();
 			spyOn(indexes, "forEach").andCallThrough();
 
-			expect(store.delAll()).toEqual(false);
-			expect(store.delAll({})).toEqual(false);
-			expect(store.delAll(indexes)).toEqual(true);
+			expect(store.delAll()).toBe(false);
+			expect(store.delAll({})).toBe(false);
+			expect(store.delAll(indexes)).toBe(true);
 
 			expect(indexes.sort.mostRecentCall.args[0]).toBe(Tools.compareNumbers);
-			expect(indexes.reverse.wasCalled).toEqual(true);
+			expect(indexes.reverse.wasCalled).toBe(true);
 			expect(indexes.forEach.mostRecentCall.args[0]).toBe(store.del);
 			expect(indexes.forEach.mostRecentCall.args[1]).toBe(store);
 
-			expect(store.get(0)).toEqual(2);
-			expect(store.get(1)).toEqual(7);
-			expect(store.get(2)).toEqual(10);
+			expect(store.get(0)).toBe(2);
+			expect(store.get(1)).toBe(7);
+			expect(store.get(2)).toBe(10);
 
 		});
 
 		it("should dump its data", function () {
 			store.reset({a:10});
-			expect(store.dump().a).toEqual(10);
+			expect(store.dump().a).toBe(10);
 		});
 
 	});
@@ -164,8 +164,8 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(storeObservable, "watch").andCallThrough();
 
 			expect(store.watch(name, spy, scope)).toBeTruthy();
-			expect(storeObservable.watch.wasCalled).toEqual(true);
-			expect(storeObservable.watch.mostRecentCall.args[0]).toEqual(name);
+			expect(storeObservable.watch.wasCalled).toBe(true);
+			expect(storeObservable.watch.mostRecentCall.args[0]).toBe(name);
 			expect(storeObservable.watch.mostRecentCall.args[1]).toBe(spy);
 			expect(storeObservable.watch.mostRecentCall.args[2]).toBe(scope);
 		});
@@ -174,9 +174,9 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(storeObservable, "notify");
 
 			store.set("test");
-			expect(storeObservable.notify.wasCalled).toEqual(true);
-			expect(storeObservable.notify.mostRecentCall.args[0]).toEqual("added");
-			expect(storeObservable.notify.mostRecentCall.args[1]).toEqual("test");
+			expect(storeObservable.notify.wasCalled).toBe(true);
+			expect(storeObservable.notify.mostRecentCall.args[0]).toBe("added");
+			expect(storeObservable.notify.mostRecentCall.args[1]).toBe("test");
 			expect(storeObservable.notify.mostRecentCall.args[2]).toBeUndefined();
 		});
 
@@ -185,10 +185,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			store.set("test");
 			store.set("test", "newValue");
-			expect(storeObservable.notify.wasCalled).toEqual(true);
-			expect(storeObservable.notify.mostRecentCall.args[0]).toEqual("updated");
-			expect(storeObservable.notify.mostRecentCall.args[1]).toEqual("test");
-			expect(storeObservable.notify.mostRecentCall.args[2]).toEqual("newValue");
+			expect(storeObservable.notify.wasCalled).toBe(true);
+			expect(storeObservable.notify.mostRecentCall.args[0]).toBe("updated");
+			expect(storeObservable.notify.mostRecentCall.args[1]).toBe("test");
+			expect(storeObservable.notify.mostRecentCall.args[2]).toBe("newValue");
 		});
 
 		it("should notify with old value too on set", function () {
@@ -197,7 +197,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.set("test", "oldValue");
 			store.set("test", "newValue");
 
-			expect(storeObservable.notify.mostRecentCall.args[3]).toEqual("oldValue");
+			expect(storeObservable.notify.mostRecentCall.args[3]).toBe("oldValue");
 		});
 
 		it("should notify on update", function () {
@@ -206,10 +206,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(storeObservable, "notify");
 
 			store.update("test", "prop", "newValue");
-			expect(storeObservable.notify.wasCalled).toEqual(true);
-			expect(storeObservable.notify.mostRecentCall.args[0]).toEqual("updated");
-			expect(storeObservable.notify.mostRecentCall.args[1]).toEqual("prop");
-			expect(storeObservable.notify.mostRecentCall.args[2]).toEqual("newValue");
+			expect(storeObservable.notify.wasCalled).toBe(true);
+			expect(storeObservable.notify.mostRecentCall.args[0]).toBe("updated");
+			expect(storeObservable.notify.mostRecentCall.args[1]).toBe("prop");
+			expect(storeObservable.notify.mostRecentCall.args[2]).toBe("newValue");
 		});
 
 		it("should provide value when said available", function () {
@@ -219,7 +219,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.watch("added", callback);
 			store.set("test", "yes");
 
-			expect(callback.ret).toEqual("yes");
+			expect(callback.ret).toBe("yes");
 		});
 
 		it("should notify on del", function () {
@@ -227,9 +227,9 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			store.set("test");
 			store.del("test");
-			expect(storeObservable.notify.wasCalled).toEqual(true);
-			expect(storeObservable.notify.mostRecentCall.args[0]).toEqual("deleted");
-			expect(storeObservable.notify.mostRecentCall.args[1]).toEqual("test");
+			expect(storeObservable.notify.wasCalled).toBe(true);
+			expect(storeObservable.notify.mostRecentCall.args[0]).toBe("deleted");
+			expect(storeObservable.notify.mostRecentCall.args[1]).toBe("test");
 			expect(storeObservable.notify.mostRecentCall.args[2]).toBeUndefined();
 		});
 
@@ -239,7 +239,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			handler = store.watch("added", function(){});
 			store.unwatch(handler);
 
-			expect(storeObservable.unwatch.wasCalled).toEqual(true);
+			expect(storeObservable.unwatch.wasCalled).toBe(true);
 			expect(storeObservable.unwatch.mostRecentCall.args[0]).toBe(handler);
 		});
 
@@ -266,8 +266,8 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(valueObservable, "watch").andCallThrough();
 
 			expect(store.watchValue(name, spy, scope)).toBeTruthy();
-			expect(valueObservable.watch.wasCalled).toEqual(true);
-			expect(valueObservable.watch.mostRecentCall.args[0]).toEqual(name);
+			expect(valueObservable.watch.wasCalled).toBe(true);
+			expect(valueObservable.watch.mostRecentCall.args[0]).toBe(name);
 			expect(valueObservable.watch.mostRecentCall.args[1]).toBe(spy);
 			expect(valueObservable.watch.mostRecentCall.args[2]).toBe(scope);
 		});
@@ -276,10 +276,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(valueObservable, "notify");
 
 			store.set("test");
-			expect(valueObservable.notify.wasCalled).toEqual(true);
-			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
+			expect(valueObservable.notify.wasCalled).toBe(true);
+			expect(valueObservable.notify.mostRecentCall.args[0]).toBe("test");
 			expect(valueObservable.notify.mostRecentCall.args[1]).toBeUndefined();
-			expect(valueObservable.notify.mostRecentCall.args[2]).toEqual("added");
+			expect(valueObservable.notify.mostRecentCall.args[2]).toBe("added");
 		});
 
 		it("should notify with new value on set", function () {
@@ -287,10 +287,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			store.set("test");
 			store.set("test", "newValue");
-			expect(valueObservable.notify.wasCalled).toEqual(true);
-			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
-			expect(valueObservable.notify.mostRecentCall.args[1]).toEqual("newValue");
-			expect(valueObservable.notify.mostRecentCall.args[2]).toEqual("updated");
+			expect(valueObservable.notify.wasCalled).toBe(true);
+			expect(valueObservable.notify.mostRecentCall.args[0]).toBe("test");
+			expect(valueObservable.notify.mostRecentCall.args[1]).toBe("newValue");
+			expect(valueObservable.notify.mostRecentCall.args[2]).toBe("updated");
 		});
 
 		it("should notify with old value too on set", function () {
@@ -299,7 +299,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.set("test", "oldValue");
 			store.set("test", "newValue");
 
-			expect(valueObservable.notify.mostRecentCall.args[3]).toEqual("oldValue");
+			expect(valueObservable.notify.mostRecentCall.args[3]).toBe("oldValue");
 		});
 
 		it("should notify on update", function () {
@@ -309,10 +309,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(valueObservable, "notify");
 
 			store.update("test", "prop", "newValue");
-			expect(valueObservable.notify.wasCalled).toEqual(true);
-			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
-			expect(valueObservable.notify.mostRecentCall.args[1]).toEqual(item);
-			expect(valueObservable.notify.mostRecentCall.args[2]).toEqual("updated");
+			expect(valueObservable.notify.wasCalled).toBe(true);
+			expect(valueObservable.notify.mostRecentCall.args[0]).toBe("test");
+			expect(valueObservable.notify.mostRecentCall.args[1]).toBe(item);
+			expect(valueObservable.notify.mostRecentCall.args[2]).toBe("updated");
 		});
 
 		it("should provide value when said available", function () {
@@ -322,7 +322,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.watchValue("test", callback);
 			store.set("test", "yes");
 
-			expect(callback.ret).toEqual("yes");
+			expect(callback.ret).toBe("yes");
 		});
 
 		it("should notify on del", function () {
@@ -330,10 +330,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			store.set("test");
 			store.del("test");
-			expect(valueObservable.notify.wasCalled).toEqual(true);
-			expect(valueObservable.notify.mostRecentCall.args[0]).toEqual("test");
+			expect(valueObservable.notify.wasCalled).toBe(true);
+			expect(valueObservable.notify.mostRecentCall.args[0]).toBe("test");
 			expect(valueObservable.notify.mostRecentCall.args[1]).toBeUndefined();
-			expect(valueObservable.notify.mostRecentCall.args[2]).toEqual("deleted");
+			expect(valueObservable.notify.mostRecentCall.args[2]).toBe("deleted");
 		});
 
 		it("can unwatch value", function () {
@@ -342,7 +342,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			handler = store.watchValue("added", function(){});
 			store.unwatchValue(handler);
 
-			expect(valueObservable.unwatch.wasCalled).toEqual(true);
+			expect(valueObservable.unwatch.wasCalled).toBe(true);
 			expect(valueObservable.unwatch.mostRecentCall.args[0]).toBe(handler);
 		});
 
@@ -354,16 +354,16 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			var func = function () {};
 
 			var store = new Store({x: 10, y: 20, z:func});
-			expect(store.get("x")).toEqual(10);
-			expect(store.get("y")).toEqual(20);
-			expect(store.get("z")).toEqual(func);
+			expect(store.get("x")).toBe(10);
+			expect(store.get("y")).toBe(20);
+			expect(store.get("z")).toBe(func);
 		});
 
 		it("can be initialized with an array", function () {
 			var store = new Store([1, 2, "yes"]);
-			expect(store.get(0)).toEqual(1);
-			expect(store.get(1)).toEqual(2);
-			expect(store.get(2)).toEqual("yes");
+			expect(store.get(0)).toBe(1);
+			expect(store.get(1)).toBe(2);
+			expect(store.get(2)).toBe("yes");
 		});
 
 	});
@@ -377,25 +377,25 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 		});
 
 		it("should return the right number of items", function () {
-			expect(store.getNbItems()).toEqual(0);
+			expect(store.getNbItems()).toBe(0);
 			store.set("value1");
-			expect(store.getNbItems()).toEqual(1);
+			expect(store.getNbItems()).toBe(1);
 			store.set("value2");
 			store.set("value3");
-			expect(store.getNbItems()).toEqual(3);
+			expect(store.getNbItems()).toBe(3);
 			store.del("value3");
-			expect(store.getNbItems()).toEqual(2);
+			expect(store.getNbItems()).toBe(2);
 			store.del("value2");
 			store.del("value1");
 			store.del("test");
-			expect(store.getNbItems()).toEqual(0);
+			expect(store.getNbItems()).toBe(0);
 		});
 
 		it("should return the right number of items when init with data", function () {
 			var initValue = {x:10, y: 20},
 				store = new Store(initValue);
 
-			expect(store.getNbItems()).toEqual(2);
+			expect(store.getNbItems()).toBe(2);
 		});
 	});
 
@@ -415,7 +415,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 		it("should allow for looping through it", function () {
 			expect(store.loop).toBeInstanceOf(Function);
 			store.loop(function (val, idx) {
-				expect(store.get(idx)).toEqual(val);
+				expect(store.get(idx)).toBe(val);
 			});
 		});
 
@@ -439,20 +439,20 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 		});
 
 		it("should be working with arrays as data", function () {
-			expect(store.get(0)).toEqual(0);
-			expect(store.get(3)).toEqual(3);
-			expect(store.getNbItems()).toEqual(4);
+			expect(store.get(0)).toBe(0);
+			expect(store.get(3)).toBe(3);
+			expect(store.getNbItems()).toBe(4);
 		});
 
 		it("should be updatable", function () {
-			expect(store.set(0, 10)).toEqual(true);
-			expect(store.get(0)).toEqual(10);
+			expect(store.set(0, 10)).toBe(true);
+			expect(store.get(0)).toBe(10);
 		});
 
 		it("should loop in the correct order", function () {
 			var i = 0;
 			store.loop(function (val, idx) {
-				expect(idx).toEqual(i++);
+				expect(idx).toBe(i++);
 			});
 		});
 
@@ -475,11 +475,11 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.alter("pop");
 			store.alter("sort");
 			store.alter("splice", 1, 2);
-			expect(Array.prototype.pop.wasCalled).toEqual(true);
-			expect(Array.prototype.sort.wasCalled).toEqual(true);
-			expect(Array.prototype.splice.wasCalled).toEqual(true);
-			expect(Array.prototype.splice.mostRecentCall.args[0]).toEqual(1);
-			expect(Array.prototype.splice.mostRecentCall.args[1]).toEqual(2);
+			expect(Array.prototype.pop.wasCalled).toBe(true);
+			expect(Array.prototype.sort.wasCalled).toBe(true);
+			expect(Array.prototype.splice.wasCalled).toBe(true);
+			expect(Array.prototype.splice.mostRecentCall.args[0]).toBe(1);
+			expect(Array.prototype.splice.mostRecentCall.args[1]).toBe(2);
 		});
 
 		it("should advertise on changes", function () {
@@ -491,34 +491,34 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			store.alter("splice", 1, 2);
 
-			expect(spy1.wasCalled).toEqual(true);
-			expect(spy2.wasCalled).toEqual(true);
-			expect(spy1.callCount).toEqual(1);
-			expect(spy2.callCount).toEqual(2);
-			expect(spy1.mostRecentCall.args[0]).toEqual(1);
-			expect(spy1.mostRecentCall.args[1]).toEqual(3);
+			expect(spy1.wasCalled).toBe(true);
+			expect(spy2.wasCalled).toBe(true);
+			expect(spy1.callCount).toBe(1);
+			expect(spy2.callCount).toBe(2);
+			expect(spy1.mostRecentCall.args[0]).toBe(1);
+			expect(spy1.mostRecentCall.args[1]).toBe(3);
 			spy2.calls.forEach(function (call) {
 				// Don't know how to write this test better
 				//  call.args[0] should equal 2 or 3
-				expect(call.args[0] >= 2).toEqual(true);
+				expect(call.args[0] >= 2).toBe(true);
 				expect(call.args[1]).toBeUndefined();
 			});
 		});
 
 		it("should return false if the function doesn't exist", function () {
-			expect(store.alter("doesn't exist")).toEqual(false);
+			expect(store.alter("doesn't exist")).toBe(false);
 		});
 
 
 		it("should call Array.splice on del if init'd with an array", function () {
 			store.reset([0, 1, 2, 3]);
 			spyOn(Array.prototype, "splice").andCallThrough();
-			expect(store.del(1)).toEqual(true);
-			expect(Array.prototype.splice.wasCalled).toEqual(true);
-			expect(Array.prototype.splice.mostRecentCall.args[0]).toEqual(1);
-			expect(Array.prototype.splice.mostRecentCall.args[1]).toEqual(1);
-			expect(store.get(0)).toEqual(0);
-			expect(store.get(1)).toEqual(2);
+			expect(store.del(1)).toBe(true);
+			expect(Array.prototype.splice.wasCalled).toBe(true);
+			expect(Array.prototype.splice.mostRecentCall.args[0]).toBe(1);
+			expect(Array.prototype.splice.mostRecentCall.args[1]).toBe(1);
+			expect(store.get(0)).toBe(0);
+			expect(store.get(1)).toBe(2);
 		});
 
 		it("should notify only once on del", function () {
@@ -526,7 +526,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.reset([0, 1, 2, 3]);
 			store.watch("deleted", spy);
 			store.del(1);
-			expect(spy.callCount).toEqual(1);
+			expect(spy.callCount).toBe(1);
 		});
 
 	});
@@ -543,9 +543,9 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 		it("should allow for complete data reset", function () {
 			expect(store.reset).toBeInstanceOf(Function);
-			expect(store.reset(resetData)).toEqual(true);
-			expect(store.has("a")).toEqual(false);
-			expect(store.get("b")).toEqual(20);
+			expect(store.reset(resetData)).toBe(true);
+			expect(store.has("a")).toBe(false);
+			expect(store.get("b")).toBe(20);
 		});
 
 		it("should only reset if data is object or array", function () {
@@ -553,8 +553,8 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 				store.reset();
 			}).not.toThrow();
 
-			expect(store.reset()).toEqual(false);
-			expect(store.get("a")).toEqual(10);
+			expect(store.reset()).toBe(false);
+			expect(store.get("a")).toBe(10);
 		});
 
 		it("should advertise for every modified value", function () {
@@ -564,13 +564,13 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.watch("deleted", spyA);
 			store.watch("added", spyB);
 			store.reset(resetData);
-			expect(spyA.wasCalled).toEqual(true);
-			expect(spyA.mostRecentCall.args[0]).toEqual("a")
+			expect(spyA.wasCalled).toBe(true);
+			expect(spyA.mostRecentCall.args[0]).toBe("a")
 			expect(spyA.mostRecentCall.args[1]).toBeUndefined();
-			expect(spyA.callCount).toEqual(1);
-			expect(spyB.mostRecentCall.args[0]).toEqual("b");
-			expect(spyB.mostRecentCall.args[1]).toEqual(20);
-			expect(spyB.callCount).toEqual(1);
+			expect(spyA.callCount).toBe(1);
+			expect(spyB.mostRecentCall.args[0]).toBe("b");
+			expect(spyB.mostRecentCall.args[1]).toBe(20);
+			expect(spyB.callCount).toBe(1);
 		});
 	});
 
@@ -597,8 +597,8 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			store1.watch("added", spyAdded);
 			store2.set("shared");
-			expect(spyAdded.wasCalled).toEqual(false);
-			expect(spyUpdated.wasCalled).toEqual(false);
+			expect(spyAdded.wasCalled).toBe(false);
+			expect(spyUpdated.wasCalled).toBe(false);
 		});
 
 		it("should have the same behaviour on reset", function () {
@@ -612,8 +612,8 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			store1.watch("added", spyAdded);
 			store2.set("shared");
-			expect(spyAdded.wasCalled).toEqual(false);
-			expect(spyUpdated.wasCalled).toEqual(false);
+			expect(spyAdded.wasCalled).toBe(false);
+			expect(spyUpdated.wasCalled).toBe(false);
 		});
 
 	});

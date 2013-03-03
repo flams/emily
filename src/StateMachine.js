@@ -70,7 +70,6 @@ function StateMachine(Tools) {
 			} else {
 				return _states[name];
 			}
-
 		};
 
 		/**
@@ -89,6 +88,29 @@ function StateMachine(Tools) {
 		 */
 		this.getCurrent = function getCurrent() {
 			return _currentState;
+		};
+
+		/**
+		 * Tell if the state machine has the given state
+		 * @param {String} state the name of the state
+		 * @returns {Boolean} true if it has the given state
+		 */
+		this.has = function has(state) {
+			return _states.hasOwnProperty(state);
+		};
+
+		/**
+		 * Advances the state machine to a given state
+		 * @param {String} state the name of the state to advance the state machine to
+		 * @returns {Boolean} true if it has the given state
+		 */
+		this.advance = function advance(state) {
+			if (this.has(state)) {
+				_currentState = state;
+				return true;
+			} else {
+				return false;
+			}
 		};
 
 		/**
