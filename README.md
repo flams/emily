@@ -7,7 +7,8 @@ Changes are listed in the sibling https://github.com/flams/emily/blob/master/CHA
  * It's ready for realtime applications.
  * It's only a set of AMD/commonJS modules, your module loader is the framework
  * It's ready for being used with other frameworks.
- * It doesn't use any proprietary technology.
+ * It only relies on standard features
+ * It eases the development of MV* applications my providing the M
 
 ###What modules does it provide?
 
@@ -17,8 +18,6 @@ Changes are listed in the sibling https://github.com/flams/emily/blob/master/CHA
  * StateMachine: don't hide your states and transitions behind if/else anymore.
  * Transport: make requests to anything node.js has access to.
  * Tools: these functions you always need and rewrite.
-
- The documentation for each module can be found here: https://github.com/flams/emily/wiki
 
 ###How do I use it?
 
@@ -54,12 +53,156 @@ npm install emily
 	});
 ```
 
-### Better integration within your application
+### Integration tests: (Emily 1.3.4)
 
-For a better integration within your application, you can simply download Emily and copy the source files that you need into your application's file tree. Provided that you are using requirejs or similar, you'll be able to load Emily's modules just like any other part of your application and you'll also be able to use your preferred optimizer.
+/**
+ * Emily.js - http://flams.github.com/emily/
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+define(["Observable", "Tools", "Transport", "Store", "StateMachine", "Promise"],
+
+function(Observable, Tools, Transport, Store, StateMachine, Promise) {
+
+
+	describe("Observable implements the Observer design pattern, also called publish subscribe", function () {
+
+		it("has a watch function for adding a listener", function () {
+			var observable = new Observable();
+
+			var handle = observable.watch("topic", function listener() {
+				// action to execute when something is published on the topic
+			}, this);
+		});
+
+		it("has a notify function for publishing something on a topic", function () {
+			var observable = new Observable(),
+				message;
+
+			observable.watch("topic", function listener(something) {
+				message = something;
+			});
+
+			observable.notify("topic", "hello");
+
+			expect(message).toBe("hello");
+		});
+
+		it("notifies several listeners in the order they were added", function () {
+			var observable = new Observable(),
+				order = [];
+
+			observable.watch("topic", function listener1() {  order.push(1); });
+			observable.watch("topic", function listener2() {  order.push(2); });
+			observable.watch("topic", function listener3() {  order.push(3); });
+
+			observable.notify("topic");
+
+			expect(order[0]).toBe(1);
+			expect(order[1]).toBe(2);
+			expect(order[2]).toBe(3);
+		});
+
+		it("should continue publishing on all the listeners even if one of them fails", function () {
+			var observable = new Observable(),
+				order = [];
+
+			observable.watch("topic", function listener1() {  order.push(1); });
+			observable.watch("topic", function listener2() {  throw new Error("this listener fails"); });
+			observable.watch("topic", function listener3() {  order.push(3); });
+
+			observable.notify("topic");
+
+			expect(order[0]).toBe(1);
+			expect(order[1]).toBe(3);
+		});
+
+		it("can bind the this object of a listener to a given object and pass multiple things on the topic", function () {
+			var observable = new Observable(),
+				message1,
+				message2,
+				message3,
+				context;
+
+			observable.watch("topic", function listener(something1, something2, something3) {
+				message1 = something1;
+				message2 = something2;
+				message3 = something3;
+				context = this;
+			}, this);
+
+			observable.notify("topic", "hello", "this is", "emily");
+
+			expect(message1).toBe("hello");
+			expect(message2).toBe("this is");
+			expect(message3).toBe("emily");
+			expect(context).toBe(this);
+		});
+
+		it("can remove a listener on a topic", function () {
+			var observable = new Observable(),
+				removed = true;
+
+			var handle = observable.watch("topic", function listener(something) {
+				removed = false;
+			});
+
+			// Remove the listener so it doesn't get called anymore
+			observable.unwatch(handle);
+
+			observable.notify("topic");
+
+			expect(removed).toBe(true);
+		});
+
+	});
+
+
+
+});
+
+
 
 ### Going further
 
 Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives
+
+1.3.4 - 03 MAR 2013
+-------------------
+
+* Added advance to the state machine
+
+1.3.3 - 28 JAN 2013
+-------------------
+
+* Added Store.dump
+* When store publishes a change event, it publishes both the new and the previous value
+
+1.3.2 - 22 JAN 2013
+-------------------
+
+* Fixed emily-server breaking olives
+* Updated requirejs
+
+1.3.1 - 1 JAN 2013
+-------------------
+
+* Promise has been updated to pass the promise/A+ specs according to
+https://github.com/promises-aplus/promises-tests
+* Updated StateMachine so new transitions can be added on the fly
+* Moved the CouchDB handler to CouchDB Emily Tools
+
+1.3.0 - 16 DEC 2012
+-------------------
+
+ * Promise has been updated to pass the promise/A specs according to https://github.com/domenic/promise-tests
+ * The build now includes the source files as you should be able to drop them into your application
+   to decide how you want to load and optimize them
+
+1.2.0 - 07 OCT 2012
+-------------------
+
+Removal of CouchDBStore - now part of CouchDB-Emily-Tools
 
 
