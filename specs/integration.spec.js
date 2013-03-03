@@ -99,6 +99,39 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			expect(removed).toBe(true);
 		});
 
+		it("can remove all listeners on a given topic", function () {
+			var observable = new Observable(),
+				topics = [];
+
+			observable.watch("topic1", function listener1() { topics.push("topic1"); });
+			observable.watch("topic1", function listener2() { topics.push("topic1"); });
+			observable.watch("topic2", function listener3() { topics.push("topic2"); });
+
+			observable.unwatchAll("topic1");
+
+			observable.notify("topic1");
+			observable.notify("topic2");
+
+			expect(topics.length).toBe(1);
+			expect(topics[0]).toBe("topic2");
+		});
+
+		it("can remove all listeners", function () {
+			var observable = new Observable(),
+				topics = [];
+
+			observable.watch("topic1", function listener1() { topics.push("topic1"); });
+			observable.watch("topic1", function listener2() { topics.push("topic1"); });
+			observable.watch("topic2", function listener3() { topics.push("topic2"); });
+
+			observable.unwatchAll();
+
+			observable.notify("topic1");
+			observable.notify("topic2");
+
+			expect(topics.length).toBe(0);
+		});
+
 	});
 
 
