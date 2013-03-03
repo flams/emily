@@ -1,3 +1,8 @@
+1.3.4 - 03 MAR 2013
+-------------------
+
+* Added advance to the state machine
+
 1.3.3 - 28 JAN 2013
 -------------------
 
