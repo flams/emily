@@ -39,7 +39,7 @@
 <span class='line'> 32</span> 		 * @param {String} topic the topic to observe
 <span class='line'> 33</span> 		 * @param {Function} callback the callback to execute
 <span class='line'> 34</span> 		 * @param {Object} scope the scope in which to execute the callback
-<span class='line'> 35</span> 		 * @returns handler
+<span class='line'> 35</span> 		 * @returns handle
 <span class='line'> 36</span> 		 */</span><span class="WHIT">
 <span class='line'> 37</span> </span><span class="WHIT">		</span><span class="NAME">this.watch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">watch</span><span class="PUNC">(</span><span class="NAME">topic</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 38</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"function"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -56,7 +56,7 @@
 <span class='line'> 49</span> 
 <span class='line'> 50</span> </span><span class="WHIT">		</span><span class="COMM">/**
 <span class='line'> 51</span> 		 * Remove an observer
-<span class='line'> 52</span> 		 * @param {Handler} handler returned by the watch method
+<span class='line'> 52</span> 		 * @param {Handler} handle returned by the watch method
 <span class='line'> 53</span> 		 * @returns {Boolean} true if there were subscribers
 <span class='line'> 54</span> 		 */</span><span class="WHIT">
 <span class='line'> 55</span> </span><span class="WHIT">		</span><span class="NAME">this.unwatch</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">unwatch</span><span class="PUNC">(</span><span class="NAME">handler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">

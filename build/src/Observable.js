@@ -32,7 +32,7 @@ function Observable(Tools) {
 		 * @param {String} topic the topic to observe
 		 * @param {Function} callback the callback to execute
 		 * @param {Object} scope the scope in which to execute the callback
-		 * @returns handler
+		 * @returns handle
 		 */
 		this.watch = function watch(topic, callback, scope) {
 			if (typeof callback == "function") {
@@ -49,7 +49,7 @@ function Observable(Tools) {
 
 		/**
 		 * Remove an observer
-		 * @param {Handler} handler returned by the watch method
+		 * @param {Handler} handle returned by the watch method
 		 * @returns {Boolean} true if there were subscribers
 		 */
 		this.unwatch = function unwatch(handler) {
