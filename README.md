@@ -55,6 +55,7 @@ npm install emily
 
 ### Integration tests: (Emily 1.3.4)
 
+```js
 /**
  * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
@@ -161,7 +162,7 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 
 });
-
+```
 
 
 ### Going further
