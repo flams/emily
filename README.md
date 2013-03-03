@@ -1,5 +1,3 @@
-Changes are listed in the sibling https://github.com/flams/emily/blob/master/CHANGELOG.md
-
 ###What is Emily?
 
  * Emily is a JS library for building scalable web applications.
