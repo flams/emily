@@ -178,6 +178,13 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				// The destination's c has been replaced by the source's one
 				expect(destination.c).toBe(25);
 			});
+
+			it("also returns the destination object", function () {
+				var source = {c: 30, d: 40},
+					destination = {a: 10, b: 20, c: 25};
+
+				expect(Tools.mixin(source, destination, true)).toBe(destination);
+			});
 		});
 
 		describe("Tools.count tells how many own properties an Object has", function () {
@@ -234,12 +241,60 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				(function () {
 					var args = Tools.toArray(arguments);
 
-					args.forEach(function (value, idx) {
-						expect(value).toBe(arguments[idx]);
-					});
+					expect(Array.isArray(args)).toBe(true);
 
-				})(0,1,2,3);
+				})();
 			});
+
+			it("transforms a nodelist into an array", function () {
+				if (__Global.document) {
+					var all = document.querySelectorAll("*");
+
+					expect(Array.isArray(all)).toBe(true);
+				}
+			});
+		});
+
+		describe("Tools.loop abstracts the difference between iterating over an object and an array", function () {
+
+			it("can iterate over an array", function () {
+				var array = [0, 1, 2, 3];
+
+				var _self = this;
+
+				Tools.loop(array, function (value, index, iterated) {
+					expect(iterated).toBe(array);
+					expect(array[index]).toBe(value);
+					// The context in which to run this function can also be given
+					expect(this).toBe(_self);
+				}, this);
+			});
+
+			it("can iterate over an array which length varies", function () {
+				var iterated = [1],
+					nbOfCalls = 0;
+
+				Tools.loop(iterated, function (value) {
+					if (nbOfCalls < 10) {
+						iterated.push(1);
+						nbOfCalls++;
+					}
+				});
+
+				expect(iterated.length).toBe(11);
+			});
+
+			it("can iterate over an object", function () {
+				var object = {a: 10, b: 20};
+
+				Tools.loop(object, function (value, key, obj) {
+					expect(object).toBe(obj);
+					expect(object[key]).toBe(value);
+				});
+			});
+		});
+
+		describe("Tools.objectsDiffs returns an object describing the differences between two objects", function () {
 
 		});
 
