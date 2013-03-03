@@ -26,8 +26,8 @@ function Tools(){
 
 		/**
 		 * Mixes an object into another
-		 * @param {Object} destination object to mix values into
 		 * @param {Object} source object to get values from
+		 * @param {Object} destination object to mix values into
 		 * @param {Boolean} optional, set to true to prevent overriding
 		 */
 	    mixin: function mixin(source, destination, dontOverride) {
