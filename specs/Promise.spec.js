@@ -50,12 +50,12 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 			resolver(value);
 
-			expect(returnFunc.wasCalled).toEqual(true);
+			expect(returnFunc.wasCalled).toBe(true);
 			expect(returnFunc.mostRecentCall.args[0]).toBe(value);
 			expect(returnFunc.mostRecentCall.object).toBe(scope);
 
-			expect(newPromise.fulfill.wasCalled).toEqual(true);
-			expect(newPromise.fulfill.mostRecentCall.args[0]).toEqual("return");
+			expect(newPromise.fulfill.wasCalled).toBe(true);
+			expect(newPromise.fulfill.mostRecentCall.args[0]).toBe("return");
 		});
 
 		it("should reject the new promise if the func throws", function () {
@@ -64,12 +64,12 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 			resolver(reason);
 
-			expect(throwFunc.wasCalled).toEqual(true);
+			expect(throwFunc.wasCalled).toBe(true);
 			expect(throwFunc.mostRecentCall.args[0]).toBe(reason);
 			expect(throwFunc.mostRecentCall.object).toBe(scope);
 
-			expect(newPromise.reject.wasCalled).toEqual(true);
-			expect(newPromise.reject.mostRecentCall.args[0]).toEqual("error");
+			expect(newPromise.reject.wasCalled).toBe(true);
+			expect(newPromise.reject.mostRecentCall.args[0]).toBe("error");
 		});
 
 	});
@@ -87,7 +87,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 		});
 
 		it("should be init in Pending state", function () {
-			expect(promise.getStateMachine().getCurrent()).toEqual("Pending");
+			expect(promise.getStateMachine().getCurrent()).toBe("Pending");
 		});
 
 		describe("PromiseStateMachine Pending state", function () {
@@ -104,8 +104,8 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 				spyOn(observable, "notify");
 
 				expect(fulfill).toBeInstanceOf(Array);
-				expect(fulfill[0]).toEqual("fulfill");
-				expect(fulfill[2]).toEqual("Fulfilled");
+				expect(fulfill[0]).toBe("fulfill");
+				expect(fulfill[2]).toBe("Fulfilled");
 
 				callback = fulfill[1];
 
@@ -113,8 +113,8 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 				expect(promise.getValue()).toBe(value);
 
-				expect(observable.notify.wasCalled).toEqual(true);
-				expect(observable.notify.mostRecentCall.args[0]).toEqual("fulfill");
+				expect(observable.notify.wasCalled).toBe(true);
+				expect(observable.notify.mostRecentCall.args[0]).toBe("fulfill");
 				expect(observable.notify.mostRecentCall.args[1]).toBe(value);
 
 			});
@@ -128,8 +128,8 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 				spyOn(observable, "notify");
 
 				expect(reject).toBeInstanceOf(Array);
-				expect(reject[0]).toEqual("reject");
-				expect(reject[2]).toEqual("Rejected");
+				expect(reject[0]).toBe("reject");
+				expect(reject[2]).toBe("Rejected");
 
 				callback = reject[1];
 
@@ -137,8 +137,8 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 
 				expect(promise.getReason()).toBe(reason);
 
-				expect(observable.notify.wasCalled).toEqual(true);
-				expect(observable.notify.mostRecentCall.args[0]).toEqual("reject");
+				expect(observable.notify.wasCalled).toBe(true);
+				expect(observable.notify.mostRecentCall.args[0]).toBe("reject");
 				expect(observable.notify.mostRecentCall.args[1]).toBe(reason);
 
 			});
@@ -151,14 +151,14 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 				spyOn(observable, "watch");
 
 				expect(toFulfill).toBeInstanceOf(Array);
-				expect(toFulfill[0]).toEqual("toFulfill");
+				expect(toFulfill[0]).toBe("toFulfill");
 
 				callback = toFulfill[1];
 
 				callback(resolver);
 
-				expect(observable.watch.wasCalled).toEqual(true);
-				expect(observable.watch.mostRecentCall.args[0]).toEqual("fulfill");
+				expect(observable.watch.wasCalled).toBe(true);
+				expect(observable.watch.mostRecentCall.args[0]).toBe("fulfill");
 				expect(observable.watch.mostRecentCall.args[1]).toBe(resolver);
 			});
 
@@ -170,14 +170,14 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 				spyOn(observable, "watch");
 
 				expect(toReject).toBeInstanceOf(Array);
-				expect(toReject[0]).toEqual("toReject");
+				expect(toReject[0]).toBe("toReject");
 
 				callback = toReject[1];
 
 				callback(resolver);
 
-				expect(observable.watch.wasCalled).toEqual(true);
-				expect(observable.watch.mostRecentCall.args[0]).toEqual("reject");
+				expect(observable.watch.wasCalled).toBe(true);
+				expect(observable.watch.mostRecentCall.args[0]).toBe("reject");
 				expect(observable.watch.mostRecentCall.args[1]).toBe(resolver);
 			});
 
@@ -196,7 +196,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 					});
 
 				expect(toFulfill).toBeInstanceOf(Array);
-				expect(toFulfill[0]).toEqual("toFulfill");
+				expect(toFulfill[0]).toBe("toFulfill");
 
 				callback = toFulfill[1];
 
@@ -219,7 +219,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 					});
 
 				expect(toReject).toBeInstanceOf(Array);
-				expect(toReject[0]).toEqual("toReject");
+				expect(toReject[0]).toBe("toReject");
 
 				callback = toReject[1];
 
@@ -261,11 +261,11 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 		it("should add a fulfillement callback", function () {
 			var newPromise = promise.then(fulfillmentCB);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.calls[0].args[0]).toEqual("toFulfill");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.calls[0].args[0]).toBe("toFulfill");
 			expect(stateMachine.event.calls[0].args[1]).toBe(resolver);
 
-			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.wasCalled).toBe(true);
 			expect(promise.makeResolver.calls[0].args[0]).toBe(newPromise);
 			expect(promise.makeResolver.calls[0].args[1]).toBe(fulfillmentCB);
 		});
@@ -274,11 +274,11 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 		it("should add a fulfillement callback with a scope", function () {
 			var newPromise = promise.then(fulfillmentCB, fulfillmentScope);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.calls[0].args[0]).toEqual("toFulfill");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.calls[0].args[0]).toBe("toFulfill");
 			expect(stateMachine.event.calls[0].args[1]).toBe(resolver);
 
-			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.wasCalled).toBe(true);
 			expect(promise.makeResolver.calls[0].args[0]).toBe(newPromise);
 			expect(promise.makeResolver.calls[0].args[1]).toBe(fulfillmentCB);
 			expect(promise.makeResolver.calls[0].args[2]).toBe(fulfillmentScope);
@@ -288,12 +288,12 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			var defaultCB,
 				newPromise = promise.then();
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.calls[0].args[0]).toEqual("toFulfill");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.calls[0].args[0]).toBe("toFulfill");
 			expect(stateMachine.event.calls[0].args[1]).toBe(resolver);
 
-			expect(promise.makeResolver.wasCalled).toEqual(true);
-			expect(promise.makeResolver.calls[0].args[0]).toEqual(newPromise);
+			expect(promise.makeResolver.wasCalled).toBe(true);
+			expect(promise.makeResolver.calls[0].args[0]).toBe(newPromise);
 			expect(promise.makeResolver.calls[0].args[1]).toBeInstanceOf(Function);
 
 			defaultCB = promise.makeResolver.calls[0].args[1]
@@ -301,18 +301,18 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			spyOn(newPromise, "fulfill");
 
 			defaultCB();
-			expect(newPromise.fulfill.wasCalled).toEqual(true);
+			expect(newPromise.fulfill.wasCalled).toBe(true);
 			expect(newPromise.fulfill.mostRecentCall.args[0]).toBe(newPromise.getValue());
 		});
 
 		it("should add a rejection callback", function () {
 			var newPromise = promise.then(null, rejectCB);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("toReject");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("toReject");
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe(resolver);
 
-			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.wasCalled).toBe(true);
 			expect(promise.makeResolver.mostRecentCall.args[0]).toBe(newPromise);
 			expect(promise.makeResolver.mostRecentCall.args[1]).toBe(rejectCB);
 		});
@@ -321,11 +321,11 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 		it("should add a rejection callback with a scope", function () {
 			var newPromise = promise.then(null, rejectCB, rejectScope);
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("toReject");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("toReject");
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe(resolver);
 
-			expect(promise.makeResolver.wasCalled).toEqual(true);
+			expect(promise.makeResolver.wasCalled).toBe(true);
 			expect(promise.makeResolver.mostRecentCall.args[0]).toBe(newPromise);
 			expect(promise.makeResolver.mostRecentCall.args[1]).toBe(rejectCB);
 			expect(promise.makeResolver.mostRecentCall.args[2]).toBe(rejectScope);
@@ -335,12 +335,12 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			var defaultCB,
 				newPromise = promise.then();
 
-			expect(stateMachine.event.wasCalled).toEqual(true);
-			expect(stateMachine.event.mostRecentCall.args[0]).toEqual("toReject");
+			expect(stateMachine.event.wasCalled).toBe(true);
+			expect(stateMachine.event.mostRecentCall.args[0]).toBe("toReject");
 			expect(stateMachine.event.mostRecentCall.args[1]).toBe(resolver);
 
-			expect(promise.makeResolver.wasCalled).toEqual(true);
-			expect(promise.makeResolver.mostRecentCall.args[0]).toEqual(newPromise);
+			expect(promise.makeResolver.wasCalled).toBe(true);
+			expect(promise.makeResolver.mostRecentCall.args[0]).toBe(newPromise);
 			expect(promise.makeResolver.mostRecentCall.args[1]).toBeInstanceOf(Function);
 
 			defaultCB = promise.makeResolver.mostRecentCall.args[1]
@@ -348,7 +348,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			spyOn(newPromise, "reject");
 
 			defaultCB();
-			expect(newPromise.reject.wasCalled).toEqual(true);
+			expect(newPromise.reject.wasCalled).toBe(true);
 			expect(newPromise.reject.mostRecentCall.args[0]).toBe(newPromise.getReason());
 		});
 
@@ -368,7 +368,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 		});
 
 		it("should only synchronise with thenables", function () {
-			expect(promise.sync("fake")).toEqual(false);
+			expect(promise.sync("fake")).toBe(false);
 		});
 
 		it("should synchronize the promise with a thenable", function () {
@@ -378,17 +378,17 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			spyOn(promise, "fulfill");
 			spyOn(promise, "reject");
 
-			expect(promise.sync(thenable)).toEqual(true);
+			expect(promise.sync(thenable)).toBe(true);
 
-			expect(thenable.then.wasCalled).toEqual(true);
+			expect(thenable.then.wasCalled).toBe(true);
 			onFulfilled = thenable.then.mostRecentCall.args[0];
 			onRejected = thenable.then.mostRecentCall.args[1];
 
 			onFulfilled("value");
-			expect(promise.fulfill.mostRecentCall.args[0]).toEqual("value");
+			expect(promise.fulfill.mostRecentCall.args[0]).toBe("value");
 
 			onRejected("reason");
-			expect(promise.reject.mostRecentCall.args[0]).toEqual("reason");
+			expect(promise.reject.mostRecentCall.args[0]).toBe("reason");
 
 		});
 

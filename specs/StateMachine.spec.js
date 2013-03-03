@@ -43,17 +43,17 @@ require(["StateMachine"], function (StateMachine) {
 
 		it("should should set initialization state", function () {
 			var initState = "state";
-			expect(stateMachine.init(initState)).toEqual(false);
+			expect(stateMachine.init(initState)).toBe(false);
 			stateMachine.add(initState);
-			expect(stateMachine.init(initState)).toEqual(true);
+			expect(stateMachine.init(initState)).toBe(true);
 		});
 
 		it("should return the current state", function () {
 			var initState = "state";
-			expect(stateMachine.getCurrent()).toEqual("");
+			expect(stateMachine.getCurrent()).toBe("");
 			stateMachine.add(initState);
 			stateMachine.init(initState);
-			expect(stateMachine.getCurrent()).toEqual(initState);
+			expect(stateMachine.getCurrent()).toBe(initState);
 		});
 
 		it("should return an existing state", function () {
@@ -90,12 +90,12 @@ require(["StateMachine"], function (StateMachine) {
 			var action = jasmine.createSpy(),
 				event = "on";
 
-			expect(state.add(event)).toEqual(false);
-			expect(state.add(action, event)).toEqual(false);
-			expect(state.add(event, event)).toEqual(false);
-			expect(state.add(action, action)).toEqual(false);
-			expect(state.add(event, action)).toEqual(true);
-			expect(state.add(event, action)).toEqual(false);
+			expect(state.add(event)).toBe(false);
+			expect(state.add(action, event)).toBe(false);
+			expect(state.add(event, event)).toBe(false);
+			expect(state.add(action, action)).toBe(false);
+			expect(state.add(event, action)).toBe(true);
+			expect(state.add(event, action)).toBe(false);
 
 			expect(state.has(event));
 		});
@@ -106,8 +106,8 @@ require(["StateMachine"], function (StateMachine) {
 				transition;
 
 			state.add(event, action);
-			expect(state.get()).toEqual(false);
-			expect(state.get("off")).toEqual(false);
+			expect(state.get()).toBe(false);
+			expect(state.get("off")).toBe(false);
 			transition = state.get(event);
 			expect(transition).toBeTruthy();
 			expect(transition[0]).toBe(action);
@@ -119,11 +119,11 @@ require(["StateMachine"], function (StateMachine) {
 
 			state.add(event, action);
 			expect(state.event(event)).toBeUndefined();
-			expect(action.wasCalled).toEqual(true);
+			expect(action.wasCalled).toBe(true);
 		});
 
 		it("should return false if no such transition", function () {
-			expect(state.event("noSuchTransition")).toEqual(false);
+			expect(state.event("noSuchTransition")).toBe(false);
 		});
 
 		it("should pass parameters to the action", function () {
@@ -133,7 +133,7 @@ require(["StateMachine"], function (StateMachine) {
 
 			state.add(event, action);
 			expect(state.event(event, params)).toBeUndefined();
-			expect(action.wasCalled).toEqual(true);
+			expect(action.wasCalled).toBe(true);
 			expect(action.mostRecentCall.args[0]).toBe(params);
 		});
 
@@ -145,7 +145,7 @@ require(["StateMachine"], function (StateMachine) {
 
 			state.add(event, action);
 			expect(state.event(event, params1, params2)).toBeUndefined();
-			expect(action.wasCalled).toEqual(true);
+			expect(action.wasCalled).toBe(true);
 			expect(action.mostRecentCall.args[0]).toBe(params1);
 			expect(action.mostRecentCall.args[1]).toBe(params2);
 		});
@@ -156,8 +156,8 @@ require(["StateMachine"], function (StateMachine) {
 				scope = {};
 
 			// rule of thumbs : if scope is to be passed, it's always the param after the callback
-			expect(state.add(event, action, scope)).toEqual(true);
-			expect(state.add(event, action, scope)).toEqual(false);
+			expect(state.add(event, action, scope)).toBe(true);
+			expect(state.add(event, action, scope)).toBe(false);
 		});
 
 		it("should execute action in scope", function () {
@@ -176,8 +176,8 @@ require(["StateMachine"], function (StateMachine) {
 				scope = {},
 				next = "next";
 
-			expect(state.add(event, action, scope, next)).toEqual(true);
-			expect(state.add(event, action, scope, next)).toEqual(false);
+			expect(state.add(event, action, scope, next)).toBe(true);
+			expect(state.add(event, action, scope, next)).toBe(false);
 		});
 
 		it("should execute an action in scope and return the next transition", function () {
@@ -187,7 +187,7 @@ require(["StateMachine"], function (StateMachine) {
 				next = "next";
 
 			state.add(event, action, scope, next);
-			expect(state.event(event)).toEqual(next);
+			expect(state.event(event)).toBe(next);
 			expect(action.mostRecentCall.object).toBe(scope);
 		});
 
@@ -208,7 +208,7 @@ require(["StateMachine"], function (StateMachine) {
 				event = "on",
 				next = "next";
 
-			expect(state.add(event, action, next)).toEqual(true);
+			expect(state.add(event, action, next)).toBe(true);
 		});
 
 	});
@@ -232,10 +232,10 @@ require(["StateMachine"], function (StateMachine) {
 
 			stateMachine.init("state1");
 			state1.add(event, action);
-			expect(stateMachine.event(event, params)).toEqual(true);
-			expect(action.wasCalled).toEqual(true);
+			expect(stateMachine.event(event, params)).toBe(true);
+			expect(action.wasCalled).toBe(true);
 			expect(action.mostRecentCall.args[0]).toBe(params);
-			expect(stateMachine.event("noEvent")).toEqual(false);
+			expect(stateMachine.event("noEvent")).toBe(false);
 		});
 
 		it('should send multiple params to the current state', function () {
@@ -246,8 +246,8 @@ require(["StateMachine"], function (StateMachine) {
 
 			stateMachine.init("state1");
 			state1.add(event, action);
-			expect(stateMachine.event(event, params1, params2)).toEqual(true);
-			expect(action.wasCalled).toEqual(true);
+			expect(stateMachine.event(event, params1, params2)).toBe(true);
+			expect(action.wasCalled).toBe(true);
 			expect(action.mostRecentCall.args[0]).toBe(params1);
 			expect(action.mostRecentCall.args[1]).toBe(params2);
 		});
@@ -275,13 +275,13 @@ require(["StateMachine"], function (StateMachine) {
 
 
 		it("should transit between states", function () {
-			expect(stateMachine.event("close!")).toEqual(false);
-			expect(stateMachine.event("open!")).toEqual(true);
-			expect(open.wasCalled).toEqual(true);
-			expect(stateMachine.getCurrent()).toEqual("opened");
-			expect(stateMachine.event("close!")).toEqual(true);
-			expect(close.wasCalled).toEqual(true);
-			expect(stateMachine.getCurrent()).toEqual("closed");
+			expect(stateMachine.event("close!")).toBe(false);
+			expect(stateMachine.event("open!")).toBe(true);
+			expect(open.wasCalled).toBe(true);
+			expect(stateMachine.getCurrent()).toBe("opened");
+			expect(stateMachine.event("close!")).toBe(true);
+			expect(close.wasCalled).toBe(true);
+			expect(stateMachine.getCurrent()).toBe("closed");
 		});
 
 
@@ -327,25 +327,25 @@ require(["StateMachine"], function (StateMachine) {
 				expect(unlocked.has("coin")).toBeTruthy();
 				expect(unlocked.has("pass")).toBeTruthy();
 
-				expect(stateMachine.getCurrent()).toEqual("Locked");
+				expect(stateMachine.getCurrent()).toBe("Locked");
 
 				stateMachine.event("pass");
-				expect(alarm.wasCalled).toEqual(true);
-				expect(stateMachine.getCurrent()).toEqual("Locked");
+				expect(alarm.wasCalled).toBe(true);
+				expect(stateMachine.getCurrent()).toBe("Locked");
 
 				stateMachine.event("coin");
-				expect(unlock.wasCalled).toEqual(true);
+				expect(unlock.wasCalled).toBe(true);
 				expect(unlock.mostRecentCall.object).toBe(UnlockObj);
-				expect(stateMachine.getCurrent()).toEqual("Unlocked");
+				expect(stateMachine.getCurrent()).toBe("Unlocked");
 
 				stateMachine.event("coin");
-				expect(thankyou.wasCalled).toEqual(true);
+				expect(thankyou.wasCalled).toBe(true);
 				expect(thankyou.mostRecentCall.object).toBe(thankyouObj);
-				expect(stateMachine.getCurrent()).toEqual("Unlocked");
+				expect(stateMachine.getCurrent()).toBe("Unlocked");
 
 				stateMachine.event("pass");
-				expect(lock.wasCalled).toEqual(true);
-				expect(stateMachine.getCurrent()).toEqual("Locked");
+				expect(lock.wasCalled).toBe(true);
+				expect(stateMachine.getCurrent()).toBe("Locked");
 			});
 
 	});
@@ -378,24 +378,24 @@ require(["StateMachine"], function (StateMachine) {
 
 		it("should call the exit action in scope on exiting the Locked state", function () {
 			stateMachine.event("coin");
-			expect(goodBye.wasCalled).toEqual(true);
+			expect(goodBye.wasCalled).toBe(true);
 			expect(goodBye.mostRecentCall.object).toBe(thisObj);
 		});
 
 		it("should call the entry action in scope on exiting the Locked state", function () {
 			stateMachine.event("coin");
-			expect(hello.wasCalled).toEqual(true);
+			expect(hello.wasCalled).toBe(true);
 			expect(hello.mostRecentCall.object).toBe(thisObj);
 		});
 
 		it("shouldn't call the entry from the current state", function () {
 			stateMachine.event("coin");
-			expect(dontCallMe.wasCalled).toEqual(false);
+			expect(dontCallMe.wasCalled).toBe(false);
 		});
 
 		it("shouldn't call the exit from the next state", function () {
 			stateMachine.event("coin");
-			expect(dontCallMe.wasCalled).toEqual(false);
+			expect(dontCallMe.wasCalled).toBe(false);
 		});
 
 	});

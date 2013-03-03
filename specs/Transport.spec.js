@@ -35,9 +35,9 @@ require(["Transport", "Store"], function (Transport, Store) {
 			transport = new Transport();
 
 			expect(transport.getReqHandlers()).toBeNull();
-			expect(transport.setReqHandlers()).toEqual(false);
-			expect(transport.setReqHandlers({})).toEqual(true);
-			expect(transport.setReqHandlers(reqHandlers)).toEqual(true);
+			expect(transport.setReqHandlers()).toBe(false);
+			expect(transport.setReqHandlers({})).toBe(true);
+			expect(transport.setReqHandlers(reqHandlers)).toBe(true);
 			expect(transport.getReqHandlers()).toBe(reqHandlers);
 		});
 
@@ -63,11 +63,11 @@ require(["Transport", "Store"], function (Transport, Store) {
 		});
 
 		it("should pass the request to the request handler", function () {
-			expect(transport.request()).toEqual(false);
-			expect(transport.request("channel")).toEqual(false);
-			expect(transport.request("channel", "data")).toEqual(true);
-			expect(transport.request("channel", reqData)).toEqual(true);
-			expect(reqHandlers.get("channel").wasCalled).toEqual(true);
+			expect(transport.request()).toBe(false);
+			expect(transport.request("channel")).toBe(false);
+			expect(transport.request("channel", "data")).toBe(true);
+			expect(transport.request("channel", reqData)).toBe(true);
+			expect(reqHandlers.get("channel").wasCalled).toBe(true);
 			expect(reqHandlers.get("channel").mostRecentCall.args[0]).toBe(reqData);
 		});
 
@@ -75,10 +75,10 @@ require(["Transport", "Store"], function (Transport, Store) {
 			var spy = jasmine.createSpy(),
 				args = {};
 
-			expect(transport.request("channel", reqData, spy)).toEqual(true);
+			expect(transport.request("channel", reqData, spy)).toBe(true);
 			reqHandlers.get("channel").mostRecentCall.args[1](args);
 
-			expect(spy.wasCalled).toEqual(true);
+			expect(spy.wasCalled).toBe(true);
 			expect(spy.mostRecentCall.args[0]).toBe(args);
 
 		});
@@ -88,12 +88,12 @@ require(["Transport", "Store"], function (Transport, Store) {
 				thisObj = {},
 				cb;
 
-			expect(transport.request("channel", reqData, spy, thisObj)).toEqual(true);
+			expect(transport.request("channel", reqData, spy, thisObj)).toBe(true);
 			cb = reqHandlers.get("channel").mostRecentCall.args[1];
-			expect(typeof cb).toEqual("function");
+			expect(typeof cb).toBe("function");
 			cb();
 
-			expect(spy.wasCalled).toEqual(true);
+			expect(spy.wasCalled).toBe(true);
 			expect(spy.mostRecentCall.object).toBe(thisObj);
 		});
 
@@ -127,10 +127,10 @@ require(["Transport", "Store"], function (Transport, Store) {
 
 		it("should allow to listen to a given url", function () {
 			var spy = jasmine.createSpy();
-			expect(transport.listen()).toEqual(false);
-			expect(transport.listen("channel")).toEqual(false);
-			expect(transport.listen("channel", data)).toEqual(false);
-			expect(transport.listen("fake", data, spy)).toEqual(false);
+			expect(transport.listen()).toBe(false);
+			expect(transport.listen("channel")).toBe(false);
+			expect(transport.listen("channel", data)).toBe(false);
+			expect(transport.listen("fake", data, spy)).toBe(false);
 			expect(transport.listen("channel", data, spy)).toBeTruthy();
 			expect(transport.listen("channel", "data", spy)).toBeTruthy();
 		});
@@ -143,13 +143,13 @@ require(["Transport", "Store"], function (Transport, Store) {
 
 			transport.listen("channel", data, spy);
 
-			expect(reqHandlers.get("channel").wasCalled).toEqual(true);
+			expect(reqHandlers.get("channel").wasCalled).toBe(true);
 			expect(reqHandlers.get("channel").mostRecentCall.args[0]).toBe(data);
 
 			cb = reqHandlers.get("channel").mostRecentCall.args[1];
-			expect(typeof cb).toEqual("function");
+			expect(typeof cb).toBe("function");
 			cb(args);
-			expect(spy.wasCalled).toEqual(true);
+			expect(spy.wasCalled).toBe(true);
 			expect(spy.mostRecentCall.args[0]).toBe(args);
 			expect(reqHandlers.get("channel").mostRecentCall.args[2]).toBe(cb);
 		});
@@ -169,7 +169,7 @@ require(["Transport", "Store"], function (Transport, Store) {
 
 			expect(stop).toBeInstanceOf(Function);
 			stop();
-			expect(func.wasCalled).toEqual(true);
+			expect(func.wasCalled).toBe(true);
 			expect(func.mostRecentCall.object).toBe(obj);
 		});
 
