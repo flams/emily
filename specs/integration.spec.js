@@ -414,7 +414,114 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 	describe("Store is an observable data structure that publishes events whenever it's updated", function () {
 
+		it("can store its data in an object", function () {
+			var store = new Store({});
 
+			store.set("key", "emily");
+			store.set("otherKey", 2);
+
+			expect(store.get("key")).toBe("emily");
+			expect(store.get("otherKey")).toBe(2);
+
+			expect(store.has("key")).toBe(true);
+
+			expect(store.del("key")).toBe(true);
+			expect(store.del("key")).toBe(false);
+			expect(store.has("key")).toBe(false);
+		});
+
+		it("can store data in an array", function () {
+			var store = new Store([]);
+
+			store.set(0, "emily");
+			store.set(1, 1);
+
+			expect(store.get(0)).toBe("emily");
+			expect(store.get(1)).toBe(1);
+
+			expect(store.del(0)).toBe(true);
+			expect(store.get(0)).toBe(1);
+		});
+
+		it("publishes events when a store is updated", function () {
+			var store = new Store([]),
+				itemAdded = false,
+				itemUpdated = false,
+				itemDeleted = false;
+
+			// Listening to the events uses the same API as the Observable
+			store.watch("added", function (key) {
+				itemAdded = key;
+			}, this);
+
+			store.watch("updated", function (key) {
+				itemUpdated = key;
+			}, this);
+
+			store.watch("deleted", function (key) {
+				itemDeleted = key;
+			}, this);
+
+			store.set(0, "emily");
+
+			expect(itemAdded).toBe(0);
+
+			store.set(0, "olives");
+
+			expect(itemUpdated).toBe(0);
+
+			store.del(0);
+
+			expect(itemDeleted).toBe(0);
+		});
+
+		it("publishes events when a value in the store is updated", function () {
+			var store = new Store([]),
+				spyNewValue,
+				spyOldValue,
+				spyEvent;
+
+			store.watchValue(0, function (newValue, action, oldValue) {
+				spyNewValue = newValue;
+				spyOldValue = oldValue;
+				spyEvent = action;
+			}, this);
+
+			store.set(0, "emily");
+
+			expect(spyNewValue).toBe("emily");
+			expect(spyEvent).toBe("added");
+
+			store.set(0, "olives");
+
+			expect(spyNewValue).toBe("olives");
+			expect(spyEvent).toBe("updated");
+			expect(spyOldValue).toBe("emily");
+		});
+
+		it("works the same with objects", function () {
+			var store = new Store({}),
+				spyNewValue,
+				spyOldValue,
+				spyEvent;
+
+			store.watchValue('key', function (newValue, action, oldValue) {
+				spyNewValue = newValue;
+				spyOldValue = oldValue;
+				spyEvent = action;
+			}, this);
+
+			store.set('key', "emily");
+
+			expect(spyNewValue).toBe("emily");
+			expect(spyEvent).toBe("added");
+
+			store.set('key', "olives");
+
+			expect(spyNewValue).toBe("olives");
+			expect(spyEvent).toBe("updated");
+			expect(spyOldValue).toBe("emily");
+		});
 
 	});
 

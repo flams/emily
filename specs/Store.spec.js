@@ -63,11 +63,11 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 		});
 
 
-		it("should return undefined if does'nt exist", function () {
+		it("should return undefined if a value doesn't exist", function () {
 			expect(store.get("has not")).toBeUndefined();
 		});
 
-		it("should update value if it already exists", function () {
+		it("should update a value if it already exists", function () {
 			store.set("test", true);
 			expect(store.set("test", false)).toBe(true);
 			expect(store.get("test")).toBe(false);
@@ -77,7 +77,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(store.set()).toBe(false);
 		});
 
-		it("should del value", function () {
+		it("should delete a value", function () {
 			store.set("test", true);
 			expect(store.del("test")).toBe(true);
 			expect(store.has("test")).toBe(false);

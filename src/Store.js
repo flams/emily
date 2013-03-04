@@ -150,7 +150,9 @@ define(["Observable", "Tools"],
 				// Indexes must be removed from the greatest to the lowest
 				// To avoid trying to remove indexes that don't exist.
 				// i.e: given [0, 1, 2], remove 1, then 2, 2 doesn't exist anymore
-				indexes.sort(Tools.compareNumbers).reverse().forEach(this.del, this);
+				indexes.sort(Tools.compareNumbers)
+					.reverse()
+					.forEach(this.del, this);
 				return true;
 			} else {
 				return false;
