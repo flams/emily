@@ -397,6 +397,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			expect(store.getNbItems()).toBe(2);
 		});
+
+		it("should have a count function as an alias for getNbItems", function () {
+			expect(store.count).toBe(store.getNbItems);
+		});
 	});
 
 	describe("StoreLoop", function () {

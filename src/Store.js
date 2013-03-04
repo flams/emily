@@ -61,6 +61,12 @@ define(["Observable", "Tools"],
 		};
 
 		/**
+		 * Count is an alias for getNbItems
+		 * @returns {Number} the number of items in the store
+		 */
+		this.count = this.getNbItems;
+
+		/**
 		 * Get a value from its index
 		 * @param {String} name the name of the index
 		 * @returns the value

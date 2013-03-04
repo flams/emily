@@ -297,8 +297,8 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 		describe("Tools.objectsDiffs returns an object describing the differences between two objects", function () {
 
 			it("tells what was added in an array", function () {
-				var array1 = ['a', 'b', 'c'],
-					array2 = ['a', 'b', 'c', 'd', 'e'];
+				var array1 = ["a", "b", "c"],
+					array2 = ["a", "b", "c", "d", "e"];
 
 				var diff = Tools.objectsDiffs(array1, array2);
 				// The third item of array2 was added
@@ -308,8 +308,8 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			});
 
 			it("tells what was removed", function () {
-				var array1 = ['a', 'b', 'c'],
-					array2 = ['a', 'b'];
+				var array1 = ["a", "b", "c"],
+					array2 = ["a", "b"];
 
 				var diff = Tools.objectsDiffs(array1, array2);
 				// The third item of array2 was deleted
@@ -317,8 +317,8 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			});
 
 			it("tells what was updated", function () {
-				var array1 = ['a', 'b', 'c'],
-					array2 = ['a', 'd', 'e'];
+				var array1 = ["a", "b", "c"],
+					array2 = ["a", "d", "e"];
 
 				var diff = Tools.objectsDiffs(array1, array2);
 				// The second item of array2 was updated
@@ -328,8 +328,8 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			});
 
 			it("tells what remains unchanged", function () {
-				var array1 = ['a', 'b', 'c'],
-					array2 = ['a', 'd', 'e'];
+				var array1 = ["a", "b", "c"],
+					array2 = ["a", "d", "e"];
 
 				var diff = Tools.objectsDiffs(array1, array2);
 				// The first item remains unchanged
@@ -342,10 +342,10 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 				var diff = Tools.objectsDiffs(object1, object2);
 
-				expect(diff.deleted[0]).toBe('a');
-				expect(diff.updated[0]).toBe('b');
-				expect(diff.unchanged[0]).toBe('c');
-				expect(diff.added[0]).toBe('d');
+				expect(diff.deleted[0]).toBe("a");
+				expect(diff.updated[0]).toBe("b");
+				expect(diff.unchanged[0]).toBe("c");
+				expect(diff.added[0]).toBe("d");
 			});
 
 		});
@@ -356,13 +356,13 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				var nonJsonObject = {
 					a: function () {},
 					b: undefined,
-					c:['emily']
+					c:["emily"]
 				};
 
 				var jsonified = Tools.jsonify(nonJsonObject);
 
 				expect(Tools.count(jsonified)).toBe(1);
-				expect(jsonified.c[0]).toBe('emily');
+				expect(jsonified.c[0]).toBe("emily");
 				expect(jsonified.c).not.toBe(nonJsonObject.c);
 			});
 
@@ -443,6 +443,22 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			expect(store.get(0)).toBe(1);
 		});
 
+		it("can be initialized with data", function () {
+			var store = new Store({a: 10});
+
+			expect(store.get("a")).toBe(10);
+		});
+
+		it("can be initialized two times with the same data but the data are not shared between them", function () {
+			var data = {a: 10},
+				store1 = new Store(data),
+				store2 = new Store(data);
+
+			store1.set("b", 20);
+
+			expect(store2.has("b")).toBe(false);
+		});
+
 		it("publishes events when a store is updated", function () {
 			var store = new Store([]),
 				itemAdded = false,
@@ -511,18 +527,18 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				spyOldValue,
 				spyEvent;
 
-			store.watchValue('key', function (newValue, action, oldValue) {
+			store.watchValue("key", function (newValue, action, oldValue) {
 				spyNewValue = newValue;
 				spyOldValue = oldValue;
 				spyEvent = action;
 			}, this);
 
-			store.set('key', "emily");
+			store.set("key", "emily");
 
 			expect(spyNewValue).toBe("emily");
 			expect(spyEvent).toBe("added");
 
-			store.set('key', "olives");
+			store.set("key", "olives");
 
 			expect(spyNewValue).toBe("olives");
 			expect(spyEvent).toBe("updated");
@@ -542,6 +558,126 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			store.update("key", "a.b.c", "emily");
 
 			expect(updatedValue.a.b.c).toBe("emily");
+
+		});
+
+		it("can delete multiple items in one function call", function () {
+			var store = new Store(["a", "b", "c", "d", "e", "f"]);
+
+			store.delAll([0,1,2]);
+
+			expect(store.count()).toBe(3);
+
+			expect(store.get(0)).toBe("d");
+			expect(store.get(1)).toBe("e");
+			expect(store.get(2)).toBe("f");
+		});
+
+		it("can delete multiple properties in one function call", function () {
+			var store = new Store({a: 10, b: 20, c: 30});
+
+			store.delAll(["a", "b"]);
+
+			expect(store.count()).toBe(1);
+
+			expect(store.has("a")).toBe(false);
+			expect(store.has("b")).toBe(false);
+			expect(store.has("c")).toBe(true);
+		});
+
+		it("can proxy methods to the inner data structure's methods", function () {
+			var store = new Store([0, 2, 3]),
+				newValue;
+
+			store.watchValue(1, function (value) {
+				newValue = value;
+			});
+			// Splice can alter the store
+			store.alter("splice", 1, 0, 1); // [0,1,2,3]
+
+			expect(store.get(1)).toBe(1);
+			expect(newValue).toBe(1);
+
+			// Map doesn't alter it, just like calling map on any array
+			var newArray = store.alter("map", function (value) {
+				return value * 2;
+			});
+
+			expect(newArray[3]).toBe(6);
+		});
+
+		it("can also proxy to any method of an object", function () {
+			var store = new Store({a: 10});
+
+			expect(store.alter("hasOwnProperty", "a")).toBe(true);
+		});
+
+		it("has a function for iterating over it the same way being based on an object or an array", function () {
+			var store = new Store({a: 10, b: 20}),
+				calls = [];
+
+			store.loop(function () {
+				calls.push(arguments);
+			});
+
+			// Note that it's lucky that this test passes
+			// as loop doesn't guarantee the order in case of an object!
+			expect(calls[0][0]).toBe(10);
+			expect(calls[0][1]).toBe("a");
+
+			expect(calls[1][0]).toBe(20);
+			expect(calls[1][1]).toBe("b");
+
+			store = new Store(["a", "b"]),
+			calls = [];
+
+			store.loop(function () {
+				calls.push(arguments);
+			});
+
+			expect(calls[0][0]).toBe("a");
+			expect(calls[0][1]).toBe(0);
+
+			expect(calls[1][0]).toBe("b");
+			expect(calls[1][1]).toBe(1);
+		});
+
+		it("has a function for resetting the whole store", function () {
+			var store = new Store({a: 10}),
+				itemAdded;
+
+			// Calling reset fires the diff events
+			store.watch("added", function (key) {
+				itemAdded = key;
+			});
+
+			store.reset(["a"]);
+
+			expect(store.get(0)).toBe("a");
+
+			expect(itemAdded).toBe(0);
+		});
+
+		it("can return the jsonified version of itself", function () {
+			var store = new Store({a: undefined}),
+				jsonified;
+
+			expect(store.has("a")).toBe(true);
+
+			jsonified = store.toJSON();
+			expect(Tools.count(jsonified)).toBe(0);
+		});
+
+		it("can return it's internal structure", function () {
+			var store = new Store({a: 10}),
+				internal;
+
+			internal = store.dump();
+
+			expect(internal.a).toBe(10);
+
+			// The internal is not the object passed at init
+			expect(store).not.toBe(internal);
 
 		});
 
