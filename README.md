@@ -461,7 +461,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 
 ```js
 
-``
+```
 
 
 ### Going further
