@@ -296,6 +296,46 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 		describe("Tools.objectsDiffs returns an object describing the differences between two objects", function () {
 
+			it("tells what was added in an array", function () {
+				var array1 = ['a', 'b', 'c'],
+					array2 = ['a', 'b', 'c', 'd', 'e'];
+
+				var diff = Tools.objectsDiffs(array1, array2);
+				// The third item of array2 was added
+				expect(diff.added[0]).toBe(3);
+				// The fourth item too
+				expect(diff.added[1]).toBe(4);
+			});
+
+			it("tells what was removed", function () {
+				var array1 = ['a', 'b', 'c'],
+					array2 = ['a', 'b'];
+
+				var diff = Tools.objectsDiffs(array1, array2);
+				// The third item of array2 was deleted
+				expect(diff.deleted[0]).toBe(2);
+			});
+
+			it("tells what was updated", function () {
+				var array1 = ['a', 'b', 'c'],
+					array2 = ['a', 'd', 'e'];
+
+				var diff = Tools.objectsDiffs(array1, array2);
+				// The second item of array2 was updated
+				expect(diff.updated[0]).toBe(1);
+				// The third one too
+				expect(diff.updated[1]).toBe(2);
+			});
+
+			it("tells what remains unchanged", function () {
+				var array1 = ['a', 'b', 'c'],
+					array2 = ['a', 'd', 'e'];
+
+				var diff = Tools.objectsDiffs(array1, array2);
+				// The first item remains unchanged
+				expect(diff.unchanged[0]).toBe(0);
+			});
+
 		});
 
 	});
