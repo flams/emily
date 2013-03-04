@@ -283,7 +283,6 @@ require(["Tools"], function (Tools) {
 			});
 		});
 
-
 	});
 
 	describe("ToolsTestJsonify", function () {

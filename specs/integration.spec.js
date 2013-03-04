@@ -336,10 +336,81 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				expect(diff.unchanged[0]).toBe(0);
 			});
 
+			it("also works with objects", function () {
+				var object1 = { a: 10, b: 20, c: 30},
+					object2 = { b: 30, c: 30, d: 40};
+
+				var diff = Tools.objectsDiffs(object1, object2);
+
+				expect(diff.deleted[0]).toBe('a');
+				expect(diff.updated[0]).toBe('b');
+				expect(diff.unchanged[0]).toBe('c');
+				expect(diff.added[0]).toBe('d');
+			});
+
+		});
+
+		describe("Tools.jsonify returns the jsonified version of an object", function () {
+
+			it("returns a new object without the properties that can't be saved in a stringified json", function () {
+				var nonJsonObject = {
+					a: function () {},
+					b: undefined,
+					c:['emily']
+				};
+
+				var jsonified = Tools.jsonify(nonJsonObject);
+
+				expect(Tools.count(jsonified)).toBe(1);
+				expect(jsonified.c[0]).toBe('emily');
+				expect(jsonified.c).not.toBe(nonJsonObject.c);
+			});
+
+		});
+
+		describe("Tools.setNestedProperty sets the property of an object nested in one or more objects", function () {
+
+			it("sets the property of an object deeply nested and creates the missing ones", function () {
+				var object = {};
+
+				Tools.setNestedProperty(object, "a.b.c.d.e.f", "emily");
+
+				expect(object.a.b.c.d.e.f).toBe("emily");
+			});
+
+			it("returns the value if the first parameter is not an object", function () {
+				expect(Tools.setNestedProperty("emily")).toBe("emily");
+			});
+
+			it("also works if there are arrays in the path, but it doesn't create an array", function () {
+				var object = {};
+
+				Tools.setNestedProperty(object, "a.b.c.0.d", "emily");
+
+				expect(object.a.b.c[0].d).toBe("emily");
+				expect(Array.isArray(object.a.b.c)).toBe(false);
+			});
+
+		});
+
+		describe("Tools.getNestedProperty gets the property of an object nested in other objects", function () {
+
+			it("gets the property of an object deeply nested in another one", function () {
+				var object = {b:{c:{d:{e:1}}}};
+
+				expect(Tools.getNestedProperty(object, "b.c")).toBe(object.b.c);
+				expect(Tools.getNestedProperty(object, "b.c.d.e")).toBe(1);
+			});
+
+			it("also works if an array is in the path", function () {
+				var object = {a: [{b: 1}]};
+
+				expect(Tools.getNestedProperty(object, "a.0.b")).toBe(1);
+			});
+
 		});
 
 	});
-
 
 
 });
