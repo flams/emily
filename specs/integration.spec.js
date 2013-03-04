@@ -412,5 +412,10 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 	});
 
+	describe("Store is an observable data structure that publishes events whenever it's updated", function () {
+
+
+
+	});
 
 });

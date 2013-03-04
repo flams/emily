@@ -342,8 +342,126 @@ describe("Tools.loop abstracts the difference between iterating over an object a
 
 describe("Tools.objectsDiffs returns an object describing the differences between two objects", function () {
 
+	it("tells what was added in an array", function () {
+		var array1 = ['a', 'b', 'c'],
+			array2 = ['a', 'b', 'c', 'd', 'e'];
+
+		var diff = Tools.objectsDiffs(array1, array2);
+		// The third item of array2 was added
+		expect(diff.added[0]).toBe(3);
+		// The fourth item too
+		expect(diff.added[1]).toBe(4);
+	});
+
+	it("tells what was removed", function () {
+		var array1 = ['a', 'b', 'c'],
+			array2 = ['a', 'b'];
+
+		var diff = Tools.objectsDiffs(array1, array2);
+		// The third item of array2 was deleted
+		expect(diff.deleted[0]).toBe(2);
+	});
+
+	it("tells what was updated", function () {
+		var array1 = ['a', 'b', 'c'],
+			array2 = ['a', 'd', 'e'];
+
+		var diff = Tools.objectsDiffs(array1, array2);
+		// The second item of array2 was updated
+		expect(diff.updated[0]).toBe(1);
+		// The third one too
+		expect(diff.updated[1]).toBe(2);
+	});
+
+	it("tells what remains unchanged", function () {
+		var array1 = ['a', 'b', 'c'],
+			array2 = ['a', 'd', 'e'];
+
+		var diff = Tools.objectsDiffs(array1, array2);
+		// The first item remains unchanged
+		expect(diff.unchanged[0]).toBe(0);
+	});
+
+	it("also works with objects", function () {
+		var object1 = { a: 10, b: 20, c: 30},
+			object2 = { b: 30, c: 30, d: 40};
+
+		var diff = Tools.objectsDiffs(object1, object2);
+
+		expect(diff.deleted[0]).toBe('a');
+		expect(diff.updated[0]).toBe('b');
+		expect(diff.unchanged[0]).toBe('c');
+		expect(diff.added[0]).toBe('d');
+	});
+
+});
+
+describe("Tools.jsonify returns the jsonified version of an object", function () {
+
+	it("returns a new object without the properties that can't be saved in a stringified json", function () {
+		var nonJsonObject = {
+			a: function () {},
+			b: undefined,
+			c:['emily']
+		};
+
+		var jsonified = Tools.jsonify(nonJsonObject);
+
+		expect(Tools.count(jsonified)).toBe(1);
+		expect(jsonified.c[0]).toBe('emily');
+		expect(jsonified.c).not.toBe(nonJsonObject.c);
+	});
+
+});
+
+describe("Tools.setNestedProperty sets the property of an object nested in one or more objects", function () {
+
+	it("sets the property of an object deeply nested and creates the missing ones", function () {
+		var object = {};
+
+		Tools.setNestedProperty(object, "a.b.c.d.e.f", "emily");
+
+		expect(object.a.b.c.d.e.f).toBe("emily");
+	});
+
+	it("returns the value if the first parameter is not an object", function () {
+		expect(Tools.setNestedProperty("emily")).toBe("emily");
+	});
+
+	it("also works if there are arrays in the path, but it doesn't create an array", function () {
+		var object = {};
+
+		Tools.setNestedProperty(object, "a.b.c.0.d", "emily");
+
+		expect(object.a.b.c[0].d).toBe("emily");
+		expect(Array.isArray(object.a.b.c)).toBe(false);
+	});
+
+});
+
+describe("Tools.getNestedProperty gets the property of an object nested in other objects", function () {
+
+	it("gets the property of an object deeply nested in another one", function () {
+		var object = {b:{c:{d:{e:1}}}};
+
+		expect(Tools.getNestedProperty(object, "b.c")).toBe(object.b.c);
+		expect(Tools.getNestedProperty(object, "b.c.d.e")).toBe(1);
+	});
+
+	it("also works if an array is in the path", function () {
+		var object = {a: [{b: 1}]};
+
+		expect(Tools.getNestedProperty(object, "a.0.b")).toBe(1);
+	});
+
 });
 ```
+
+## Store
+
+```js
+
+``
 
 
 ### Going further
