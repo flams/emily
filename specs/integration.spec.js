@@ -447,10 +447,11 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			var store = new Store([]),
 				itemAdded = false,
 				itemUpdated = false,
-				itemDeleted = false;
+				itemDeleted = false,
+				handle;
 
 			// Listening to the events uses the same API as the Observable
-			store.watch("added", function (key) {
+			handle = store.watch("added", function (key) {
 				itemAdded = key;
 			}, this);
 
@@ -473,15 +474,18 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			store.del(0);
 
 			expect(itemDeleted).toBe(0);
+
+			store.unwatch(handle);
 		});
 
 		it("publishes events when a value in the store is updated", function () {
 			var store = new Store([]),
 				spyNewValue,
 				spyOldValue,
-				spyEvent;
+				spyEvent,
+				handle;
 
-			store.watchValue(0, function (newValue, action, oldValue) {
+			handle = store.watchValue(0, function (newValue, action, oldValue) {
 				spyNewValue = newValue;
 				spyOldValue = oldValue;
 				spyEvent = action;
@@ -497,6 +501,8 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			expect(spyNewValue).toBe("olives");
 			expect(spyEvent).toBe("updated");
 			expect(spyOldValue).toBe("emily");
+
+			store.unwatchValue(handle);
 		});
 
 		it("works the same with objects", function () {
@@ -521,6 +527,22 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			expect(spyNewValue).toBe("olives");
 			expect(spyEvent).toBe("updated");
 			expect(spyOldValue).toBe("emily");
+		});
+
+		it("can update the property of an object nested in a store and publish an event", function () {
+			var store = new Store({
+					key: {}
+				}),
+				updatedValue = false;
+
+			store.watchValue("key", function (value) {
+				updatedValue = value;
+			}, this);
+
+			store.update("key", "a.b.c", "emily");
+
+			expect(updatedValue.a.b.c).toBe("emily");
+
 		});
 
 	});
