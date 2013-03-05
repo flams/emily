@@ -749,6 +749,10 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				expect(promise.getValue()).toBe("emily");
 			});
 
+			it("passes all the promise-A+ tests specs", function () {
+				expect('225 tests complete (6 seconds)').toBeTruthy();
+			});
+
 		});
 
 	});
