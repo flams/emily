@@ -681,6 +681,76 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 		});
 
+		describe("Promise is a fully Promise/A+ compliant implementation", function () {
+
+			it("calls the fulfillment callback within scope", function () {
+				var promise = new Promise(),
+					scope = {},
+					thisObj,
+					value;
+
+				promise.then(function (val) {
+					thisObj = this;
+					value = val;
+				}, scope);
+
+				promise.fulfill("emily");
+
+				expect(value).toBe("emily");
+				expect(thisObj).toBe(scope);
+			});
+
+			it("calls the rejection callback within a scope", function () {
+				var promise = new Promise(),
+					scope = {},
+					thisObj,
+					reason;
+
+				promise.then(null, function (res) {
+					thisObj = this;
+					reason = res;
+				}, scope);
+
+				promise.reject(false);
+
+				expect(reason).toBe(false);
+				expect(thisObj).toBe(scope);
+			});
+
+			it("can synchronise a promise with another one, or any thenable", function () {
+				var promise1 = new Promise(),
+					promise2 = new Promise(),
+					synched;
+
+				promise2.sync(promise1);
+
+				promise2.then(function (value) {
+					synched = value;
+				});
+
+				promise1.fulfill(true);
+
+				expect(synched).toBe(true);
+			});
+
+			it("can return the reason of a rejected promise", function () {
+				var promise = new Promise();
+
+				promise.reject("reason");
+
+				expect(promise.getReason()).toBe("reason");
+			});
+
+			it("can return the value of a fulfilled promise", function () {
+				var promise = new Promise();
+
+				promise.fulfill("emily");
+
+				expect(promise.getValue()).toBe("emily");
+			});
+
+		});
+
 	});
 
 });
