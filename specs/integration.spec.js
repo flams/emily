@@ -755,6 +755,40 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 		});
 
+		describe("StateMachine helps you with the control flow of your apps by removing branching if/else", function () {
+
+			it("expects a starting state and a flow diagram", function () {
+				var passCalled,
+					coinCalled,
+
+					stateMachine = new StateMachine("opened", {
+					"opened": [
+						["pass", function onPass(event) {
+							passCalled = event;
+						}, "closed"]
+					],
+					"closed": [
+						["coin", function onCoin(event) {
+							coinCalled = event;
+						}, "opened"]
+					]
+				});
+
+				expect(stateMachine.getCurrent()).toBe("opened");
+
+				expect(stateMachine.event("nonExistingState")).toBe(false);
+				expect(stateMachine.event("pass", "hello")).toBe(true);
+				expect(passCalled).toBe("hello");
+
+				expect(stateMachine.getCurrent()).toBe("closed");
+				expect(stateMachine.event("coin", "2p")).toBe(true);
+				expect(coinCalled).toBe("2p");
+
+				expect(stateMachine.getCurrent()).toBe("opened");
+			});
+
+		});
+
 	});
 
 });

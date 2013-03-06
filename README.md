@@ -810,6 +810,13 @@ describe("Promise is a fully Promise/A+ compliant implementation", function () {
 });
 ```
 
+## StateMachine
+
+```js
+
+
+```
+
 ### Going further
 
 Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives
