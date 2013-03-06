@@ -787,6 +787,55 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				expect(stateMachine.getCurrent()).toBe("opened");
 			});
 
+			it("executes the action in the given scope", function () {
+				var passThisObject,
+					coinThisObject,
+					scope = {},
+
+				stateMachine = new StateMachine("opened", {
+					"opened": [
+						["pass", function onPass() {
+							passThisObject = this;
+						}, scope, "closed"]
+					],
+					"closed": [
+						["coin", function onCoin() {
+							coinThisObject = this;
+						}, scope, "opened"]
+					]
+				});
+
+				stateMachine.event("pass");
+				expect(passThisObject).toBe(scope);
+
+				stateMachine.event("coin");
+				expect(coinThisObject).toBe(scope);
+			});
+
+			it("can handle events that don't necessarily change the state", function () {
+				var coinCalled,
+					stateMachine = new StateMachine("opened", {
+					"opened": [
+						["pass", function onPass() {
+							passThisObject = this;
+						}, "closed"],
+						["coin", function onCoin() {
+							coinCalled = true;
+						}]
+					],
+					"closed": [
+						["coin", function onCoin() {
+							coinThisbject = this;
+						}, "opened"]
+					]
+				});
+
+				stateMachine.event("coin");
+				expect(coinCalled).toBe(true);
+				expect(stateMachine.getCurrent()).toBe("opened");
+
+			});
+
 		});
 
 	});
