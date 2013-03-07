@@ -763,12 +763,12 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 					stateMachine = new StateMachine("opened", {
 					"opened": [
-						["pass", function onPass(event) {
+						["pass", function pass(event) {
 							passCalled = event;
 						}, "closed"]
 					],
 					"closed": [
-						["coin", function onCoin(event) {
+						["coin", function coin(event) {
 							coinCalled = event;
 						}, "opened"]
 					]
@@ -794,12 +794,12 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 				stateMachine = new StateMachine("opened", {
 					"opened": [
-						["pass", function onPass() {
+						["pass", function pass() {
 							passThisObject = this;
 						}, scope, "closed"]
 					],
 					"closed": [
-						["coin", function onCoin() {
+						["coin", function coin() {
 							coinThisObject = this;
 						}, scope, "opened"]
 					]
@@ -816,15 +816,15 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				var coinCalled,
 					stateMachine = new StateMachine("opened", {
 					"opened": [
-						["pass", function onPass() {
+						["pass", function pass() {
 							passThisObject = this;
 						}, "closed"],
-						["coin", function onCoin() {
+						["coin", function coin() {
 							coinCalled = true;
 						}]
 					],
 					"closed": [
-						["coin", function onCoin() {
+						["coin", function coin() {
 							coinThisbject = this;
 						}, "opened"]
 					]
@@ -834,6 +834,58 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 				expect(coinCalled).toBe(true);
 				expect(stateMachine.getCurrent()).toBe("opened");
 
+			});
+
+			it("can execute given actions upon entering or leaving a state", function () {
+				var onEnter,
+					onExit,
+					stateMachine = new StateMachine("opened", {
+					"opened": [
+						["pass", function pass() {
+							//
+						}, "closed"],
+						["exit", function exit() {
+							onExit = true;
+						}]
+					],
+					"closed": [
+						["entry", function entry() {
+							onEnter = true;
+						}],
+						["coin", function coin() {
+							//
+						}, "opened"]
+					]
+				});
+
+				stateMachine.event("pass");
+
+				expect(onExit).toBe(true);
+				expect(onExit).toBe(true);
+
+				expect(stateMachine.getCurrent()).toBe("closed");
+			});
+
+			it("can be advanced to a given state", function () {
+				var stateMachine = new StateMachine("opened", {
+					"opened": [
+						["pass", function pass() {
+							passThisObject = this;
+						}, "closed"]
+					],
+					"closed": [
+						["coin", function coin() {
+							coinThisObject = this;
+						}, "opened"]
+					]
+				});
+
+				expect(stateMachine.advance("")).toBe(false);
+				expect(stateMachine.advance("closed")).toBe(true);
+				expect(stateMachine.getCurrent()).toBe("closed");
+
+				expect(stateMachine.advance("opened")).toBe(true);
+				expect(stateMachine.getCurrent()).toBe("opened");
 			});
 
 		});

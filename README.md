@@ -821,12 +821,12 @@ describe("StateMachine helps you with the control flow of your apps by removing 
 
 			stateMachine = new StateMachine("opened", {
 			"opened": [
-				["pass", function onPass(event) {
+				["pass", function pass(event) {
 					passCalled = event;
 				}, "closed"]
 			],
 			"closed": [
-				["coin", function onCoin(event) {
+				["coin", function coin(event) {
 					coinCalled = event;
 				}, "opened"]
 			]
@@ -842,6 +842,107 @@ describe("StateMachine helps you with the control flow of your apps by removing 
 		expect(stateMachine.event("coin", "2p")).toBe(true);
 		expect(coinCalled).toBe("2p");
 
+		expect(stateMachine.getCurrent()).toBe("opened");
+	});
+
+	it("executes the action in the given scope", function () {
+		var passThisObject,
+			coinThisObject,
+			scope = {},
+
+		stateMachine = new StateMachine("opened", {
+			"opened": [
+				["pass", function pass() {
+					passThisObject = this;
+				}, scope, "closed"]
+			],
+			"closed": [
+				["coin", function coin() {
+					coinThisObject = this;
+				}, scope, "opened"]
+			]
+		});
+
+		stateMachine.event("pass");
+		expect(passThisObject).toBe(scope);
+
+		stateMachine.event("coin");
+		expect(coinThisObject).toBe(scope);
+	});
+
+	it("can handle events that don't necessarily change the state", function () {
+		var coinCalled,
+			stateMachine = new StateMachine("opened", {
+			"opened": [
+				["pass", function pass() {
+					passThisObject = this;
+				}, "closed"],
+				["coin", function coin() {
+					coinCalled = true;
+				}]
+			],
+			"closed": [
+				["coin", function coin() {
+					coinThisbject = this;
+				}, "opened"]
+			]
+		});
+
+		stateMachine.event("coin");
+		expect(coinCalled).toBe(true);
+		expect(stateMachine.getCurrent()).toBe("opened");
+
+	});
+
+	it("can execute given actions upon entering or leaving a state", function () {
+		var onEnter,
+			onExit,
+			stateMachine = new StateMachine("opened", {
+			"opened": [
+				["pass", function pass() {
+					//
+				}, "closed"],
+				["exit", function exit() {
+					onExit = true;
+				}]
+			],
+			"closed": [
+				["entry", function entry() {
+					onEnter = true;
+				}],
+				["coin", function coin() {
+					//
+				}, "opened"]
+			]
+		});
+
+		stateMachine.event("pass");
+
+		expect(onExit).toBe(true);
+		expect(onExit).toBe(true);
+
+		expect(stateMachine.getCurrent()).toBe("closed");
+	});
+
+	it("can be advanced to a given state", function () {
+		var stateMachine = new StateMachine("opened", {
+			"opened": [
+				["pass", function pass() {
+					passThisObject = this;
+				}, "closed"]
+			],
+			"closed": [
+				["coin", function coin() {
+					coinThisObject = this;
+				}, "opened"]
+			]
+		});
+
+		expect(stateMachine.advance("")).toBe(false);
+		expect(stateMachine.advance("closed")).toBe(true);
+		expect(stateMachine.getCurrent()).toBe("closed");
+
+		expect(stateMachine.advance("opened")).toBe(true);
 		expect(stateMachine.getCurrent()).toBe("opened");
 	});
 
