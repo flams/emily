@@ -757,19 +757,26 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 		describe("StateMachine helps you with the control flow of your apps by removing branching if/else", function () {
 
-			it("expects a starting state and a flow diagram", function () {
+			it("will call specific actions depending on the current state and the triggered event", function () {
 				var passCalled,
 					coinCalled,
 
 					stateMachine = new StateMachine("opened", {
+					// It has an 'opened' state
 					"opened": [
+						// That accepts a 'pass' event that will execute the 'pass' action
 						["pass", function pass(event) {
 							passCalled = event;
+						// And when done, it will transit to the 'closed' state
 						}, "closed"]
 					],
+
+					// It also has a 'closed' state
 					"closed": [
+						// That accepts a 'coin' event that will execute the 'coin' action
 						["coin", function coin(event) {
 							coinCalled = event;
+						// And when done, it will transit back to the 'opened' state
 						}, "opened"]
 					]
 				});
@@ -844,11 +851,15 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 						["pass", function pass() {
 							//
 						}, "closed"],
+
+						// Exit will be called upon leaving opened
 						["exit", function exit() {
 							onExit = true;
 						}]
 					],
 					"closed": [
+
+						// Whereas entry will be called upon entering the state
 						["entry", function entry() {
 							onEnter = true;
 						}],
