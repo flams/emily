@@ -90,7 +90,11 @@ function Transport(Store) {
 
 				abort = _reqHandlers.get(channel)(data, func, func);
 				return function () {
-					abort.func.call(abort.scope);
+					if (typeof abort == "function") {
+						abort();
+					} else if (typeof abort == "object" && typeof abort.func == "function") {
+						abort.func.call(abort.scope);
+					}
 				};
 			} else {
 				return false;
