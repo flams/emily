@@ -962,6 +962,64 @@ describe("StateMachine helps you with the control flow of your apps by removing 
 });
 ```
 
+## Transport
+
+```js
+describe("Transport hides and centralizes the logic behind requests", function () {
+
+	it("issues requests to request handlers", function () {
+
+		var onEndCalled = false;
+
+		var requestsHandlers = new Store({
+			// This function will handle the request specified by payload.
+			// It will call the onEnd request when it has received all the data
+			// It will call onData for each chunk of data that needs to be sent
+			myRequestHandler: function (payload, onEnd) {
+				if (payload == "whoami") {
+					onEnd("emily");
+				}
+			}
+		});
+
+		var transport = new Transport(requestsHandlers);
+
+		// Issue a request on myRequestHandler with "whoami" in the payload
+		transport.request("myRequestHandler", "whoami", function onEnd() {
+			onEndCalled = true;
+		})
+
+		expect(onEndCalled).toBe(true);
+	});
+
+	it("accepts objects as payloads", function () {
+
+		var payload = {
+			firstname: "olivier",
+			lastname: "scherrer"
+		},
+		transport,
+		response;
+
+		var requestsHandlers = new Store({
+			myRequestHandler: function (payload, onEnd) {
+				onEnd("Hi " + payload.firstname + " " + payload.lastname);
+			}
+		});
+
+		transport = new Transport(requestsHandlers);
+
+		transport.request("myRequestHandler", payload, function onEnd(data) {
+			response = data;
+		});
+
+		expect(response).toBe("Hi olivier scherrer");
+
+	});
+
+});
+```
+
 ### Going further
 
 Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives
