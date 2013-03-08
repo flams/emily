@@ -994,27 +994,71 @@ describe("Transport hides and centralizes the logic behind requests", function (
 
 	it("accepts objects as payloads", function () {
 
-		var payload = {
-			firstname: "olivier",
-			lastname: "scherrer"
-		},
-		transport,
-		response;
-
 		var requestsHandlers = new Store({
 			myRequestHandler: function (payload, onEnd) {
 				onEnd("Hi " + payload.firstname + " " + payload.lastname);
 			}
-		});
+		}),
+		transport,
+		response;
 
 		transport = new Transport(requestsHandlers);
 
-		transport.request("myRequestHandler", payload, function onEnd(data) {
+		transport.request("myRequestHandler", {
+			firstname: "olivier",
+			lastname: "scherrer"
+		}, function onEnd(data) {
 			response = data;
 		});
 
 		expect(response).toBe("Hi olivier scherrer");
 
+	});
+
+	it("can also listen to channels and receive data in several chunks", function () {
+
+		var requestsHandlers = new Store({
+			// When onEnd is called, no further data can be sent.
+			// But when the channel must no be closed, onData can be called instead
+			myRequestHandler: function (payload, onEnd, onData) {
+				onData("chunk1");
+				onData("chunk2");
+				onData("chunk3");
+				onEnd("chunk4");
+			}
+		}),
+		response = [];
+
+		var transport = new Transport(requestsHandlers);
+
+		transport.listen("myRequestHandler", {}, function onData(data) {
+			response.push(data);
+		});
+
+		expect(response.length).toBe(4);
+		expect(response[0]).toBe("chunk1");
+		expect(response[3]).toBe("chunk4");
+
+	});
+
+	it("can close a listening channel on the client end point", function () {
+		var aborted = false;
+
+		var requestsHandlers = new Store({
+			myRequestHandler: function () {
+				return function abort() {
+					aborted = true;
+				}
+			}
+		}),
+		transport = new Transport(requestsHandlers),
+		abort;
+
+		abort = transport.listen("myRequestHandler", "", function () {});
+
+		abort();
+
+		expect(aborted).toBe(true);
 	});
 
 });
