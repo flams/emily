@@ -7,7 +7,7 @@ define(["Observable", "StateMachine"],
 
 /**
  * @class
- * Create a Promise
+ * Create a promise/A+
  */
 function Promise(Observable, StateMachine) {
 

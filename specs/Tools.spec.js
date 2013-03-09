@@ -1,6 +1,6 @@
 /**
  * Emily
- * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
 
@@ -282,7 +282,6 @@ require(["Tools"], function (Tools) {
 				expect(result.added[0]).toBe("d");
 			});
 		});
-
 
 	});
 

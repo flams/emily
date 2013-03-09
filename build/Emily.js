@@ -34,9 +34,10 @@ function Tools(){
 
 		/**
 		 * Mixes an object into another
-		 * @param {Object} destination object to mix values into
 		 * @param {Object} source object to get values from
+		 * @param {Object} destination object to mix values into
 		 * @param {Boolean} optional, set to true to prevent overriding
+		 * @returns {Object} the destination object
 		 */
 	    mixin: function mixin(source, destination, dontOverride) {
 			this.loop(source, function (value, idx) {
@@ -98,7 +99,7 @@ function Tools(){
 		 * @returns {Array}
 		 */
 		toArray: function toArray(array) {
-			return Array.prototype.slice.call(array);
+			return [].slice.call(array);
 		},
 
 		/**
@@ -364,11 +365,11 @@ function Observable(Tools) {
 
 		/**
 		 * Remove an observer
-		 * @param {Handler} handle returned by the watch method
+		 * @param {Handle} handle returned by the watch method
 		 * @returns {Boolean} true if there were subscribers
 		 */
-		this.unwatch = function unwatch(handler) {
-			var topic = handler[0], idx = handler[1];
+		this.unwatch = function unwatch(handle) {
+			var topic = handle[0], idx = handle[1];
 			if (_topics[topic] && _topics[topic][idx]) {
 				// delete value so the indexes don't move
 				delete _topics[topic][idx];
@@ -408,11 +409,11 @@ function Observable(Tools) {
 
 		/**
 		 * Check if topic has the described observer
-		 * @param {Handler}
+		 * @param {Handle}
 		 * @returns {Boolean} true if exists
 		 */
-		this.hasObserver = function hasObserver(handler) {
-			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
+		this.hasObserver = function hasObserver(handle) {
+			return !!( handle && _topics[handle[0]] && _topics[handle[0]][handle[1]]);
 		};
 
 		/**
@@ -703,7 +704,7 @@ define('Promise',["Observable", "StateMachine"],
 
 /**
  * @class
- * Create a Promise
+ * Create a promise/A+
  */
 function Promise(Observable, StateMachine) {
 
@@ -969,15 +970,14 @@ function Promise(Observable, StateMachine) {
 define('Store',["Observable", "Tools"],
 /**
  * @class
- * Store creates a small NoSQL database with observables
- * It can publish events on store/data changes
+ * Store creates an observable structure based on a key/values object
+ * or on an array
  */
  function Store(Observable, Tools) {
 
 	/**
 	 * Defines the Store
-	 * @private
-	 * @param values
+	 * @param {Array/Object} the data to initialize the store with
 	 * @returns
 	 */
 	return function StoreConstructor($data) {
@@ -989,18 +989,21 @@ define('Store',["Observable", "Tools"],
 		var _data = Tools.clone($data) || {},
 
 		/**
-		 * The observable
+		 * The observable for publishing changes on the store iself
 		 * @private
 		 */
 		_storeObservable = new Observable(),
 
+		/**
+		 * The observable for publishing changes on a value
+		 * @private
+		 */
 		_valueObservable = new Observable(),
 
 		/**
 		 * Gets the difference between two objects and notifies them
 		 * @private
-		 * @param previousData
-		 * @returns
+		 * @param {Object} previousData
 		 */
 		_notifyDiffs = function _notifyDiffs(previousData) {
 			var diffs = Tools.objectsDiffs(previousData, _data);
@@ -1021,6 +1024,12 @@ define('Store',["Observable", "Tools"],
 		this.getNbItems = function() {
 			return _data instanceof Array ? _data.length : Tools.count(_data);
 		};
+
+		/**
+		 * Count is an alias for getNbItems
+		 * @returns {Number} the number of items in the store
+		 */
+		this.count = this.getNbItems;
 
 		/**
 		 * Get a value from its index
@@ -1112,7 +1121,9 @@ define('Store',["Observable", "Tools"],
 				// Indexes must be removed from the greatest to the lowest
 				// To avoid trying to remove indexes that don't exist.
 				// i.e: given [0, 1, 2], remove 1, then 2, 2 doesn't exist anymore
-				indexes.sort(Tools.compareNumbers).reverse().forEach(this.del, this);
+				indexes.sort(Tools.compareNumbers)
+					.reverse()
+					.forEach(this.del, this);
 				return true;
 			} else {
 				return false;
@@ -1140,11 +1151,16 @@ define('Store',["Observable", "Tools"],
 		};
 
 		/**
+		 * proxy is an alias for alter
+		 */
+		 this.proxy = this.alter;
+
+		/**
 		 * Watch the store's modifications
 		 * @param {String} added/updated/deleted
 		 * @param {Function} func the function to execute
 		 * @param {Object} scope the scope in which to execute the function
-		 * @returns {Handler} the subscribe's handler to use to stop watching
+		 * @returns {Handle} the subscribe's handler to use to stop watching
 		 */
 		this.watch = function watch(name, func, scope) {
 			return _storeObservable.watch(name, func, scope);
@@ -1152,11 +1168,11 @@ define('Store',["Observable", "Tools"],
 
 		/**
 		 * Unwatch the store modifications
-		 * @param {Handler} handler the handler returned by the watch function
+		 * @param {Handle} handle the handler returned by the watch function
 		 * @returns
 		 */
-		this.unwatch = function unwatch(handler) {
-			return _storeObservable.unwatch(handler);
+		this.unwatch = function unwatch(handle) {
+			return _storeObservable.unwatch(handle);
 		};
 
 		/**
@@ -1250,18 +1266,18 @@ define('Store',["Observable", "Tools"],
  * MIT Licensed
  */
 
-define('Transport',["Store"],
+define('Transport',[],
 /**
  * @class
- * Transport creates the link between your requests and Emily's requests handlers.
- * A request handler can be defined to make requets of any kind as long as it's supported
- * by your node.js. (HTTP, FileSystem, SIP...)
+ * Transport hides and centralizes the logic behind requests.
+ * It can issue requests to request handlers, which in turn can issue requests
+ * to anything your node.js server has access to (HTTP, FileSystem, SIP...)
  */
-function Transport(Store) {
+function Transport() {
 
 	/**
 	 * Create a Transport
-	 * @param {Object} $reqHandlers the requestHandler defined in your node.js app
+	 * @param {Emily Store} [optionanl] $reqHandlers an object containing the request handlers
 	 * @returns
 	 */
 	return function TransportConstructor($reqHandlers) {
@@ -1273,8 +1289,8 @@ function Transport(Store) {
 		var _reqHandlers = null;
 
 		/**
-		 * Set the requests handlers
-		 * @param {Object} reqHandlers the list of requests handlers
+		 * Set the requests handlers object
+		 * @param {Emily Store} reqHandlers an object containing the requests handlers
 		 * @returns
 		 */
 		this.setReqHandlers = function setReqHandlers(reqHandlers) {
@@ -1288,26 +1304,25 @@ function Transport(Store) {
 
 		/**
 		 * Get the requests handlers
-		 * @private
-		 * @returns
+		 * @returns{ Emily Store} reqHandlers the object containing the requests handlers
 		 */
 		this.getReqHandlers = function getReqHandlers() {
 			return _reqHandlers;
 		};
 
 		/**
-		 * Make a request
-		 * @param {String} channel is the name of the request handler to use
-		 * @param data the request data
+		 * Issue a request to a request handler
+		 * @param {String} reqHandler the name of the request handler to issue the request to
+		 * @param {Object} data the data, or payload, to send to the request handler
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
 		 * @returns
 		 */
-		this.request = function request(channel, data, callback, scope) {
-			if (_reqHandlers.has(channel)
+		this.request = function request(reqHandler, data, callback, scope) {
+			if (_reqHandlers.has(reqHandler)
 					&& typeof data != "undefined") {
 
-				_reqHandlers.get(channel)(data, function () {
+				_reqHandlers.get(reqHandler)(data, function () {
 					callback && callback.apply(scope, arguments);
 				});
 				return true;
@@ -1317,15 +1332,16 @@ function Transport(Store) {
 		};
 
 		/**
-		 * Listen to a path (Kept alive)
-		 * @param {String} channel is the name of the request handler to use
-		 * @param data the request data: path should indicate the url, query can add up query strings to the url
+		 * Issue a request to a reqHandler but keep listening for the response as it can be sent in several chunks
+		 * or remain open as long as the abort funciton is not called
+		 * @param {String} reqHandler the name of the request handler to issue the request to
+		 * @param {Object} data the data, or payload, to send to the request handler
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
-		 * @returns
+		 * @returns {Function} the abort function to call to stop listening
 		 */
-		this.listen = function listen(channel, data, callback, scope) {
-			if (_reqHandlers.has(channel)
+		this.listen = function listen(reqHandler, data, callback, scope) {
+			if (_reqHandlers.has(reqHandler)
 					&& typeof data != "undefined"
 					&& typeof callback == "function") {
 
@@ -1334,9 +1350,13 @@ function Transport(Store) {
 				},
 				abort;
 
-				abort = _reqHandlers.get(channel)(data, func, func);
+				abort = _reqHandlers.get(reqHandler)(data, func, func);
 				return function () {
-					abort.func.call(abort.scope);
+					if (typeof abort == "function") {
+						abort();
+					} else if (typeof abort == "object" && typeof abort.func == "function") {
+						abort.func.call(abort.scope);
+					}
 				};
 			} else {
 				return false;

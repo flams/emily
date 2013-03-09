@@ -1,6 +1,6 @@
 /**
  * Emily
- * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
 
@@ -112,15 +112,18 @@ require(["Transport", "Store"], function (Transport, Store) {
 		var transport = null,
 			reqHandlers = null,
 			data = {},
-			func = jasmine.createSpy(),
+			func,
 			obj = jasmine.createSpy();
 
 		beforeEach(function () {
+			func = jasmine.createSpy();
 			reqHandlers =  new Store({
 				"channel": jasmine.createSpy().andReturn({
 						scope:obj,
 						func: func
-					})
+					}),
+				"nostopchannel": jasmine.createSpy(),
+				"funcstopchannel": jasmine.createSpy().andReturn(func)
 			});
 			transport = new Transport(reqHandlers);
 		});
@@ -171,6 +174,23 @@ require(["Transport", "Store"], function (Transport, Store) {
 			stop();
 			expect(func.wasCalled).toBe(true);
 			expect(func.mostRecentCall.object).toBe(obj);
+		});
+
+		it("should not fail if no stop function is returned or if not a valid format", function () {
+			var stop = transport.listen("nostopchannel", "", function () {});
+
+			expect(function () {
+				stop();
+			}).not.toThrow();
+		});
+
+		it("should call the stop function if its a function on its own", function () {
+			var stop = transport.listen("funcstopchannel", "", function () {});
+
+			stop();
+
+			expect(func.wasCalled).toBe(true);
+
 		});
 
 	});

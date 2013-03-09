@@ -1,6 +1,6 @@
 /**
  * Emily
- * Copyright(c) 2012 Olivier Scherrer <pode.fr@gmail.com>
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
 
@@ -63,11 +63,11 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 		});
 
 
-		it("should return undefined if does'nt exist", function () {
+		it("should return undefined if a value doesn't exist", function () {
 			expect(store.get("has not")).toBeUndefined();
 		});
 
-		it("should update value if it already exists", function () {
+		it("should update a value if it already exists", function () {
 			store.set("test", true);
 			expect(store.set("test", false)).toBe(true);
 			expect(store.get("test")).toBe(false);
@@ -77,7 +77,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(store.set()).toBe(false);
 		});
 
-		it("should del value", function () {
+		it("should delete a value", function () {
 			store.set("test", true);
 			expect(store.del("test")).toBe(true);
 			expect(store.has("test")).toBe(false);
@@ -397,6 +397,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 			expect(store.getNbItems()).toBe(2);
 		});
+
+		it("should have a count function as an alias for getNbItems", function () {
+			expect(store.count).toBe(store.getNbItems);
+		});
 	});
 
 	describe("StoreLoop", function () {
@@ -527,6 +531,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.watch("deleted", spy);
 			store.del(1);
 			expect(spy.callCount).toBe(1);
+		});
+
+		it("should have a proxy function as an alias of alter", function () {
+			expect(store.proxy).toBe(store.alter);
 		});
 
 	});

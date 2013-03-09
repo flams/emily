@@ -26,9 +26,10 @@ function Tools(){
 
 		/**
 		 * Mixes an object into another
-		 * @param {Object} destination object to mix values into
 		 * @param {Object} source object to get values from
+		 * @param {Object} destination object to mix values into
 		 * @param {Boolean} optional, set to true to prevent overriding
+		 * @returns {Object} the destination object
 		 */
 	    mixin: function mixin(source, destination, dontOverride) {
 			this.loop(source, function (value, idx) {
@@ -90,7 +91,7 @@ function Tools(){
 		 * @returns {Array}
 		 */
 		toArray: function toArray(array) {
-			return Array.prototype.slice.call(array);
+			return [].slice.call(array);
 		},
 
 		/**

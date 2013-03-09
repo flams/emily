@@ -4,18 +4,18 @@
  * MIT Licensed
  */
 
-define(["Store"],
+define(
 /**
  * @class
- * Transport creates the link between your requests and Emily's requests handlers.
- * A request handler can be defined to make requets of any kind as long as it's supported
- * by your node.js. (HTTP, FileSystem, SIP...)
+ * Transport hides and centralizes the logic behind requests.
+ * It can issue requests to request handlers, which in turn can issue requests
+ * to anything your node.js server has access to (HTTP, FileSystem, SIP...)
  */
-function Transport(Store) {
+function Transport() {
 
 	/**
 	 * Create a Transport
-	 * @param {Object} $reqHandlers the requestHandler defined in your node.js app
+	 * @param {Emily Store} [optionanl] $reqHandlers an object containing the request handlers
 	 * @returns
 	 */
 	return function TransportConstructor($reqHandlers) {
@@ -27,8 +27,8 @@ function Transport(Store) {
 		var _reqHandlers = null;
 
 		/**
-		 * Set the requests handlers
-		 * @param {Object} reqHandlers the list of requests handlers
+		 * Set the requests handlers object
+		 * @param {Emily Store} reqHandlers an object containing the requests handlers
 		 * @returns
 		 */
 		this.setReqHandlers = function setReqHandlers(reqHandlers) {
@@ -42,26 +42,25 @@ function Transport(Store) {
 
 		/**
 		 * Get the requests handlers
-		 * @private
-		 * @returns
+		 * @returns{ Emily Store} reqHandlers the object containing the requests handlers
 		 */
 		this.getReqHandlers = function getReqHandlers() {
 			return _reqHandlers;
 		};
 
 		/**
-		 * Make a request
-		 * @param {String} channel is the name of the request handler to use
-		 * @param data the request data
+		 * Issue a request to a request handler
+		 * @param {String} reqHandler the name of the request handler to issue the request to
+		 * @param {Object} data the data, or payload, to send to the request handler
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
 		 * @returns
 		 */
-		this.request = function request(channel, data, callback, scope) {
-			if (_reqHandlers.has(channel)
+		this.request = function request(reqHandler, data, callback, scope) {
+			if (_reqHandlers.has(reqHandler)
 					&& typeof data != "undefined") {
 
-				_reqHandlers.get(channel)(data, function () {
+				_reqHandlers.get(reqHandler)(data, function () {
 					callback && callback.apply(scope, arguments);
 				});
 				return true;
@@ -71,15 +70,16 @@ function Transport(Store) {
 		};
 
 		/**
-		 * Listen to a path (Kept alive)
-		 * @param {String} channel is the name of the request handler to use
-		 * @param data the request data: path should indicate the url, query can add up query strings to the url
+		 * Issue a request to a reqHandler but keep listening for the response as it can be sent in several chunks
+		 * or remain open as long as the abort funciton is not called
+		 * @param {String} reqHandler the name of the request handler to issue the request to
+		 * @param {Object} data the data, or payload, to send to the request handler
 		 * @param {Function} callback the function to execute with the result
 		 * @param {Object} scope the scope in which to execute the callback
-		 * @returns
+		 * @returns {Function} the abort function to call to stop listening
 		 */
-		this.listen = function listen(channel, data, callback, scope) {
-			if (_reqHandlers.has(channel)
+		this.listen = function listen(reqHandler, data, callback, scope) {
+			if (_reqHandlers.has(reqHandler)
 					&& typeof data != "undefined"
 					&& typeof callback == "function") {
 
@@ -88,9 +88,13 @@ function Transport(Store) {
 				},
 				abort;
 
-				abort = _reqHandlers.get(channel)(data, func, func);
+				abort = _reqHandlers.get(reqHandler)(data, func, func);
 				return function () {
-					abort.func.call(abort.scope);
+					if (typeof abort == "function") {
+						abort();
+					} else if (typeof abort == "object" && typeof abort.func == "function") {
+						abort.func.call(abort.scope);
+					}
 				};
 			} else {
 				return false;
