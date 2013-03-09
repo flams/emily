@@ -533,6 +533,10 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(spy.callCount).toBe(1);
 		});
 
+		it("should have a proxy function as an alias of alter", function () {
+			expect(store.proxy).toBe(store.alter);
+		});
+
 	});
 
 

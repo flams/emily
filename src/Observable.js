@@ -49,11 +49,11 @@ function Observable(Tools) {
 
 		/**
 		 * Remove an observer
-		 * @param {Handler} handle returned by the watch method
+		 * @param {Handle} handle returned by the watch method
 		 * @returns {Boolean} true if there were subscribers
 		 */
-		this.unwatch = function unwatch(handler) {
-			var topic = handler[0], idx = handler[1];
+		this.unwatch = function unwatch(handle) {
+			var topic = handle[0], idx = handle[1];
 			if (_topics[topic] && _topics[topic][idx]) {
 				// delete value so the indexes don't move
 				delete _topics[topic][idx];
@@ -93,11 +93,11 @@ function Observable(Tools) {
 
 		/**
 		 * Check if topic has the described observer
-		 * @param {Handler}
+		 * @param {Handle}
 		 * @returns {Boolean} true if exists
 		 */
-		this.hasObserver = function hasObserver(handler) {
-			return !!( handler && _topics[handler[0]] && _topics[handler[0]][handler[1]]);
+		this.hasObserver = function hasObserver(handle) {
+			return !!( handle && _topics[handle[0]] && _topics[handle[0]][handle[1]]);
 		};
 
 		/**
