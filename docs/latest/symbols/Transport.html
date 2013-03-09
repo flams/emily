@@ -222,9 +222,9 @@ ul.inheritsList
 				
 				
 			
-				Transport creates the link between your requests and Emily's requests handlers.
-A request handler can be defined to make requets of any kind as long as it's supported
-by your node.js. (HTTP, FileSystem, SIP...)
+				Transport hides and centralizes the logic behind requests.
+It can issue requests to request handlers, which in turn can issue requests
+to anything your node.js server has access to (HTTP, FileSystem, SIP...)
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Transport.js.html">Transport.js</a>.
@@ -246,7 +246,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Transport.html#constructor">Transport</a></b>(Store)
+								<b><a href="../symbols/Transport.html#constructor">Transport</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -275,18 +275,28 @@ by your node.js. (HTTP, FileSystem, SIP...)
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Transport.html#listen">listen</a></b>(channel, data, callback, scope)
+								<div class="fixedFont"><b><a href="../symbols/Transport.html#getReqHandlers">getReqHandlers</a></b>()
 								</div>
-								<div class="description">Listen to a path (Kept alive)</div>
+								<div class="description">Get the requests handlers</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Transport.html#request">request</a></b>(channel, data, callback, scope)
+								<div class="fixedFont"><b><a href="../symbols/Transport.html#listen">listen</a></b>(reqHandler, data, callback, scope)
 								</div>
-								<div class="description">Make a request</div>
+								<div class="description">Issue a request to a reqHandler but keep listening for the response as it can be sent in several chunks
+or remain open as long as the abort funciton is not called</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Transport.html#request">request</a></b>(reqHandler, data, callback, scope)
+								</div>
+								<div class="description">Issue a request to a request handler</div>
 							</td>
 						</tr>
 					
@@ -295,14 +305,14 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Transport.html#setReqHandlers">setReqHandlers</a></b>(reqHandlers)
 								</div>
-								<div class="description">Set the requests handlers</div>
+								<div class="description">Set the requests handlers object</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Transport.html#-TransportConstructor">TransportConstructor</a></b>($reqHandlers)
+								<div class="fixedFont"><b><a href="../symbols/Transport.html#-TransportConstructor">TransportConstructor</a></b>(optionanl)
 								</div>
 								<div class="description">Create a Transport</div>
 							</td>
@@ -325,7 +335,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 				</div>
 				
 				<div class="fixedFont">
-						<b>Transport</b>(Store)
+						<b>Transport</b>()
 				</div>
 				
 				<div class="description">
@@ -336,17 +346,6 @@ by your node.js. (HTTP, FileSystem, SIP...)
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								 <b>Store</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
 					
 					
@@ -367,15 +366,41 @@ by your node.js. (HTTP, FileSystem, SIP...)
 					Method Detail
 				</div>
 				
-					<a name="listen"> </a>
+					<a name="getReqHandlers"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>listen</b>(channel, data, callback, scope)
+					<b>getReqHandlers</b>()
 					
 					</div>
 					<div class="description">
-						Listen to a path (Kept alive)
+						Get the requests handlers
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="listen"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Function}</span>
+					<b>listen</b>(reqHandler, data, callback, scope)
+					
+					</div>
+					<div class="description">
+						Issue a request to a reqHandler but keep listening for the response as it can be sent in several chunks
+or remain open as long as the abort funciton is not called
 						
 						
 					</div>
@@ -387,16 +412,16 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>channel</b>
+									<span class="light fixedFont">{String}</span> <b>reqHandler</b>
 									
 								</dt>
-								<dd>is the name of the request handler to use</dd>
+								<dd>the name of the request handler to issue the request to</dd>
 							
 								<dt>
-									<b>data</b>
+									<span class="light fixedFont">{Object}</span> <b>data</b>
 									
 								</dt>
-								<dd>the request data: path should indicate the url, query can add up query strings to the url</dd>
+								<dd>the data, or payload, to send to the request handler</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>callback</b>
@@ -419,7 +444,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd></dd>
+								<dd><span class="light fixedFont">{Function}</span> the abort function to call to stop listening</dd>
 							
 							</dl>
 						
@@ -432,11 +457,11 @@ by your node.js. (HTTP, FileSystem, SIP...)
 					<div class="fixedFont">
 					
 					
-					<b>request</b>(channel, data, callback, scope)
+					<b>request</b>(reqHandler, data, callback, scope)
 					
 					</div>
 					<div class="description">
-						Make a request
+						Issue a request to a request handler
 						
 						
 					</div>
@@ -448,16 +473,16 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>channel</b>
+									<span class="light fixedFont">{String}</span> <b>reqHandler</b>
 									
 								</dt>
-								<dd>is the name of the request handler to use</dd>
+								<dd>the name of the request handler to issue the request to</dd>
 							
 								<dt>
-									<b>data</b>
+									<span class="light fixedFont">{Object}</span> <b>data</b>
 									
 								</dt>
-								<dd>the request data</dd>
+								<dd>the data, or payload, to send to the request handler</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>callback</b>
@@ -497,7 +522,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 					
 					</div>
 					<div class="description">
-						Set the requests handlers
+						Set the requests handlers object
 						
 						
 					</div>
@@ -509,10 +534,10 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>reqHandlers</b>
+									<span class="light fixedFont">{Emily Store}</span> <b>reqHandlers</b>
 									
 								</dt>
-								<dd>the list of requests handlers</dd>
+								<dd>an object containing the requests handlers</dd>
 							
 							</dl>
 						
@@ -536,7 +561,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 					<div class="fixedFont">&lt;inner&gt; 
 					
 					
-					<b>TransportConstructor</b>($reqHandlers)
+					<b>TransportConstructor</b>(optionanl)
 					
 					</div>
 					<div class="description">
@@ -552,10 +577,10 @@ by your node.js. (HTTP, FileSystem, SIP...)
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>$reqHandlers</b>
-									
+									<span class="light fixedFont">{Emily Store}</span> <b>optionanl</b>
+									<i>Optional</i>
 								</dt>
-								<dd>the requestHandler defined in your node.js app</dd>
+								<dd>$reqHandlers an object containing the request handlers</dd>
 							
 							</dl>
 						
@@ -587,7 +612,7 @@ by your node.js. (HTTP, FileSystem, SIP...)
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Mar 03 2013 20:19:20 GMT-0000 (GMT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Mar 09 2013 13:21:26 GMT-0000 (GMT)
 		</div>
 	</body>
 </html>
