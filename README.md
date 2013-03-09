@@ -50,7 +50,7 @@ npm install requirejs emily
 	});
 ```
 
-### Integration tests: (Emily 1.3.4)
+### Integration tests: (Emily 1.3.5)
 
 ##Observable
 
@@ -294,7 +294,7 @@ describe("Tools.toArray transforms an array like object, like arguments or a nod
 
 	it("transforms a nodelist into an array", function () {
 		if (__Global.document) {
-			var all = document.querySelectorAll("*");
+			var all = Tools.toArray(document.querySelectorAll("*"));
 
 			expect(Array.isArray(all)).toBe(true);
 		}
@@ -1064,9 +1064,14 @@ describe("Transport hides and centralizes the logic behind requests", function (
 });
 ```
 
-### Going further
+### Changelog
 
-Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives
+1.3.5 - 09 MAR 2013
+-------------------
+
+* Added count alias for getNbItems in Store
+* Added proxy alias for alter in Store
+* Updated documentation, added integration tests
 
 1.3.4 - 03 MAR 2013
 -------------------
@@ -1104,5 +1109,9 @@ https://github.com/promises-aplus/promises-tests
 -------------------
 
 Removal of CouchDBStore - now part of CouchDB-Emily-Tools
+
+### Going further
+
+Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives
 
 
