@@ -7,15 +7,14 @@
 define(["Observable", "Tools"],
 /**
  * @class
- * Store creates a small NoSQL database with observables
- * It can publish events on store/data changes
+ * Store creates an observable structure based on a key/values object
+ * or on an array
  */
  function Store(Observable, Tools) {
 
 	/**
 	 * Defines the Store
-	 * @private
-	 * @param values
+	 * @param {Array/Object} the data to initialize the store with
 	 * @returns
 	 */
 	return function StoreConstructor($data) {
@@ -27,18 +26,21 @@ define(["Observable", "Tools"],
 		var _data = Tools.clone($data) || {},
 
 		/**
-		 * The observable
+		 * The observable for publishing changes on the store iself
 		 * @private
 		 */
 		_storeObservable = new Observable(),
 
+		/**
+		 * The observable for publishing changes on a value
+		 * @private
+		 */
 		_valueObservable = new Observable(),
 
 		/**
 		 * Gets the difference between two objects and notifies them
 		 * @private
-		 * @param previousData
-		 * @returns
+		 * @param {Object} previousData
 		 */
 		_notifyDiffs = function _notifyDiffs(previousData) {
 			var diffs = Tools.objectsDiffs(previousData, _data);
@@ -59,6 +61,12 @@ define(["Observable", "Tools"],
 		this.getNbItems = function() {
 			return _data instanceof Array ? _data.length : Tools.count(_data);
 		};
+
+		/**
+		 * Count is an alias for getNbItems
+		 * @returns {Number} the number of items in the store
+		 */
+		this.count = this.getNbItems;
 
 		/**
 		 * Get a value from its index
@@ -150,7 +158,9 @@ define(["Observable", "Tools"],
 				// Indexes must be removed from the greatest to the lowest
 				// To avoid trying to remove indexes that don't exist.
 				// i.e: given [0, 1, 2], remove 1, then 2, 2 doesn't exist anymore
-				indexes.sort(Tools.compareNumbers).reverse().forEach(this.del, this);
+				indexes.sort(Tools.compareNumbers)
+					.reverse()
+					.forEach(this.del, this);
 				return true;
 			} else {
 				return false;
@@ -178,11 +188,16 @@ define(["Observable", "Tools"],
 		};
 
 		/**
+		 * proxy is an alias for alter
+		 */
+		 this.proxy = this.alter;
+
+		/**
 		 * Watch the store's modifications
 		 * @param {String} added/updated/deleted
 		 * @param {Function} func the function to execute
 		 * @param {Object} scope the scope in which to execute the function
-		 * @returns {Handler} the subscribe's handler to use to stop watching
+		 * @returns {Handle} the subscribe's handler to use to stop watching
 		 */
 		this.watch = function watch(name, func, scope) {
 			return _storeObservable.watch(name, func, scope);
@@ -190,11 +205,11 @@ define(["Observable", "Tools"],
 
 		/**
 		 * Unwatch the store modifications
-		 * @param {Handler} handler the handler returned by the watch function
+		 * @param {Handle} handle the handler returned by the watch function
 		 * @returns
 		 */
-		this.unwatch = function unwatch(handler) {
-			return _storeObservable.unwatch(handler);
+		this.unwatch = function unwatch(handle) {
+			return _storeObservable.unwatch(handle);
 		};
 
 		/**
