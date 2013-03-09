@@ -6,7 +6,7 @@
 
 var __Global = this;
 
-define(["Observable", "Tools", "Transport", "Store", "StateMachine", "Promise"],
+require(["Observable", "Tools", "Transport", "Store", "StateMachine", "Promise"],
 
 function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
@@ -248,7 +248,7 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 			it("transforms a nodelist into an array", function () {
 				if (__Global.document) {
-					var all = document.querySelectorAll("*");
+					var all = Tools.toArray(document.querySelectorAll("*"));
 
 					expect(Array.isArray(all)).toBe(true);
 				}
@@ -982,9 +982,9 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 				var requestsHandlers = new Store({
 					myRequestHandler: function () {
-						return function abort() {
+						return function() {
 							aborted = true;
-						}
+						};
 					}
 				}),
 				transport = new Transport(requestsHandlers),
@@ -996,6 +996,7 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 				expect(aborted).toBe(true);
 			});
+
 
 		});
 
