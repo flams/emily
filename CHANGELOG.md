@@ -1,3 +1,10 @@
+1.3.5 - 09 MAR 2013
+-------------------
+
+* Added count alias for getNbItems in Store
+* Added proxy alias for alter in Store
+* Updated documentation, added integration tests
+
 1.3.4 - 03 MAR 2013
 -------------------
 
