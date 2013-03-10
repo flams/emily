@@ -12,7 +12,7 @@
 
  * Observable: the all mighty observer design pattern.
  * Store: the spine of your MV* application.
- * Promise: a fully compliant promise/A+ implementation following https://github.com/promises-aplus/promises-tests
+ * Promise: a fully compliant promise/A+ implementation following [promiseA+-tests](https://github.com/promises-aplus/promises-tests)
  * StateMachine: don't hide your states and transitions behind if/else anymore.
  * Transport: make requests to anything node.js has access to.
  * Tools: these functions you always need and rewrite.
@@ -21,8 +21,8 @@
 
 ####In the browser:
 
-Emily requires an AMD/commonJS compatible loader. I use requirejs: http://requirejs.org/
-Download the latest version of Emily here: http://flams.github.com/emily/
+Emily requires an AMD/commonJS compatible loader. I use requirejs: [require.js](http://requirejs.org/)
+Download the latest version of [Emily here](http://flams.github.com/emily/)
 
 ```html
 	<script src="require.js"></script>
@@ -1088,14 +1088,13 @@ describe("Transport hides and centralizes the logic behind requests", function (
 
 ####1.3.1 - 1 JAN 2013
 
-* Promise has been updated to pass the promise/A+ specs according to
-https://github.com/promises-aplus/promises-tests
+* Promise has been updated to pass the promise/A+ specs according to [promiseA+-tests](https://github.com/promises-aplus/promises-tests)
 * Updated StateMachine so new transitions can be added on the fly
 * Moved the CouchDB handler to CouchDB Emily Tools
 
 ####1.3.0 - 16 DEC 2012
 
- * Promise has been updated to pass the promise/A specs according to https://github.com/domenic/promise-tests
+ * Promise has been updated to pass the promise/A specs according to [promise-tests](https://github.com/domenic/promise-tests)
  * The build now includes the source files as you should be able to drop them into your application
    to decide how you want to load and optimize them
 
@@ -1105,6 +1104,6 @@ Removal of CouchDBStore - now part of CouchDB-Emily-Tools
 
 ## Going further
 
-Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives
+Check out [Olives](https://github.com/flams/olives) for scalable MV* applications in the browser.
 
 
