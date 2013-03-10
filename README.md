@@ -1,4 +1,4 @@
-###What is Emily?
+##What is Emily?
 
  * Emily is a JS library for building scalable web applications.
  * It's runtime agnostic as it doesn't rely on the DOM.
@@ -8,7 +8,7 @@
  * It only relies on standard features
  * It eases the development of MV* applications by providing the M
 
-###What modules does it provide?
+##What modules does it provide?
 
  * Observable: the all mighty observer design pattern.
  * Store: the spine of your MV* application.
@@ -17,7 +17,7 @@
  * Transport: make requests to anything node.js has access to.
  * Tools: these functions you always need and rewrite.
 
-###How do I use it?
+##How do I use it?
 
 ####In the browser:
 
@@ -50,9 +50,9 @@ npm install requirejs emily
 	});
 ```
 
-### Integration tests: (Emily 1.3.5)
+##Integration tests:
 
-##Observable
+###Observable
 
 ```js
 describe("Observable implements the Observer design pattern, also called publish subscribe", function () {
@@ -181,7 +181,7 @@ describe("Observable implements the Observer design pattern, also called publish
 });
 ```
 
-##Tools
+###Tools
 
 ```js
 describe("Tools.getGlobal can retrieve the global object", function () {
@@ -457,7 +457,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 });
 ```
 
-## Store
+### Store
 
 ```js
 describe("Store is an observable data structure that publishes events whenever it's updated", function () {
@@ -732,7 +732,7 @@ describe("Store is an observable data structure that publishes events whenever i
 });
 ```
 
-## Promise
+### Promise
 
 ```js
 describe("Promise is a fully Promise/A+ compliant implementation", function () {
@@ -810,7 +810,7 @@ describe("Promise is a fully Promise/A+ compliant implementation", function () {
 });
 ```
 
-## StateMachine
+### StateMachine
 
 ```js
 describe("StateMachine helps you with the control flow of your apps by removing branching if/else", function () {
@@ -962,7 +962,7 @@ describe("StateMachine helps you with the control flow of your apps by removing 
 });
 ```
 
-## Transport
+### Transport
 
 ```js
 describe("Transport hides and centralizes the logic behind requests", function () {
@@ -1064,53 +1064,46 @@ describe("Transport hides and centralizes the logic behind requests", function (
 });
 ```
 
-### Changelog
+## Changelog
 
-1.3.5 - 09 MAR 2013
--------------------
+####1.3.5 - 09 MAR 2013
 
 * Added count alias for getNbItems in Store
 * Added proxy alias for alter in Store
 * Updated documentation, added integration tests
 
-1.3.4 - 03 MAR 2013
--------------------
+####1.3.4 - 03 MAR 2013
 
 * Added advance to the state machine
 
-1.3.3 - 28 JAN 2013
--------------------
+####1.3.3 - 28 JAN 2013
 
 * Added Store.dump
 * When store publishes a change event, it publishes both the new and the previous value
 
-1.3.2 - 22 JAN 2013
--------------------
+####1.3.2 - 22 JAN 2013
 
 * Fixed emily-server breaking olives
 * Updated requirejs
 
-1.3.1 - 1 JAN 2013
--------------------
+####1.3.1 - 1 JAN 2013
 
 * Promise has been updated to pass the promise/A+ specs according to
 https://github.com/promises-aplus/promises-tests
 * Updated StateMachine so new transitions can be added on the fly
 * Moved the CouchDB handler to CouchDB Emily Tools
 
-1.3.0 - 16 DEC 2012
--------------------
+####1.3.0 - 16 DEC 2012
 
  * Promise has been updated to pass the promise/A specs according to https://github.com/domenic/promise-tests
  * The build now includes the source files as you should be able to drop them into your application
    to decide how you want to load and optimize them
 
-1.2.0 - 07 OCT 2012
--------------------
+####1.2.0 - 07 OCT 2012
 
 Removal of CouchDBStore - now part of CouchDB-Emily-Tools
 
-### Going further
+## Going further
 
 Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives
 
