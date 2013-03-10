@@ -29,8 +29,53 @@ index = fs.readFileSync("index.html") + '',
 output = converter.makeHtml(readme);
 
 
+
+function Helpers(window) {
+
+	var document = window.document;
+
+	this.getDom = function getDom(query) {
+		return document.querySelectorAll(query);
+	};
+
+	this.replaceContent = function replaceContent(content) {
+		this.getDom("#replaceContent")[0].innerHTML = content;
+	};
+
+	this.addLinkToTop = function addLinkToTop(addTo) {
+		addTo.innerHTML += '<a href="#top">top</a>';
+		return addTo;
+	};
+
+	this.generateMenu = function generateMenu() {
+		var modules = this.getDom("h3"),
+			menu = this.getDom("menu")[0],
+			generatedMenu = '<ul><li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li>';
+
+		[].slice.call(modules, 0).forEach(function (h3) {
+			generatedMenu += '<li><a href="#' + h3.id + '">' + h3.innerHTML + '</a></li>\n';
+			this.addLinkToTop(h3);
+		}, this);
+
+		generatedMenu += '</ul>';
+
+		generatedMenu += "<hr />";
+		generatedMenu += '<ul> \
+			<li><a href="tests.html" target="_blank">Test your browser</a></li> \
+			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li> \
+		 </ul>';
+
+		menu.innerHTML = generatedMenu;
+	}
+}
+
+
 jsdom.env(index, [], function (errors, window) {
-	window.document.querySelector("#replaceContent").innerHTML = output;
+	var helpers = new Helpers(window);
+
+	helpers.replaceContent(output);
+	helpers.generateMenu();
+
 	fs.writeFileSync("index.html", window.document.innerHTML);
 });
 

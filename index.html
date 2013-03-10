@@ -32,8 +32,7 @@ It provides you with Observables, StateMachines, Promises, Stores, a Transport l
  	width: 900px;
  	color: white;
  	padding: 30px;
- 	margin-left: auto;
- 	margin-right: auto;
+ 	margin-left: 320px;
  	margin-bottom: 50px;
  }
 
@@ -69,11 +68,11 @@ It provides you with Observables, StateMachines, Promises, Stores, a Transport l
 }
 
 #replaceContent {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 320px;
     width: 1000px;
 }
 
+menu,
 #replaceContent pre {
 	margin: 10px;
 	padding: 10px;
@@ -110,10 +109,32 @@ It provides you with Observables, StateMachines, Promises, Stores, a Transport l
     padding-left: 20px;
 }
 
+h3 a {
+    float: right;
+}
+
+menu {
+    width: 260px;
+    position: fixed;
+    left: 20px;
+    top: 210px;
+}
+
+menu ul {
+    list-style-type: none;
+}
+
+menu li {
+    padding: 5px;
+}
+
+menu hr {
+    margin: 10px;
+}
+
 footer {
  	width: 900px;
- 	margin-left: auto;
- 	margin-right: auto;
+ 	margin-left: 320px;
  	display: block;
  	clear:left;
  	background-image: url(img/hr.jpg);
@@ -130,7 +151,7 @@ footer {
 
 	<section id="emily">
 
-		<header>
+		<header id="top">
 			<h1>Emily.js</h1>
 			<p>
 				Simple tools for powerful JS applications, in node.js or the browser!
@@ -140,7 +161,15 @@ footer {
 			</p>
 		</header>
 
-		<article id="replaceContent"><h3 id="whatisemily">What is Emily?</h3>
+        <menu><ul><li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li><li><a href="#whatisemily">What is Emily?</a></li>
+<li><a href="#whatmodulesdoesitprovide">What modules does it provide?</a></li>
+<li><a href="#howdoiuseit">How do I use it?</a></li>
+<li><a href="#integrationtestsemily135">Integration tests: (Emily 1.3.5)</a></li>
+<li><a href="#changelog">Changelog</a></li>
+<li><a href="#goingfurther">Going further</a></li>
+</ul><hr /><ul> 			<li><a href="tests.html" target="_blank">Test your browser</a></li> 			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li> 		 </ul></menu>
+
+		<article id="replaceContent"><h3 id="whatisemily">What is Emily?<a href="#top">top</a></h3>
 
 <ul>
 <li>Emily is a JS library for building scalable web applications.</li>
@@ -152,7 +181,7 @@ footer {
 <li>It eases the development of MV* applications by providing the M</li>
 </ul>
 
-<h3 id="whatmodulesdoesitprovide">What modules does it provide?</h3>
+<h3 id="whatmodulesdoesitprovide">What modules does it provide?<a href="#top">top</a></h3>
 
 <ul>
 <li>Observable: the all mighty observer design pattern.</li>
@@ -163,7 +192,7 @@ footer {
 <li>Tools: these functions you always need and rewrite.</li>
 </ul>
 
-<h3 id="howdoiuseit">How do I use it?</h3>
+<h3 id="howdoiuseit">How do I use it?<a href="#top">top</a></h3>
 
 <h4 id="inthebrowser">In the browser:</h4>
 
@@ -192,7 +221,7 @@ Download the latest version of Emily here: http://flams.github.com/emily/</p>
     });
 </code></pre>
 
-<h3 id="integrationtestsemily135">Integration tests: (Emily 1.3.5)</h3>
+<h3 id="integrationtestsemily135">Integration tests: (Emily 1.3.5)<a href="#top">top</a></h3>
 
 <h2 id="observable">Observable</h2>
 
@@ -1200,7 +1229,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 });
 </code></pre>
 
-<h3 id="changelog">Changelog</h3>
+<h3 id="changelog">Changelog<a href="#top">top</a></h3>
 
 <h2 id="13509mar2013">1.3.5 - 09 MAR 2013</h2>
 
@@ -1251,7 +1280,7 @@ to decide how you want to load and optimize them</li>
 
 <p>Removal of CouchDBStore - now part of CouchDB-Emily-Tools</p>
 
-<h3 id="goingfurther">Going further</h3>
+<h3 id="goingfurther">Going further<a href="#top">top</a></h3>
 
 <p>Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives</p></article>
 
