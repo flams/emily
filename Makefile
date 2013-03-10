@@ -117,8 +117,10 @@ endif
 
 	git checkout gh-pages
 
-	git checkout master build Makefile docs src specs tools lib release
+	git checkout master build Makefile docs src specs tools lib release README.md
 	git add build docs src specs tools lib release
+
+	node genhtml.js
 
 	sed -i .bak 's#version">.*<#version">'${VERSION}'<#g' index.html
 	sed -i .bak 's#<a href="release/Emily.*\.tgz">#<a href="release/Emily-'${VERSION}'.tgz">#' index.html
