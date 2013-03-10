@@ -92,12 +92,12 @@ menu,
     padding: 10px;
 }
 
-#replaceContent h2 {
+#replaceContent h3 {
  	margin: 20px;
  	padding: 10px;
 }
 
-#replaceContent h3 {
+#replaceContent h2 {
     margin: 10px;
     padding: 10px;
 	border-bottom: 1px solid #c0c0c0;
@@ -109,6 +109,7 @@ menu,
     padding-left: 20px;
 }
 
+h2 a,
 h3 a {
     float: right;
 }
@@ -126,6 +127,10 @@ menu ul {
 
 menu li {
     padding: 5px;
+}
+
+menu li.H3 {
+    padding-left: 20px;
 }
 
 menu hr {
@@ -161,15 +166,21 @@ footer {
 			</p>
 		</header>
 
-        <menu><ul><li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li><li><a href="#whatisemily">What is Emily?</a></li>
-<li><a href="#whatmodulesdoesitprovide">What modules does it provide?</a></li>
-<li><a href="#howdoiuseit">How do I use it?</a></li>
-<li><a href="#integrationtestsemily135">Integration tests: (Emily 1.3.5)</a></li>
-<li><a href="#changelog">Changelog</a></li>
-<li><a href="#goingfurther">Going further</a></li>
+        <menu><ul><li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li><li class="H2"><a href="#whatisemily">What is Emily?</a></li>
+<li class="H2"><a href="#whatmodulesdoesitprovide">What modules does it provide?</a></li>
+<li class="H2"><a href="#howdoiuseit">How do I use it?</a></li>
+<li class="H2"><a href="#integrationtests">Integration tests:</a></li>
+<li class="H3"><a href="#observable">Observable</a></li>
+<li class="H3"><a href="#tools">Tools</a></li>
+<li class="H3"><a href="#store">Store</a></li>
+<li class="H3"><a href="#promise">Promise</a></li>
+<li class="H3"><a href="#statemachine">StateMachine</a></li>
+<li class="H3"><a href="#transport">Transport</a></li>
+<li class="H2"><a href="#changelog">Changelog</a></li>
+<li class="H2"><a href="#goingfurther">Going further</a></li>
 </ul><hr /><ul> 			<li><a href="tests.html" target="_blank">Test your browser</a></li> 			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li> 		 </ul></menu>
 
-		<article id="replaceContent"><h3 id="whatisemily">What is Emily?<a href="#top">top</a></h3>
+		<article id="replaceContent"><h2 id="whatisemily">What is Emily?<a href="#top">top</a></h2>
 
 <ul>
 <li>Emily is a JS library for building scalable web applications.</li>
@@ -181,7 +192,7 @@ footer {
 <li>It eases the development of MV* applications by providing the M</li>
 </ul>
 
-<h3 id="whatmodulesdoesitprovide">What modules does it provide?<a href="#top">top</a></h3>
+<h2 id="whatmodulesdoesitprovide">What modules does it provide?<a href="#top">top</a></h2>
 
 <ul>
 <li>Observable: the all mighty observer design pattern.</li>
@@ -192,7 +203,7 @@ footer {
 <li>Tools: these functions you always need and rewrite.</li>
 </ul>
 
-<h3 id="howdoiuseit">How do I use it?<a href="#top">top</a></h3>
+<h2 id="howdoiuseit">How do I use it?<a href="#top">top</a></h2>
 
 <h4 id="inthebrowser">In the browser:</h4>
 
@@ -221,9 +232,9 @@ Download the latest version of Emily here: http://flams.github.com/emily/</p>
     });
 </code></pre>
 
-<h3 id="integrationtestsemily135">Integration tests: (Emily 1.3.5)<a href="#top">top</a></h3>
+<h2 id="integrationtests">Integration tests:<a href="#top">top</a></h2>
 
-<h2 id="observable">Observable</h2>
+<h3 id="observable">Observable<a href="#top">top</a></h3>
 
 <pre><code class="js">describe("Observable implements the Observer design pattern, also called publish subscribe", function () {
 
@@ -351,7 +362,7 @@ Download the latest version of Emily here: http://flams.github.com/emily/</p>
 });
 </code></pre>
 
-<h2 id="tools">Tools</h2>
+<h3 id="tools">Tools<a href="#top">top</a></h3>
 
 <pre><code class="js">describe("Tools.getGlobal can retrieve the global object", function () {
 
@@ -626,7 +637,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 });
 </code></pre>
 
-<h2 id="store">Store</h2>
+<h3 id="store">Store<a href="#top">top</a></h3>
 
 <pre><code class="js">describe("Store is an observable data structure that publishes events whenever it's updated", function () {
 
@@ -900,7 +911,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 });
 </code></pre>
 
-<h2 id="promise">Promise</h2>
+<h3 id="promise">Promise<a href="#top">top</a></h3>
 
 <pre><code class="js">describe("Promise is a fully Promise/A+ compliant implementation", function () {
 
@@ -977,7 +988,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 });
 </code></pre>
 
-<h2 id="statemachine">StateMachine</h2>
+<h3 id="statemachine">StateMachine<a href="#top">top</a></h3>
 
 <pre><code class="js">describe("StateMachine helps you with the control flow of your apps by removing branching if/else", function () {
 
@@ -1128,7 +1139,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 });
 </code></pre>
 
-<h2 id="transport">Transport</h2>
+<h3 id="transport">Transport<a href="#top">top</a></h3>
 
 <pre><code class="js">describe("Transport hides and centralizes the logic behind requests", function () {
 
@@ -1229,9 +1240,9 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 });
 </code></pre>
 
-<h3 id="changelog">Changelog<a href="#top">top</a></h3>
+<h2 id="changelog">Changelog<a href="#top">top</a></h2>
 
-<h2 id="13509mar2013">1.3.5 - 09 MAR 2013</h2>
+<h4 id="13509mar2013">1.3.5 - 09 MAR 2013</h4>
 
 <ul>
 <li>Added count alias for getNbItems in Store</li>
@@ -1239,27 +1250,27 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 <li>Updated documentation, added integration tests</li>
 </ul>
 
-<h2 id="13403mar2013">1.3.4 - 03 MAR 2013</h2>
+<h4 id="13403mar2013">1.3.4 - 03 MAR 2013</h4>
 
 <ul>
 <li>Added advance to the state machine</li>
 </ul>
 
-<h2 id="13328jan2013">1.3.3 - 28 JAN 2013</h2>
+<h4 id="13328jan2013">1.3.3 - 28 JAN 2013</h4>
 
 <ul>
 <li>Added Store.dump</li>
 <li>When store publishes a change event, it publishes both the new and the previous value</li>
 </ul>
 
-<h2 id="13222jan2013">1.3.2 - 22 JAN 2013</h2>
+<h4 id="13222jan2013">1.3.2 - 22 JAN 2013</h4>
 
 <ul>
 <li>Fixed emily-server breaking olives</li>
 <li>Updated requirejs</li>
 </ul>
 
-<h2 id="1311jan2013">1.3.1 - 1 JAN 2013</h2>
+<h4 id="1311jan2013">1.3.1 - 1 JAN 2013</h4>
 
 <ul>
 <li>Promise has been updated to pass the promise/A+ specs according to
@@ -1268,7 +1279,7 @@ https://github.com/promises-aplus/promises-tests</li>
 <li>Moved the CouchDB handler to CouchDB Emily Tools</li>
 </ul>
 
-<h2 id="13016dec2012">1.3.0 - 16 DEC 2012</h2>
+<h4 id="13016dec2012">1.3.0 - 16 DEC 2012</h4>
 
 <ul>
 <li>Promise has been updated to pass the promise/A specs according to https://github.com/domenic/promise-tests</li>
@@ -1276,11 +1287,11 @@ https://github.com/promises-aplus/promises-tests</li>
 to decide how you want to load and optimize them</li>
 </ul>
 
-<h2 id="12007oct2012">1.2.0 - 07 OCT 2012</h2>
+<h4 id="12007oct2012">1.2.0 - 07 OCT 2012</h4>
 
 <p>Removal of CouchDBStore - now part of CouchDB-Emily-Tools</p>
 
-<h3 id="goingfurther">Going further<a href="#top">top</a></h3>
+<h2 id="goingfurther">Going further<a href="#top">top</a></h2>
 
 <p>Check out Olives for scalable MV* applications in the browser. https://github.com/flams/olives</p></article>
 
