@@ -59,7 +59,6 @@ function Helpers(window) {
 
 		generatedMenu += '</ul>\n';
 
-		generatedMenu += "<hr />\n";
 		generatedMenu += '<ul>\n \
 			<li><a href="tests.html" target="_blank">Test your browser</a></li>\n \
 			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li>\n \
