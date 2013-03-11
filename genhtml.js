@@ -76,7 +76,7 @@ jsdom.env(index, [], function (errors, window) {
 	helpers.replaceContent(output);
 	helpers.generateMenu();
 
-	fs.writeFileSync("index.html", window.document.innerHTML);
+	fs.writeFileSync("index.html", "<!doctype html>\n" + window.document.innerHTML);
 });
 
 
