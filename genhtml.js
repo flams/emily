@@ -57,13 +57,13 @@ function Helpers(window) {
 			this.addLinkToTop(title);
 		}, this);
 
-		generatedMenu += '</ul>';
+		generatedMenu += '</ul>\n';
 
-		generatedMenu += "<hr />";
-		generatedMenu += '<ul> \
-			<li><a href="tests.html" target="_blank">Test your browser</a></li> \
-			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li> \
-		 </ul>';
+		generatedMenu += "<hr />\n";
+		generatedMenu += '<ul>\n \
+			<li><a href="tests.html" target="_blank">Test your browser</a></li>\n \
+			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li>\n \
+		 </ul>\n';
 
 		menu.innerHTML = generatedMenu;
 	}

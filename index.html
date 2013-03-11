@@ -1,186 +1,195 @@
 <!doctype html>
 <html lang="en">
-<head>
-<title>Emily - simple tools for powerful JavaScript applications, in node.js or the browser.</title>
-<meta charset="UTF-8" />
-<meta name="description" content="JS Framework for real-time web applications. It's runtime agnostic and targets at both browsers and servers.
-It provides you with Observables, StateMachines, Promises, Stores, a Transport layer and Tools. There's even a built-in CouchDB utility. Try Olives too for real-time UIs!" />
-<meta name="author" content="Olivier Scherrer" />
-<style type="text/css">
- * {
- 	margin: 0;
- 	padding: 0;
- }
+    <head>
+        <title>Emily - simple tools for powerful JavaScript applications, in node.js or the browser.</title>
+        <meta charset="UTF-8" />
+        <meta name="description" content="JS Framework for real-time web applications. It's runtime agnostic and targets at both browsers and servers.
+        It provides you with Observables, StateMachines, Promises, Stores, a Transport layer and Tools. There's even a built-in CouchDB utility. Try Olives too for real-time UIs!" />
+        <meta name="author" content="Olivier Scherrer" />
+        <style type="text/css">
+             * {
+             	margin: 0;
+             	padding: 0;
+             }
 
- a {
- 	color: #333;
- 	text-decoration: none;
- }
+             a {
+             	color: #333;
+             	text-decoration: none;
+             }
 
- body {
- 	background-image: url(img/noise.jpg);
- 	color: #666;
- 	 font-family: 'Belleza';
- }
+             body {
+             	background-image: url(img/noise.jpg);
+             	color: #666;
+             	 font-family: 'Belleza';
+             }
 
- #emily {
-  	background-image: url(img/bgcartouche.jpg);
- 	background-repeat: repeat-x;
- }
+             #emily {
+              	background-image: url(img/bgcartouche.jpg);
+             	background-repeat: repeat-x;
+             }
 
- .header {
- 	height: 100px;
- 	width: 900px;
- 	color: white;
- 	padding: 30px;
- 	margin-left: 320px;
- 	margin-bottom: 50px;
- }
+             .header {
+             	height: 100px;
+             	width: 900px;
+             	color: white;
+             	padding: 30px;
+             	margin-left: 320px;
+             	margin-bottom: 50px;
+             }
 
-.header h1 {
- 	text-align: center;
- 	font-family: 'Great Vibes', cursive;
- 	font-size: 80px;
- 	text-shadow: 2px 2px 2px #333;
- 	margin-bottom: 20px;
- }
+            .header h1 {
+             	text-align: center;
+             	font-family: 'Great Vibes', cursive;
+             	font-size: 80px;
+             	text-shadow: 2px 2px 2px #333;
+             	margin-bottom: 20px;
+             }
 
-.header p {
- 	text-align: center;
- 	font-size: 24px;
- 	text-shadow: 1px 1px 1px #333;
-}
+            .header p {
+             	text-align: center;
+             	font-size: 24px;
+             	text-shadow: 1px 1px 1px #333;
+            }
 
-.header p a {
- 	background-color: grey;
- 	padding: 10px;
- 	border-radius: 5px;
- 	color: white;
-	background: rgb(167,207,223); /* Old browsers */
-	background: -moz-linear-gradient(top, rgba(167,207,223,1) 0%, rgba(35,83,138,1) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(167,207,223,1)), color-stop(100%,rgba(35,83,138,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* IE10+ */
-	background: linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a7cfdf', endColorstr='#23538a',GradientType=0 ); /* IE6-9 */
-	box-shadow: 2px 2px 2px black;
-}
+            .header p a {
+             	background-color: grey;
+             	padding: 10px;
+             	border-radius: 5px;
+             	color: white;
+            	background: rgb(167,207,223); /* Old browsers */
+            	background: -moz-linear-gradient(top, rgba(167,207,223,1) 0%, rgba(35,83,138,1) 100%); /* FF3.6+ */
+            	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(167,207,223,1)), color-stop(100%,rgba(35,83,138,1))); /* Chrome,Safari4+ */
+            	background: -webkit-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* Chrome10+,Safari5.1+ */
+            	background: -o-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* Opera 11.10+ */
+            	background: -ms-linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* IE10+ */
+            	background: linear-gradient(top, rgba(167,207,223,1) 0%,rgba(35,83,138,1) 100%); /* W3C */
+            	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a7cfdf', endColorstr='#23538a',GradientType=0 ); /* IE6-9 */
+            	box-shadow: 2px 2px 2px black;
+            }
 
-#replaceContent {
-    margin-left: 320px;
-    width: 900px;
-}
+            #replaceContent {
+                margin-left: 320px;
+                width: 900px;
+            }
 
-.menu,
-#replaceContent pre {
-	margin: 10px;
-	padding: 10px;
-	background-color: #f0f0f0;
-	border-radius: 5px;
-	border: 1px solid #c0c0c0;
-}
+            .menu,
+            #replaceContent pre {
+            	margin: 10px;
+            	padding: 10px;
+            	background-color: #f0f0f0;
+            	border-radius: 5px;
+            	border: 1px solid #c0c0c0;
+            }
 
-#replaceContent ul {
-    margin: 10px;
-    padding: 10px;
-	padding-left: 20px;
-}
+            #replaceContent ul {
+                margin: 10px;
+                padding: 10px;
+            	padding-left: 20px;
+            }
 
-#replaceContent p {
-    margin: 10px;
-    padding: 10px;
-}
+            #replaceContent p {
+                margin: 10px;
+                padding: 10px;
+            }
 
-#replaceContent h3 {
- 	margin: 20px;
- 	padding: 10px;
-}
+            #replaceContent h3 {
+             	margin: 20px;
+             	padding: 10px;
+            }
 
-#replaceContent h2 {
-    margin: 10px;
-    padding: 10px;
-	border-bottom: 1px solid #c0c0c0;
-}
+            #replaceContent h2 {
+                margin: 10px;
+                padding: 10px;
+            	border-bottom: 1px solid #c0c0c0;
+            }
 
-#replaceContent h4 {
-    margin: 10px;
-    padding: 10px;
-    padding-left: 20px;
-}
+            #replaceContent h4 {
+                margin: 10px;
+                padding: 10px;
+                padding-left: 20px;
+            }
 
-h2 a,
-h3 a {
-    float: right;
-}
+            h2 a,
+            h3 a {
+                float: right;
+            }
 
-.menu {
-    width: 260px;
-    position: fixed;
-    left: 20px;
-    top: 210px;
-}
+            .menu {
+                width: 260px;
+                position: fixed;
+                left: 20px;
+                top: 210px;
+            }
 
-.menu ul {
-    list-style-type: none;
-}
+            .menu ul {
+                list-style-type: none;
+            }
 
-.menu li {
-    padding: 5px;
-}
+            .menu li {
+                padding: 3px;
+            }
 
-.menu li.H3 {
-    padding-left: 20px;
-}
+            .menu li.H3 {
+                padding-left: 20px;
+            }
 
-.menu hr {
-    margin: 10px;
-}
+            .menu hr {
+                margin: 10px;
+            }
 
-.footer {
- 	width: 900px;
- 	margin-left: 320px;
- 	display: block;
- 	clear:left;
- 	background-image: url(img/hr.jpg);
- 	background-repeat: repeat-x;
- 	padding-top: 30px;
- 	padding-bottom: 50px;
-	text-shadow:  0 1px 0 white;
-	text-align: center;
- }
-</style>
-<link href="http://fonts.googleapis.com/css?family=Great+Vibes|Belleza" rel="stylesheet" type="text/css" />
-</head>
-<body>
+            .footer {
+                width: 900px;
+                margin-left: 320px;
+                display: block;
+                clear:left;
+                background-image: url(img/hr.jpg);
+                background-repeat: repeat-x;
+                padding-top: 30px;
+                padding-bottom: 50px;
+                text-shadow:  0 1px 0 white;
+                text-align: center;
+             }
+        </style>
+        <link href="http://fonts.googleapis.com/css?family=Great+Vibes|Belleza" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
 
-	<div id="emily">
+    	<div id="emily">
 
-		<div class="menu" id="top">
-			<h1>Emily.js</h1>
-			<p>
-				Simple tools for powerful JS applications, in node.js or the browser!
-				<a href="release/Emily-1.3.5.tgz">
-					Download <span id="version">1.3.5</span>
-				</a>
-			</p>
-		</div>
+    		<div class="header" id="top">
+    			<h1>Emily.js</h1>
+    			<p>
+    				Simple tools for powerful JS applications, in node.js or the browser!
+    				<a href="release/Emily-1.3.5.tgz">
+    					Download <span id="version">1.3.5</span>
+    				</a>
+    			</p>
+    		</div>
 
-        <div class="menu"><ul><li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li><li class="H2"><a href="#whatisemily">What is Emily?</a></li>
-<li class="H2"><a href="#whatmodulesdoesitprovide">What modules does it provide?</a></li>
-<li class="H2"><a href="#howdoiuseit">How do I use it?</a></li>
-<li class="H2"><a href="#integrationtests">Integration tests:</a></li>
-<li class="H3"><a href="#observable">Observable</a></li>
-<li class="H3"><a href="#tools">Tools</a></li>
-<li class="H3"><a href="#store">Store</a></li>
-<li class="H3"><a href="#promise">Promise</a></li>
-<li class="H3"><a href="#statemachine">StateMachine</a></li>
-<li class="H3"><a href="#transport">Transport</a></li>
-<li class="H2"><a href="#changelog">Changelog</a></li>
-<li class="H2"><a href="#goingfurther">Going further</a></li>
-</ul><hr /><ul> 			<li><a href="tests.html" target="_blank">Test your browser</a></li> 			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li> 		 </ul></div>
+            <div class="menu">
+                <ul>
+                    <li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li><li class="H2"><a href="#whatisemily">What is Emily?</a></li>
+                    <li class="H2"><a href="#whatmodulesdoesitprovide">What modules does it provide?</a></li>
+                    <li class="H2"><a href="#howdoiuseit">How do I use it?</a></li>
+                    <li class="H2"><a href="#integrationtests">Integration tests:</a></li>
+                    <li class="H3"><a href="#observable">Observable</a></li>
+                    <li class="H3"><a href="#tools">Tools</a></li>
+                    <li class="H3"><a href="#store">Store</a></li>
+                    <li class="H3"><a href="#promise">Promise</a></li>
+                    <li class="H3"><a href="#statemachine">StateMachine</a></li>
+                    <li class="H3"><a href="#transport">Transport</a></li>
+                    <li class="H2"><a href="#changelog">Changelog</a></li>
+                    <li class="H2"><a href="#goingfurther">Going further</a></li>
+                </ul>
+                <hr />
+                <ul>
+         			<li><a href="tests.html" target="_blank">Test your browser</a></li>
+         			<li><a href="docs/latest/index.html" target="_blank">JsDoc</a></li>
+                </ul>
+            </div>
 
-		<div class="article" id="replaceContent"><h2 id="whatisemily">What is Emily?<a href="#top">top</a></h2>
+		<div class="article" id="replaceContent">
+            <h2 id="whatisemily">What is Emily?<a href="#top">top</a></h2>
 
 <ul>
 <li>Emily is a JS library for building scalable web applications.</li>
@@ -1295,34 +1304,35 @@ to decide how you want to load and optimize them</li>
 <p>Check out <a href="https://github.com/flams/olives">Olives</a> for scalable MV* applications in the browser.</p></div>
 
 
-		<div class="footer">
-			Emily is released under the <a href="https://github.com/flams/emily/blob/master/LICENSE">MIT license</a>. Copyright <a href="http://podefr.tumblr.com">Olivier Scherrer</a> 2012-2013
-		</div>
+	<div class="footer">
+		Emily is released under the <a href="https://github.com/flams/emily/blob/master/LICENSE">MIT license</a>. Copyright <a href="http://podefr.tumblr.com">Olivier Scherrer</a> 2012-2013
+	</div>
 
 
 
 
 <a href="http://github.com/flams/emily"> <img alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" style="position: fixed; top: 0; right: 0; border: 0;" /> </a>
-<script type="text/javascript">
-    var elements = document.getElementsByTagName("pre");
-    // loop old-style for IE8, even though Emily doesn't support it
-    for (var i=0, nb=elements.length; i<nb; i++) {
-        elements[i].className += "prettyprint";
-    }
-</script>
-<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
-<script type="text/javascript">
+    <script type="text/javascript">
+        var elements = document.getElementsByTagName("pre");
+        // loop old-style for IE8, even though Emily doesn't support it
+        for (var i=0, nb=elements.length; i<nb; i++) {
+            elements[i].className += "prettyprint";
+        }
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-30029982-1']);
-  _gaq.push(['_trackPageview']);
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-30029982-1']);
+      _gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
 
-</script>
-</div></body>
+    </script>
+    </div>
+</body>
 </html>
