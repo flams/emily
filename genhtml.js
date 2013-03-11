@@ -49,7 +49,7 @@ function Helpers(window) {
 
 	this.generateMenu = function generateMenu() {
 		var modules = this.getDom("h2, h3"),
-			menu = this.getDom("menu")[0],
+			menu = this.getDom(".menu")[0],
 			generatedMenu = '<ul><li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li>';
 
 		[].slice.call(modules, 0).forEach(function (title) {
