@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap-3.0.0-wip.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>src/StateMachine.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="span6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">72.79</p>
+    </div>
+    <div class="span6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">246</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="span6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="span6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">32.33</p>
+    </div>
+    <div class="span6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">0.74</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="span6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="span6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="span12">/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+define(["Tools"],
+/**
+ * @class
+ * Create a stateMachine
+ */
+function StateMachine(Tools) {
+
+     /**
+     * @param initState {String} the initial state
+     * @param diagram {Object} the diagram that describes the state machine
+     * @example
+     *
+     *      diagram = {
+     *              "State1" : [
+     *                      [ message1, action, nextState], // Same as the state's add function
+     *                      [ message2, action2, nextState]
+     *              ],
+     *
+     *              "State2" :
+     *                       [ message3, action3, scope3, nextState]
+     *                      ... and so on ....
+     *
+     *   }
+     *
+     * @return the stateMachine object
+     */
+    function StateMachineConstructor($initState, $diagram) {
+
+        /**
+         * The list of states
+         * @private
+         */
+        var _states = {},
+
+        /**
+         * The current state
+         * @private
+         */
+        _currentState = "";
+
+        /**
+         * Set the initialization state
+         * @param {String} name the name of the init state
+         * @returns {Boolean}
+         */
+        this.init = function init(name) {
+                if (_states[name]) {
+                    _currentState = name;
+                    return true;
+                } else {
+                    return false;
+                }
+        };
+
+        /**
+         * Add a new state
+         * @private
+         * @param {String} name the name of the state
+         * @returns {State} a new state
+         */
+        this.add = function add(name) {
+            if (!_states[name]) {
+                var transition = _states[name] = new Transition();
+                return transition;
+            } else {
+                return _states[name];
+            }
+        };
+
+        /**
+         * Get an existing state
+         * @private
+         * @param {String} name the name of the state
+         * @returns {State} the state
+         */
+        this.get = function get(name) {
+            return _states[name];
+        };
+
+        /**
+         * Get the current state
+         * @returns {String}
+         */
+        this.getCurrent = function getCurrent() {
+            return _currentState;
+        };
+
+        /**
+         * Tell if the state machine has the given state
+         * @param {String} state the name of the state
+         * @returns {Boolean} true if it has the given state
+         */
+        this.has = function has(state) {
+            return _states.hasOwnProperty(state);
+        };
+
+        /**
+         * Advances the state machine to a given state
+         * @param {String} state the name of the state to advance the state machine to
+         * @returns {Boolean} true if it has the given state
+         */
+        this.advance = function advance(state) {
+            if (this.has(state)) {
+                _currentState = state;
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        /**
+         * Pass an event to the state machine
+         * @param {String} name the name of the event
+         * @returns {Boolean} true if the event exists in the current state
+         */
+        this.event = function event(name) {
+            var nextState;
+
+            nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
+            // False means that there's no such event
+            // But undefined means that the state doesn't change
+            if (nextState === false) {
+                return false;
+            } else {
+                // There could be no next state, so the current one remains
+                if (nextState) {
+                    // Call the exit action if any
+                    _states[_currentState].event("exit");
+                    _currentState = nextState;
+                    // Call the new state's entry action if any
+                    _states[_currentState].event("entry");
+                }
+                return true;
+            }
+        };
+
+        /**
+         * Initializes the StateMachine with the given diagram
+         */
+        Tools.loop($diagram, function (transition, state) {
+            var myState = this.add(state);
+            transition.forEach(function (params){
+                myState.add.apply(null, params);
+            });
+        }, this);
+
+        /**
+         * Sets its initial state
+         */
+        this.init($initState);
+    }
+
+    /**
+     * Each state has associated transitions
+     * @constructor
+     */
+    function Transition() {
+
+        /**
+         * The list of transitions associated to a state
+         * @private
+         */
+        var _transitions = {};
+
+        /**
+         * Add a new transition
+         * @private
+         * @param {String} event the event that will trigger the transition
+         * @param {Function} action the function that is executed
+         * @param {Object} scope [optional] the scope in which to execute the action
+         * @param {String} next [optional] the name of the state to transit to.
+         * @returns {Boolean} true if success, false if the transition already exists
+         */
+        this.add = function add(event, action, scope, next) {
+
+            var arr = [];
+
+            if (_transitions[event]) {
+                return false;
+            }
+
+            if (typeof event == "string" &&
+                typeof action == "function") {
+
+                    arr[0] = action;
+
+                    if (typeof scope == "object") {
+                        arr[1] = scope;
+                    }
+
+                    if (typeof scope == "string") {
+                        arr[2] = scope;
+                    }
+
+                    if (typeof next == "string") {
+                        arr[2] = next;
+                    }
+
+                    _transitions[event] = arr;
+                    return true;
+            }
+
+            return false;
+        };
+
+        /**
+         * Check if a transition can be triggered with given event
+         * @private
+         * @param {String} event the name of the event
+         * @returns {Boolean} true if exists
+         */
+        this.has = function has(event) {
+            return !!_transitions[event];
+        };
+
+        /**
+         * Get a transition from it's event
+         * @private
+         * @param {String} event the name of the event
+         * @return the transition
+         */
+        this.get = function get(event) {
+            return _transitions[event] || false;
+        };
+
+        /**
+         * Execute the action associated to the given event
+         * @param {String} event the name of the event
+         * @param {params} params to pass to the action
+         * @private
+         * @returns false if error, the next state or undefined if success (that sounds weird)
+         */
+        this.event = function event(newEvent) {
+            var _transition = _transitions[newEvent];
+            if (_transition) {
+                _transition[0].apply(_transition[1], Tools.toArray(arguments).slice(1));
+                return _transition[2];
+            } else {
+                return false;
+            }
+        };
+    }
+
+    return StateMachineConstructor;
+
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
