@@ -57,11 +57,13 @@ function Transport() {
 		 * @returns
 		 */
 		this.request = function request(reqHandler, data, callback, scope) {
-			if (_reqHandlers.has(reqHandler)
-					&& typeof data != "undefined") {
+			if (_reqHandlers.has(reqHandler) &&
+				typeof data != "undefined") {
 
 				_reqHandlers.get(reqHandler)(data, function () {
-					callback && callback.apply(scope, arguments);
+					if (callback) {
+						callback.apply(scope, arguments);
+					}
 				});
 				return true;
 			} else {
@@ -79,9 +81,9 @@ function Transport() {
 		 * @returns {Function} the abort function to call to stop listening
 		 */
 		this.listen = function listen(reqHandler, data, callback, scope) {
-			if (_reqHandlers.has(reqHandler)
-					&& typeof data != "undefined"
-					&& typeof callback == "function") {
+			if (_reqHandlers.has(reqHandler) &&
+				typeof data != "undefined" &&
+				typeof callback == "function") {
 
 				var func = function () {
 					callback.apply(scope, arguments);
