@@ -1,0 +1,10 @@
+{
+  "name": "emily",
+  "version": "1.4.0",
+  "main": "build/Emily.min.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
