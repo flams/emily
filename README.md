@@ -633,7 +633,7 @@ describe("Store is an observable data structure that publishes events whenever i
 		expect(store.has("c")).toBe(true);
 	});
 
-	it("can proxy methods to the inner data structure's methods", function () {
+	it("can alter the inner data structure and publish changes when it's an array", function () {
 		var store = new Store([0, 2, 3]),
 			newValue;
 
@@ -654,10 +654,16 @@ describe("Store is an observable data structure that publishes events whenever i
 		expect(newArray[3]).toBe(6);
 	});
 
-	it("can also proxy to any method of an object", function () {
+	it("can also alter the inner structure and publish changes when it's an object", function () {
 		var store = new Store({a: 10});
 
 		expect(store.alter("hasOwnProperty", "a")).toBe(true);
+	});
+
+	it("can also directly call the methods of the inner structure without further publishing events", function () {
+		var store = new Store([0, 1, 2]);
+
+		expect(store.proxy("slice", 1, 2)).toEqual([1]);
 	});
 
 	it("has a function for iterating over it the same way being based on an object or an array", function () {
@@ -728,8 +734,6 @@ describe("Store is an observable data structure that publishes events whenever i
 		expect(store).not.toBe(internal);
 
 	});
-
-});
 ```
 
 ### Promise
@@ -1065,6 +1069,10 @@ describe("Transport hides and centralizes the logic behind requests", function (
 ```
 
 ## Changelog
+
+####1.4.0 - 13 MAY 2013
+
+* Store.proxy now gives direct access to the data structure's methods without publishing diffs, which is much faster (useful for slice for instance)
 
 ####1.3.5 - 09 MAR 2013
 

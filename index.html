@@ -2,6 +2,7 @@
 
 
 
+
 <html lang="en">
     <head>
         <title>Emily - simple tools for powerful JavaScript applications, in node.js or the browser.</title>
@@ -169,7 +170,7 @@
     			</p>
     		</div>
 
-            <div class="menu"><ul><li><a href="release/Emily-1.4.0.tgz">Download Emily</a></li><li class="H2"><a href="#whatisemily">What is Emily?</a></li>
+            <div class="menu"><ul><li><a href="release/Emily-1.3.5.tgz">Download Emily</a></li><li class="H2"><a href="#whatisemily">What is Emily?</a></li>
 <li class="H2"><a href="#whatmodulesdoesitprovide">What modules does it provide?</a></li>
 <li class="H2"><a href="#howdoiuseit">How do I use it?</a></li>
 <li class="H2"><a href="#integrationtests">Integration tests:</a></li>
@@ -820,7 +821,7 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
         expect(store.has("c")).toBe(true);
     });
 
-    it("can proxy methods to the inner data structure's methods", function () {
+    it("can alter the inner data structure and publish changes when it's an array", function () {
         var store = new Store([0, 2, 3]),
             newValue;
 
@@ -841,10 +842,16 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
         expect(newArray[3]).toBe(6);
     });
 
-    it("can also proxy to any method of an object", function () {
+    it("can also alter the inner structure and publish changes when it's an object", function () {
         var store = new Store({a: 10});
 
         expect(store.alter("hasOwnProperty", "a")).toBe(true);
+    });
+
+    it("can also directly call the methods of the inner structure without further publishing events", function () {
+        var store = new Store([0, 1, 2]);
+
+        expect(store.proxy("slice", 1, 2)).toEqual([1]);
     });
 
     it("has a function for iterating over it the same way being based on an object or an array", function () {
@@ -915,8 +922,6 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
         expect(store).not.toBe(internal);
 
     });
-
-});
 </code></pre>
 
 <h3 id="promise">Promise<a href="#top">top</a></h3>
@@ -1249,6 +1254,12 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 </code></pre>
 
 <h2 id="changelog">Changelog<a href="#top">top</a></h2>
+
+<h4 id="14013may2013">1.4.0 - 13 MAY 2013</h4>
+
+<ul>
+<li>Store.proxy now gives direct access to the data structure's methods without publishing diffs, which is much faster (useful for slice for instance)</li>
+</ul>
 
 <h4 id="13509mar2013">1.3.5 - 09 MAR 2013</h4>
 
