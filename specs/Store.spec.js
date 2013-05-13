@@ -533,8 +533,17 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(spy.callCount).toBe(1);
 		});
 
-		it("should have a proxy function as an alias of alter", function () {
-			expect(store.proxy).toBe(store.alter);
+		it("should have a proxy function that access the inner store's methods", function () {
+			expect(store.proxy).toBeInstanceOf(Function);
+			var data = store.dump();
+			spyOn(data, "slice");
+
+			store.proxy("slice", 0, 1);
+			expect(data.slice.wasCalled).toBe(true);
+			expect(data.slice.mostRecentCall.args[0]).toBe(0);
+			expect(data.slice.mostRecentCall.args[1]).toBe(1);
+
+			expect(store.proxy("nofunc")).toBe(false);
 		});
 
 	});

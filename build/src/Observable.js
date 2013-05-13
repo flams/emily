@@ -82,7 +82,9 @@ function Observable(Tools) {
 			if (observers) {
 				Tools.loop(observers, function (value) {
 					try {
-						value && value[0].apply(value[1] || null, args);
+						if (value) {
+							value[0].apply(value[1] || null, args);
+						}
 					} catch (err) { }
 				});
 				return true;
