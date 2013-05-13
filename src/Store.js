@@ -168,8 +168,10 @@ define(["Observable", "Tools"],
         };
 
         /**
-         * Alter the data be calling one of it's method
+         * Alter the data by calling one of it's method
          * When the modifications are done, it notifies on changes.
+         * If the function called doesn't alter the data, consider using proxy instead
+         * which is much, much faster.
          * @param {String} func the name of the method
          * @returns the result of the method call
          */
@@ -179,7 +181,7 @@ define(["Observable", "Tools"],
 
             if (_data[func]) {
                 previousData = Tools.clone(_data);
-                apply = _data[func].apply(_data, Array.prototype.slice.call(arguments, 1));
+                apply = this.proxy.apply(this, arguments);
                 _notifyDiffs(previousData);
                 return apply;
             } else {
@@ -187,10 +189,13 @@ define(["Observable", "Tools"],
             }
         };
 
-        /**
-         * proxy is an alias for alter
-         */
-         this.proxy = this.alter;
+        this.proxy = function proxy(func) {
+        	if (_data[func]) {
+        		return _data[func].apply(_data, Array.prototype.slice.call(arguments, 1));
+        	} else {
+        		return false;
+        	}
+        };
 
         /**
          * Watch the store's modifications
