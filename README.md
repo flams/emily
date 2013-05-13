@@ -1070,6 +1070,10 @@ describe("Transport hides and centralizes the logic behind requests", function (
 
 ## Changelog
 
+####1.4.0 - 13 MAY 2013
+
+* Store.proxy now gives direct access to the data structure's methods without publishing diffs, which is much faster (useful for slice for instance)
+
 ####1.3.5 - 09 MAR 2013
 
 * Added count alias for getNbItems in Store
