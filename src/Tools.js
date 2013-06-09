@@ -11,6 +11,34 @@ define(
  */
 function Tools(){
 
+    /**
+     * Get the closest number in an array
+     * @param {Number} item the base number
+     * @param {Array} array the array to search into
+     * @param {Function} getDiff returns the difference between the base number and
+     *   and the currently read item in the array. The item which returned the smallest difference wins.
+     * @private
+     */
+    function _getClosest(item, array, getDiff) {
+        var closest,
+            diff;
+
+        if (!array) {
+            return;
+        }
+
+        array.forEach(function (comparedItem, comparedItemIndex) {
+            var thisDiff = getDiff(comparedItem, item);
+
+            if (thisDiff >= 0 && (typeof diff == "undefined" || thisDiff < diff)) {
+                diff = thisDiff;
+                closest = comparedItemIndex;
+            }
+        });
+
+        return closest;
+    }
+
     return {
         /**
          * For applications that don't run in a browser, window is not the global object.
@@ -298,52 +326,43 @@ function Tools(){
             }
         },
 
+        /**
+         * Get the closest number in an array given a base number
+         * Example: closest(30, [20, 0, 50, 29]) will return 3 as 29 is the closest item
+         * @param {Number} item the base number
+         * @param {Array} array the array of numbers to search into
+         * @returns {Number} the index of the closest item in the array
+         */
         closest: function closest(item, array) {
-			var closest,
-				diff;
-
-			this.loop(array, function (comparedItem, comparedItemIndex) {
-				var thisDiff = Math.abs(comparedItem - item);
-
-				if (typeof diff == "undefined" || thisDiff < diff) {
-					diff = thisDiff;
-					closest = comparedItemIndex;
-				}
-			});
-
-			return closest;
+            return _getClosest(item, array, function (comparedItem, item) {
+                return Math.abs(comparedItem - item);
+            });
         },
 
+        /**
+         * Get the closest greater number in an array given a base number
+         * Example: closest(30, [20, 0, 50, 29]) will return 2 as 50 is the closest greater item
+         * @param {Number} item the base number
+         * @param {Array} array the array of numbers to search into
+         * @returns {Number} the index of the closest item in the array
+         */
         closestGreater: function closestGreater(item, array) {
-        	var closest,
-				diff;
-
-			this.loop(array, function (comparedItem, comparedItemIndex) {
-				var thisDiff = comparedItem - item;
-
-				if (thisDiff >= 0 && (typeof diff == "undefined" || thisDiff < diff)) {
-					diff = thisDiff;
-					closest = comparedItemIndex;
-				}
-			});
-
-			return closest;
+            return _getClosest(item, array, function (comparedItem, item) {
+                return comparedItem - item;
+            });
         },
 
+        /**
+         * Get the closest lower number in an array given a base number
+         * Example: closest(30, [20, 0, 50, 29]) will return 0 as 20 is the closest lower item
+         * @param {Number} item the base number
+         * @param {Array} array the array of numbers to search into
+         * @returns {Number} the index of the closest item in the array
+         */
         closestLower: function closestLower(item, array) {
-        	var closest,
-				diff;
-
-			this.loop(array, function (comparedItem, comparedItemIndex) {
-				var thisDiff = item - comparedItem;
-
-				if (thisDiff >= 0 && (typeof diff == "undefined" || thisDiff < diff)) {
-					diff = thisDiff;
-					closest = comparedItemIndex;
-				}
-			});
-
-			return closest;
+            return _getClosest(item, array, function (comparedItem, item) {
+                return item - comparedItem;
+            });
         }
 
 
