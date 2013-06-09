@@ -296,6 +296,43 @@ function Tools(){
             } else {
                 return object;
             }
+        },
+
+        closest: function closest(item, array) {
+			var closest,
+				diff;
+
+			this.loop(array, function (comparedItem, comparedItemIndex) {
+				var thisDiff = Math.abs(item - comparedItem);
+
+				if (typeof diff == "undefined" || thisDiff < diff) {
+					diff = thisDiff;
+					closest = comparedItemIndex;
+				}
+			});
+
+			return closest;
+        },
+
+        closestGreater: function closestGreater(item, array) {
+        	var closest;
+
+        	if (typeof item == "number" && array instanceof Array) {
+				array.sort(this.compareNumbers);
+
+				array.some(function (comparedItem, comparedItemIndex) {
+					if (comparedItem >= item) {
+						closest = comparedItemIndex;
+						return true;
+					}
+				});
+
+				return closest;
+        	}
+        },
+
+        closetLower: function closestLower() {
+
         }
 
 
