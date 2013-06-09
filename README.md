@@ -455,6 +455,31 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 	});
 
 });
+
+describe("Tools.closest finds the closest number to a base number in an array and returns its index", function () {
+
+	it("gets the closest number", function () {
+		expect(Tools.closest(10, [30, 5, 40, 20])).toBe(1);
+		expect(Tools.closest(25, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closest(30, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closest(45, [30, 5, 40, 20])).toBe(2);
+	});
+
+	it("gets the closest number that is greater", function () {
+		expect(Tools.closestGreater(10, [30, 5, 40, 20])).toBe(3);
+		expect(Tools.closestGreater(25, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closestGreater(30, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closestGreater(45, [30, 5, 40, 20])).toBeUndefined();
+	});
+
+	it("gets the closest number that is lower", function () {
+		expect(Tools.closestLower(10, [30, 5, 40, 20])).toBe(1);
+		expect(Tools.closestLower(25, [30, 5, 40, 20])).toBe(3);
+		expect(Tools.closestLower(30, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closestLower(45, [30, 5, 40, 20])).toBe(2);
+	});
+
+});
 ```
 
 ### Store
