@@ -471,7 +471,7 @@ require(["Tools"], function (Tools) {
 
 	describe("ClosestGreater", function () {
 
-		var array = [10, 15, 0, 20, 5];
+		var array = [10, 15, 1, 20, 5];
 
 		it("should be a function", function () {
 			expect(Tools.closestGreater).toBeInstanceOf(Function);
