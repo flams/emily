@@ -446,4 +446,72 @@ require(["Tools"], function (Tools) {
 		});
 	});
 
+	describe("Closest", function () {
+
+		var array = [10, 15, 0, 20, 5];
+
+		it("should be a function", function () {
+			expect(Tools.closest).toBeInstanceOf(Function);
+		});
+
+		it("should return the closest item in an array", function () {
+			expect(Tools.closest()).toBeUndefined();
+			expect(Tools.closest(0)).toBeUndefined();
+			expect(Tools.closest(0, array)).toBe(2);
+			expect(Tools.closest(2, array)).toBe(2);
+			expect(Tools.closest(3, array)).toBe(4);
+			expect(Tools.closest(2.5, array)).toBe(2);
+			expect(Tools.closest(9, array)).toBe(0);
+			expect(Tools.closest(10, array)).toBe(0);
+			expect(Tools.closest(15.5, array)).toBe(1);
+			expect(Tools.closest(20, array)).toBe(3);
+		});
+
+	});
+
+	describe("ClosestGreater", function () {
+
+		var array = [10, 15, 1, 20, 5];
+
+		it("should be a function", function () {
+			expect(Tools.closestGreater).toBeInstanceOf(Function);
+		});
+
+		it("should return the closest greater or equal item in an array", function () {
+			expect(Tools.closestGreater()).toBeUndefined();
+			expect(Tools.closestGreater(0)).toBeUndefined();
+			expect(Tools.closestGreater(0, array)).toBe(2);
+			expect(Tools.closestGreater(2, array)).toBe(4);
+			expect(Tools.closestGreater(3, array)).toBe(4);
+			expect(Tools.closestGreater(2.5, array)).toBe(4);
+			expect(Tools.closestGreater(9, array)).toBe(0);
+			expect(Tools.closestGreater(10, array)).toBe(0);
+			expect(Tools.closestGreater(15.5, array)).toBe(3);
+			expect(Tools.closestGreater(20, array)).toBe(3);
+		});
+
+	});
+
+	describe("ClosestLower", function () {
+
+		var array = [10, 15, 0, 20, 5];
+
+		it("should be a function", function () {
+			expect(Tools.closestLower).toBeInstanceOf(Function);
+		});
+
+		it("should return the closest lower or equal item in an array", function () {
+			expect(Tools.closestLower()).toBeUndefined();
+			expect(Tools.closestLower(0)).toBeUndefined();
+			expect(Tools.closestLower(0, array)).toBe(2);
+			expect(Tools.closestLower(4, array)).toBe(2);
+			expect(Tools.closestLower(9, array)).toBe(4);
+			expect(Tools.closestLower(10, array)).toBe(0);
+			expect(Tools.closestLower(14, array)).toBe(0);
+			expect(Tools.closestLower(15.5, array)).toBe(1);
+			expect(Tools.closestLower(20, array)).toBe(3);
+		});
+
+	});
+
 });
