@@ -303,7 +303,7 @@ function Tools(){
 				diff;
 
 			this.loop(array, function (comparedItem, comparedItemIndex) {
-				var thisDiff = Math.abs(item - comparedItem);
+				var thisDiff = Math.abs(comparedItem - item);
 
 				if (typeof diff == "undefined" || thisDiff < diff) {
 					diff = thisDiff;
@@ -315,24 +315,35 @@ function Tools(){
         },
 
         closestGreater: function closestGreater(item, array) {
-        	var closest;
+        	var closest,
+				diff;
 
-        	if (typeof item == "number" && array instanceof Array) {
-				array.sort(this.compareNumbers);
+			this.loop(array, function (comparedItem, comparedItemIndex) {
+				var thisDiff = comparedItem - item;
 
-				array.some(function (comparedItem, comparedItemIndex) {
-					if (comparedItem >= item) {
-						closest = comparedItemIndex;
-						return true;
-					}
-				});
+				if (thisDiff >= 0 && (typeof diff == "undefined" || thisDiff < diff)) {
+					diff = thisDiff;
+					closest = comparedItemIndex;
+				}
+			});
 
-				return closest;
-        	}
+			return closest;
         },
 
-        closetLower: function closestLower() {
+        closestLower: function closestLower(item, array) {
+        	var closest,
+				diff;
 
+			this.loop(array, function (comparedItem, comparedItemIndex) {
+				var thisDiff = item - comparedItem;
+
+				if (thisDiff >= 0 && (typeof diff == "undefined" || thisDiff < diff)) {
+					diff = thisDiff;
+					closest = comparedItemIndex;
+				}
+			});
+
+			return closest;
         }
 
 
