@@ -1095,7 +1095,7 @@ describe("Transport hides and centralizes the logic behind requests", function (
 
 ## Changelog
 
-###1.6.0 - PENDING
+###1.6.0 - 17 JUNE 2013
 
 * Adds computed properties to the Store
 
