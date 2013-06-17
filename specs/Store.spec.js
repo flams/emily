@@ -589,12 +589,14 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 		it("should update the computed property when one of the initial property changes", function () {
 			store.set("property1", 336);
 			store.set("property2", 1000);
-			var spy = jasmine.createSpy();
+			var spy = jasmine.createSpy().andReturn(1337);
 			store.compute("name", ["property1", "property2"], spy);
 
 			store.set("property1", 337);
 
 			expect(spy.callCount).toBe(2);
+
+			expect(store.get("name")).toBe(1337);
 		});
 
 		it("should have a function to tell if a property is computed", function () {
@@ -628,11 +630,6 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			spyOn(store, "unwatchValue");
 
 			store.compute("name", ["property"], spy, scope);
-
-			expect(store.watchValue).toHaveBeenCalled();
-			expect(store.watchValue.mostRecentCall.args[0]).toBe("property");
-			expect(store.watchValue.mostRecentCall.args[1]).toBe(spy);
-			expect(store.watchValue.mostRecentCall.args[2]).toBe(scope);
 
 			store.removeCompute("name");
 

@@ -319,7 +319,9 @@ define(["Observable", "Tools"],
         		_computed[name] = [];
 
         		Tools.loop(computeFrom, function (property) {
-        			_computed[name].push(this.watchValue(property, callback, scope));
+        			_computed[name].push(this.watchValue(property, function () {
+        				this.set(name, callback.call(scope));
+        			}, this));
         		}, this);
 
         		this.set(name, callback.call(scope));
