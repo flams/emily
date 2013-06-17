@@ -455,6 +455,31 @@ describe("Tools.getNestedProperty gets the property of an object nested in other
 	});
 
 });
+
+describe("Tools.closest finds the closest number to a base number in an array and returns its index", function () {
+
+	it("gets the closest number", function () {
+		expect(Tools.closest(10, [30, 5, 40, 20])).toBe(1);
+		expect(Tools.closest(25, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closest(30, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closest(45, [30, 5, 40, 20])).toBe(2);
+	});
+
+	it("gets the closest number that is greater", function () {
+		expect(Tools.closestGreater(10, [30, 5, 40, 20])).toBe(3);
+		expect(Tools.closestGreater(25, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closestGreater(30, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closestGreater(45, [30, 5, 40, 20])).toBeUndefined();
+	});
+
+	it("gets the closest number that is lower", function () {
+		expect(Tools.closestLower(10, [30, 5, 40, 20])).toBe(1);
+		expect(Tools.closestLower(25, [30, 5, 40, 20])).toBe(3);
+		expect(Tools.closestLower(30, [30, 5, 40, 20])).toBe(0);
+		expect(Tools.closestLower(45, [30, 5, 40, 20])).toBe(2);
+	});
+
+});
 ```
 
 ### Store
@@ -631,6 +656,26 @@ describe("Store is an observable data structure that publishes events whenever i
 		expect(store.has("a")).toBe(false);
 		expect(store.has("b")).toBe(false);
 		expect(store.has("c")).toBe(true);
+	});
+
+	it("can compute properties from other properties", function () {
+		var store = new Store({a: 1000, b: 336}),
+			observedComputed;
+
+		store.compute("c", ["a", "b"], function () {
+			return this.get("a") + this.get("b");
+		}, store);
+
+		expect(store.get("c")).toBe(1336);
+
+		store.watchValue("c", function (value) {
+			observedComputed = value;
+		});
+
+		store.set("b", 337);
+
+		expect(store.get("c")).toBe(1337);
+		expect(observedComputed).toBe(1337);
 	});
 
 	it("can alter the inner data structure and publish changes when it's an array", function () {
@@ -1069,6 +1114,14 @@ describe("Transport hides and centralizes the logic behind requests", function (
 ```
 
 ## Changelog
+
+###1.6.0 - 17 JUNE 2013
+
+* Adds computed properties to the Store
+
+####1.5.0 - 9 JUNE 2013
+
+* Tools now has closest, closestGreater and closestLower for finding the number in an array that is the closest to a base number.
 
 ####1.4.0 - 13 MAY 2013
 
