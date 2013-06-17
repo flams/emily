@@ -658,6 +658,26 @@ describe("Store is an observable data structure that publishes events whenever i
 		expect(store.has("c")).toBe(true);
 	});
 
+	it("can compute properties from other properties", function () {
+		var store = new Store({a: 1000, b: 336}),
+			observedComputed;
+
+		store.compute("c", ["a", "b"], function () {
+			return this.get("a") + this.get("b");
+		}, store);
+
+		expect(store.get("c")).toBe(1336);
+
+		store.watchValue("c", function (value) {
+			observedComputed = value;
+		});
+
+		store.set("b", 337);
+
+		expect(store.get("c")).toBe(1337);
+		expect(observedComputed).toBe(1337);
+	});
+
 	it("can alter the inner data structure and publish changes when it's an array", function () {
 		var store = new Store([0, 2, 3]),
 			newValue;
