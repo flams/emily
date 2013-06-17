@@ -1095,6 +1095,10 @@ describe("Transport hides and centralizes the logic behind requests", function (
 
 ## Changelog
 
+###1.6.0 - PENDING
+
+* Adds computed properties to the Store
+
 ####1.5.0 - 9 JUNE 2013
 
 * Tools now has closest, closestGreater and closestLower for finding the number in an array that is the closest to a base number.
