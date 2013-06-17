@@ -24,6 +24,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(store.toJSON).toBeInstanceOf(Function);
 			expect(store.dump).toBeInstanceOf(Function);
 			expect(store.alter).toBeInstanceOf(Function);
+			expect(store.proxy).toBeInstanceOf(Function);
 			expect(store.watch).toBeInstanceOf(Function);
 			expect(store.unwatch).toBeInstanceOf(Function);
 			expect(store.getStoreObservable).toBeInstanceOf(Function);
@@ -548,6 +549,95 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 
 	});
 
+	describe("StoreComputed", function () {
+
+		var store = null;
+
+		beforeEach(function () {
+			store = new Store();
+		});
+
+		it("should have a function to compute a property from other properties", function () {
+			var spy = jasmine.createSpy();
+			expect(store.compute).toBeInstanceOf(Function);
+			expect(store.compute()).toBe(false);
+			expect(store.compute("name")).toBe(false);
+			expect(store.compute("name", ["property1", "property2"])).toBe(false);
+			expect(store.compute("name", ["property1", "property2"], spy)).toBe(true);
+			expect(store.compute("name", ["property1", "property2"], spy)).toBe(false);
+		});
+
+		it("should set the property", function () {
+			spyOn(store, "set");
+			var spy = jasmine.createSpy().andReturn(1337);
+			store.compute("name", ["property", "property"], spy);
+
+			expect(store.set).toHaveBeenCalled();
+			expect(store.set.mostRecentCall.args[0]).toBe("name");
+			expect(store.set.mostRecentCall.args[1]).toBe(1337);
+		});
+
+		it("should execute the callback in the given scope", function () {
+			var spy = jasmine.createSpy(),
+				scope = {};
+
+			store.compute("name", ["property1", "property2"], spy, scope);
+
+			expect(spy.mostRecentCall.object).toBe(scope);
+		});
+
+		it("should update the computed property when one of the initial property changes", function () {
+			store.set("property1", 336);
+			store.set("property2", 1000);
+			var spy = jasmine.createSpy().andReturn(1337);
+			store.compute("name", ["property1", "property2"], spy);
+
+			store.set("property1", 337);
+
+			expect(spy.callCount).toBe(2);
+
+			expect(store.get("name")).toBe(1337);
+		});
+
+		it("should have a function to tell if a property is computed", function () {
+			expect(store.isCompute).toBeInstanceOf(Function);
+			var spy = jasmine.createSpy();
+
+			expect(store.isCompute("name")).toBe(false);
+
+			store.compute("name", ["property1", "property2"], spy);
+
+			expect(store.isCompute("name")).toBe(true);
+
+		});
+
+		it("should have a function for removing a computed property", function () {
+			expect(store.removeCompute).toBeInstanceOf(Function);
+
+			expect(store.removeCompute("name")).toBe(false);
+
+			var spy = jasmine.createSpy();
+			store.compute("name", ["property1", "property2"], spy);
+
+			expect(store.removeCompute("name")).toBe(true);
+		});
+
+		it("should remove the observers", function() {
+			var spy = jasmine.createSpy(),
+				scope = {};
+
+			spyOn(store, "watchValue").andReturn(1337);
+			spyOn(store, "unwatchValue");
+
+			store.compute("name", ["property"], spy, scope);
+
+			store.removeCompute("name");
+
+			expect(store.unwatchValue).toHaveBeenCalled();
+			expect(store.unwatchValue.mostRecentCall.args[0]).toBe(1337);
+		});
+
+	});
 
 	describe("StoreReset", function () {
 		var store = null,

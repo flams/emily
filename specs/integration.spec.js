@@ -610,6 +610,26 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 			expect(store.has("c")).toBe(true);
 		});
 
+		it("can compute properties from other properties", function () {
+			var store = new Store({a: 1000, b: 336}),
+				observedComputed;
+
+			store.compute("c", ["a", "b"], function () {
+				return this.get("a") + this.get("b");
+			}, store);
+
+			expect(store.get("c")).toBe(1336);
+
+			store.watchValue("c", function (value) {
+				observedComputed = value;
+			});
+
+			store.set("b", 337);
+
+			expect(store.get("c")).toBe(1337);
+			expect(observedComputed).toBe(1337);
+		});
+
 		it("can alter the inner data structure and publish changes when it's an array", function () {
 			var store = new Store([0, 2, 3]),
 				newValue;
@@ -712,323 +732,322 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise) {
 
 		});
 
-		describe("Promise is a fully Promise/A+ compliant implementation", function () {
+	});
 
-			it("calls the fulfillment callback within scope", function () {
-				var promise = new Promise(),
-					scope = {},
-					thisObj,
-					value;
+	describe("Promise is a fully Promise/A+ compliant implementation", function () {
 
-				promise.then(function (val) {
-					thisObj = this;
-					value = val;
-				}, scope);
+		it("calls the fulfillment callback within scope", function () {
+			var promise = new Promise(),
+				scope = {},
+				thisObj,
+				value;
 
-				promise.fulfill("emily");
+			promise.then(function (val) {
+				thisObj = this;
+				value = val;
+			}, scope);
 
-				expect(value).toBe("emily");
-				expect(thisObj).toBe(scope);
-			});
+			promise.fulfill("emily");
 
-			it("calls the rejection callback within a scope", function () {
-				var promise = new Promise(),
-					scope = {},
-					thisObj,
-					reason;
-
-				promise.then(null, function (res) {
-					thisObj = this;
-					reason = res;
-				}, scope);
-
-				promise.reject(false);
-
-				expect(reason).toBe(false);
-				expect(thisObj).toBe(scope);
-			});
-
-			it("can synchronise a promise with another one, or any thenable", function () {
-				var promise1 = new Promise(),
-					promise2 = new Promise(),
-					synched;
-
-				promise2.sync(promise1);
-
-				promise2.then(function (value) {
-					synched = value;
-				});
-
-				promise1.fulfill(true);
-
-				expect(synched).toBe(true);
-			});
-
-			it("can return the reason of a rejected promise", function () {
-				var promise = new Promise();
-
-				promise.reject("reason");
-
-				expect(promise.getReason()).toBe("reason");
-			});
-
-			it("can return the value of a fulfilled promise", function () {
-				var promise = new Promise();
-
-				promise.fulfill("emily");
-
-				expect(promise.getValue()).toBe("emily");
-			});
-
-			it("passes all the promise-A+ tests specs", function () {
-				expect('225 tests complete (6 seconds)').toBeTruthy();
-			});
-
+			expect(value).toBe("emily");
+			expect(thisObj).toBe(scope);
 		});
 
-		describe("StateMachine helps you with the control flow of your apps by removing branching if/else", function () {
+		it("calls the rejection callback within a scope", function () {
+			var promise = new Promise(),
+				scope = {},
+				thisObj,
+				reason;
 
-			it("will call specific actions depending on the current state and the triggered event", function () {
-				var passCalled,
-					coinCalled,
+			promise.then(null, function (res) {
+				thisObj = this;
+				reason = res;
+			}, scope);
 
-					stateMachine = new StateMachine("opened", {
-					// It has an 'opened' state
-					"opened": [
-						// That accepts a 'pass' event that will execute the 'pass' action
-						["pass", function pass(event) {
-							passCalled = event;
-						// And when done, it will transit to the 'closed' state
-						}, "closed"]
-					],
+			promise.reject(false);
 
-					// It also has a 'closed' state
-					"closed": [
-						// That accepts a 'coin' event that will execute the 'coin' action
-						["coin", function coin(event) {
-							coinCalled = event;
-						// And when done, it will transit back to the 'opened' state
-						}, "opened"]
-					]
-				});
+			expect(reason).toBe(false);
+			expect(thisObj).toBe(scope);
+		});
 
-				expect(stateMachine.getCurrent()).toBe("opened");
+		it("can synchronise a promise with another one, or any thenable", function () {
+			var promise1 = new Promise(),
+				promise2 = new Promise(),
+				synched;
 
-				expect(stateMachine.event("nonExistingState")).toBe(false);
-				expect(stateMachine.event("pass", "hello")).toBe(true);
-				expect(passCalled).toBe("hello");
+			promise2.sync(promise1);
 
-				expect(stateMachine.getCurrent()).toBe("closed");
-				expect(stateMachine.event("coin", "2p")).toBe(true);
-				expect(coinCalled).toBe("2p");
-
-				expect(stateMachine.getCurrent()).toBe("opened");
+			promise2.then(function (value) {
+				synched = value;
 			});
 
-			it("executes the action in the given scope", function () {
-				var passThisObject,
-					coinThisObject,
-					scope = {},
+			promise1.fulfill(true);
+
+			expect(synched).toBe(true);
+		});
+
+		it("can return the reason of a rejected promise", function () {
+			var promise = new Promise();
+
+			promise.reject("reason");
+
+			expect(promise.getReason()).toBe("reason");
+		});
+
+		it("can return the value of a fulfilled promise", function () {
+			var promise = new Promise();
+
+			promise.fulfill("emily");
+
+			expect(promise.getValue()).toBe("emily");
+		});
+
+		it("passes all the promise-A+ tests specs", function () {
+			expect('225 tests complete (6 seconds)').toBeTruthy();
+		});
+
+	});
+
+	describe("StateMachine helps you with the control flow of your apps by removing branching if/else", function () {
+
+		it("will call specific actions depending on the current state and the triggered event", function () {
+			var passCalled,
+				coinCalled,
 
 				stateMachine = new StateMachine("opened", {
-					"opened": [
-						["pass", function pass() {
-							passThisObject = this;
-						}, scope, "closed"]
-					],
-					"closed": [
-						["coin", function coin() {
-							coinThisObject = this;
-						}, scope, "opened"]
-					]
-				});
+				// It has an 'opened' state
+				"opened": [
+					// That accepts a 'pass' event that will execute the 'pass' action
+					["pass", function pass(event) {
+						passCalled = event;
+					// And when done, it will transit to the 'closed' state
+					}, "closed"]
+				],
 
-				stateMachine.event("pass");
-				expect(passThisObject).toBe(scope);
-
-				stateMachine.event("coin");
-				expect(coinThisObject).toBe(scope);
+				// It also has a 'closed' state
+				"closed": [
+					// That accepts a 'coin' event that will execute the 'coin' action
+					["coin", function coin(event) {
+						coinCalled = event;
+					// And when done, it will transit back to the 'opened' state
+					}, "opened"]
+				]
 			});
 
-			it("can handle events that don't necessarily change the state", function () {
-				var coinCalled,
-					stateMachine = new StateMachine("opened", {
-					"opened": [
-						["pass", function pass() {
-							passThisObject = this;
-						}, "closed"],
-						["coin", function coin() {
-							coinCalled = true;
-						}]
-					],
-					"closed": [
-						["coin", function coin() {
-							coinThisbject = this;
-						}, "opened"]
-					]
-				});
+			expect(stateMachine.getCurrent()).toBe("opened");
 
-				stateMachine.event("coin");
-				expect(coinCalled).toBe(true);
-				expect(stateMachine.getCurrent()).toBe("opened");
+			expect(stateMachine.event("nonExistingState")).toBe(false);
+			expect(stateMachine.event("pass", "hello")).toBe(true);
+			expect(passCalled).toBe("hello");
 
+			expect(stateMachine.getCurrent()).toBe("closed");
+			expect(stateMachine.event("coin", "2p")).toBe(true);
+			expect(coinCalled).toBe("2p");
+
+			expect(stateMachine.getCurrent()).toBe("opened");
+		});
+
+		it("executes the action in the given scope", function () {
+			var passThisObject,
+				coinThisObject,
+				scope = {},
+
+			stateMachine = new StateMachine("opened", {
+				"opened": [
+					["pass", function pass() {
+						passThisObject = this;
+					}, scope, "closed"]
+				],
+				"closed": [
+					["coin", function coin() {
+						coinThisObject = this;
+					}, scope, "opened"]
+				]
 			});
 
-			it("can execute given actions upon entering or leaving a state", function () {
-				var onEnter,
-					onExit,
-					stateMachine = new StateMachine("opened", {
-					"opened": [
-						["pass", function pass() {
-							//
-						}, "closed"],
+			stateMachine.event("pass");
+			expect(passThisObject).toBe(scope);
 
-						// Exit will be called upon leaving opened
-						["exit", function exit() {
-							onExit = true;
-						}]
-					],
-					"closed": [
+			stateMachine.event("coin");
+			expect(coinThisObject).toBe(scope);
+		});
 
-						// Whereas entry will be called upon entering the state
-						["entry", function entry() {
-							onEnter = true;
-						}],
-						["coin", function coin() {
-							//
-						}, "opened"]
-					]
-				});
-
-				stateMachine.event("pass");
-
-				expect(onExit).toBe(true);
-				expect(onExit).toBe(true);
-
-				expect(stateMachine.getCurrent()).toBe("closed");
+		it("can handle events that don't necessarily change the state", function () {
+			var coinCalled,
+				stateMachine = new StateMachine("opened", {
+				"opened": [
+					["pass", function pass() {
+						passThisObject = this;
+					}, "closed"],
+					["coin", function coin() {
+						coinCalled = true;
+					}]
+				],
+				"closed": [
+					["coin", function coin() {
+						coinThisbject = this;
+					}, "opened"]
+				]
 			});
 
-			it("can be advanced to a given state", function () {
-				var stateMachine = new StateMachine("opened", {
-					"opened": [
-						["pass", function pass() {
-							passThisObject = this;
-						}, "closed"]
-					],
-					"closed": [
-						["coin", function coin() {
-							coinThisObject = this;
-						}, "opened"]
-					]
-				});
-
-				expect(stateMachine.advance("")).toBe(false);
-				expect(stateMachine.advance("closed")).toBe(true);
-				expect(stateMachine.getCurrent()).toBe("closed");
-
-				expect(stateMachine.advance("opened")).toBe(true);
-				expect(stateMachine.getCurrent()).toBe("opened");
-			});
+			stateMachine.event("coin");
+			expect(coinCalled).toBe(true);
+			expect(stateMachine.getCurrent()).toBe("opened");
 
 		});
 
-		describe("Transport hides and centralizes the logic behind requests", function () {
+		it("can execute given actions upon entering or leaving a state", function () {
+			var onEnter,
+				onExit,
+				stateMachine = new StateMachine("opened", {
+				"opened": [
+					["pass", function pass() {
+						//
+					}, "closed"],
 
-			it("issues requests to request handlers", function () {
+					// Exit will be called upon leaving opened
+					["exit", function exit() {
+						onExit = true;
+					}]
+				],
+				"closed": [
 
-				var onEndCalled = false;
-
-				var requestsHandlers = new Store({
-					// This function will handle the request specified by payload.
-					// It will call the onEnd request when it has received all the data
-					// It will call onData for each chunk of data that needs to be sent
-					myRequestHandler: function (payload, onEnd) {
-						if (payload == "whoami") {
-							onEnd("emily");
-						}
-					}
-				});
-
-				var transport = new Transport(requestsHandlers);
-
-				// Issue a request on myRequestHandler with "whoami" in the payload
-				transport.request("myRequestHandler", "whoami", function onEnd() {
-					onEndCalled = true;
-				})
-
-				expect(onEndCalled).toBe(true);
+					// Whereas entry will be called upon entering the state
+					["entry", function entry() {
+						onEnter = true;
+					}],
+					["coin", function coin() {
+						//
+					}, "opened"]
+				]
 			});
 
-			it("accepts objects as payloads", function () {
+			stateMachine.event("pass");
 
-				var requestsHandlers = new Store({
-					myRequestHandler: function (payload, onEnd) {
-						onEnd("Hi " + payload.firstname + " " + payload.lastname);
-					}
-				}),
-				transport,
-				response;
+			expect(onExit).toBe(true);
+			expect(onExit).toBe(true);
 
-				transport = new Transport(requestsHandlers);
+			expect(stateMachine.getCurrent()).toBe("closed");
+		});
 
-				transport.request("myRequestHandler", {
-					firstname: "olivier",
-					lastname: "scherrer"
-				}, function onEnd(data) {
-					response = data;
-				});
-
-				expect(response).toBe("Hi olivier scherrer");
-
+		it("can be advanced to a given state", function () {
+			var stateMachine = new StateMachine("opened", {
+				"opened": [
+					["pass", function pass() {
+						passThisObject = this;
+					}, "closed"]
+				],
+				"closed": [
+					["coin", function coin() {
+						coinThisObject = this;
+					}, "opened"]
+				]
 			});
 
-			it("can also listen to channels and receive data in several chunks", function () {
+			expect(stateMachine.advance("")).toBe(false);
+			expect(stateMachine.advance("closed")).toBe(true);
+			expect(stateMachine.getCurrent()).toBe("closed");
 
-				var requestsHandlers = new Store({
-					// When onEnd is called, no further data can be sent.
-					// But when the channel must no be closed, onData can be called instead
-					myRequestHandler: function (payload, onEnd, onData) {
-						onData("chunk1");
-						onData("chunk2");
-						onData("chunk3");
-						onEnd("chunk4");
+			expect(stateMachine.advance("opened")).toBe(true);
+			expect(stateMachine.getCurrent()).toBe("opened");
+		});
+
+	});
+
+	describe("Transport hides and centralizes the logic behind requests", function () {
+
+		it("issues requests to request handlers", function () {
+
+			var onEndCalled = false;
+
+			var requestsHandlers = new Store({
+				// This function will handle the request specified by payload.
+				// It will call the onEnd request when it has received all the data
+				// It will call onData for each chunk of data that needs to be sent
+				myRequestHandler: function (payload, onEnd) {
+					if (payload == "whoami") {
+						onEnd("emily");
 					}
-				}),
-				response = [];
-
-				var transport = new Transport(requestsHandlers);
-
-				transport.listen("myRequestHandler", {}, function onData(data) {
-					response.push(data);
-				});
-
-				expect(response.length).toBe(4);
-				expect(response[0]).toBe("chunk1");
-				expect(response[3]).toBe("chunk4");
-
+				}
 			});
 
-			it("can close a listening channel on the client end point", function () {
-				var aborted = false;
+			var transport = new Transport(requestsHandlers);
 
-				var requestsHandlers = new Store({
-					myRequestHandler: function () {
-						return function() {
-							aborted = true;
-						};
-					}
-				}),
-				transport = new Transport(requestsHandlers),
-				abort;
+			// Issue a request on myRequestHandler with "whoami" in the payload
+			transport.request("myRequestHandler", "whoami", function onEnd() {
+				onEndCalled = true;
+			})
 
-				abort = transport.listen("myRequestHandler", "", function () {});
+			expect(onEndCalled).toBe(true);
+		});
 
-				abort();
+		it("accepts objects as payloads", function () {
 
-				expect(aborted).toBe(true);
+			var requestsHandlers = new Store({
+				myRequestHandler: function (payload, onEnd) {
+					onEnd("Hi " + payload.firstname + " " + payload.lastname);
+				}
+			}),
+			transport,
+			response;
+
+			transport = new Transport(requestsHandlers);
+
+			transport.request("myRequestHandler", {
+				firstname: "olivier",
+				lastname: "scherrer"
+			}, function onEnd(data) {
+				response = data;
 			});
 
+			expect(response).toBe("Hi olivier scherrer");
 
+		});
+
+		it("can also listen to channels and receive data in several chunks", function () {
+
+			var requestsHandlers = new Store({
+				// When onEnd is called, no further data can be sent.
+				// But when the channel must no be closed, onData can be called instead
+				myRequestHandler: function (payload, onEnd, onData) {
+					onData("chunk1");
+					onData("chunk2");
+					onData("chunk3");
+					onEnd("chunk4");
+				}
+			}),
+			response = [];
+
+			var transport = new Transport(requestsHandlers);
+
+			transport.listen("myRequestHandler", {}, function onData(data) {
+				response.push(data);
+			});
+
+			expect(response.length).toBe(4);
+			expect(response[0]).toBe("chunk1");
+			expect(response[3]).toBe("chunk4");
+
+		});
+
+		it("can close a listening channel on the client end point", function () {
+			var aborted = false;
+
+			var requestsHandlers = new Store({
+				myRequestHandler: function () {
+					return function() {
+						aborted = true;
+					};
+				}
+			}),
+			transport = new Transport(requestsHandlers),
+			abort;
+
+			abort = transport.listen("myRequestHandler", "", function () {});
+
+			abort();
+
+			expect(aborted).toBe(true);
 		});
 
 	});

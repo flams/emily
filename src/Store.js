@@ -37,6 +37,12 @@ define(["Observable", "Tools"],
          */
         _valueObservable = new Observable(),
 
+		/**
+         * Saves the handles for the subscriptions of the computed properties
+         * @private
+         */
+        _computed = [],
+
         /**
          * Gets the difference between two objects and notifies them
          * @private
@@ -173,6 +179,7 @@ define(["Observable", "Tools"],
          * If the function called doesn't alter the data, consider using proxy instead
          * which is much, much faster.
          * @param {String} func the name of the method
+         * @params {*} any number of params to be given to the func
          * @returns the result of the method call
          */
         this.alter = function alter(func) {
@@ -189,6 +196,14 @@ define(["Observable", "Tools"],
             }
         };
 
+        /**
+         * Proxy is similar to alter but doesn't trigger events.
+         * It's preferable to call proxy for functions that don't
+         * update the interal data source, like slice or filter.
+         * @param {String} func the name of the method
+         * @params {*} any number of params to be given to the func
+         * @returns the result of the method call
+         */
         this.proxy = function proxy(func) {
         	if (_data[func]) {
         		return _data[func].apply(_data, Array.prototype.slice.call(arguments, 1));
@@ -281,6 +296,65 @@ define(["Observable", "Tools"],
                 return false;
             }
 
+        };
+
+        /**
+         * Compute a new property from other properties.
+         * The computed property will look exactly similar to any none
+         * computed property, it can be watched upon.
+         * @param {String} name the name of the computed property
+         * @param {Array} computeFrom a list of properties to compute from
+         * @param {Function} callback the callback to compute the property
+         * @param {Object} scope the scope in which to execute the callback
+         * @returns {Boolean} false if wrong params given to the function
+         */
+        this.compute = function compute(name, computeFrom, callback, scope) {
+        	var args = [];
+
+        	if (typeof name == "string" &&
+        		typeof computeFrom == "object" &&
+        		typeof callback == "function" &&
+        		!this.isCompute(name)) {
+
+        		_computed[name] = [];
+
+        		Tools.loop(computeFrom, function (property) {
+        			_computed[name].push(this.watchValue(property, function () {
+        				this.set(name, callback.call(scope));
+        			}, this));
+        		}, this);
+
+        		this.set(name, callback.call(scope));
+        		return true;
+        	} else {
+        		return false;
+        	}
+        };
+
+        /**
+         * Remove a computed property
+         * @param {String} name the name of the computed to remove
+         * @returns {Boolean} true if the property is removed
+         */
+        this.removeCompute = function removeCompute(name) {
+        	if (this.isCompute(name)) {
+        		Tools.loop(_computed[name], function (handle) {
+        			this.unwatchValue(handle);
+        		}, this);
+        		this.del(name);
+        		return true;
+        	} else {
+        		return false;
+        	}
+        };
+
+        /**
+         * Tells if a property is a computed property
+         * @param {String} name the name of the property to test
+         * @returns {Boolean} true if it's a computed property
+         */
+        this.isCompute = function isCompute(name) {
+        	return !!_computed[name];
         };
 
         /**
