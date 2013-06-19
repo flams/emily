@@ -4,21 +4,20 @@
  * MIT Licensed
  */
 
-define(
 /**
  * @class
  * Transport hides and centralizes the logic behind requests.
  * It can issue requests to request handlers, which in turn can issue requests
  * to anything your node.js server has access to (HTTP, FileSystem, SIP...)
  */
-function Transport() {
+
 
 	/**
 	 * Create a Transport
 	 * @param {Emily Store} [optionanl] $reqHandlers an object containing the request handlers
 	 * @returns
 	 */
-	return function TransportConstructor($reqHandlers) {
+	module.exports =  function TransportConstructor($reqHandlers) {
 
 		/**
 		 * The request handlers
@@ -106,5 +105,3 @@ function Transport() {
 		this.setReqHandlers($reqHandlers);
 
 	};
-
-});

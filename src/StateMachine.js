@@ -3,14 +3,11 @@
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
-
-define(["Tools"],
+var Tools = require("./Tools");
 /**
  * @class
  * Create a stateMachine
  */
-function StateMachine(Tools) {
-
      /**
      * @param initState {String} the initial state
      * @param diagram {Object} the diagram that describes the state machine
@@ -30,7 +27,7 @@ function StateMachine(Tools) {
      *
      * @return the stateMachine object
      */
-    function StateMachineConstructor($initState, $diagram) {
+module.exports = function StateMachineConstructor($initState, $diagram) {
 
         /**
          * The list of states
@@ -245,8 +242,4 @@ function StateMachine(Tools) {
                 return false;
             }
         };
-    }
-
-    return StateMachineConstructor;
-
-});
+    };
