@@ -4,20 +4,20 @@
  * MIT Licensed
  */
 
-define(["Observable", "Tools"],
+	var Observable = require("./Observable"),
+		Tools = require("./Tools");
 /**
  * @class
  * Store creates an observable structure based on a key/values object
  * or on an array
  */
- function Store(Observable, Tools) {
 
     /**
      * Defines the Store
      * @param {Array/Object} the data to initialize the store with
      * @returns
      */
-    return function StoreConstructor($data) {
+module.exports = function StoreConstructor($data) {
 
         /**
          * Where the data is stored
@@ -374,4 +374,3 @@ define(["Observable", "Tools"],
             return _data;
         };
     };
-});

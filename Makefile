@@ -96,7 +96,7 @@ endif
 	git push --tags
 
 temp.js:
-	r.js -o tools/build.js
+	browserify -r ./src/Emily.js:emily -o temp.js
 
 Emily.js: temp.js
 	mkdir -p build

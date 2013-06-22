@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-define(["Tools"],
+var Tools = require("./Tools");
 /**
 * @class
 * Observable is an implementation of the Observer design pattern,
@@ -12,14 +12,7 @@ define(["Tools"],
 *
 * This service creates an Observable on which you can add subscribers.
 */
-function Observable(Tools) {
-
-	/**
-	 * Defines the Observable
-	 * @private
-	 * @returns {_Observable}
-	 */
-	return function ObservableConstructor() {
+module.exports = function ObservableConstructor() {
 
 		/**
 		 * The list of topics
@@ -127,4 +120,3 @@ function Observable(Tools) {
 
 	};
 
-});

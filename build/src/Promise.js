@@ -3,15 +3,14 @@
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
-define(["Observable", "StateMachine"],
+var Observable = require("./Observable"),
+	StateMachine = require("./StateMachine");
 
 /**
  * @class
  * Create a promise/A+
  */
-function Promise(Observable, StateMachine) {
-
-    return function PromiseConstructor() {
+module.exports = function PromiseConstructor() {
 
         /**
          * The fulfilled value
@@ -259,7 +258,3 @@ function Promise(Observable, StateMachine) {
 
     };
 
-
-
-
-});
