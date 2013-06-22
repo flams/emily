@@ -1,7 +1,7 @@
 {
  "name": "emily",
  "description": "runtime agnostic JS library for scalable web applications",
- "version": "1.6.0",
+ "version": "2.0.0",
  "homepage": "http://flams.github.com/emily/",
  "licenses": [{
   "type":"MIT",
@@ -16,7 +16,7 @@
  "dependencies": {
   "requirejs": ">=2.0.4"
   },
- "keywords": ["library", "AMD/commonJS", "Promise", "Observable", "StateMachine", "Store", "scalable webapp"],
+ "keywords": ["library", "Promise", "Observable", "StateMachine", "Store"],
  "repository": {
   "type": "git",
   "url": "git@github.com:flams/emily.git"
