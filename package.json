@@ -25,7 +25,7 @@
   "url": "https://github.com/flams/emily/issues"
  },
  "main":"emily-server.js",
- "browser":"src/Emily.js",
+ "browser":"build/src/Emily.js",
  "engines": {
  	"node":">= 0.6.0"
  }
