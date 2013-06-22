@@ -10,14 +10,14 @@ module.exports=require('WNi+zd');
 },{}],"WNi+zd":[function(require,module,exports){
 module.exports = {
 	Observable: 	require("./Observable"),
-	Promise: 		require("./Promise"),
 	StateMachine: 	require("./StateMachine"),
 	Store: 			require("./Store"),
 	Tools: 			require("./Tools"),
-	Promise: 		require("./Promise")
+	Promise: 		require("./Promise"),
+	Transport: 		require("./Transport")
 };
 
-},{"./Observable":1,"./Promise":2,"./StateMachine":3,"./Store":4,"./Tools":5}],5:[function(require,module,exports){
+},{"./Observable":1,"./StateMachine":2,"./Store":3,"./Tools":4,"./Promise":5,"./Transport":6}],4:[function(require,module,exports){
 (function(){/**
  * Emily
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
@@ -390,6 +390,115 @@ module.exports = {
 
 
 })()
+},{}],6:[function(require,module,exports){
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+
+/**
+ * @class
+ * Transport hides and centralizes the logic behind requests.
+ * It can issue requests to request handlers, which in turn can issue requests
+ * to anything your node.js server has access to (HTTP, FileSystem, SIP...)
+ */
+
+
+	/**
+	 * Create a Transport
+	 * @param {Emily Store} [optionanl] $reqHandlers an object containing the request handlers
+	 * @returns
+	 */
+	module.exports =  function TransportConstructor($reqHandlers) {
+
+		/**
+		 * The request handlers
+		 * @private
+		 */
+		var _reqHandlers = null;
+
+		/**
+		 * Set the requests handlers object
+		 * @param {Emily Store} reqHandlers an object containing the requests handlers
+		 * @returns
+		 */
+		this.setReqHandlers = function setReqHandlers(reqHandlers) {
+			if (reqHandlers instanceof Object) {
+				_reqHandlers = reqHandlers;
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Get the requests handlers
+		 * @returns{ Emily Store} reqHandlers the object containing the requests handlers
+		 */
+		this.getReqHandlers = function getReqHandlers() {
+			return _reqHandlers;
+		};
+
+		/**
+		 * Issue a request to a request handler
+		 * @param {String} reqHandler the name of the request handler to issue the request to
+		 * @param {Object} data the data, or payload, to send to the request handler
+		 * @param {Function} callback the function to execute with the result
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns
+		 */
+		this.request = function request(reqHandler, data, callback, scope) {
+			if (_reqHandlers.has(reqHandler) &&
+				typeof data != "undefined") {
+
+				_reqHandlers.get(reqHandler)(data, function () {
+					if (callback) {
+						callback.apply(scope, arguments);
+					}
+				});
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		/**
+		 * Issue a request to a reqHandler but keep listening for the response as it can be sent in several chunks
+		 * or remain open as long as the abort funciton is not called
+		 * @param {String} reqHandler the name of the request handler to issue the request to
+		 * @param {Object} data the data, or payload, to send to the request handler
+		 * @param {Function} callback the function to execute with the result
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns {Function} the abort function to call to stop listening
+		 */
+		this.listen = function listen(reqHandler, data, callback, scope) {
+			if (_reqHandlers.has(reqHandler) &&
+				typeof data != "undefined" &&
+				typeof callback == "function") {
+
+				var func = function () {
+					callback.apply(scope, arguments);
+				},
+				abort;
+
+				abort = _reqHandlers.get(reqHandler)(data, func, func);
+				return function () {
+					if (typeof abort == "function") {
+						abort();
+					} else if (typeof abort == "object" && typeof abort.func == "function") {
+						abort.func.call(abort.scope);
+					}
+				};
+			} else {
+				return false;
+			}
+		};
+
+		this.setReqHandlers($reqHandlers);
+
+	};
+
 },{}],1:[function(require,module,exports){
 /**
  * Emily
@@ -514,516 +623,7 @@ module.exports = function ObservableConstructor() {
 	};
 
 
-},{"./Tools":5}],2:[function(require,module,exports){
-/**
- * Emily
- * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
- * MIT Licensed
- */
-var Observable = require("./Observable"),
-	StateMachine = require("./StateMachine");
-
-/**
- * @class
- * Create a promise/A+
- */
-module.exports = function PromiseConstructor() {
-
-        /**
-         * The fulfilled value
-         * @private
-         */
-        var _value = null,
-
-        /**
-         * The rejection reason
-         * @private
-         */
-        _reason = null,
-
-        /**
-         * The funky observable
-         * @private
-         */
-        _observable = new Observable(),
-
-        /**
-         * The state machine States & transitions
-         * @private
-         */
-        _states = {
-
-            // The promise is pending
-            "Pending": [
-
-                // It can only be fulfilled when pending
-                ["fulfill", function onFulfill(value) {
-                    _value = value;
-                    _observable.notify("fulfill", value);
-                // Then it transits to the fulfilled state
-                }, "Fulfilled"],
-
-                // it can only be rejected when pending
-                ["reject", function onReject(reason) {
-                    _reason = reason;
-                    _observable.notify("reject", reason);
-                // Then it transits to the rejected state
-                }, "Rejected"],
-
-                // When pending, add the resolver to an observable
-                ["toFulfill", function toFulfill(resolver) {
-                    _observable.watch("fulfill", resolver);
-                }],
-
-                // When pending, add the resolver to an observable
-                ["toReject", function toReject(resolver) {
-                    _observable.watch("reject", resolver);
-                }]],
-
-            // When fulfilled,
-            "Fulfilled": [
-                // We directly call the resolver with the value
-                ["toFulfill", function toFulfill(resolver) {
-                    setTimeout(function () {
-                        resolver(_value);
-                    }, 0);
-                }]],
-
-            // When rejected
-            "Rejected": [
-                // We directly call the resolver with the reason
-                ["toReject", function toReject(resolver) {
-                    setTimeout(function () {
-                        resolver(_reason);
-                    }, 0);
-                }]]
-        },
-
-        /**
-         * The stateMachine
-         * @private
-         */
-        _stateMachine = new StateMachine("Pending", _states);
-
-        /**
-         * Fulfilled the promise.
-         * A promise can be fulfilld only once.
-         * @param the fulfillment value
-         * @returns the promise
-         */
-        this.fulfill = function fulfill(value) {
-            _stateMachine.event("fulfill", value);
-            return this;
-        };
-
-        /**
-         * Reject the promise.
-         * A promise can be rejected only once.
-         * @param the rejection value
-         * @returns true if the rejection function was called
-         */
-        this.reject = function reject(reason) {
-            _stateMachine.event("reject", reason);
-            return this;
-        };
-
-        /**
-         * The callbacks to call after fulfillment or rejection
-         * @param {Function} fulfillmentCallback the first parameter is a success function, it can be followed by a scope
-         * @param {Function} the second, or third parameter is the rejection callback, it can also be followed by a scope
-         * @examples:
-         *
-         * then(fulfillment)
-         * then(fulfillment, scope, rejection, scope)
-         * then(fulfillment, rejection)
-         * then(fulfillment, rejection, scope)
-         * then(null, rejection, scope)
-         * @returns {Promise} the new promise
-         */
-        this.then = function then() {
-            var promise = new PromiseConstructor();
-
-            // If a fulfillment callback is given
-            if (arguments[0] instanceof Function) {
-                // If the second argument is also a function, then no scope is given
-                if (arguments[1] instanceof Function) {
-                    _stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0]));
-                } else {
-                    // If the second argument is not a function, it's the scope
-                    _stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0], arguments[1]));
-                }
-            } else {
-                // If no fulfillment callback given, give a default one
-                _stateMachine.event("toFulfill", this.makeResolver(promise, function () {
-                    promise.fulfill(_value);
-                }));
-            }
-
-            // if the second arguments is a callback, it's the rejection one, and the next argument is the scope
-            if (arguments[1] instanceof Function) {
-                _stateMachine.event("toReject", this.makeResolver(promise, arguments[1], arguments[2]));
-            }
-
-            // if the third arguments is a callback, it's the rejection one, and the next arguments is the sopce
-            if (arguments[2] instanceof Function) {
-                _stateMachine.event("toReject", this.makeResolver(promise, arguments[2], arguments[3]));
-            }
-
-            // If no rejection callback is given, give a default one
-            if (!(arguments[1] instanceof Function) &&
-                !(arguments[2] instanceof Function)) {
-                _stateMachine.event("toReject", this.makeResolver(promise, function () {
-                    promise.reject(_reason);
-                }));
-            }
-
-            return promise;
-        };
-
-        /**
-         * Synchronize this promise with a thenable
-         * @returns {Boolean} false if the given sync is not a thenable
-         */
-        this.sync = function sync(syncWith) {
-            if (syncWith instanceof Object && syncWith.then) {
-
-                var onFulfilled = function onFulfilled(value) {
-                    this.fulfill(value);
-                },
-                onRejected = function onRejected(reason) {
-                    this.reject(reason);
-                };
-
-                syncWith.then(onFulfilled.bind(this),
-                        onRejected.bind(this));
-
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        /**
-         * Make a resolver
-         * for debugging only
-         * @private
-         * @returns {Function} a closure
-         */
-        this.makeResolver = function makeResolver(promise, func, scope) {
-            return function resolver(value) {
-                var returnedPromise;
-
-                try {
-                    returnedPromise = func.call(scope, value);
-                    if (!promise.sync(returnedPromise)) {
-                        promise.fulfill(returnedPromise);
-                    }
-                } catch (err) {
-                    promise.reject(err);
-                }
-
-            };
-        };
-
-        /**
-         * Returns the reason
-         * for debugging only
-         * @private
-         */
-        this.getReason = function getReason() {
-            return _reason;
-        };
-
-        /**
-         * Returns the reason
-         * for debugging only
-         * @private
-         */
-        this.getValue = function getValue() {
-            return _value;
-        };
-
-        /**
-         * Get the promise's observable
-         * for debugging only
-         * @private
-         * @returns {Observable}
-         */
-        this.getObservable = function getObservable() {
-            return _observable;
-        };
-
-        /**
-         * Get the promise's stateMachine
-         * for debugging only
-         * @private
-         * @returns {StateMachine}
-         */
-        this.getStateMachine = function getStateMachine() {
-            return _stateMachine;
-        };
-
-        /**
-         * Get the statesMachine's states
-         * for debugging only
-         * @private
-         * @returns {Object}
-         */
-        this.getStates = function getStates() {
-            return _states;
-        };
-
-    };
-
-
-},{"./Observable":1,"./StateMachine":3}],3:[function(require,module,exports){
-/**
- * Emily
- * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
- * MIT Licensed
- */
-var Tools = require("./Tools");
-/**
- * @class
- * Create a stateMachine
- */
-     /**
-     * @param initState {String} the initial state
-     * @param diagram {Object} the diagram that describes the state machine
-     * @example
-     *
-     *      diagram = {
-     *              "State1" : [
-     *                      [ message1, action, nextState], // Same as the state's add function
-     *                      [ message2, action2, nextState]
-     *              ],
-     *
-     *              "State2" :
-     *                       [ message3, action3, scope3, nextState]
-     *                      ... and so on ....
-     *
-     *   }
-     *
-     * @return the stateMachine object
-     */
-module.exports = function StateMachineConstructor($initState, $diagram) {
-
-        /**
-         * The list of states
-         * @private
-         */
-        var _states = {},
-
-        /**
-         * The current state
-         * @private
-         */
-        _currentState = "";
-
-        /**
-         * Set the initialization state
-         * @param {String} name the name of the init state
-         * @returns {Boolean}
-         */
-        this.init = function init(name) {
-                if (_states[name]) {
-                    _currentState = name;
-                    return true;
-                } else {
-                    return false;
-                }
-        };
-
-        /**
-         * Add a new state
-         * @private
-         * @param {String} name the name of the state
-         * @returns {State} a new state
-         */
-        this.add = function add(name) {
-            if (!_states[name]) {
-                var transition = _states[name] = new Transition();
-                return transition;
-            } else {
-                return _states[name];
-            }
-        };
-
-        /**
-         * Get an existing state
-         * @private
-         * @param {String} name the name of the state
-         * @returns {State} the state
-         */
-        this.get = function get(name) {
-            return _states[name];
-        };
-
-        /**
-         * Get the current state
-         * @returns {String}
-         */
-        this.getCurrent = function getCurrent() {
-            return _currentState;
-        };
-
-        /**
-         * Tell if the state machine has the given state
-         * @param {String} state the name of the state
-         * @returns {Boolean} true if it has the given state
-         */
-        this.has = function has(state) {
-            return _states.hasOwnProperty(state);
-        };
-
-        /**
-         * Advances the state machine to a given state
-         * @param {String} state the name of the state to advance the state machine to
-         * @returns {Boolean} true if it has the given state
-         */
-        this.advance = function advance(state) {
-            if (this.has(state)) {
-                _currentState = state;
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        /**
-         * Pass an event to the state machine
-         * @param {String} name the name of the event
-         * @returns {Boolean} true if the event exists in the current state
-         */
-        this.event = function event(name) {
-            var nextState;
-
-            nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
-            // False means that there's no such event
-            // But undefined means that the state doesn't change
-            if (nextState === false) {
-                return false;
-            } else {
-                // There could be no next state, so the current one remains
-                if (nextState) {
-                    // Call the exit action if any
-                    _states[_currentState].event("exit");
-                    _currentState = nextState;
-                    // Call the new state's entry action if any
-                    _states[_currentState].event("entry");
-                }
-                return true;
-            }
-        };
-
-        /**
-         * Initializes the StateMachine with the given diagram
-         */
-        Tools.loop($diagram, function (transition, state) {
-            var myState = this.add(state);
-            transition.forEach(function (params){
-                myState.add.apply(null, params);
-            });
-        }, this);
-
-        /**
-         * Sets its initial state
-         */
-        this.init($initState);
-    }
-
-    /**
-     * Each state has associated transitions
-     * @constructor
-     */
-    function Transition() {
-
-        /**
-         * The list of transitions associated to a state
-         * @private
-         */
-        var _transitions = {};
-
-        /**
-         * Add a new transition
-         * @private
-         * @param {String} event the event that will trigger the transition
-         * @param {Function} action the function that is executed
-         * @param {Object} scope [optional] the scope in which to execute the action
-         * @param {String} next [optional] the name of the state to transit to.
-         * @returns {Boolean} true if success, false if the transition already exists
-         */
-        this.add = function add(event, action, scope, next) {
-
-            var arr = [];
-
-            if (_transitions[event]) {
-                return false;
-            }
-
-            if (typeof event == "string" &&
-                typeof action == "function") {
-
-                    arr[0] = action;
-
-                    if (typeof scope == "object") {
-                        arr[1] = scope;
-                    }
-
-                    if (typeof scope == "string") {
-                        arr[2] = scope;
-                    }
-
-                    if (typeof next == "string") {
-                        arr[2] = next;
-                    }
-
-                    _transitions[event] = arr;
-                    return true;
-            }
-
-            return false;
-        };
-
-        /**
-         * Check if a transition can be triggered with given event
-         * @private
-         * @param {String} event the name of the event
-         * @returns {Boolean} true if exists
-         */
-        this.has = function has(event) {
-            return !!_transitions[event];
-        };
-
-        /**
-         * Get a transition from it's event
-         * @private
-         * @param {String} event the name of the event
-         * @return the transition
-         */
-        this.get = function get(event) {
-            return _transitions[event] || false;
-        };
-
-        /**
-         * Execute the action associated to the given event
-         * @param {String} event the name of the event
-         * @param {params} params to pass to the action
-         * @private
-         * @returns false if error, the next state or undefined if success (that sounds weird)
-         */
-        this.event = function event(newEvent) {
-            var _transition = _transitions[newEvent];
-            if (_transition) {
-                _transition[0].apply(_transition[1], Tools.toArray(arguments).slice(1));
-                return _transition[2];
-            } else {
-                return false;
-            }
-        };
-    };
-
-},{"./Tools":5}],4:[function(require,module,exports){
+},{"./Tools":4}],3:[function(require,module,exports){
 /**
  * Emily
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
@@ -1401,5 +1001,514 @@ module.exports = function StoreConstructor($data) {
         };
     };
 
-},{"./Observable":1,"./Tools":5}]},{},[])
+},{"./Observable":1,"./Tools":4}],2:[function(require,module,exports){
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+var Tools = require("./Tools");
+/**
+ * @class
+ * Create a stateMachine
+ */
+     /**
+     * @param initState {String} the initial state
+     * @param diagram {Object} the diagram that describes the state machine
+     * @example
+     *
+     *      diagram = {
+     *              "State1" : [
+     *                      [ message1, action, nextState], // Same as the state's add function
+     *                      [ message2, action2, nextState]
+     *              ],
+     *
+     *              "State2" :
+     *                       [ message3, action3, scope3, nextState]
+     *                      ... and so on ....
+     *
+     *   }
+     *
+     * @return the stateMachine object
+     */
+module.exports = function StateMachineConstructor($initState, $diagram) {
+
+        /**
+         * The list of states
+         * @private
+         */
+        var _states = {},
+
+        /**
+         * The current state
+         * @private
+         */
+        _currentState = "";
+
+        /**
+         * Set the initialization state
+         * @param {String} name the name of the init state
+         * @returns {Boolean}
+         */
+        this.init = function init(name) {
+                if (_states[name]) {
+                    _currentState = name;
+                    return true;
+                } else {
+                    return false;
+                }
+        };
+
+        /**
+         * Add a new state
+         * @private
+         * @param {String} name the name of the state
+         * @returns {State} a new state
+         */
+        this.add = function add(name) {
+            if (!_states[name]) {
+                var transition = _states[name] = new Transition();
+                return transition;
+            } else {
+                return _states[name];
+            }
+        };
+
+        /**
+         * Get an existing state
+         * @private
+         * @param {String} name the name of the state
+         * @returns {State} the state
+         */
+        this.get = function get(name) {
+            return _states[name];
+        };
+
+        /**
+         * Get the current state
+         * @returns {String}
+         */
+        this.getCurrent = function getCurrent() {
+            return _currentState;
+        };
+
+        /**
+         * Tell if the state machine has the given state
+         * @param {String} state the name of the state
+         * @returns {Boolean} true if it has the given state
+         */
+        this.has = function has(state) {
+            return _states.hasOwnProperty(state);
+        };
+
+        /**
+         * Advances the state machine to a given state
+         * @param {String} state the name of the state to advance the state machine to
+         * @returns {Boolean} true if it has the given state
+         */
+        this.advance = function advance(state) {
+            if (this.has(state)) {
+                _currentState = state;
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        /**
+         * Pass an event to the state machine
+         * @param {String} name the name of the event
+         * @returns {Boolean} true if the event exists in the current state
+         */
+        this.event = function event(name) {
+            var nextState;
+
+            nextState = _states[_currentState].event.apply(_states[_currentState].event, Tools.toArray(arguments));
+            // False means that there's no such event
+            // But undefined means that the state doesn't change
+            if (nextState === false) {
+                return false;
+            } else {
+                // There could be no next state, so the current one remains
+                if (nextState) {
+                    // Call the exit action if any
+                    _states[_currentState].event("exit");
+                    _currentState = nextState;
+                    // Call the new state's entry action if any
+                    _states[_currentState].event("entry");
+                }
+                return true;
+            }
+        };
+
+        /**
+         * Initializes the StateMachine with the given diagram
+         */
+        Tools.loop($diagram, function (transition, state) {
+            var myState = this.add(state);
+            transition.forEach(function (params){
+                myState.add.apply(null, params);
+            });
+        }, this);
+
+        /**
+         * Sets its initial state
+         */
+        this.init($initState);
+    }
+
+    /**
+     * Each state has associated transitions
+     * @constructor
+     */
+    function Transition() {
+
+        /**
+         * The list of transitions associated to a state
+         * @private
+         */
+        var _transitions = {};
+
+        /**
+         * Add a new transition
+         * @private
+         * @param {String} event the event that will trigger the transition
+         * @param {Function} action the function that is executed
+         * @param {Object} scope [optional] the scope in which to execute the action
+         * @param {String} next [optional] the name of the state to transit to.
+         * @returns {Boolean} true if success, false if the transition already exists
+         */
+        this.add = function add(event, action, scope, next) {
+
+            var arr = [];
+
+            if (_transitions[event]) {
+                return false;
+            }
+
+            if (typeof event == "string" &&
+                typeof action == "function") {
+
+                    arr[0] = action;
+
+                    if (typeof scope == "object") {
+                        arr[1] = scope;
+                    }
+
+                    if (typeof scope == "string") {
+                        arr[2] = scope;
+                    }
+
+                    if (typeof next == "string") {
+                        arr[2] = next;
+                    }
+
+                    _transitions[event] = arr;
+                    return true;
+            }
+
+            return false;
+        };
+
+        /**
+         * Check if a transition can be triggered with given event
+         * @private
+         * @param {String} event the name of the event
+         * @returns {Boolean} true if exists
+         */
+        this.has = function has(event) {
+            return !!_transitions[event];
+        };
+
+        /**
+         * Get a transition from it's event
+         * @private
+         * @param {String} event the name of the event
+         * @return the transition
+         */
+        this.get = function get(event) {
+            return _transitions[event] || false;
+        };
+
+        /**
+         * Execute the action associated to the given event
+         * @param {String} event the name of the event
+         * @param {params} params to pass to the action
+         * @private
+         * @returns false if error, the next state or undefined if success (that sounds weird)
+         */
+        this.event = function event(newEvent) {
+            var _transition = _transitions[newEvent];
+            if (_transition) {
+                _transition[0].apply(_transition[1], Tools.toArray(arguments).slice(1));
+                return _transition[2];
+            } else {
+                return false;
+            }
+        };
+    };
+
+},{"./Tools":4}],5:[function(require,module,exports){
+/**
+ * Emily
+ * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
+ * MIT Licensed
+ */
+var Observable = require("./Observable"),
+	StateMachine = require("./StateMachine");
+
+/**
+ * @class
+ * Create a promise/A+
+ */
+module.exports = function PromiseConstructor() {
+
+        /**
+         * The fulfilled value
+         * @private
+         */
+        var _value = null,
+
+        /**
+         * The rejection reason
+         * @private
+         */
+        _reason = null,
+
+        /**
+         * The funky observable
+         * @private
+         */
+        _observable = new Observable(),
+
+        /**
+         * The state machine States & transitions
+         * @private
+         */
+        _states = {
+
+            // The promise is pending
+            "Pending": [
+
+                // It can only be fulfilled when pending
+                ["fulfill", function onFulfill(value) {
+                    _value = value;
+                    _observable.notify("fulfill", value);
+                // Then it transits to the fulfilled state
+                }, "Fulfilled"],
+
+                // it can only be rejected when pending
+                ["reject", function onReject(reason) {
+                    _reason = reason;
+                    _observable.notify("reject", reason);
+                // Then it transits to the rejected state
+                }, "Rejected"],
+
+                // When pending, add the resolver to an observable
+                ["toFulfill", function toFulfill(resolver) {
+                    _observable.watch("fulfill", resolver);
+                }],
+
+                // When pending, add the resolver to an observable
+                ["toReject", function toReject(resolver) {
+                    _observable.watch("reject", resolver);
+                }]],
+
+            // When fulfilled,
+            "Fulfilled": [
+                // We directly call the resolver with the value
+                ["toFulfill", function toFulfill(resolver) {
+                    setTimeout(function () {
+                        resolver(_value);
+                    }, 0);
+                }]],
+
+            // When rejected
+            "Rejected": [
+                // We directly call the resolver with the reason
+                ["toReject", function toReject(resolver) {
+                    setTimeout(function () {
+                        resolver(_reason);
+                    }, 0);
+                }]]
+        },
+
+        /**
+         * The stateMachine
+         * @private
+         */
+        _stateMachine = new StateMachine("Pending", _states);
+
+        /**
+         * Fulfilled the promise.
+         * A promise can be fulfilld only once.
+         * @param the fulfillment value
+         * @returns the promise
+         */
+        this.fulfill = function fulfill(value) {
+            _stateMachine.event("fulfill", value);
+            return this;
+        };
+
+        /**
+         * Reject the promise.
+         * A promise can be rejected only once.
+         * @param the rejection value
+         * @returns true if the rejection function was called
+         */
+        this.reject = function reject(reason) {
+            _stateMachine.event("reject", reason);
+            return this;
+        };
+
+        /**
+         * The callbacks to call after fulfillment or rejection
+         * @param {Function} fulfillmentCallback the first parameter is a success function, it can be followed by a scope
+         * @param {Function} the second, or third parameter is the rejection callback, it can also be followed by a scope
+         * @examples:
+         *
+         * then(fulfillment)
+         * then(fulfillment, scope, rejection, scope)
+         * then(fulfillment, rejection)
+         * then(fulfillment, rejection, scope)
+         * then(null, rejection, scope)
+         * @returns {Promise} the new promise
+         */
+        this.then = function then() {
+            var promise = new PromiseConstructor();
+
+            // If a fulfillment callback is given
+            if (arguments[0] instanceof Function) {
+                // If the second argument is also a function, then no scope is given
+                if (arguments[1] instanceof Function) {
+                    _stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0]));
+                } else {
+                    // If the second argument is not a function, it's the scope
+                    _stateMachine.event("toFulfill", this.makeResolver(promise, arguments[0], arguments[1]));
+                }
+            } else {
+                // If no fulfillment callback given, give a default one
+                _stateMachine.event("toFulfill", this.makeResolver(promise, function () {
+                    promise.fulfill(_value);
+                }));
+            }
+
+            // if the second arguments is a callback, it's the rejection one, and the next argument is the scope
+            if (arguments[1] instanceof Function) {
+                _stateMachine.event("toReject", this.makeResolver(promise, arguments[1], arguments[2]));
+            }
+
+            // if the third arguments is a callback, it's the rejection one, and the next arguments is the sopce
+            if (arguments[2] instanceof Function) {
+                _stateMachine.event("toReject", this.makeResolver(promise, arguments[2], arguments[3]));
+            }
+
+            // If no rejection callback is given, give a default one
+            if (!(arguments[1] instanceof Function) &&
+                !(arguments[2] instanceof Function)) {
+                _stateMachine.event("toReject", this.makeResolver(promise, function () {
+                    promise.reject(_reason);
+                }));
+            }
+
+            return promise;
+        };
+
+        /**
+         * Synchronize this promise with a thenable
+         * @returns {Boolean} false if the given sync is not a thenable
+         */
+        this.sync = function sync(syncWith) {
+            if (syncWith instanceof Object && syncWith.then) {
+
+                var onFulfilled = function onFulfilled(value) {
+                    this.fulfill(value);
+                },
+                onRejected = function onRejected(reason) {
+                    this.reject(reason);
+                };
+
+                syncWith.then(onFulfilled.bind(this),
+                        onRejected.bind(this));
+
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        /**
+         * Make a resolver
+         * for debugging only
+         * @private
+         * @returns {Function} a closure
+         */
+        this.makeResolver = function makeResolver(promise, func, scope) {
+            return function resolver(value) {
+                var returnedPromise;
+
+                try {
+                    returnedPromise = func.call(scope, value);
+                    if (!promise.sync(returnedPromise)) {
+                        promise.fulfill(returnedPromise);
+                    }
+                } catch (err) {
+                    promise.reject(err);
+                }
+
+            };
+        };
+
+        /**
+         * Returns the reason
+         * for debugging only
+         * @private
+         */
+        this.getReason = function getReason() {
+            return _reason;
+        };
+
+        /**
+         * Returns the reason
+         * for debugging only
+         * @private
+         */
+        this.getValue = function getValue() {
+            return _value;
+        };
+
+        /**
+         * Get the promise's observable
+         * for debugging only
+         * @private
+         * @returns {Observable}
+         */
+        this.getObservable = function getObservable() {
+            return _observable;
+        };
+
+        /**
+         * Get the promise's stateMachine
+         * for debugging only
+         * @private
+         * @returns {StateMachine}
+         */
+        this.getStateMachine = function getStateMachine() {
+            return _stateMachine;
+        };
+
+        /**
+         * Get the statesMachine's states
+         * for debugging only
+         * @private
+         * @returns {Object}
+         */
+        this.getStates = function getStates() {
+            return _states;
+        };
+
+    };
+
+
+},{"./Observable":1,"./StateMachine":2}]},{},[])
 ;
