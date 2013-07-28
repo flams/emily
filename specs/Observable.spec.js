@@ -1,5 +1,5 @@
 /**
- * Emily
+ * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
