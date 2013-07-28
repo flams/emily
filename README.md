@@ -1261,7 +1261,7 @@ describe("Router determines the navigation in your application", function () {
 
 * Adds router
 
-###1.6.0 - 17 JUNE 2013
+####1.6.0 - 17 JUNE 2013
 
 * Adds computed properties to the Store
 
