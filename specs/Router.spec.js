@@ -104,6 +104,15 @@ function (Router, Observable, Store) {
 			expect(router.load.mostRecentCall.args[1]).toBe(params);
 		});
 
+		it("navigates to a defined route with n arguments", function () {
+			var spy = jasmine.createSpy();
+			router.set("test", spy);
+
+			router.navigate("test", "arg1", "arg2", "arg3");
+
+			expect(spy).toHaveBeenCalledWith("arg1", "arg2", "arg3");
+		});
+
 		it("returns false if no route", function () {
 			expect(router.navigate("route")).toBe(false);
 		});
@@ -207,8 +216,8 @@ function (Router, Observable, Store) {
 
 			expect(historyStore.proxy.wasCalled).toBe(true);
 			expect(historyStore.proxy.mostRecentCall.args[0]).toBe("push");
-			expect(historyStore.proxy.mostRecentCall.args[1].route).toBe("route");
-			expect(historyStore.proxy.mostRecentCall.args[1].params).toBe(obj2);
+			expect(historyStore.proxy.mostRecentCall.args[1][0]).toBe("route");
+			expect(historyStore.proxy.mostRecentCall.args[1][1]).toBe(obj2);
 		});
 
 		it("clears the forward history when navigating to a new route", function () {
