@@ -1,5 +1,5 @@
 /**
- * Emily
+ * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
@@ -65,8 +65,8 @@ require(["Observable", "Tools"], function (Observable, Tools) {
 		});
 
 		it("should add multiple observers with or without scopes", function () {
-			var spy1 = jasmine.createSpy("callback");
-				spy2 = jasmine.createSpy("callback");
+			var spy1 = jasmine.createSpy("callback"),
+				spy2 = jasmine.createSpy("callback"),
 				handler1 = null,
 				handler2 = null,
 				thisObj = {},
@@ -80,7 +80,7 @@ require(["Observable", "Tools"], function (Observable, Tools) {
 		});
 
 		it("can remove an observer", function () {
-			var spy = jasmine.createSpy("callback");
+			var spy = jasmine.createSpy("callback"),
 			handler;
 
 			handler = observable.watch(testTopic, spy);
@@ -91,8 +91,8 @@ require(["Observable", "Tools"], function (Observable, Tools) {
 		});
 
 		it("should remove multiple observers", function () {
-			var spy1 = jasmine.createSpy("callback");
-				spy2 = jasmine.createSpy("callback");
+			var spy1 = jasmine.createSpy("callback"),
+				spy2 = jasmine.createSpy("callback"),
 				handler1 = null,
 				handler2 = null,
 				thisObj = {},
@@ -239,7 +239,7 @@ require(["Observable", "Tools"], function (Observable, Tools) {
 			order = null;
 
 		beforeEach(function () {
-			observable = new Observable;
+			observable = new Observable();
 			order = [];
 
 			observable.watch("topic", function () {

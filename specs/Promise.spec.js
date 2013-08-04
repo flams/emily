@@ -1,5 +1,5 @@
 /**
- * Emily
+ * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
@@ -81,7 +81,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			observable = null;
 
 		beforeEach(function () {
-			promise = new Promise;
+			promise = new Promise();
 			states = promise.getStates();
 			observable = promise.getObservable();
 		});
@@ -296,7 +296,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			expect(promise.makeResolver.calls[0].args[0]).toBe(newPromise);
 			expect(promise.makeResolver.calls[0].args[1]).toBeInstanceOf(Function);
 
-			defaultCB = promise.makeResolver.calls[0].args[1]
+			defaultCB = promise.makeResolver.calls[0].args[1];
 
 			spyOn(newPromise, "fulfill");
 
@@ -343,7 +343,7 @@ require(["Promise", "Observable", "StateMachine"], function (Promise, Observable
 			expect(promise.makeResolver.mostRecentCall.args[0]).toBe(newPromise);
 			expect(promise.makeResolver.mostRecentCall.args[1]).toBeInstanceOf(Function);
 
-			defaultCB = promise.makeResolver.mostRecentCall.args[1]
+			defaultCB = promise.makeResolver.mostRecentCall.args[1];
 
 			spyOn(newPromise, "reject");
 

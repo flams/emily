@@ -61,6 +61,9 @@ tests-promiseA:
 tests-promiseAplus:
 	node tools/promise-test/runTestAplus.js
 
+jshint:
+	jshint src/*.js specs/*.js
+
 build: clean-build Emily.js
 	cp LICENSE build/
 	cp -rf src/ build/src/
@@ -131,4 +134,4 @@ endif
 	git checkout master
 
 
-.PHONY: docs clean-docs clean-build build tests release clean gh-pages
+.PHONY: docs clean-docs clean-build build tests release clean gh-pages jshint

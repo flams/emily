@@ -1,5 +1,5 @@
 /**
- * Emily
+ * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
@@ -13,6 +13,8 @@ define(["Tools"],
 * This service creates an Observable on which you can add subscribers.
 */
 function Observable(Tools) {
+
+	"use strict";
 
 	/**
 	 * Defines the Observable

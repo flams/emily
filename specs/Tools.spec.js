@@ -1,5 +1,5 @@
 /**
- * Emily
+ * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
@@ -26,7 +26,7 @@ require(["Tools"], function (Tools) {
 			destination = {a: 10, b: 20};
 			source = function () { this.b=30; this.c=40;};
 			source.prototype.d = 50;
-			source = new source;
+			source = new source();
 		});
 
 		it("should be a function", function () {
@@ -61,7 +61,7 @@ require(["Tools"], function (Tools) {
 
 		var object = function () { this.a=10; this.b=20;};
 			object.prototype.c = 30;
-			object = new object;
+			object = new object();
 
 		it("should be a function", function () {
 			expect(Tools.count).toBeInstanceOf(Function);
@@ -99,7 +99,7 @@ require(["Tools"], function (Tools) {
 		it("should return -1 if first number is lower than the second", function () {
 			expect(Tools.compareNumbers(0, 1)).toBe(-1);
 			expect(Tools.compareNumbers(2.3,2.35)).toBe(-1);
-			expect(Tools.compareNumbers(-1, -.9)).toBe(-1);
+			expect(Tools.compareNumbers(-1, -0.9)).toBe(-1);
 		});
 
 		it("should return 0 if they're the same", function () {
@@ -214,7 +214,7 @@ require(["Tools"], function (Tools) {
 
 		it("shouldn't loop on values that are deleted on the fly", function () {
 			Tools.loop(array, function (val, key) {
-				if (key == 0) {
+				if (key === 0) {
 					array.splice(key, 1);
 				}
 				expect(typeof val != "undefined" && key != 3).toBe(true);
@@ -290,14 +290,13 @@ require(["Tools"], function (Tools) {
 		var func = function () {
 				this.a = 1;
 				this.b = function () {};
-				this.d;
 				this.e = null;
 			},
 			object = null,
 			array = [1, 3];
 
 		func.prototype.c = 3;
-		object = new func;
+		object = new func();
 
 		it("should be a function", function () {
 			expect(Tools.jsonify).toBeInstanceOf(Function);
@@ -306,10 +305,10 @@ require(["Tools"], function (Tools) {
 		it("should return valid JSON", function () {
 			var result = Tools.jsonify(object);
 			expect(result).toBeInstanceOf(Object);
-			expect(result["a"]).toBe(1);
-			expect(result["b"]).toBeUndefined();
-			expect(result["c"]).toBeUndefined();
-			expect(result["d"]).toBeUndefined();
+			expect(result.a).toBe(1);
+			expect(result.b).toBeUndefined();
+			expect(result.c).toBeUndefined();
+			expect(result.d).toBeUndefined();
 		});
 
 		it("should return a copy of the array", function () {

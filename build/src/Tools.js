@@ -1,5 +1,5 @@
 /**
- * Emily
+ * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
@@ -10,6 +10,8 @@ define(
  * Tools is a collection of tools
  */
 function Tools(){
+
+    "use strict";
 
     /**
      * Get the closest number in an array

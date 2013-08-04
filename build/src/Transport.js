@@ -1,9 +1,8 @@
 /**
- * Emily
+ * Emily.js - http://flams.github.com/emily/
  * Copyright(c) 2012-2013 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
-
 define(
 /**
  * @class
@@ -13,98 +12,100 @@ define(
  */
 function Transport() {
 
-	/**
-	 * Create a Transport
-	 * @param {Emily Store} [optionanl] $reqHandlers an object containing the request handlers
-	 * @returns
-	 */
-	return function TransportConstructor($reqHandlers) {
+    "use strict";
 
-		/**
-		 * The request handlers
-		 * @private
-		 */
-		var _reqHandlers = null;
+    /**
+     * Create a Transport
+     * @param {Emily Store} [optionanl] $reqHandlers an object containing the request handlers
+     * @returns
+     */
+    return function TransportConstructor($reqHandlers) {
 
-		/**
-		 * Set the requests handlers object
-		 * @param {Emily Store} reqHandlers an object containing the requests handlers
-		 * @returns
-		 */
-		this.setReqHandlers = function setReqHandlers(reqHandlers) {
-			if (reqHandlers instanceof Object) {
-				_reqHandlers = reqHandlers;
-				return true;
-			} else {
-				return false;
-			}
-		};
+        /**
+         * The request handlers
+         * @private
+         */
+        var _reqHandlers = null;
 
-		/**
-		 * Get the requests handlers
-		 * @returns{ Emily Store} reqHandlers the object containing the requests handlers
-		 */
-		this.getReqHandlers = function getReqHandlers() {
-			return _reqHandlers;
-		};
+        /**
+         * Set the requests handlers object
+         * @param {Emily Store} reqHandlers an object containing the requests handlers
+         * @returns
+         */
+        this.setReqHandlers = function setReqHandlers(reqHandlers) {
+            if (reqHandlers instanceof Object) {
+                _reqHandlers = reqHandlers;
+                return true;
+            } else {
+                return false;
+            }
+        };
 
-		/**
-		 * Issue a request to a request handler
-		 * @param {String} reqHandler the name of the request handler to issue the request to
-		 * @param {Object} data the data, or payload, to send to the request handler
-		 * @param {Function} callback the function to execute with the result
-		 * @param {Object} scope the scope in which to execute the callback
-		 * @returns
-		 */
-		this.request = function request(reqHandler, data, callback, scope) {
-			if (_reqHandlers.has(reqHandler) &&
-				typeof data != "undefined") {
+        /**
+         * Get the requests handlers
+         * @returns{ Emily Store} reqHandlers the object containing the requests handlers
+         */
+        this.getReqHandlers = function getReqHandlers() {
+            return _reqHandlers;
+        };
 
-				_reqHandlers.get(reqHandler)(data, function () {
-					if (callback) {
-						callback.apply(scope, arguments);
-					}
-				});
-				return true;
-			} else {
-				return false;
-			}
-		};
+        /**
+         * Issue a request to a request handler
+         * @param {String} reqHandler the name of the request handler to issue the request to
+         * @param {Object} data the data, or payload, to send to the request handler
+         * @param {Function} callback the function to execute with the result
+         * @param {Object} scope the scope in which to execute the callback
+         * @returns
+         */
+        this.request = function request(reqHandler, data, callback, scope) {
+            if (_reqHandlers.has(reqHandler) &&
+                typeof data != "undefined") {
 
-		/**
-		 * Issue a request to a reqHandler but keep listening for the response as it can be sent in several chunks
-		 * or remain open as long as the abort funciton is not called
-		 * @param {String} reqHandler the name of the request handler to issue the request to
-		 * @param {Object} data the data, or payload, to send to the request handler
-		 * @param {Function} callback the function to execute with the result
-		 * @param {Object} scope the scope in which to execute the callback
-		 * @returns {Function} the abort function to call to stop listening
-		 */
-		this.listen = function listen(reqHandler, data, callback, scope) {
-			if (_reqHandlers.has(reqHandler) &&
-				typeof data != "undefined" &&
-				typeof callback == "function") {
+                _reqHandlers.get(reqHandler)(data, function () {
+                    if (callback) {
+                        callback.apply(scope, arguments);
+                    }
+                });
+                return true;
+            } else {
+                return false;
+            }
+        };
 
-				var func = function () {
-					callback.apply(scope, arguments);
-				},
-				abort;
+        /**
+         * Issue a request to a reqHandler but keep listening for the response as it can be sent in several chunks
+         * or remain open as long as the abort funciton is not called
+         * @param {String} reqHandler the name of the request handler to issue the request to
+         * @param {Object} data the data, or payload, to send to the request handler
+         * @param {Function} callback the function to execute with the result
+         * @param {Object} scope the scope in which to execute the callback
+         * @returns {Function} the abort function to call to stop listening
+         */
+        this.listen = function listen(reqHandler, data, callback, scope) {
+            if (_reqHandlers.has(reqHandler) &&
+                typeof data != "undefined" &&
+                typeof callback == "function") {
 
-				abort = _reqHandlers.get(reqHandler)(data, func, func);
-				return function () {
-					if (typeof abort == "function") {
-						abort();
-					} else if (typeof abort == "object" && typeof abort.func == "function") {
-						abort.func.call(abort.scope);
-					}
-				};
-			} else {
-				return false;
-			}
-		};
+                var func = function () {
+                    callback.apply(scope, arguments);
+                },
+                abort;
 
-		this.setReqHandlers($reqHandlers);
+                abort = _reqHandlers.get(reqHandler)(data, func, func);
+                return function () {
+                    if (typeof abort == "function") {
+                        abort();
+                    } else if (typeof abort == "object" && typeof abort.func == "function") {
+                        abort.func.call(abort.scope);
+                    }
+                };
+            } else {
+                return false;
+            }
+        };
 
-	};
+        this.setReqHandlers($reqHandlers);
+
+    };
 
 });
