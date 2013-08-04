@@ -184,299 +184,303 @@ describe("Observable implements the Observer design pattern, also called publish
 ###Tools
 
 ```js
-describe("Tools.getGlobal can retrieve the global object", function () {
+describe("Tools is a set of tools commonly used in JavaScript applications", function () {
 
-	it("returns the global object", function () {
-		expect(Tools.getGlobal()).toBe(__Global);
-	});
-});
+	describe("Tools.getGlobal can retrieve the global object", function () {
 
-describe("Tools.mixin can add an object's properties to another object", function () {
-
-	it("takes the properties of the second object to mix them into the first one", function () {
-		var source = {c: 30, d: 40},
-			destination = {a: 10, b: 20};
-
-		Tools.mixin(source, destination);
-
-		expect(destination.a).toBe(10);
-		expect(destination.b).toBe(20);
-		expect(destination.c).toBe(30);
-		expect(destination.d).toBe(40);
+		it("returns the global object", function () {
+			expect(Tools.getGlobal()).toBe(__Global);
+		});
 	});
 
-	it("overrides the destination's values with the source ones by default", function () {
-		var source = {c: 30, d: 40},
-			destination = {a: 10, b: 20, c: 25};
+	describe("Tools.mixin can add an object's properties to another object", function () {
 
-		Tools.mixin(source, destination);
+		it("takes the properties of the second object to mix them into the first one", function () {
+			var source = {c: 30, d: 40},
+				destination = {a: 10, b: 20};
 
-		// The destination's c has been replaced by the source's one
-		expect(destination.c).toBe(30);
+			Tools.mixin(source, destination);
+
+			expect(destination.a).toBe(10);
+			expect(destination.b).toBe(20);
+			expect(destination.c).toBe(30);
+			expect(destination.d).toBe(40);
+		});
+
+		it("overrides the destination's values with the source ones by default", function () {
+			var source = {c: 30, d: 40},
+				destination = {a: 10, b: 20, c: 25};
+
+			Tools.mixin(source, destination);
+
+			// The destination's c has been replaced by the source's one
+			expect(destination.c).toBe(30);
+		});
+
+		it("can prevent the desitnation's values to be replaced", function () {
+			var source = {c: 30, d: 40},
+				destination = {a: 10, b: 20, c: 25};
+
+			Tools.mixin(source, destination, true);
+
+			// The destination's c has been replaced by the source's one
+			expect(destination.c).toBe(25);
+		});
+
+		it("also returns the destination object", function () {
+			var source = {c: 30, d: 40},
+				destination = {a: 10, b: 20, c: 25};
+
+			expect(Tools.mixin(source, destination, true)).toBe(destination);
+		});
 	});
 
-	it("can prevent the desitnation's values to be replaced", function () {
-		var source = {c: 30, d: 40},
-			destination = {a: 10, b: 20, c: 25};
+	describe("Tools.count tells how many own properties an Object has", function () {
 
-		Tools.mixin(source, destination, true);
+		it("only counts own properties", function () {
+			var object = {a: 10, b: 20};
 
-		// The destination's c has been replaced by the source's one
-		expect(destination.c).toBe(25);
+			expect(Tools.count(object)).toBe(2);
+		});
+
 	});
 
-	it("also returns the destination object", function () {
-		var source = {c: 30, d: 40},
-			destination = {a: 10, b: 20, c: 25};
+	describe("Tools.compareObject tells if two objects have the same properties, useful for duck typing", function () {
 
-		expect(Tools.mixin(source, destination, true)).toBe(destination);
-	});
-});
+		it("tells if two objects have the same properties", function () {
+			var o1 = {a: 1, c:3, b:4, x:10},
+				o2 = {a: 2, b:52, c:4, x:100},
+				o3 = {a: 5, b: 3, x: 50};
 
-describe("Tools.count tells how many own properties an Object has", function () {
+			expect(Tools.compareObjects(o1, o2)).toBe(true);
+			expect(Tools.compareObjects(o2, o3)).toBe(false);
+		});
 
-	it("only counts own properties", function () {
-		var object = {a: 10, b: 20};
-
-		expect(Tools.count(object)).toBe(2);
 	});
 
-});
+	describe("Tools.compareNumbers is useful for telling if a number if greater, equal or lower than another one", function () {
 
-describe("Tools.compareObject tells if two objects have the same properties, useful for duck typing", function () {
+		it("tells if a number is greater than another one", function () {
+			expect(Tools.compareNumbers(2.3, 2.2)).toBe(1);
+		});
 
-	it("tells if two objects have the same properties", function () {
-		var o1 = {a: 1, c:3, b:4, x:10},
-			o2 = {a: 2, b:52, c:4, x:100},
-			o3 = {a: 5, b: 3, x: 50};
+		it("tells if a number equals another one", function () {
+			expect(Tools.compareNumbers(2.2, 2.2)).toBe(0);
+		});
 
-		expect(Tools.compareObjects(o1, o2)).toBe(true);
-		expect(Tools.compareObjects(o2, o3)).toBe(false);
+		it("tells if a number is lower than another one", function () {
+			expect(Tools.compareNumbers(2.1, 2.2)).toBe(-1);
+		});
+
+		it("can ASC sort numbers when using Array.sort", function () {
+			var array = [0, 2, 9, 4, 1, 7, 3, 12, 11, 5, 6, 8, 10];
+
+			array.sort(Tools.compareNumbers);
+
+			expect(array[10]).toBe(10);
+			expect(array[11]).toBe(11);
+		});
+
 	});
 
-});
+	describe("Tools.toArray transforms an array like object, like arguments or a nodeList to an actual array", function () {
 
-describe("Tools.compareNumbers is useful for telling if a number if greater, equal or lower than another one", function () {
+		it("transforms a list of arguments to an array", function () {
+			(function () {
+				var args = Tools.toArray(arguments);
 
-	it("tells if a number is greater than another one", function () {
-		expect(Tools.compareNumbers(2.3, 2.2)).toBe(1);
-	});
+				expect(Array.isArray(args)).toBe(true);
 
-	it("tells if a number equals another one", function () {
-		expect(Tools.compareNumbers(2.2, 2.2)).toBe(0);
-	});
+			})();
+		});
 
-	it("tells if a number is lower than another one", function () {
-		expect(Tools.compareNumbers(2.1, 2.2)).toBe(-1);
-	});
+		it("transforms a nodelist into an array", function () {
+			if (__Global.document) {
+				var all = Tools.toArray(document.querySelectorAll("*"));
 
-	it("can ASC sort numbers when using Array.sort", function () {
-		var array = [0, 2, 9, 4, 1, 7, 3, 12, 11, 5, 6, 8, 10];
-
-		array.sort(Tools.compareNumbers);
-
-		expect(array[10]).toBe(10);
-		expect(array[11]).toBe(11);
-	});
-
-});
-
-describe("Tools.toArray transforms an array like object, like arguments or a nodeList to an actual array", function () {
-
-	it("transforms a list of arguments to an array", function () {
-		(function () {
-			var args = Tools.toArray(arguments);
-
-			expect(Array.isArray(args)).toBe(true);
-
-		})();
-	});
-
-	it("transforms a nodelist into an array", function () {
-		if (__Global.document) {
-			var all = Tools.toArray(document.querySelectorAll("*"));
-
-			expect(Array.isArray(all)).toBe(true);
-		}
-	});
-});
-
-describe("Tools.loop abstracts the difference between iterating over an object and an array", function () {
-
-	it("can iterate over an array", function () {
-		var array = [0, 1, 2, 3];
-
-		var _self = this;
-
-		Tools.loop(array, function (value, index, iterated) {
-			expect(iterated).toBe(array);
-			expect(array[index]).toBe(value);
-			// The context in which to run this function can also be given
-			expect(this).toBe(_self);
-		}, this);
-	});
-
-	it("can iterate over an array which length varies", function () {
-		var iterated = [1],
-			nbOfCalls = 0;
-
-		Tools.loop(iterated, function (value) {
-			if (nbOfCalls < 10) {
-				iterated.push(1);
-				nbOfCalls++;
+				expect(Array.isArray(all)).toBe(true);
 			}
 		});
-
-		expect(iterated.length).toBe(11);
 	});
 
-	it("can iterate over an object", function () {
-		var object = {a: 10, b: 20};
+	describe("Tools.loop abstracts the difference between iterating over an object and an array", function () {
 
-		Tools.loop(object, function (value, key, obj) {
-			expect(object).toBe(obj);
-			expect(object[key]).toBe(value);
+		it("can iterate over an array", function () {
+			var array = [0, 1, 2, 3];
+
+			var _self = this;
+
+			Tools.loop(array, function (value, index, iterated) {
+				expect(iterated).toBe(array);
+				expect(array[index]).toBe(value);
+				// The context in which to run this function can also be given
+				expect(this).toBe(_self);
+			}, this);
+		});
+
+		it("can iterate over an array which length varies", function () {
+			var iterated = [1],
+				nbOfCalls = 0;
+
+			Tools.loop(iterated, function (value) {
+				if (nbOfCalls < 10) {
+					iterated.push(1);
+					nbOfCalls++;
+				}
+			});
+
+			expect(iterated.length).toBe(11);
+		});
+
+		it("can iterate over an object", function () {
+			var object = {a: 10, b: 20};
+
+			Tools.loop(object, function (value, key, obj) {
+				expect(object).toBe(obj);
+				expect(object[key]).toBe(value);
+			});
 		});
 	});
-});
 
-describe("Tools.objectsDiffs returns an object describing the differences between two objects", function () {
+	describe("Tools.objectsDiffs returns an object describing the differences between two objects", function () {
 
-	it("tells what was added in an array", function () {
-		var array1 = ['a', 'b', 'c'],
-			array2 = ['a', 'b', 'c', 'd', 'e'];
+		it("tells what was added in an array", function () {
+			var array1 = ["a", "b", "c"],
+				array2 = ["a", "b", "c", "d", "e"];
 
-		var diff = Tools.objectsDiffs(array1, array2);
-		// The third item of array2 was added
-		expect(diff.added[0]).toBe(3);
-		// The fourth item too
-		expect(diff.added[1]).toBe(4);
+			var diff = Tools.objectsDiffs(array1, array2);
+			// The third item of array2 was added
+			expect(diff.added[0]).toBe(3);
+			// The fourth item too
+			expect(diff.added[1]).toBe(4);
+		});
+
+		it("tells what was removed", function () {
+			var array1 = ["a", "b", "c"],
+				array2 = ["a", "b"];
+
+			var diff = Tools.objectsDiffs(array1, array2);
+			// The third item of array2 was deleted
+			expect(diff.deleted[0]).toBe(2);
+		});
+
+		it("tells what was updated", function () {
+			var array1 = ["a", "b", "c"],
+				array2 = ["a", "d", "e"];
+
+			var diff = Tools.objectsDiffs(array1, array2);
+			// The second item of array2 was updated
+			expect(diff.updated[0]).toBe(1);
+			// The third one too
+			expect(diff.updated[1]).toBe(2);
+		});
+
+		it("tells what remains unchanged", function () {
+			var array1 = ["a", "b", "c"],
+				array2 = ["a", "d", "e"];
+
+			var diff = Tools.objectsDiffs(array1, array2);
+			// The first item remains unchanged
+			expect(diff.unchanged[0]).toBe(0);
+		});
+
+		it("also works with objects", function () {
+			var object1 = { a: 10, b: 20, c: 30},
+				object2 = { b: 30, c: 30, d: 40};
+
+			var diff = Tools.objectsDiffs(object1, object2);
+
+			expect(diff.deleted[0]).toBe("a");
+			expect(diff.updated[0]).toBe("b");
+			expect(diff.unchanged[0]).toBe("c");
+			expect(diff.added[0]).toBe("d");
+		});
+
 	});
 
-	it("tells what was removed", function () {
-		var array1 = ['a', 'b', 'c'],
-			array2 = ['a', 'b'];
+	describe("Tools.jsonify returns the jsonified version of an object", function () {
 
-		var diff = Tools.objectsDiffs(array1, array2);
-		// The third item of array2 was deleted
-		expect(diff.deleted[0]).toBe(2);
+		it("returns a new object without the properties that can't be saved in a stringified json", function () {
+			var nonJsonObject = {
+				a: function () {},
+				b: undefined,
+				c:["emily"]
+			};
+
+			var jsonified = Tools.jsonify(nonJsonObject);
+
+			expect(Tools.count(jsonified)).toBe(1);
+			expect(jsonified.c[0]).toBe("emily");
+			expect(jsonified.c).not.toBe(nonJsonObject.c);
+		});
+
 	});
 
-	it("tells what was updated", function () {
-		var array1 = ['a', 'b', 'c'],
-			array2 = ['a', 'd', 'e'];
+	describe("Tools.setNestedProperty sets the property of an object nested in one or more objects", function () {
 
-		var diff = Tools.objectsDiffs(array1, array2);
-		// The second item of array2 was updated
-		expect(diff.updated[0]).toBe(1);
-		// The third one too
-		expect(diff.updated[1]).toBe(2);
+		it("sets the property of an object deeply nested and creates the missing ones", function () {
+			var object = {};
+
+			Tools.setNestedProperty(object, "a.b.c.d.e.f", "emily");
+
+			expect(object.a.b.c.d.e.f).toBe("emily");
+		});
+
+		it("returns the value if the first parameter is not an object", function () {
+			expect(Tools.setNestedProperty("emily")).toBe("emily");
+		});
+
+		it("also works if there are arrays in the path, but it doesn't create an array", function () {
+			var object = {};
+
+			Tools.setNestedProperty(object, "a.b.c.0.d", "emily");
+
+			expect(object.a.b.c[0].d).toBe("emily");
+			expect(Array.isArray(object.a.b.c)).toBe(false);
+		});
+
 	});
 
-	it("tells what remains unchanged", function () {
-		var array1 = ['a', 'b', 'c'],
-			array2 = ['a', 'd', 'e'];
+	describe("Tools.getNestedProperty gets the property of an object nested in other objects", function () {
 
-		var diff = Tools.objectsDiffs(array1, array2);
-		// The first item remains unchanged
-		expect(diff.unchanged[0]).toBe(0);
+		it("gets the property of an object deeply nested in another one", function () {
+			var object = {b:{c:{d:{e:1}}}};
+
+			expect(Tools.getNestedProperty(object, "b.c")).toBe(object.b.c);
+			expect(Tools.getNestedProperty(object, "b.c.d.e")).toBe(1);
+		});
+
+		it("also works if an array is in the path", function () {
+			var object = {a: [{b: 1}]};
+
+			expect(Tools.getNestedProperty(object, "a.0.b")).toBe(1);
+		});
+
 	});
 
-	it("also works with objects", function () {
-		var object1 = { a: 10, b: 20, c: 30},
-			object2 = { b: 30, c: 30, d: 40};
+	describe("Tools.closest finds the closest number to a base number in an array and returns its index", function () {
 
-		var diff = Tools.objectsDiffs(object1, object2);
+		it("gets the closest number", function () {
+			expect(Tools.closest(10, [30, 5, 40, 20])).toBe(1);
+			expect(Tools.closest(25, [30, 5, 40, 20])).toBe(0);
+			expect(Tools.closest(30, [30, 5, 40, 20])).toBe(0);
+			expect(Tools.closest(45, [30, 5, 40, 20])).toBe(2);
+		});
 
-		expect(diff.deleted[0]).toBe('a');
-		expect(diff.updated[0]).toBe('b');
-		expect(diff.unchanged[0]).toBe('c');
-		expect(diff.added[0]).toBe('d');
-	});
+		it("gets the closest number that is greater", function () {
+			expect(Tools.closestGreater(10, [30, 5, 40, 20])).toBe(3);
+			expect(Tools.closestGreater(25, [30, 5, 40, 20])).toBe(0);
+			expect(Tools.closestGreater(30, [30, 5, 40, 20])).toBe(0);
+			expect(Tools.closestGreater(45, [30, 5, 40, 20])).toBeUndefined();
+		});
 
-});
+		it("gets the closest number that is lower", function () {
+			expect(Tools.closestLower(10, [30, 5, 40, 20])).toBe(1);
+			expect(Tools.closestLower(25, [30, 5, 40, 20])).toBe(3);
+			expect(Tools.closestLower(30, [30, 5, 40, 20])).toBe(0);
+			expect(Tools.closestLower(45, [30, 5, 40, 20])).toBe(2);
+		});
 
-describe("Tools.jsonify returns the jsonified version of an object", function () {
-
-	it("returns a new object without the properties that can't be saved in a stringified json", function () {
-		var nonJsonObject = {
-			a: function () {},
-			b: undefined,
-			c:['emily']
-		};
-
-		var jsonified = Tools.jsonify(nonJsonObject);
-
-		expect(Tools.count(jsonified)).toBe(1);
-		expect(jsonified.c[0]).toBe('emily');
-		expect(jsonified.c).not.toBe(nonJsonObject.c);
-	});
-
-});
-
-describe("Tools.setNestedProperty sets the property of an object nested in one or more objects", function () {
-
-	it("sets the property of an object deeply nested and creates the missing ones", function () {
-		var object = {};
-
-		Tools.setNestedProperty(object, "a.b.c.d.e.f", "emily");
-
-		expect(object.a.b.c.d.e.f).toBe("emily");
-	});
-
-	it("returns the value if the first parameter is not an object", function () {
-		expect(Tools.setNestedProperty("emily")).toBe("emily");
-	});
-
-	it("also works if there are arrays in the path, but it doesn't create an array", function () {
-		var object = {};
-
-		Tools.setNestedProperty(object, "a.b.c.0.d", "emily");
-
-		expect(object.a.b.c[0].d).toBe("emily");
-		expect(Array.isArray(object.a.b.c)).toBe(false);
-	});
-
-});
-
-describe("Tools.getNestedProperty gets the property of an object nested in other objects", function () {
-
-	it("gets the property of an object deeply nested in another one", function () {
-		var object = {b:{c:{d:{e:1}}}};
-
-		expect(Tools.getNestedProperty(object, "b.c")).toBe(object.b.c);
-		expect(Tools.getNestedProperty(object, "b.c.d.e")).toBe(1);
-	});
-
-	it("also works if an array is in the path", function () {
-		var object = {a: [{b: 1}]};
-
-		expect(Tools.getNestedProperty(object, "a.0.b")).toBe(1);
-	});
-
-});
-
-describe("Tools.closest finds the closest number to a base number in an array and returns its index", function () {
-
-	it("gets the closest number", function () {
-		expect(Tools.closest(10, [30, 5, 40, 20])).toBe(1);
-		expect(Tools.closest(25, [30, 5, 40, 20])).toBe(0);
-		expect(Tools.closest(30, [30, 5, 40, 20])).toBe(0);
-		expect(Tools.closest(45, [30, 5, 40, 20])).toBe(2);
-	});
-
-	it("gets the closest number that is greater", function () {
-		expect(Tools.closestGreater(10, [30, 5, 40, 20])).toBe(3);
-		expect(Tools.closestGreater(25, [30, 5, 40, 20])).toBe(0);
-		expect(Tools.closestGreater(30, [30, 5, 40, 20])).toBe(0);
-		expect(Tools.closestGreater(45, [30, 5, 40, 20])).toBeUndefined();
-	});
-
-	it("gets the closest number that is lower", function () {
-		expect(Tools.closestLower(10, [30, 5, 40, 20])).toBe(1);
-		expect(Tools.closestLower(25, [30, 5, 40, 20])).toBe(3);
-		expect(Tools.closestLower(30, [30, 5, 40, 20])).toBe(0);
-		expect(Tools.closestLower(45, [30, 5, 40, 20])).toBe(2);
 	});
 
 });
@@ -727,7 +731,7 @@ describe("Store is an observable data structure that publishes events whenever i
 		expect(calls[1][0]).toBe(20);
 		expect(calls[1][1]).toBe("b");
 
-		store = new Store(["a", "b"]),
+		store = new Store(["a", "b"]);
 		calls = [];
 
 		store.loop(function () {
@@ -779,6 +783,8 @@ describe("Store is an observable data structure that publishes events whenever i
 		expect(store).not.toBe(internal);
 
 	});
+
+});
 ```
 
 ### Promise
@@ -857,6 +863,7 @@ describe("Promise is a fully Promise/A+ compliant implementation", function () {
 	});
 
 });
+
 ```
 
 ### StateMachine
@@ -1007,8 +1014,6 @@ describe("StateMachine helps you with the control flow of your apps by removing 
 	});
 
 });
-
-});
 ```
 
 ### Transport
@@ -1036,7 +1041,7 @@ describe("Transport hides and centralizes the logic behind requests", function (
 		// Issue a request on myRequestHandler with "whoami" in the payload
 		transport.request("myRequestHandler", "whoami", function onEnd() {
 			onEndCalled = true;
-		})
+		});
 
 		expect(onEndCalled).toBe(true);
 	});
@@ -1095,9 +1100,9 @@ describe("Transport hides and centralizes the logic behind requests", function (
 
 		var requestsHandlers = new Store({
 			myRequestHandler: function () {
-				return function abort() {
+				return function() {
 					aborted = true;
-				}
+				};
 			}
 		}),
 		transport = new Transport(requestsHandlers),
@@ -1111,6 +1116,7 @@ describe("Transport hides and centralizes the logic behind requests", function (
 	});
 
 });
+
 ```
 
 ### Router
