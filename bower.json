@@ -1,22 +1,4 @@
 {
   "name": "emily",
-  "version": "1.7.0",
-  "main": "build/Emily.min.js",
-  "ignore": [
-    "**/.*",
-    "LICENSE",
-    "LICENSE-MINI",
-    "Makefile",
-    "README.md",
-    "emily-server.js",
-    "node_modules",
-    "jsTestDriver.conf",
-    "lib",
-    "release",
-    "report",
-    "specs",
-    "src",
-    "temp.js",
-    "tools"
-  ]
+  "version": "1.7.0"
 }
