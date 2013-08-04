@@ -4,7 +4,19 @@
   "main": "build/Emily.min.js",
   "ignore": [
     "**/.*",
+    "LICENSE",
+    "LICENSE-MINI",
+    "Makefile",
+    "README.md",
+    "emily-server.js",
     "node_modules",
-    "components"
+    "jsTestDriver.conf",
+    "lib",
+    "release",
+    "report",
+    "specs",
+    "src",
+    "temp.js",
+    "tools"
   ]
 }
