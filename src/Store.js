@@ -12,6 +12,8 @@ define(["Observable", "Tools"],
  */
  function Store(Observable, Tools) {
 
+ 	"use strict";
+
     /**
      * Defines the Store
      * @param {Array/Object} the data to initialize the store with

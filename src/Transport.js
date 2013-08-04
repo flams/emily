@@ -12,6 +12,8 @@ define(
  */
 function Transport() {
 
+ 	"use strict";
+
 	/**
 	 * Create a Transport
 	 * @param {Emily Store} [optionanl] $reqHandlers an object containing the request handlers

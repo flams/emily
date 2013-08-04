@@ -11,6 +11,8 @@ define(
  */
 function Tools(){
 
+ 	"use strict";
+
     /**
      * Get the closest number in an array
      * @param {Number} item the base number

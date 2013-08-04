@@ -14,6 +14,8 @@ define(["Tools"],
 */
 function Observable(Tools) {
 
+	"use strict";
+
 	/**
 	 * Defines the Observable
 	 * @private
