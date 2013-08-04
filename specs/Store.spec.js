@@ -54,7 +54,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.set("test", null);
 			expect(store.get("test")).toBe(null);
 			store.set("test", obj);
-			expect(store.get("test")).toBe(obj)
+			expect(store.get("test")).toBe(obj);
 			store.set("test", arr);
 			expect(store.get("test")).toBe(arr);
 			store.set("test", func);
@@ -672,7 +672,7 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			store.watch("added", spyB);
 			store.reset(resetData);
 			expect(spyA.wasCalled).toBe(true);
-			expect(spyA.mostRecentCall.args[0]).toBe("a")
+			expect(spyA.mostRecentCall.args[0]).toBe("a");
 			expect(spyA.mostRecentCall.args[1]).toBeUndefined();
 			expect(spyA.callCount).toBe(1);
 			expect(spyB.mostRecentCall.args[0]).toBe("b");

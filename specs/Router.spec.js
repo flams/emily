@@ -15,7 +15,7 @@ function (Router, Observable, Store) {
 		});
 
 		it("has functions to get the internal observables", function () {
-			var router = new Router;
+			var router = new Router();
 
 			expect(router.getRoutesObservable()).toBeInstanceOf(Observable);
 			expect(router.getEventsObservable()).toBeInstanceOf(Observable);
@@ -29,7 +29,7 @@ function (Router, Observable, Store) {
 			routesObservable = null;
 
 		beforeEach(function () {
-			router = new Router;
+			router = new Router();
 			routesObservable = router.getRoutesObservable();
 		});
 
@@ -75,7 +75,7 @@ function (Router, Observable, Store) {
 		routesObservable = null;
 
 		beforeEach(function () {
-			router = new Router;
+			router = new Router();
 			routesObservable = router.getRoutesObservable();
 		});
 
@@ -125,7 +125,7 @@ function (Router, Observable, Store) {
 		eventsObservable = null;
 
 		beforeEach(function () {
-			router = new Router;
+			router = new Router();
 			eventsObservable = router.getEventsObservable();
 		});
 
@@ -191,7 +191,7 @@ function (Router, Observable, Store) {
 			historyStore = null;
 
 		beforeEach(function () {
-			router = new Router;
+			router = new Router();
 			historyStore = router.getHistoryStore();
 		});
 

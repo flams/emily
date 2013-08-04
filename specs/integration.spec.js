@@ -679,7 +679,7 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise, Router) {
 			expect(calls[1][0]).toBe(20);
 			expect(calls[1][1]).toBe("b");
 
-			store = new Store(["a", "b"]),
+			store = new Store(["a", "b"]);
 			calls = [];
 
 			store.loop(function () {
@@ -976,7 +976,7 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise, Router) {
 			// Issue a request on myRequestHandler with "whoami" in the payload
 			transport.request("myRequestHandler", "whoami", function onEnd() {
 				onEndCalled = true;
-			})
+			});
 
 			expect(onEndCalled).toBe(true);
 		});

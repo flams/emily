@@ -27,11 +27,11 @@ require(["Transport", "Store"], function (Transport, Store) {
 		var transport = null;
 
 		beforeEach(function () {
-			transport = new Transport;
+			transport = new Transport();
 		});
 
 		it("should set the requests handlers", function () {
-			var reqHandlers = new Store;
+			var reqHandlers = new Store();
 			transport = new Transport();
 
 			expect(transport.getReqHandlers()).toBeNull();
@@ -42,7 +42,7 @@ require(["Transport", "Store"], function (Transport, Store) {
 		});
 
 		it("shoud set the requests handler at init", function () {
-			var reqHandlers = new Store;
+			var reqHandlers = new Store();
 			transport = new Transport(reqHandlers);
 
 			expect(transport.getReqHandlers()).toBe(reqHandlers);

@@ -11,7 +11,7 @@ define(
  */
 function Tools(){
 
- 	"use strict";
+    "use strict";
 
     /**
      * Get the closest number in an array
