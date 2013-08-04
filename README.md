@@ -16,6 +16,7 @@
  * StateMachine: don't hide your states and transitions behind if/else anymore.
  * Transport: make requests to anything node.js has access to.
  * Tools: these functions you always need and rewrite.
+ * Router: set routes with associated actions and navigate to it, while keeping tack of the history
 
 ##How do I use it?
 
