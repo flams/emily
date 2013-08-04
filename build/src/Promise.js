@@ -11,6 +11,8 @@ define(["Observable", "StateMachine"],
  */
 function Promise(Observable, StateMachine) {
 
+	"use strict";
+
     return function PromiseConstructor() {
 
         /**

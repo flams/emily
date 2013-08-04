@@ -11,6 +11,8 @@ define(["Tools"],
  */
 function StateMachine(Tools) {
 
+	"use strict";
+
      /**
      * @param initState {String} the initial state
      * @param diagram {Object} the diagram that describes the state machine

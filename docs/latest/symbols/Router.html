@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Observable</title>
+		<title>JsDoc Reference - Router</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class Observable
+				Class Router
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,16 +224,16 @@ ul.inheritsList
 				
 				
 			
-				Observable is an implementation of the Observer design pattern,which is also known as publish/subscribe.This service creates an Observable on which you can add subscribers.
+				Routing allows for navigating in an application by defining routes.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Observable.js.html">Observable.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Router.js.html">Router.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Observable.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Router.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -246,7 +246,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Observable.html#constructor">Observable</a></b>(Tools)
+								<b><a href="../symbols/Router.html#constructor">Router</a></b>(Observable, Store, Tools)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -262,7 +262,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Observable.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Router.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -275,54 +275,110 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#hasObserver">hasObserver</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Router.html#back">back</a></b>()
 								</div>
-								<div class="description">Check if topic has the described observer</div>
+								<div class="description">Go back in the history, short for go(-1)</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#hasTopic">hasTopic</a></b>(topic)
+								<div class="fixedFont"><b><a href="../symbols/Router.html#clearHistory">clearHistory</a></b>()
 								</div>
-								<div class="description">Check if a topic has observers</div>
+								<div class="description">Flush the entire history</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#notify">notify</a></b>(topic, subject)
+								<div class="fixedFont"><b><a href="../symbols/Router.html#forward">forward</a></b>()
 								</div>
-								<div class="description">Notifies observers that a topic has a new message</div>
+								<div class="description">Go forward in the history, short for go(1)</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#unwatch">unwatch</a></b>(handle)
+								<div class="fixedFont"><b><a href="../symbols/Router.html#getHistoryCount">getHistoryCount</a></b>()
 								</div>
-								<div class="description">Remove an observer</div>
+								<div class="description">Get the current length of history</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#unwatchAll">unwatchAll</a></b>(topic)
+								<div class="fixedFont"><b><a href="../symbols/Router.html#getMaxHistory">getMaxHistory</a></b>()
 								</div>
-								<div class="description">Unwatch all or unwatch all from topic</div>
+								<div class="description">Get the current max history setting</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Observable.html#watch">watch</a></b>(topic, callback, scope)
+								<div class="fixedFont"><b><a href="../symbols/Router.html#go">go</a></b>(nb)
 								</div>
-								<div class="description">Add an observer</div>
+								<div class="description">Go back and forth in the history</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Router.html#navigate">navigate</a></b>(route, *params)
+								</div>
+								<div class="description">Navigate to a route</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Router.html#set">set</a></b>(route, func, scope)
+								</div>
+								<div class="description">Set a new route</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Router.html#setMaxHistory">setMaxHistory</a></b>(maxHistory)
+								</div>
+								<div class="description">Set the maximum length of history
+As the user navigates through the application, the
+routeur keeps track of the history.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Router.html#unset">unset</a></b>(handle)
+								</div>
+								<div class="description">Remove a route</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Router.html#unwatch">unwatch</a></b>(handle)
+								</div>
+								<div class="description">Unwatch routes changes</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Router.html#watch">watch</a></b>(func, scope)
+								</div>
+								<div class="description">Watch for route changes</div>
 							</td>
 						</tr>
 					
@@ -343,7 +399,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Observable</b>(Tools)
+						<b>Router</b>(Observable, Store, Tools)
 				</div>
 				
 				<div class="description">
@@ -357,6 +413,18 @@ ul.inheritsList
 					
 						<dl class="detailList">
 						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>Observable</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>Store</b>
+								
+							</dt>
+								<dd></dd>
 						
 							<dt>
 								 <b>Tools</b>
@@ -385,15 +453,168 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="hasObserver"> </a>
+					<a name="back"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
-					<b>hasObserver</b>()
+					
+					<b>back</b>()
 					
 					</div>
 					<div class="description">
-						Check if topic has the described observer
+						Go back in the history, short for go(-1)
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="clearHistory"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clearHistory</b>()
+					
+					</div>
+					<div class="description">
+						Flush the entire history
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="forward"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>forward</b>()
+					
+					</div>
+					<div class="description">
+						Go forward in the history, short for go(1)
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getHistoryCount"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Number}</span>
+					<b>getHistoryCount</b>()
+					
+					</div>
+					<div class="description">
+						Get the current length of history
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Number}</span> the length of history</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getMaxHistory"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Number}</span>
+					<b>getMaxHistory</b>()
+					
+					</div>
+					<div class="description">
+						Get the current max history setting
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Number}</span> the depth of history</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="go"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>go</b>(nb)
+					
+					</div>
+					<div class="description">
+						Go back and forth in the history
 						
 						
 					</div>
@@ -405,7 +626,56 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Handle}</span> <b></b>
+									<span class="light fixedFont">{Number}</span> <b>nb</b>
+									
+								</dt>
+								<dd>the amount of history to rewind/forward</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if history exists</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="navigate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>navigate</b>(route, *params)
+					
+					</div>
+					<div class="description">
+						Navigate to a route
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>route</b>
+									
+								</dt>
+								<dd>the route to navigate to</dd>
+							
+								<dt>
+									<span class="light fixedFont">{*}</span> <b>*params</b>
 									
 								</dt>
 								<dd></dd>
@@ -419,99 +689,151 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if exists</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="hasTopic"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>hasTopic</b>(topic)
-					
-					</div>
-					<div class="description">
-						Check if a topic has observers
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
-									
-								</dt>
-								<dd>the name of the topic</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if topic is listened</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="notify"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>notify</b>(topic, subject)
-					
-					</div>
-					<div class="description">
-						Notifies observers that a topic has a new message
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
-									
-								</dt>
-								<dd>the name of the topic to publish to</dd>
-							
-								<dt>
-									<b>subject</b>
-									
-								</dt>
 								<dd></dd>
 							
 							</dl>
 						
 						
 						
+
+					<hr />
+				
+					<a name="set"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>set</b>(route, func, scope)
+					
+					</div>
+					<div class="description">
+						Set a new route
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>route</b>
+									
+								</dt>
+								<dd>the name of the route</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>the function to be execute when navigating to the route</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>scope</b>
+									
+								</dt>
+								<dd>the scope in which to execute the function</dd>
+							
+							</dl>
+						
+						
+						
 						
 						
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if there was subscribers</dd>
+								<dd>a handle to remove the route</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setMaxHistory"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>setMaxHistory</b>(maxHistory)
+					
+					</div>
+					<div class="description">
+						Set the maximum length of history
+As the user navigates through the application, the
+routeur keeps track of the history. Set the depth of the history
+depending on your need and the amount of memory that you can allocate it
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>maxHistory</b>
+									
+								</dt>
+								<dd>the depth of history</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if maxHistory is equal or greater than 0</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="unset"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unset</b>(handle)
+					
+					</div>
+					<div class="description">
+						Remove a route
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>handle</b>
+									
+								</dt>
+								<dd>the handle provided by the set method</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>true if successfully removed</dd>
 							
 							</dl>
 						
@@ -523,12 +845,12 @@ ul.inheritsList
 					<a name="unwatch"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Boolean}</span>
+					
 					<b>unwatch</b>(handle)
 					
 					</div>
 					<div class="description">
-						Remove an observer
+						Unwatch routes changes
 						
 						
 					</div>
@@ -540,10 +862,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Handle}</span> <b>handle</b>
+									<span class="light fixedFont">{Object}</span> <b>handle</b>
 									
 								</dt>
-								<dd>returned by the watch method</dd>
+								<dd>the handle was returned by the watch function</dd>
 							
 							</dl>
 						
@@ -554,50 +876,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Boolean}</span> true if there were subscribers</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="unwatchAll"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Boolean}</span>
-					<b>unwatchAll</b>(topic)
-					
-					</div>
-					<div class="description">
-						Unwatch all or unwatch all from topic
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
-									
-								</dt>
-								<dd>optional unwatch all from topic</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> true if ok</dd>
+								<dd>true if unwatch</dd>
 							
 							</dl>
 						
@@ -609,12 +888,12 @@ ul.inheritsList
 					<a name="watch"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>watch</b>(topic, callback, scope)
+					<span class="light">{Object}</span>
+					<b>watch</b>(func, scope)
 					
 					</div>
 					<div class="description">
-						Add an observer
+						Watch for route changes
 						
 						
 					</div>
@@ -626,22 +905,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>topic</b>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
 									
 								</dt>
-								<dd>the topic to observe</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>callback</b>
-									
-								</dt>
-								<dd>the callback to execute</dd>
+								<dd>the func to execute when the route changes</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>scope</b>
 									
 								</dt>
-								<dd>the scope in which to execute the callback</dd>
+								<dd>the scope in which to execute the function</dd>
 							
 							</dl>
 						
@@ -652,7 +925,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>handle</dd>
+								<dd><span class="light fixedFont">{Object}</span> the handle to unwatch for route changes</dd>
 							
 							</dl>
 						

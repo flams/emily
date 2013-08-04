@@ -12,6 +12,8 @@ define(["Observable", "Tools"],
  */
  function Store(Observable, Tools) {
 
+    "use strict";
+
     /**
      * Defines the Store
      * @param {Array/Object} the data to initialize the store with
@@ -37,7 +39,7 @@ define(["Observable", "Tools"],
          */
         _valueObservable = new Observable(),
 
-		/**
+        /**
          * Saves the handles for the subscriptions of the computed properties
          * @private
          */
@@ -205,11 +207,11 @@ define(["Observable", "Tools"],
          * @returns the result of the method call
          */
         this.proxy = function proxy(func) {
-        	if (_data[func]) {
-        		return _data[func].apply(_data, Array.prototype.slice.call(arguments, 1));
-        	} else {
-        		return false;
-        	}
+            if (_data[func]) {
+                return _data[func].apply(_data, Array.prototype.slice.call(arguments, 1));
+            } else {
+                return false;
+            }
         };
 
         /**
@@ -309,26 +311,26 @@ define(["Observable", "Tools"],
          * @returns {Boolean} false if wrong params given to the function
          */
         this.compute = function compute(name, computeFrom, callback, scope) {
-        	var args = [];
+            var args = [];
 
-        	if (typeof name == "string" &&
-        		typeof computeFrom == "object" &&
-        		typeof callback == "function" &&
-        		!this.isCompute(name)) {
+            if (typeof name == "string" &&
+                typeof computeFrom == "object" &&
+                typeof callback == "function" &&
+                !this.isCompute(name)) {
 
-        		_computed[name] = [];
+                _computed[name] = [];
 
-        		Tools.loop(computeFrom, function (property) {
-        			_computed[name].push(this.watchValue(property, function () {
-        				this.set(name, callback.call(scope));
-        			}, this));
-        		}, this);
+                Tools.loop(computeFrom, function (property) {
+                    _computed[name].push(this.watchValue(property, function () {
+                        this.set(name, callback.call(scope));
+                    }, this));
+                }, this);
 
-        		this.set(name, callback.call(scope));
-        		return true;
-        	} else {
-        		return false;
-        	}
+                this.set(name, callback.call(scope));
+                return true;
+            } else {
+                return false;
+            }
         };
 
         /**
@@ -337,15 +339,15 @@ define(["Observable", "Tools"],
          * @returns {Boolean} true if the property is removed
          */
         this.removeCompute = function removeCompute(name) {
-        	if (this.isCompute(name)) {
-        		Tools.loop(_computed[name], function (handle) {
-        			this.unwatchValue(handle);
-        		}, this);
-        		this.del(name);
-        		return true;
-        	} else {
-        		return false;
-        	}
+            if (this.isCompute(name)) {
+                Tools.loop(_computed[name], function (handle) {
+                    this.unwatchValue(handle);
+                }, this);
+                this.del(name);
+                return true;
+            } else {
+                return false;
+            }
         };
 
         /**
@@ -354,7 +356,7 @@ define(["Observable", "Tools"],
          * @returns {Boolean} true if it's a computed property
          */
         this.isCompute = function isCompute(name) {
-        	return !!_computed[name];
+            return !!_computed[name];
         };
 
         /**
