@@ -1264,7 +1264,7 @@ describe("Router determines the navigation in your application", function () {
 
 ## Changelog
 
-###1.7.0 - PENDING
+###1.7.0 - 04 AUG 2013
 
 * Adds router
 
