@@ -192,6 +192,7 @@ define(["Observable", "Tools"],
                 previousData = Tools.clone(_data);
                 apply = this.proxy.apply(this, arguments);
                 _notifyDiffs(previousData);
+                _storeObservable.notify("altered", _data, previousData);
                 return apply;
             } else {
                 return false;
@@ -293,6 +294,7 @@ define(["Observable", "Tools"],
                 var previousData = Tools.clone(_data);
                 _data = Tools.clone(data) || {};
                 _notifyDiffs(previousData);
+                _storeObservable.notify("resetted", _data, previousData);
                 return true;
             } else {
                 return false;

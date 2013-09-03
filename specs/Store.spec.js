@@ -547,6 +547,18 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(store.proxy("nofunc")).toBe(false);
 		});
 
+		it("should publish an altered event when the store is altered", function () {
+			var observable = store.getStoreObservable(),
+				oldData = store.dump();
+
+			spyOn(observable, "notify");
+			store.alter("splice", 0);
+
+			expect(observable.notify.mostRecentCall.args[0]).toBe("altered");
+			expect(observable.notify.mostRecentCall.args[1]).toBe(store.dump());
+			expect(observable.notify.mostRecentCall.args[2]).toEqual([0,1,2,3]);
+		});
+
 	});
 
 	describe("StoreComputed", function () {
@@ -678,6 +690,19 @@ require(["Store", "Observable", "Tools"], function (Store, Observable, Tools) {
 			expect(spyB.mostRecentCall.args[0]).toBe("b");
 			expect(spyB.mostRecentCall.args[1]).toBe(20);
 			expect(spyB.callCount).toBe(1);
+		});
+
+		it("should publish an event when the store is resetted", function () {
+			var observable = store.getStoreObservable(),
+				oldData = store.dump();
+
+				spyOn(observable, "notify");
+
+			store.reset({});
+
+			expect(observable.notify.mostRecentCall.args[0]).toBe("resetted");
+			expect(observable.notify.mostRecentCall.args[1]).toBe(store.dump());
+			expect(observable.notify.mostRecentCall.args[2]).toEqual({ a: 10 });
 		});
 	});
 
