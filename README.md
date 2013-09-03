@@ -1264,6 +1264,11 @@ describe("Router determines the navigation in your application", function () {
 
 ## Changelog
 
+###1.8.0 - 03 SEP 2013
+
+* Store.reset publishes a "resetted" event when the store is resetted
+* Store.reset publishes an "altered" event with the store is altered
+
 ###1.7.0 - 04 AUG 2013
 
 * Adds router
