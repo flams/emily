@@ -13,25 +13,22 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise, Router) {
 
 	describe("Observable implements the Observer design pattern, also called publish subscribe", function () {
 
-		it("has a watch function for adding a listener", function () {
-			var observable = new Observable();
-
-			var handle = observable.watch("topic", function listener() {
-				// action to execute when something is published on the topic
-			}, this);
-		});
-
 		it("has a notify function for publishing something on a topic", function () {
 			var observable = new Observable(),
+				scope = null,
+				expectedScope = {},
 				message;
 
 			observable.watch("topic", function listener(something) {
 				message = something;
-			});
+				scope = this;
+			}, expectedScope);
 
 			observable.notify("topic", "hello");
 
 			expect(message).toBe("hello");
+
+			expect(expectedScope).toBe(scope);
 		});
 
 		it("can listen to events on a topic only once", function () {
@@ -107,7 +104,7 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise, Router) {
 			expect(context).toBe(this);
 		});
 
-		it("can remove a listener on a topic", function () {
+		it("can remove a listener from a topic", function () {
 			var observable = new Observable(),
 				removed = true;
 
@@ -123,7 +120,7 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise, Router) {
 			expect(removed).toBe(true);
 		});
 
-		it("can remove all listeners on a given topic", function () {
+		it("can remove all listeners from a given topic", function () {
 			var observable = new Observable(),
 				topics = [];
 
