@@ -43,11 +43,7 @@ docs: clean-docs
 		-d=docs/latest/ \
 		-t=tools/JsDoc/templates/jsdoc
 
-tests: tests-node tests-jstd
-
-tests-jstd: clean-temp temp.js
-	java -jar $(JsTestDriver) \
-		--tests all
+tests: tests-node
 
 tests-node: clean-temp temp.js
 	node tools/jasmine-node.js lib/require.js \
