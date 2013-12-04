@@ -34,6 +34,28 @@ function(Observable, Tools, Transport, Store, StateMachine, Promise, Router) {
 			expect(message).toBe("hello");
 		});
 
+		it("can listen to events on a topic only once", function () {
+			var observable = new Observable(),
+				listener = jasmine.createSpy(),
+				handle = null;
+
+			handle = observable.once("topic", listener, this);
+
+			expect(observable.hasObserver(handle)).toBe(true);
+
+			observable.notify("topic", 1, 2, 3);
+
+			expect(listener).toHaveBeenCalledWith(1, 2, 3);
+
+			listener.reset();
+
+			expect(observable.hasObserver(handle)).toBe(false);
+
+			observable.notify("topic", 1, 2, 3);
+
+			expect(listener).not.toHaveBeenCalled();
+		});
+
 		it("notifies several listeners in the order they were added", function () {
 			var observable = new Observable(),
 				order = [];
