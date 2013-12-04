@@ -50,6 +50,21 @@ function Observable(Tools) {
 		};
 
 		/**
+		 * Listen to an event just once before removing the handler
+		 * @param {String} topic the topic to observe
+		 * @param {Function} callback the callback to execute
+		 * @param {Object} scope the scope in which to execute the callback
+		 * @returns handle
+		 */
+		this.once = function once(topic, callback, scope) {
+			var handle = this.watch(topic, function () {
+				callback.apply(scope, arguments);
+				this.unwatch(handle);
+			}, this);
+			return handle;
+		};
+
+		/**
 		 * Remove an observer
 		 * @param {Handle} handle returned by the watch method
 		 * @returns {Boolean} true if there were subscribers
@@ -93,7 +108,7 @@ function Observable(Tools) {
 			} else {
 				return false;
 			}
-		},
+		};
 
 		/**
 		 * Check if topic has the described observer

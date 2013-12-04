@@ -153,6 +153,29 @@ require(["Observable", "Tools"], function (Observable, Tools) {
 			expect(observable.hasTopic("topic")).toBe(false);
 		});
 
+		it("should watch an event on a topic only once", function () {
+			var handle = [],
+				spy = jasmine.createSpy(),
+				scope = {};
+
+			spyOn(observable, "watch").andReturn(handle);
+			spyOn(observable, "unwatch");
+
+			expect(observable.once("test", spy, scope)).toBe(handle);
+
+			expect(observable.watch).toHaveBeenCalled();
+			expect(observable.watch.mostRecentCall.args[0]).toBe("test");
+			expect(typeof observable.watch.mostRecentCall.args[1]).toBe("function");
+			expect(observable.watch.mostRecentCall.args[2]).toBe(observable);
+
+			observable.watch.mostRecentCall.args[1].call(observable, 1, 2, 3);
+
+			expect(spy).toHaveBeenCalledWith(1, 2, 3);
+			expect(spy.mostRecentCall.object).toBe(scope);
+
+			expect(observable.unwatch).toHaveBeenCalledWith(handle);
+		});
+
 	});
 
 	describe("ObservableNotify", function () {
