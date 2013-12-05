@@ -1283,7 +1283,11 @@ describe("Router determines the navigation in your application", function () {
 
 ## Changelog
 
-###1.8.0 - 03 SEP 2013
+###1.8.1 - 03 DEC 2013
+
+* Add convenience method observable.once
+
+####1.8.0 - 03 SEP 2013
 
 * Store.reset publishes a "resetted" event when the store is resetted
 * Store.reset publishes an "altered" event with the store is altered
