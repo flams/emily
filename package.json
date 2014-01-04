@@ -13,8 +13,8 @@
  	"emily-server.js"
  ],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
- "dependencies": {
-  "requirejs": ">=2.0.4"
+ "devDependencies": {
+  "promises-aplus-tests": ">=2.0.3"
   },
  "keywords": ["library", "AMD/commonJS", "Promise", "Observable", "StateMachine", "Store", "scalable webapp"],
  "repository": {

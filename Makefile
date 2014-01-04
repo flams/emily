@@ -45,17 +45,11 @@ docs: clean-docs
 
 tests: tests-node
 
-tests-node: clean-temp temp.js
-	node tools/jasmine-node.js lib/require.js \
-		temp.js \
-		specs/specHelper.js \
-		$(SPECS)
+tests-node:
+	jasmine-node specs/
 
-tests-promiseA:
-	node tools/promise-test/runTestA.js
-
-tests-promiseAplus:
-	node tools/promise-test/runTestAplus.js
+tests-promise:
+	node tools/promise-test/runTest.js
 
 jshint:
 	jshint src/*.js specs/*.js
