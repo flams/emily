@@ -44,10 +44,7 @@ module.exports = {
      * @returns {Object} the global object
      */
     getGlobal: function getGlobal() {
-        var func = function() {
-            return this;
-        };
-        return func.call(null);
+        return Function('return this')();
     },
 
     /**

@@ -6,8 +6,8 @@
 "use strict";
 
 var Observable = require("./Observable"),
-    Store = require("Store"),
-    Tools = require("Tools");
+    Store = require("./Store"),
+    Tools = require("./Tools");
 
 /**
  * @class

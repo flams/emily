@@ -9,3 +9,4 @@ emily.sublime-workspace
 couchdb.stderr
 couchdb.stdout
 temp.js
+node_modules/
