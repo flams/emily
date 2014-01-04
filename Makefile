@@ -21,7 +21,7 @@
 
 SRC := $(wildcard src/*.js)
 
-all: tests docs build
+all: test docs build
 
 clean-temp:
 	rm -f temp.js
@@ -61,7 +61,7 @@ emily.min.js: emily.js
 		--js_output_file build/emily.min.js \
 		--create_source_map build/emily-map
 
-clean: clean-build clean-docs
+clean: clean-build clean-docs clean-temp
 
 build: clean-build clean-temp emily.js emily.min.js
 	cp LICENSE build/
