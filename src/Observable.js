@@ -50,7 +50,7 @@ module.exports = function ObservableConstructor() {
      * @param {Object} scope the scope in which to execute the callback
      * @returns handle
      */
-    this.once = function once(topic, callback, scope) {
+    this.once = function once(topic, callback, scope) {
         var handle = this.watch(topic, function () {
             callback.apply(scope, arguments);
             this.unwatch(handle);

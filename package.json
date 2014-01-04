@@ -1,16 +1,15 @@
 {
  "name": "emily",
  "description": "runtime agnostic JS library for scalable web applications",
- "version": "1.8.1",
+ "version": "2.0.0",
  "homepage": "http://flams.github.com/emily/",
  "licenses": [{
   "type":"MIT",
   "url":"https://raw.github.com/flams/emily/master/LICENSE"
  }],
  "files": [
- 	"build",
- 	"LICENSE",
- 	"emily-server.js"
+ 	"src",
+ 	"LICENSE"
  ],
  "author": "Olivier Scherrer <pode.fr@gmail.com>",
  "devDependencies": {
@@ -24,7 +23,7 @@
  "bugs": {
   "url": "https://github.com/flams/emily/issues"
  },
- "main":"emily-server.js",
+ "main":"src/emily.js",
  "engines": {
  	"node":">= 0.6.0"
  }
