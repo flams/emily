@@ -23,6 +23,9 @@ SRC := $(wildcard src/*.js)
 
 all: tests docs build
 
+clean-temp:
+	rm -f temp.js
+
 clean-docs:
 	-rm -rf docs/latest/
 
@@ -46,13 +49,13 @@ jshint:
 	jshint src/*.js specs/*.js
 
 temp.js:
-	browserify -r src/emily.js:emily -o temp.js
+	browserify -r ./src/emily.js:emily -o temp.js
 
-emily.js:
+emily.js: temp.js
 	mkdir -p build
 	cat LICENSE-MINI temp.js > build/$@
 
-emily.min.js:
+emily.min.js: emily.js
 	java -jar tools/GoogleCompiler/compiler.jar \
 		--js build/emily.js \
 		--js_output_file build/emily.min.js \
@@ -60,7 +63,7 @@ emily.min.js:
 
 clean: clean-build clean-docs
 
-build: clean-build emily.js emily.min.js
+build: clean-build clean-temp emily.js emily.min.js
 	cp LICENSE build/
 
 release: all
