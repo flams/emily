@@ -1,7 +1,7 @@
 {
  "name": "emily",
  "description": "runtime agnostic JS library for scalable web applications",
- "version": "2.0.0beta",
+ "version": "2.0.0-beta",
  "homepage": "http://flams.github.com/emily/",
  "licenses": [{
   "type":"MIT",
