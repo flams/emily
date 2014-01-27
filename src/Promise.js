@@ -69,18 +69,14 @@ module.exports = function PromiseConstructor() {
         "Fulfilled": [
             // We directly call the resolver with the value
             ["toFulfill", function toFulfill(resolver) {
-                setTimeout(function () {
-                    resolver(_value);
-                }, 0);
+                   resolver(_value);
             }]],
 
         // When rejected
         "Rejected": [
             // We directly call the resolver with the reason
             ["toReject", function toReject(resolver) {
-                setTimeout(function () {
-                    resolver(_reason);
-                }, 0);
+                   resolver(_reason);
             }]]
     },
 
@@ -97,8 +93,10 @@ module.exports = function PromiseConstructor() {
      * @returns the promise
      */
     this.fulfill = function fulfill(value) {
-        _stateMachine.event("fulfill", value);
-        return this;
+        setTimeout(function () {
+            _stateMachine.event("fulfill", value);
+            return this;
+        }, 0);
     };
 
     /**
@@ -108,8 +106,10 @@ module.exports = function PromiseConstructor() {
      * @returns true if the rejection function was called
      */
     this.reject = function reject(reason) {
-        _stateMachine.event("reject", reason);
-        return this;
+        setTimeout(function () {
+            _stateMachine.event("reject", reason);
+            return this;
+        }, 0);
     };
 
     /**
