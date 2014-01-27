@@ -200,6 +200,9 @@ module.exports = function PromiseConstructor() {
 
             try {
                 returnedPromise = func.call(scope, value);
+                if (returnedPromise === promise) {
+                    throw new TypeError("Promise A+ 2.3.1: If `promise` and `x` refer to the same object, reject `promise` with a `TypeError' as the reason.");
+                }
                 if (!promise.sync(returnedPromise)) {
                     promise.fulfill(returnedPromise);
                 }
