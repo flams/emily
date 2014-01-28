@@ -170,17 +170,12 @@ module.exports = function PromiseConstructor() {
      * @returns {Boolean} false if the given sync is not a thenable
      */
     this.sync = function sync(syncWith) {
-        if (syncWith instanceof Object && syncWith.then) {
+        if (syncWith instanceof PromiseConstructor ||
+            typeof syncWith == "object" ||
+            typeof syncWith == "function") {
 
-            var onFulfilled = function onFulfilled(value) {
-                this.fulfill(value);
-            },
-            onRejected = function onRejected(reason) {
-                this.reject(reason);
-            };
-
-            syncWith.then(onFulfilled.bind(this),
-                    onRejected.bind(this));
+            syncWith.then(this.fulfill.bind(this),
+                    this.reject.bind(this));
 
             return true;
         } else {
