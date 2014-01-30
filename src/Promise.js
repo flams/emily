@@ -95,8 +95,9 @@ module.exports = function PromiseConstructor() {
     this.fulfill = function fulfill(value) {
         setTimeout(function () {
             _stateMachine.event("fulfill", value);
-            return this;
         }, 0);
+        return this;
+
     };
 
     /**
@@ -108,8 +109,8 @@ module.exports = function PromiseConstructor() {
     this.reject = function reject(reason) {
         setTimeout(function () {
             _stateMachine.event("reject", reason);
-            return this;
         }, 0);
+        return this;
     };
 
     /**
