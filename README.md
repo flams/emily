@@ -22,18 +22,25 @@
 
 ####In the browser:
 
-Emily requires an AMD/commonJS compatible loader. I use requirejs: [require.js](http://requirejs.org/)
 Download the latest version of [Emily here](http://flams.github.com/emily/)
 
 ```html
-	<script src="require.js"></script>
-	<script src="Emily.js"></script>
+	<script src="emily.js"></script>
 ```
 
 ```js
-	require(["Module"], function (Module) {
-		// Do what you want with Module
-	});
+	var emily = require("emily");
+
+	var StateMachine = emily.StateMachine;
+	var Observable = emily.Observable;
+	var Promise = emily.Promise;
+	var Router = emily.Router;
+	var StateMachine = emily.StateMachine;
+	var Store = emily.Store;
+	var Tools = emily.Tools;
+	var Transport = emily.Transport;
+
+	// ...
 ```
 
 ####In node:
@@ -43,12 +50,18 @@ npm install requirejs emily
 ```
 
 ```js
-	var requirejs = require("requirejs");
-		emily = require("emily");
+	var emily = require("emily");
 
-	requirejs(["Module"], function (Module) {
-		// Do what you want with Module
-	});
+	var StateMachine = emily.StateMachine;
+	var Observable = emily.Observable;
+	var Promise = emily.Promise;
+	var Router = emily.Router;
+	var StateMachine = emily.StateMachine;
+	var Store = emily.Store;
+	var Tools = emily.Tools;
+	var Transport = emily.Transport;
+
+	// ...
 ```
 
 ##Integration tests:
@@ -57,6 +70,8 @@ npm install requirejs emily
 
 ```js
 describe("Observable implements the Observer design pattern, also called publish subscribe", function () {
+
+	var Observable = require("emily").Observable;
 
 	it("has a notify function for publishing something on a topic", function () {
 		var observable = new Observable(),
@@ -205,6 +220,8 @@ describe("Observable implements the Observer design pattern, also called publish
 
 ```js
 describe("Tools is a set of tools commonly used in JavaScript applications", function () {
+
+	var Tools = require("emily").Tools;
 
 	describe("Tools.getGlobal can retrieve the global object", function () {
 
@@ -511,6 +528,8 @@ describe("Tools is a set of tools commonly used in JavaScript applications", fun
 ```js
 describe("Store is an observable data structure that publishes events whenever it's updated", function () {
 
+	var Store = require("emily").Store;
+
 	it("can store its data in an object", function () {
 		var store = new Store({});
 
@@ -809,8 +828,12 @@ describe("Store is an observable data structure that publishes events whenever i
 
 ### Promise
 
+Promise are not yet fully compliant with the promise/A+ specs, but will eventually be.
+
 ```js
-describe("Promise is a fully Promise/A+ compliant implementation", function () {
+describe("Promise is a partially Promise/A+ compliant implementation", function () {
+
+	var Promise = require("emily").Promise;
 
 	it("calls the fulfillment callback within scope", function () {
 		var promise = new Promise(),
@@ -890,6 +913,8 @@ describe("Promise is a fully Promise/A+ compliant implementation", function () {
 
 ```js
 describe("StateMachine helps you with the control flow of your apps by removing branching if/else", function () {
+
+	var StateMachine = require("emily").StateMachine;
 
 	it("will call specific actions depending on the current state and the triggered event", function () {
 		var passCalled,
@@ -1041,6 +1066,8 @@ describe("StateMachine helps you with the control flow of your apps by removing 
 ```js
 describe("Transport hides and centralizes the logic behind requests", function () {
 
+	var Transport = require("emily").Transport;
+
 	it("issues requests to request handlers", function () {
 
 		var onEndCalled = false;
@@ -1143,6 +1170,8 @@ describe("Transport hides and centralizes the logic behind requests", function (
 
 ```js
 describe("Router determines the navigation in your application", function () {
+
+	var Router = require("emily").Router;
 
 	it("can navigate to routes and pass arguments", function () {
 		var router = new Router();
@@ -1282,6 +1311,11 @@ describe("Router determines the navigation in your application", function () {
 ```
 
 ## Changelog
+
+##2.0 beta - 04 FEB 2014
+
+* Completely removed the dependency on requirejs
+* Promise.sync has been renamed to Promise.cast
 
 ###1.8.1 - 03 DEC 2013
 
