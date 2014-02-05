@@ -3,7 +3,6 @@
  * Emily is a JS library for building scalable web applications.
  * It's runtime agnostic as it doesn't rely on the DOM.
  * It's ready for realtime applications.
- * It's only a set of AMD/commonJS modules, your module loader is the framework
  * It's ready for being used with other frameworks.
  * It only relies on standard features
  * It eases the development of MV* applications by providing the M
