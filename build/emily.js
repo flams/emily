@@ -1,5 +1,5 @@
 /**
- * @license Emily <VERSION> http://flams.github.com/emily
+ * @license emily.js <VERSION> http://flams.github.com/emily
  *
  * The MIT License (MIT)
  *
@@ -180,10 +180,10 @@ module.exports = function PromiseConstructor() {
     _observable = new Observable(),
 
     /**
-     * The state machine States & transitions
+     * The stateMachine
      * @private
      */
-    _states = {
+    _stateMachine = new StateMachine("Pending", {
 
         // The promise is pending
         "Pending": [
@@ -216,26 +216,16 @@ module.exports = function PromiseConstructor() {
         "Fulfilled": [
             // We directly call the resolver with the value
             ["toFulfill", function toFulfill(resolver) {
-                setTimeout(function () {
-                    resolver(_value);
-                }, 0);
+                   resolver(_value);
             }]],
 
         // When rejected
         "Rejected": [
             // We directly call the resolver with the reason
             ["toReject", function toReject(resolver) {
-                setTimeout(function () {
-                    resolver(_reason);
-                }, 0);
+                   resolver(_reason);
             }]]
-    },
-
-    /**
-     * The stateMachine
-     * @private
-     */
-    _stateMachine = new StateMachine("Pending", _states);
+    });
 
     /**
      * Fulfilled the promise.
@@ -244,8 +234,11 @@ module.exports = function PromiseConstructor() {
      * @returns the promise
      */
     this.fulfill = function fulfill(value) {
-        _stateMachine.event("fulfill", value);
+        setTimeout(function () {
+            _stateMachine.event("fulfill", value);
+        }, 0);
         return this;
+
     };
 
     /**
@@ -255,7 +248,9 @@ module.exports = function PromiseConstructor() {
      * @returns true if the rejection function was called
      */
     this.reject = function reject(reason) {
-        _stateMachine.event("reject", reason);
+        setTimeout(function () {
+            _stateMachine.event("reject", reason);
+        }, 0);
         return this;
     };
 
@@ -313,21 +308,16 @@ module.exports = function PromiseConstructor() {
     };
 
     /**
-     * Synchronize this promise with a thenable
-     * @returns {Boolean} false if the given sync is not a thenable
+     * Cast a thenable into an Emily promise
+     * @returns {Boolean} false if the given promise is not a thenable
      */
-    this.sync = function sync(syncWith) {
-        if (syncWith instanceof Object && syncWith.then) {
+    this.cast = function cast(thenable) {
+        if (thenable instanceof PromiseConstructor ||
+            typeof thenable == "object" ||
+            typeof thenable == "function") {
 
-            var onFulfilled = function onFulfilled(value) {
-                this.fulfill(value);
-            },
-            onRejected = function onRejected(reason) {
-                this.reject(reason);
-            };
-
-            syncWith.then(onFulfilled.bind(this),
-                    onRejected.bind(this));
+            thenable.then(this.fulfill.bind(this),
+                    this.reject.bind(this));
 
             return true;
         } else {
@@ -347,7 +337,10 @@ module.exports = function PromiseConstructor() {
 
             try {
                 returnedPromise = func.call(scope, value);
-                if (!promise.sync(returnedPromise)) {
+                if (returnedPromise === promise) {
+                    throw new TypeError("Promise A+ 2.3.1: If `promise` and `x` refer to the same object, reject `promise` with a `TypeError' as the reason.");
+                }
+                if (!promise.cast(returnedPromise)) {
                     promise.fulfill(returnedPromise);
                 }
             } catch (err) {
