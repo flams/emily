@@ -104,8 +104,8 @@ endif
 
 	git checkout gh-pages
 
-	git checkout master build Makefile docs src specs tools lib release
-	git add build docs src specs tools lib release
+	git checkout master build Makefile docs src specs tools release
+	git add build docs src specs tools release
 
 	sed -i .bak 's#version">.*<#version">'${VERSION}'<#g' index.html
 	sed -i .bak 's#<a href="release/emily.*\.tgz">#<a href="release/emily-'${VERSION}'.tgz">#' index.html
