@@ -14,6 +14,6 @@ var adapter = {
 	}
 };
 
-promiseTests(adapter, { grep: "2.3.3.3" },function () {
+promiseTests(adapter, { grep: "2.2.6.1" },function () {
 // All done, output in the CLI.
 });

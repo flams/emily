@@ -7,7 +7,7 @@ var Promise = require("../src/Promise"),
     Observable = require("../src/Observable"),
     StateMachine = require("../src/StateMachine");
 
-describe("PromiseInit", function () {
+xdescribe("PromiseInit", function () {
 
     it("should be a constructor function", function () {
         expect(Promise).toBeInstanceOf(Function);
@@ -22,7 +22,7 @@ describe("PromiseInit", function () {
 
 });
 
-describe("PromiseMakeResolver", function () {
+xdescribe("PromiseMakeResolver", function () {
 
     var promise = null,
         newPromise = {
@@ -76,7 +76,7 @@ describe("PromiseMakeResolver", function () {
 
 });
 
-describe("PromiseStateMachine", function () {
+xdescribe("PromiseStateMachine", function () {
 
     var states = null,
         promise = null,
@@ -233,7 +233,7 @@ describe("PromiseStateMachine", function () {
 
 });
 
-describe("PromiseThen", function () {
+xdescribe("PromiseThen", function () {
 
     var promise = null,
         stateMachine = null,
@@ -357,7 +357,7 @@ describe("PromiseThen", function () {
 
 });
 
-describe("PromiseSync", function () {
+xdescribe("PromiseSync", function () {
 
     var thenable = null,
         promise = null;

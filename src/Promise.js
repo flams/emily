@@ -33,10 +33,10 @@ module.exports = function PromiseConstructor() {
     _observable = new Observable(),
 
     /**
-     * The state machine States & transitions
+     * The stateMachine
      * @private
      */
-    _states = {
+    _stateMachine = new StateMachine("Pending", {
 
         // The promise is pending
         "Pending": [
@@ -78,13 +78,7 @@ module.exports = function PromiseConstructor() {
             ["toReject", function toReject(resolver) {
                    resolver(_reason);
             }]]
-    },
-
-    /**
-     * The stateMachine
-     * @private
-     */
-    _stateMachine = new StateMachine("Pending", _states);
+    });
 
     /**
      * Fulfilled the promise.
@@ -167,15 +161,15 @@ module.exports = function PromiseConstructor() {
     };
 
     /**
-     * Synchronize this promise with a thenable
-     * @returns {Boolean} false if the given sync is not a thenable
+     * Cast a thenable into an Emily promise
+     * @returns {Boolean} false if the given promise is not a thenable
      */
-    this.sync = function sync(syncWith) {
-        if (syncWith instanceof PromiseConstructor ||
-            typeof syncWith == "object" ||
-            typeof syncWith == "function") {
+    this.cast = function cast(thenable) {
+        if (thenable instanceof PromiseConstructor ||
+            typeof thenable == "object" ||
+            typeof thenable == "function") {
 
-            syncWith.then(this.fulfill.bind(this),
+            thenable.then(this.fulfill.bind(this),
                     this.reject.bind(this));
 
             return true;
@@ -199,7 +193,7 @@ module.exports = function PromiseConstructor() {
                 if (returnedPromise === promise) {
                     throw new TypeError("Promise A+ 2.3.1: If `promise` and `x` refer to the same object, reject `promise` with a `TypeError' as the reason.");
                 }
-                if (!promise.sync(returnedPromise)) {
+                if (!promise.cast(returnedPromise)) {
                     promise.fulfill(returnedPromise);
                 }
             } catch (err) {
