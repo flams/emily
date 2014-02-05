@@ -1,17 +1,15 @@
 ###############################################################################################
-# Emily http://flams.github.com/emily
+# emily http://flams.github.com/emily
 # The MIT License (MIT)
-# Copyright (c) 2012-2103 Olivier Scherrer <pode.fr@gmail.com>
+# Copyright (c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
 #
 # Targets:
 #
-# make tests-jstd: runs the JsTestDriver tests
-# make tests-node: runs the tests under node.js
-# make tests-promiseA: runs the tests against promise/A specs
-# make tests: runs both tests
+# make test: runs the tests under node.js
+# make test-promise: runs the tests against promise/A+ specs
 #
 # make docs: generates the documentation into docs/latest
-# make build: generates Emily.js and Emily.min.js as they appear in the release
+# make build: generates emily.js and emily.min.js as they appear in the release
 #
 # make all: tests + docs + build
 #
@@ -22,19 +20,17 @@
 ################################################################################################
 
 SRC := $(wildcard src/*.js)
-SPECS := $(wildcard specs/*.js)
-JsTestDriver = $(shell find tools -name "JsTestDriver-*.jar" -type f)
 
-all: tests docs build
+all: test docs build
+
+clean-temp:
+	rm -f temp.js
 
 clean-docs:
 	-rm -rf docs/latest/
 
 clean-build:
 	-rm -rf build/
-
-clean-temp:
-	rm -f temp.js
 
 docs: clean-docs
 	java -jar tools/JsDoc/jsrun.jar \
@@ -43,26 +39,32 @@ docs: clean-docs
 		-d=docs/latest/ \
 		-t=tools/JsDoc/templates/jsdoc
 
-tests: tests-node
+test:
+	jasmine-node specs/
 
-tests-node: clean-temp temp.js
-	node tools/jasmine-node.js lib/require.js \
-		temp.js \
-		specs/specHelper.js \
-		$(SPECS)
-
-tests-promiseA:
-	node tools/promise-test/runTestA.js
-
-tests-promiseAplus:
-	node tools/promise-test/runTestAplus.js
+test-promise:
+	node tools/promise-test/runTest.js
 
 jshint:
 	jshint src/*.js specs/*.js
 
-build: clean-build Emily.js
+temp.js:
+	browserify -r ./src/emily.js:emily -o temp.js
+
+emily.js: temp.js
+	mkdir -p build
+	cat LICENSE-MINI temp.js > build/$@
+
+emily.min.js: emily.js
+	java -jar tools/GoogleCompiler/compiler.jar \
+		--js build/emily.js \
+		--js_output_file build/emily.min.js \
+		--create_source_map build/emily-map
+
+clean: clean-build clean-docs clean-temp
+
+build: clean-build clean-temp emily.js emily.min.js
 	cp LICENSE build/
-	cp -rf src/ build/src/
 
 release: all
 ifndef VERSION
@@ -70,15 +72,15 @@ ifndef VERSION
 	@exit 2
 endif
 
-	mkdir -p release/tmp/Emily-$(VERSION)
-	cp -rf build/* release/tmp/Emily-$(VERSION)
+	mkdir -p release/tmp/emily-$(VERSION)
+	cp -rf build/* release/tmp/emily-$(VERSION)
 
-	cd release/tmp/Emily-$(VERSION); \
-	sed -i .bak 's#<VERSION>#'$(VERSION)'#' Emily.js Emily.min.js; \
-	rm Emily.js.bak Emily.min.js.bak
+	cd release/tmp/emily-$(VERSION); \
+	sed -i .bak 's#<VERSION>#'$(VERSION)'#' emily.js emily.min.js; \
+	rm emily.js.bak emily.min.js.bak
 
 	cd release/tmp/; \
-	tar czf ../Emily-$(VERSION).tgz Emily-$(VERSION)
+	tar czf ../emily-$(VERSION).tgz emily-$(VERSION)
 
 	rm -rf release/tmp/
 
@@ -94,20 +96,6 @@ endif
 
 	git push --tags
 
-temp.js:
-	r.js -o tools/build.js
-
-Emily.js: temp.js
-	mkdir -p build
-	cat LICENSE-MINI temp.js > build/$@
-
-	java -jar tools/GoogleCompiler/compiler.jar \
-		--js build/Emily.js \
-		--js_output_file build/Emily.min.js \
-		--create_source_map build/Emily-map
-
-clean: clean-build clean-docs
-
 gh-pages:
 ifndef VERSION
 	@echo "You must give a VERSION number to make gh-pages"
@@ -116,11 +104,11 @@ endif
 
 	git checkout gh-pages
 
-	git checkout master build Makefile docs src specs tools lib release
-	git add build docs src specs tools lib release
+	git checkout master build Makefile docs src specs tools release
+	git add build docs src specs tools release
 
 	sed -i .bak 's#version">.*<#version">'${VERSION}'<#g' index.html
-	sed -i .bak 's#<a href="release/Emily.*\.tgz">#<a href="release/Emily-'${VERSION}'.tgz">#' index.html
+	sed -i .bak 's#<a href="release/emily.*\.tgz">#<a href="release/emily-'${VERSION}'.tgz">#' index.html
 	rm index.html.bak
 
 	git commit -am "updated to $(VERSION)"
