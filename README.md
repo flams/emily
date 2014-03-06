@@ -1312,12 +1312,16 @@ describe("Router determines the navigation in your application", function () {
 
 ## Changelog
 
-##2.0 beta - 04 FEB 2014
+###2.0.0 - 05 MAR 2014
+
+* No changes since beta
+
+####2.0.0 beta - 04 FEB 2014
 
 * Completely removed the dependency on requirejs
 * Promise.sync has been renamed to Promise.cast
 
-###1.8.1 - 03 DEC 2013
+####1.8.1 - 03 DEC 2013
 
 * Add convenience method observable.once
 
