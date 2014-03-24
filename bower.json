@@ -1,4 +1,18 @@
 {
   "name": "emily",
-  "version": "2.0.0"
+  "version": "2.0.0",
+  "main": "build/emily.min.js",
+  "ignore": [
+    "LICENSE",
+    "LICENSE-MINI",
+    "Makefile",
+    "docs",
+    "example.html",
+    "package.json",
+    "release",
+    "report",
+    "specs",
+    "src",
+    "tools"
+  ]
 }
