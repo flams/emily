@@ -3,12 +3,30 @@
  * Copyright(c) 2012-2014 Olivier Scherrer <pode.fr@gmail.com>
  * MIT Licensed
  */
+ var compareNumbers = require("compare-numbers"),
+     nestedProperty = require("nested-property"),
+     getClosest = require("get-closest");
+
 module.exports = {
-    Observable: require("./Observable"),
+    Observable: require("watch-notify"),
     Promise: require("./Promise"),
-    Router: require("./Router"),
-    StateMachine: require("./StateMachine"),
-    Store: require("./Store"),
-    Tools: require("./Tools"),
-    Transport: require("./Transport")
+    Router: require("highway"),
+    StateMachine: require("synchronous-fsm"),
+    Store: require("observable-store"),
+    Tools: {
+         getGlobal: require("get-global"),
+         mixin: require("simple-object-mixin"),
+         count: require("object-count"),
+         compareNumbers: compareNumbers.asc,
+         toArray: require("to-array"),
+         loop: require("simple-loop"),
+         objectsDiffs : require("shallow-diff"),
+         clone: require("shallow-copy"),
+         getNestedProperty: nestedProperty.get,
+         setNestedProperty: nestedProperty.set,
+         closest: getClosest.closest,
+         closestGreater: getClosest.greaterNumber,
+         closestLower: getClosest.lowerNumber
+     },
+    transport: require("transport")
 };

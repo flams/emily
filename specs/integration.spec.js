@@ -221,19 +221,6 @@ describe("Tools is a set of tools commonly used in JavaScript applications", fun
 
     });
 
-    describe("Tools.compareObject tells if two objects have the same properties, useful for duck typing", function () {
-
-        it("tells if two objects have the same properties", function () {
-            var o1 = {a: 1, c:3, b:4, x:10},
-                o2 = {a: 2, b:52, c:4, x:100},
-                o3 = {a: 5, b: 3, x: 50};
-
-            expect(Tools.compareObjects(o1, o2)).toBe(true);
-            expect(Tools.compareObjects(o2, o3)).toBe(false);
-        });
-
-    });
-
     describe("Tools.compareNumbers is useful for telling if a number if greater, equal or lower than another one", function () {
 
         it("tells if a number is greater than another one", function () {
@@ -370,24 +357,6 @@ describe("Tools is a set of tools commonly used in JavaScript applications", fun
             expect(diff.updated[0]).toBe("b");
             expect(diff.unchanged[0]).toBe("c");
             expect(diff.added[0]).toBe("d");
-        });
-
-    });
-
-    describe("Tools.jsonify returns the jsonified version of an object", function () {
-
-        it("returns a new object without the properties that can't be saved in a stringified json", function () {
-            var nonJsonObject = {
-                a: function () {},
-                b: undefined,
-                c:["emily"]
-            };
-
-            var jsonified = Tools.jsonify(nonJsonObject);
-
-            expect(Tools.count(jsonified)).toBe(1);
-            expect(jsonified.c[0]).toBe("emily");
-            expect(jsonified.c).not.toBe(nonJsonObject.c);
         });
 
     });

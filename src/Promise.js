@@ -5,8 +5,8 @@
 */
 "use strict";
 
-var Observable = require("./Observable"),
-StateMachine = require("./StateMachine");
+var Observable = require("watch-notify"),
+StateMachine = require("synchronous-fsm");
 
 /**
 * @class
