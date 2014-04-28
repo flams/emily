@@ -1259,7 +1259,11 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
 
 ## Changelog
 
-###3.0.0 - 27 APR 2014
+###3.0.1 - 27 APR 2014
+
+* Remove unused docs, previous releases and browser builds. Use browserify to use Emily.js in the browser.
+
+####3.0.0 - 27 APR 2014
 
 * Already version 3.0.0! It doesn't change much, but every module has been extracted into it's own module, and Emily just
  packs them together into a great library, because they work nicely together.
