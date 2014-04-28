@@ -15,7 +15,8 @@
   ],
   "author": "Olivier Scherrer <pode.fr@gmail.com>",
   "devDependencies": {
-    "promises-aplus-tests": ">=2.0.3"
+    "promises-aplus-tests": ">=2.0.3",
+    "jasmine-node": "~1.14.3"
   },
   "keywords": [
     "library",
@@ -33,7 +34,7 @@
   "bugs": {
     "url": "https://github.com/flams/emily/issues"
   },
-  "main": "src/emily.js",
+  "main": "src/Emily.js",
   "engines": {
     "node": ">= 0.6.0"
   },
@@ -53,5 +54,9 @@
     "transport": "0.0.3",
     "simple-loop": "0.0.3",
     "get-closest": "0.0.2"
+  },
+  "scripts": {
+    "test": "jasmine-node specs/",
+    "test-promise": "node tools/promise-test/runTest.js"
   }
 }
