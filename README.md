@@ -1267,7 +1267,7 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
  - Tools.jsonify which was removing unjsonifiable properties like functions and undefined properties
  - Tools.compareObjects which was comparing the keys of two objects to tell if they were the same
 
-###2.0.0 - 05 MAR 2014
+####2.0.0 - 05 MAR 2014
 
 * No changes since beta
 
