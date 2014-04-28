@@ -709,7 +709,8 @@ describe("Store is an observable data structure that publishes events whenever i
         expect(store.has("a")).toBe(true);
 
         jsonified = store.toJSON();
-        expect(Tools.count(jsonified)).toBe(0);
+
+        expect(jsonified).toBe("{}");
     });
 
     it("can return it's internal structure", function () {

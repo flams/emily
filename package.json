@@ -45,13 +45,13 @@
     "shallow-diff": "0.0.2",
     "nested-property": "0.0.2",
     "to-array": "~0.1.4",
-    "get-closest": "0.0.1",
     "shallow-copy": "0.0.1",
     "synchronous-fsm": "0.0.3",
     "watch-notify": "0.0.2",
     "highway": "0.0.2",
     "observable-store": "0.0.3",
     "transport": "0.0.3",
-    "simple-loop": "0.0.3"
+    "simple-loop": "0.0.3",
+    "get-closest": "0.0.2"
   }
 }

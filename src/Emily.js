@@ -24,9 +24,9 @@ module.exports = {
          clone: require("shallow-copy"),
          getNestedProperty: nestedProperty.get,
          setNestedProperty: nestedProperty.set,
-         closest: getClosest.closest,
+         closest: getClosest.number,
          closestGreater: getClosest.greaterNumber,
          closestLower: getClosest.lowerNumber
      },
-    transport: require("transport")
+    Transport: require("transport")
 };
