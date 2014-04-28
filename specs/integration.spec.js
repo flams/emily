@@ -13,7 +13,6 @@ var Observable = Emily.Observable,
     Transport = Emily.Transport,
     Store = Emily.Store,
     StateMachine = Emily.StateMachine,
-    Promise = Emily.Promise,
     Router = Emily.Router;
 
 describe("Observable implements the Observer design pattern, also called publish subscribe", function () {
