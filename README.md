@@ -20,31 +20,6 @@
 
 ##How do I use it?
 
-####In the browser:
-
-Download the latest version of [Emily here](http://flams.github.com/emily/)
-
-```html
-	<script src="emily.js"></script>
-```
-
-```js
-	var emily = require("emily");
-
-	var StateMachine = emily.StateMachine;
-	var Observable = emily.Observable;
-	var Promise = emily.Promise;
-	var Router = emily.Router;
-	var StateMachine = emily.StateMachine;
-	var Store = emily.Store;
-	var Tools = emily.Tools;
-	var Transport = emily.Transport;
-
-	// ...
-```
-
-####In node:
-
 ```
 npm install emily
 ```
@@ -1259,7 +1234,11 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
 
 ## Changelog
 
-###3.0.1 - 27 APR 2014
+###3.0.2 - 28 APR 2014
+
+* Doc update
+
+####3.0.1 - 27 APR 2014
 
 * Remove unused docs, previous releases and browser builds. Use browserify to use Emily.js in the browser.
 
