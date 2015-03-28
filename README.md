@@ -1234,7 +1234,11 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
 
 ## Changelog
 
-###3.0.2 - 28 APR 2014
+###3.0.3 - 28 MAR 2015
+
+* Update nested-property to 0.0.6
+
+####3.0.2 - 28 APR 2014
 
 * Doc update
 
