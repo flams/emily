@@ -1234,6 +1234,10 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
 
 ## Changelog
 
+###3.0.4 - 7 APR 2015
+
+* Update to watch-notify 3.0.4
+
 ###3.0.3 - 28 MAR 2015
 
 * Update nested-property to 0.0.6
@@ -1248,7 +1252,7 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
 
 ####3.0.0 - 27 APR 2014
 
-* Already version 3.0.0! It doesn't change much, but every module has been extracted into it's own module, and Emily just
+* Already version 3.0.0! It doesn't change much, but every module has been extracted into its own module, and Emily just
  packs them together into a great library, because they work nicely together.
 * It does have breaking changes though, the following, unused tools have been removed:
  - Tools.jsonify which was removing unjsonifiable properties like functions and undefined properties
