@@ -1234,7 +1234,11 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
 
 ## Changelog
 
-### 3.0.5 - 7 APR 2015
+### 3.0.6 - 12 APR 2015
+
+* Update to watch-notify 0.0.3
+
+#### 3.0.5 - 7 APR 2015
 
 * Update to observable-store 0.0.5
 
