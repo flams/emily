@@ -1,7 +1,7 @@
 {
   "name": "emily",
   "description": "Runtime agnostic JS library for scalable web applications.",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "homepage": "http://flams.github.com/emily/",
   "licenses": [
     {
@@ -47,8 +47,8 @@
     "object-count": "0.0.1",
     "observable-store": "0.0.5",
     "shallow-copy": "0.0.1",
-    "shallow-diff": "0.0.2",
-    "simple-loop": "0.0.3",
+    "shallow-diff": "0.0.5",
+    "simple-loop": "0.0.4",
     "simple-object-mixin": "0.0.1",
     "synchronous-fsm": "0.0.3",
     "to-array": "~0.1.4",

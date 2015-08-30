@@ -1234,6 +1234,11 @@ describe("Promise is a partially Promise/A+ compliant implementation", function 
 
 ## Changelog
 
+### 3.0.7 - 28 AUG 2015
+
+* Update to shallow-diff 0.0.5
+* Update to simple-loop 0.0.4
+
 ### 3.0.6 - 12 APR 2015
 
 * Update to watch-notify 0.0.3
